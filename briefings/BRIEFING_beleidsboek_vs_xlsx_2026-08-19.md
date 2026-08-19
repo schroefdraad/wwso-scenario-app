@@ -12,13 +12,29 @@ Deze briefing legt vast wat er afwijkt, wat er klopt, en wat dat betekent voor d
 
 <https://www.huurcommissie.nl/site/binaries/site-content/collections/documents/2026/01/01/beleidsboek-woningwaarderingstelsel-onzelfstandige-woonruimte/beleidsboek-woningwaardering-onzelfstandige-woonruimte-januari-2026.pdf>
 
-> **Actiepunt:** dit document staat nu alleen in een tijdelijke sessiemap. Het hoort in het project, zodat elke volgende taak ertegen kan valideren zonder het opnieuw op te halen. `resources/` blijft onaangeraakt tenzij jij anders beslist — voorstel is een aparte map.
+Staat sinds 2026-08-19 in het project: `resources/beleidsboek/beleidsboek-wwso-2026-01.pdf`, met een `HERKOMST.md` die vastlegt dat dit van de Huurcommissie komt en niet van de gebruiker.
 
 ---
 
-## A. Fouten in reeds gebouwde code (taak 4)
+## Stand van zaken
 
-Deze zijn aantoonbaar fout tegen het beleidsboek en moeten gecorrigeerd worden.
+Bijgewerkt na de correctieronde en taak 5, beide op 2026-08-19.
+
+| Onderdeel | Status |
+|---|---|
+| **A1 t/m A7** — fouten in taak 4 | **Opgelost** — zie `outputs/RAPPORT_correctie_taak4_2026-08-19.md` |
+| **B1** — rubrieknummering | **Half** — datamodel en `plan.md` gecorrigeerd; taak 6 moet de nieuwe nummering nog implementeren, inclusief de echte rubriek 7 (het model heeft er al een veld voor) |
+| **B2 t/m B8** — R5/R6 | **Opgelost** — zie `outputs/RAPPORT_taak5_2026-08-19.md` |
+| **B9 t/m B15** — R8 t/m R13, opslagen, >250 punten | **Open** — horen bij taak 6 en 7 |
+| **D1 t/m D4** — onduidelijkheden in het beleidsboek | **Blijft open** — waar een keuze gemaakt is, staat die in de code en het bijbehorende rapport |
+
+Nog niet aangepakt en niet aan een taak gekoppeld: de energie-index als alternatief voor het energielabel (§2.4.4), en de taxatiewaarde bij een ontbrekende WOZ-waarde (§2.11.1).
+
+---
+
+## A. Fouten in reeds gebouwde code (taak 4) — opgelost
+
+Deze waren aantoonbaar fout tegen het beleidsboek. Alle zeven zijn op 2026-08-19 gecorrigeerd; de beschrijvingen hieronder zijn in de tegenwoordige tijd van vóór de reparatie blijven staan, zodat naderhand te volgen is wát er misging.
 
 ### A1. R3 — verkeersruimten tellen wél mee voor verwarming
 **§2.3:** *"Vertrekken, overige ruimtes én verkeersruimtes kunnen punten krijgen als deze zijn verwarmd, namelijk 2 punten per verwarmd vertrek en 1 punt voor overige ruimtes en verkeersruimten."*
@@ -180,18 +196,32 @@ Niet alles is op te lossen door beter lezen.
 
 2. **Volgorde van delen en afronden bij R1/R4 is niet expliciet.** §2.1.1.1 rondt m² af per categorie, maar zegt niet waar de deling door het aantal wooneenheden in die volgorde valt. Het voorbeeld in §2.4.4 deelt eerst (40 m² / 4 = 10 m²) en rekent daarna. Voor gedeelde vertrekken met niet-ronde uitkomsten kan dit een kwartpunt schelen. Kandidaat voor de validatie in taak 8.
 
-3. **Maximum van 4 punten in R3 bij gemengd privé/gemeenschappelijk.** §2.3.1 noemt het maximum apart bij de privé-regel en bij de gemeenschappelijke regel. Onduidelijk of dat één gedeeld maximum van 4 is of twee keer 4. De inleiding van §2.3 (*"Voor de laatste twee soorten binnenruimten geldt een maximum van 4 punten"*) suggereert één gezamenlijk maximum.
+3. **Maximum van 4 punten in R3 bij gemengd privé/gemeenschappelijk.** §2.3.1 noemt het maximum apart bij de privé-regel en bij de gemeenschappelijke regel. Onduidelijk of dat één gedeeld maximum van 4 is of twee keer 4. De inleiding van §2.3 (*"Voor de laatste twee soorten binnenruimten geldt een maximum van 4 punten"*) suggereert één gezamenlijk maximum. **Gekozen:** één gezamenlijk maximum.
+
+4. **Rekenvoorbeeld §2.6.2 is intern inconsistent** — gevonden bij taak 5. Het voorbeeld beschrijft een bad/douchecombinatie (6 punten) plus vijf punten aan extra voorzieningen, stelt expliciet vast dat die vijf punten *niet* worden afgetopt omdat 5 < 6, en concludeert dan: *"Omdat de badkamer wordt gedeeld door 4 onzelfstandige wooneenheden is het puntenaantal per woonruimte: 6 / 4 = 1,5 punt."* De zojuist toegekende 5 punten vallen daar weg; volgens de eigen redenering van dezelfde alinea hoort er (6 + 5) / 4 = 2,75 uit te komen. **Gekozen:** de regel volgen, niet het voorbeeld.
+
+Dat twee van de rekenvoorbeelden in het beleidsboek hun eigen regels tegenspreken (D1 en D4) is op zichzelf een bevinding: de voorbeelden zijn geen betrouwbare tweede bron naast de regeltekst. Bij een afwijking in taak 8 is dit een serieuze kandidaat-verklaring — ook de huurprijscheck-site kan zo'n voorbeeld gevolgd hebben.
 
 ---
 
 ## E. Gevolgen voor het plan
 
 ### Volgorde van herstel
-1. **Beleidsboek in het project zetten** — anders is dit alles niet reproduceerbaar
-2. **Taak 4 corrigeren** (A1 t/m A4 zijn harde fouten; A5 t/m A7 vergen ook datamodel-uitbreiding)
-3. **Rubrieknummering rechttrekken** (B1) vóór taak 6 erop verder bouwt
-4. **Datamodel uitbreiden** — dit is groter dan taak 2 aannam: basiseisen-poorten voor R5 en R6, sanitair buiten badruimten, aantallen in plaats van ja/nee, energielabel-geldigheid, taxatiewaarde, contractdatum voor de monumentopslag
-5. **Dan pas taak 5** bouwen
+1. ~~Beleidsboek in het project zetten~~ — staat in `resources/beleidsboek/`
+2. ~~Taak 4 corrigeren~~ — A1 t/m A7 opgelost
+3. ~~Rubrieknummering in het datamodel rechttrekken~~ — resteert: taak 6 moet de nieuwe nummering implementeren
+4. ~~Datamodel uitbreiden voor R5/R6~~ — basiseisen-poorten, sanitair buiten badruimten, aantallen in plaats van ja/nee
+5. ~~Taak 5 bouwen~~ — afgerond
+6. **Taak 6** — R7 t/m R13 in de gecorrigeerde nummering, met B9 t/m B13 als aandachtspunten
+7. **Taak 7** — eindtelling, met B14 (contractdatum monumentopslag) en B15 (extrapolatie boven 250 punten)
+
+### Wat taak 6 uit deze briefing nodig heeft
+- **R7 bestaat en ontbrak volledig in de xlsx** (B1) — 1 punt per € 332,00 netto-investering; `HandmatigePosten.woonvoorzieningenHandicap` staat al klaar in het model
+- **R8**: het maximum van 15 punten geldt voor privé én gemeenschappelijk sámen (B9)
+- **R9 en R10**: dubbele deling — eerst door het aantal adressen, dán door het aantal wooneenheden op het eigen adres (B10). De laadpaal bij een gemeenschappelijke parkeerplek wordt alléén door het aantal adressen gedeeld
+- **R11**: zonder WOZ- én taxatiewaarde geldt automatisch 10 punten (B11)
+- **R12**: een losse laadpaal is 2 punten binnen deze rubriek (B12)
+- **R13**: het 8 m²-criterium slaat op de R1-totaaloppervlakte inclusief het toegerekende aandeel in gedeelde vertrekken, en het verhuurder-criterium is samengesteld (B13)
 
 ### Gevolg voor taak 8
 De golden-master validatie wint hierdoor aan waarde en verandert van karakter. Er is nu een derde referentie naast de xlsx en de officiële huurprijscheck-site: het beleidsboek zelf. Bij een verschil is de rangorde helder — beleidsboek is leidend, de xlsx is een interpretatie die op de bovenstaande punten aantoonbaar afwijkt.
