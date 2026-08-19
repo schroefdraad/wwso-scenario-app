@@ -12,7 +12,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 
 ## Fase 1 — Rekenmotor
 
-- [ ] Taak 2: Datamodel (Pand, Ruimte, kamertoewijzing, handmatige posten) in TypeScript + Zod
+- [x] Taak 2: Datamodel (Pand, Ruimte, kamertoewijzing, handmatige posten) in TypeScript + Zod
 - [ ] Taak 3: Tarieventabellen als versiedataset met peildatum (huurtabel, energielabel, bouwjaar, COROP)
 - [ ] Taak 4: Rubrieken R1 t/m R4 (oppervlakte vertrekken, overige ruimten, verwarming, energieprestatie)
 - [ ] Taak 5: Rubrieken R5 en R6 (keuken, sanitair) — capping en deling per kamer **`⬆ Opus`** — meest verweven logica in de xlsx, een subtiele fout valt niet op in de uitkomst

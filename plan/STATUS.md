@@ -3,9 +3,10 @@
 Laatst bijgewerkt: 2026-08-19
 
 ## Wat werkt
-- Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine`, `packages/data` (beide nog leeg)
+- Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine`, `packages/data` (data nog leeg)
 - Vitest, ESLint, Prettier werken op root- en packageniveau
 - Supabase-connectie geverifieerd vanuit `apps/web` (zie `outputs/RAPPORT_taak1_2026-08-19.md`)
+- Datamodel in `packages/engine`: `Pand`, `Ruimte` (13 typen), K1-K12-`Toewijzing`, `HandmatigePosten` (R7 + zorgwoning), gebundeld in `PandInvoer` met referentiële validatie. Zie `outputs/RAPPORT_taak2_2026-08-19.md` voor de afweging rond de 2 ruimtetypen die de xlsx zelf nog mist (TODO-04)
 
 Wel beschikbaar als input:
 - `resources/wwso.xlsx` — werkende puntentelling in Excel, 8 tabs, rubrieken R1 t/m R13. Dit is de specificatie voor de rekenmotor. Bevat 7 bekende open punten op tab `Toelichting`.
@@ -31,4 +32,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 2: datamodel (Pand, Ruimte, kamertoewijzing, handmatige posten) in TypeScript + Zod, op basis van tab `Invoer` van `resources/wwso.xlsx`.
+Taak 3: tarieventabellen als versiedataset met peildatum (huurtabel, energielabelfactoren, bouwjaargrenzen, COROP-gebieden) in `packages/data`, op basis van tab `Tabellen` van `resources/wwso.xlsx`.

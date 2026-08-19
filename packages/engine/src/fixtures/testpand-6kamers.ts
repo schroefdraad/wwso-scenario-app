@@ -1,0 +1,81 @@
+import type { PandInvoer } from '../types/index.js';
+
+/**
+ * Synthetisch testpand, niet uit de xlsx overgenomen: wwso.xlsx bevat geen enkel ingevuld
+ * voorbeeldpand (Invoer, Berekening, Resultaat en Controles zijn allemaal lege templates).
+ * Dit pand dient om aan te tonen dat het model verliesvrij is (taak 2), niet om de
+ * rekenmotor te valideren — dat gebeurt in taak 8 met echte golden-master panden.
+ *
+ * 6 kamers, gedeelde keuken en twee gedeelde badruimtes, plus elk overig ruimtetype
+ * minstens één keer, inclusief de twee ruimtetypen die taak 2 toevoegt (TODO-04).
+ */
+export const testpand6Kamers: PandInvoer = {
+  pand: {
+    adres: 'Crooswijkseweg 95-A03',
+    stad: 'Rotterdam',
+    wozWaarde: 385000,
+    wozPeildatum: '2025-01-01',
+    wozOppervlak: 145,
+    coropGebied: 'Groot-Rijnmond',
+    energielabel: 'D',
+    energielabelIngangsdatum: '2023-06-15',
+    bouwjaar: 1932,
+    soortWoning: 'Meergezins',
+    aantalKamers: 6,
+    aantalWoningenInComplex: 4,
+    monument: 'Geen',
+  },
+  ruimtes: [
+    { nr: 1, naam: 'Kamer 1', type: 'Privévertrek', oppervlakteM2: 12.5, verdieping: 1, verwarmd: true, verkoeld: false },
+    { nr: 2, naam: 'Kamer 2', type: 'Privévertrek', oppervlakteM2: 11.8, verdieping: 1, verwarmd: true, verkoeld: false },
+    { nr: 3, naam: 'Kamer 3', type: 'Privévertrek', oppervlakteM2: 13.2, verdieping: 1, verwarmd: true, verkoeld: false },
+    { nr: 4, naam: 'Kamer 4', type: 'Privévertrek', oppervlakteM2: 10.9, verdieping: 2, verwarmd: true, verkoeld: false },
+    { nr: 5, naam: 'Kamer 5', type: 'Privévertrek', oppervlakteM2: 14.1, verdieping: 2, verwarmd: true, verkoeld: true },
+    { nr: 6, naam: 'Kamer 6', type: 'Privévertrek', oppervlakteM2: 12.0, verdieping: 2, verwarmd: true, verkoeld: false },
+    { nr: 7, naam: 'Gedeelde keuken', type: 'Keuken', oppervlakteM2: 9.5, verdieping: 1, verwarmd: true, verkoeld: false },
+    { nr: 8, naam: 'Badruimte voor', type: 'Badruimte', oppervlakteM2: 4.2, verdieping: 1, verwarmd: true, verkoeld: false },
+    { nr: 9, naam: 'Badruimte achter', type: 'Badruimte', oppervlakteM2: 3.8, verdieping: 2, verwarmd: true, verkoeld: false },
+    { nr: 10, naam: 'Toiletruimte begane grond', type: 'Toiletruimte', oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 11, naam: 'Berging', type: 'Berging', oppervlakteM2: 3.0, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 12, naam: 'Bijkeuken', type: 'Bijkeuken', oppervlakteM2: 2.4, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 13, naam: 'Wasruimte', type: 'Wasruimte', oppervlakteM2: 2.1, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 14, naam: 'Zolderberging', type: 'Overige ruimte', oppervlakteM2: 5.0, verdieping: 3, verwarmd: false, verkoeld: false },
+    { nr: 15, naam: 'Centrale hal', type: 'Verkeersruimte', oppervlakteM2: 6.8, verdieping: 0, verwarmd: true, verkoeld: false },
+    { nr: 16, naam: 'Balkon kamer 1', type: 'Buitenruimte privé', oppervlakteM2: 4.0, verdieping: 1, verwarmd: false, verkoeld: false },
+    { nr: 17, naam: 'Gedeelde achtertuin', type: 'Buitenruimte gemeenschappelijk', oppervlakteM2: 22.0, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 18, naam: 'Gemeenschappelijke woonkamer', type: 'Gemeenschappelijk vertrek', oppervlakteM2: 16.5, verdieping: 0, verwarmd: true, verkoeld: false },
+    { nr: 19, naam: 'Gemeenschappelijke fietsenberging', type: 'Gemeenschappelijke overige ruimte', oppervlakteM2: 7.0, verdieping: 0, verwarmd: false, verkoeld: false },
+  ],
+  toewijzing: [
+    { ruimteNr: 1, kamers: [1] },
+    { ruimteNr: 2, kamers: [2] },
+    { ruimteNr: 3, kamers: [3] },
+    { ruimteNr: 4, kamers: [4] },
+    { ruimteNr: 5, kamers: [5] },
+    { ruimteNr: 6, kamers: [6] },
+    { ruimteNr: 7, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 8, kamers: [1, 2, 3] },
+    { ruimteNr: 9, kamers: [4, 5, 6] },
+    { ruimteNr: 10, kamers: [1, 2, 3] },
+    { ruimteNr: 11, kamers: [1, 2] },
+    { ruimteNr: 12, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 13, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 14, kamers: [3, 4] },
+    { ruimteNr: 15, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 16, kamers: [1] },
+    { ruimteNr: 17, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 18, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 19, kamers: [1, 2, 3, 4, 5, 6] },
+  ],
+  handmatigePosten: {
+    gemeenschappelijkeVertrekken: [
+      { kamer: 1, punten: 2 },
+      { kamer: 2, punten: 2 },
+      { kamer: 3, punten: 2 },
+      { kamer: 4, punten: 2 },
+      { kamer: 5, punten: 2 },
+      { kamer: 6, punten: 2 },
+    ],
+    zorgwoning: false,
+  },
+};
