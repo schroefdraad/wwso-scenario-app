@@ -2,6 +2,7 @@ import huurprijstabel_2026_01_01 from './2026-01-01/huurprijstabel_2026-01-01.js
 import energielabelfactoren_2026_01_01 from './2026-01-01/energielabelfactoren_2026-01-01.json';
 import bouwjaargrenzen_2026_01_01 from './2026-01-01/bouwjaargrenzen_2026-01-01.json';
 import corop_2026_01_01 from './2026-01-01/corop_2026-01-01.json';
+import voorzieningen_2026_01_01 from './2026-01-01/voorzieningen_2026-01-01.json';
 import { Tarievenset } from './types.js';
 
 export * from './types.js';
@@ -18,6 +19,7 @@ const RUWE_TARIEVENSETS = [
     energielabelfactoren: energielabelfactoren_2026_01_01,
     bouwjaargrenzen: bouwjaargrenzen_2026_01_01,
     coropGebieden: corop_2026_01_01,
+    ...voorzieningen_2026_01_01,
   },
 ] as const;
 

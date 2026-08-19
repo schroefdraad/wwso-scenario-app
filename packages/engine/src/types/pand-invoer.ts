@@ -3,6 +3,7 @@ import { Pand } from './pand.js';
 import { Ruimte } from './ruimte.js';
 import { Toewijzing } from './toewijzing.js';
 import { HandmatigePosten } from './handmatige-posten.js';
+import { Keuken, SanitairVoorziening } from './voorzieningen.js';
 
 /**
  * De volledige invoer voor één puntentelling: pand, ruimtes, de K1-K12-toewijzingsmatrix
@@ -15,6 +16,8 @@ export const PandInvoer = z
     pand: Pand,
     ruimtes: z.array(Ruimte).min(1),
     toewijzing: Toewijzing,
+    keukens: z.array(Keuken),
+    sanitair: z.array(SanitairVoorziening),
     handmatigePosten: HandmatigePosten,
   })
   .superRefine((data, ctx) => {
@@ -41,6 +44,26 @@ export const PandInvoer = z
           code: 'custom',
           path: ['toewijzing', i, 'kamers'],
           message: `Kamer(s) ${buitenBereik.join(', ')} bestaan niet — pand heeft ${data.pand.aantalKamers} kamer(s).`,
+        });
+      }
+    });
+
+    data.keukens.forEach((keuken, i) => {
+      if (!ruimteNrs.has(keuken.ruimteNr)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['keukens', i, 'ruimteNr'],
+          message: `Keuken verwijst naar ruimte ${keuken.ruimteNr}, die niet in ruimtes voorkomt.`,
+        });
+      }
+    });
+
+    data.sanitair.forEach((post, i) => {
+      if (!ruimteNrs.has(post.ruimteNr)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['sanitair', i, 'ruimteNr'],
+          message: `Sanitaire voorziening verwijst naar ruimte ${post.ruimteNr}, die niet in ruimtes voorkomt.`,
         });
       }
     });

@@ -81,6 +81,18 @@ export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRui
 }
 
 /**
+ * Per ruimtenummer de kamers die er toegang en gebruiksrecht toe hebben. Nodig voor R5 en R6,
+ * die vanuit een voorziening naar de kamers redeneren in plaats van andersom.
+ */
+export function kamersPerRuimte(input: PandInvoer): Map<number, number[]> {
+  return new Map(
+    input.toewijzing.map(
+      (t) => [t.ruimteNr, t.kamers.filter((k) => k <= input.pand.aantalKamers)] as const,
+    ),
+  );
+}
+
+/**
  * De rekenregel van §2.1.1.1 / §2.2.2.1, die op vierkante meters afrondt en niet op punten:
  *
  * 1. bepaal de oppervlakte per ruimte

@@ -1,0 +1,56 @@
+{
+  "keukenAanrechtBasispunten": [
+    { "bovengrensM": 1, "inclusiefBovengrens": false, "punten": 0 },
+    { "bovengrensM": 2, "inclusiefBovengrens": true, "punten": 4 },
+    { "bovengrensM": 3, "inclusiefBovengrens": true, "punten": 7 },
+    { "bovengrensM": 5, "inclusiefBovengrens": true, "punten": 10 },
+    { "bovengrensM": null, "inclusiefBovengrens": true, "punten": 13, "minWooneenhedenMetToegang": 8 }
+  ],
+  "keukenExtraPunten": {
+    "afzuiginstallatie": 0.75,
+    "kookplaatInductie": 1.75,
+    "kookplaatKeramisch": 1,
+    "kookplaatGas": 0.5,
+    "koelkast": 1,
+    "vrieskast": 0.75,
+    "ovenElektrisch": 1,
+    "ovenGas": 0.5,
+    "magnetron": 1,
+    "vaatwasmachine": 1.5,
+    "extraKastruimtePer60Cm": 0.75,
+    "eenhandsmengkraan": 0.25,
+    "thermostatischeMengkraan": 0.5,
+    "kokendWaterfunctie": 0.5
+  },
+  "sanitairToiletPunten": {
+    "Geen": 0,
+    "Staand in toiletruimte": 3,
+    "Staand in badkamer": 2,
+    "Hangend in toiletruimte": 3.75,
+    "Hangend in badkamer": 2.75
+  },
+  "sanitairBasisPunten": {
+    "wastafel": 1,
+    "meerpersoonswastafel": 1.5,
+    "douche": 3,
+    "bad": 5,
+    "badDoucheCombinatie": 6
+  },
+  "sanitairExtraPunten": {
+    "bubbelfunctieBad": 1.5,
+    "doucheafscheidingVolledig": 1.25,
+    "handdoekenradiator": 0.75,
+    "ingebouwdKastjeMetWastafel": 1,
+    "kastruimte": 0.75,
+    "stopcontact": 0.25,
+    "eenhandsmengkraan": 0.25,
+    "thermostatischeMengkraan": 0.5
+  },
+  "sanitairMaxima": {
+    "wastafelPuntenPerVertrekBuitenBadkamer": 1,
+    "meerpersoonswastafelPuntenPerVertrekBuitenBadkamer": 1.5,
+    "kastruimtePunten": 0.75,
+    "stopcontactenPerWastafel": 2,
+    "wooneenhedenVoorWastafelUitzondering": 8
+  }
+}

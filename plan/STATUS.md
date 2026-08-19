@@ -9,6 +9,7 @@ Laatst bijgewerkt: 2026-08-19
 - Datamodel in `packages/engine`: `Pand`, `Ruimte` (13 typen), K1-K12-`Toewijzing`, `HandmatigePosten` (R7 + zorgwoning), gebundeld in `PandInvoer` met referentiële validatie. Zie `outputs/RAPPORT_taak2_2026-08-19.md` voor de afweging rond de 2 ruimtetypen die de xlsx zelf nog mist (TODO-04)
 - Tarieventabellen in `packages/data`: huurprijstabel, energielabelfactoren, bouwjaargrenzen, COROP-gebieden, peildatum 1 januari 2026, met `getTarievenset(peildatum)`
 - Rubrieken R1-R4 in `packages/engine/src/rubrieken`, **gevalideerd tegen het beleidsboek** en gecorrigeerd (zie `outputs/RAPPORT_correctie_taak4_2026-08-19.md`). Drie rekenvoorbeelden uit het beleidsboek zitten als test in de suite
+- Rubrieken R5 en R6 (keuken, sanitair) met de twee basiseisen-poorten uit §2.5.1 en §2.6.2, de aftopping van extra voorzieningen, en sanitair buiten de badkamer. Zie `outputs/RAPPORT_taak5_2026-08-19.md`
 - Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` — dit is de bron van waarheid, niet `wwso.xlsx`
 
 Wel beschikbaar als input:
@@ -38,4 +39,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 5 (⬆ Opus): rubrieken R5 en R6 — keuken en sanitair. Het datamodel moet eerst uitgebreid worden met de voorzieningen én de twee basiseisen-poorten (§2.5.1, §2.6.2) — zie briefing B2 t/m B8. De twee interpretatievragen die dit taakonderdeel ophield zijn inmiddels beantwoord door het beleidsboek.
+Taak 6: rubrieken R7 t/m R13 in de gecorrigeerde nummering. Let op de dubbele deling bij R9 en R10 (eerst adressen, dan wooneenheden) en het gezamenlijke maximum van 15 punten bij R8.
