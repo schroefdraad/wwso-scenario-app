@@ -22,7 +22,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 
 ## Fase 2 — Scenario's en suggesties
 
-- [ ] Taak 9: Scenariomodel als mutaties bovenop de as-is situatie
+- [x] Taak 9: Scenariomodel als mutaties bovenop de as-is situatie. Zie `outputs/RAPPORT_taak9_2026-08-19.md`
 - [ ] Taak 10: Kostencatalogus inlezen uit Kostenkentallen_WWSO_optimalisatie.xlsx (herhaalbaar)
 - [ ] Taak 11: Suggestie-engine — marginale analyse per rubriek, pakketten Basis/Comfort/Maximaal, ranking op terugverdientijd **`⬆ Opus`** voor het ontwerp (hoe maatregelen combineren en per kamer waarderen), daarna Sonnet voor de implementatie
 
