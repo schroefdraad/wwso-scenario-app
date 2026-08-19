@@ -1,0 +1,44 @@
+# Geheimen — nooit committen
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+*.pem
+*.key
+
+# Dependencies — reproduceerbaar met pnpm install
+node_modules/
+.pnpm-store/
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
+# Vercel — lokale koppeling, machine-specifiek
+.vercel/
+
+# Testresultaten en coverage
+coverage/
+.turbo/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS rommel
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Supabase lokale ontwikkelbestanden
+.supabase/
