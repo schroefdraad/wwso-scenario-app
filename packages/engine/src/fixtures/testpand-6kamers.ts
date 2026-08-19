@@ -42,9 +42,10 @@ export const testpand6Kamers: PandInvoer = {
     { nr: 14, naam: 'Zolderberging', type: 'Overige ruimte', oppervlakteM2: 5.0, verdieping: 3, verwarmd: false, verkoeld: false, zolder: { vasteTrap: false, beschotenDak: false } },
     { nr: 15, naam: 'Centrale hal', type: 'Verkeersruimte', oppervlakteM2: 6.8, verdieping: 0, verwarmd: true, verkoeld: false },
     { nr: 16, naam: 'Balkon kamer 1', type: 'Buitenruimte privé', oppervlakteM2: 4.0, verdieping: 1, verwarmd: false, verkoeld: false },
-    { nr: 17, naam: 'Gedeelde achtertuin', type: 'Buitenruimte gemeenschappelijk', oppervlakteM2: 22.0, verdieping: 0, verwarmd: false, verkoeld: false },
-    { nr: 18, naam: 'Gemeenschappelijke woonkamer', type: 'Gemeenschappelijk vertrek', oppervlakteM2: 16.5, verdieping: 0, verwarmd: true, verkoeld: false },
-    { nr: 19, naam: 'Gemeenschappelijke fietsenberging', type: 'Gemeenschappelijke overige ruimte', oppervlakteM2: 7.0, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 17, naam: 'Gedeelde achtertuin', type: 'Buitenruimte gemeenschappelijk', oppervlakteM2: 22.0, verdieping: 0, verwarmd: false, verkoeld: false, aantalAdressenMetToegang: 1 },
+    { nr: 18, naam: 'Gemeenschappelijke woonkamer', type: 'Gemeenschappelijk vertrek', oppervlakteM2: 16.5, verdieping: 0, verwarmd: true, verkoeld: false, aantalAdressenMetToegang: 1 },
+    { nr: 19, naam: 'Gemeenschappelijke fietsenberging', type: 'Gemeenschappelijke overige ruimte', oppervlakteM2: 7.0, verdieping: 0, verwarmd: false, verkoeld: false, aantalAdressenMetToegang: 1 },
+    { nr: 20, naam: 'Gedeelde parkeerplaats', type: 'Parkeerplek gemeenschappelijk', oppervlakteM2: 12.5, verdieping: 0, verwarmd: false, verkoeld: false, aantalAdressenMetToegang: 1 },
   ],
   toewijzing: [
     { ruimteNr: 1, kamers: [1] },
@@ -66,6 +67,7 @@ export const testpand6Kamers: PandInvoer = {
     { ruimteNr: 17, kamers: [1, 2, 3, 4, 5, 6] },
     { ruimteNr: 18, kamers: [1, 2, 3, 4, 5, 6] },
     { ruimteNr: 19, kamers: [1, 2, 3, 4, 5, 6] },
+    { ruimteNr: 20, kamers: [1, 2] },
   ],
   keukens: [
     {
@@ -176,15 +178,16 @@ export const testpand6Kamers: PandInvoer = {
       },
     },
   ],
+  parkeerplekken: [{ ruimteNr: 20, type: 'II', laadpaal: true }],
   handmatigePosten: {
-    gemeenschappelijkeVertrekken: [
-      { kamer: 1, punten: 2 },
-      { kamer: 2, punten: 2 },
-      { kamer: 3, punten: 2 },
-      { kamer: 4, punten: 2 },
-      { kamer: 5, punten: 2 },
-      { kamer: 6, punten: 2 },
-    ],
+    woonvoorzieningenHandicap: [{ nettoInvesteringEuro: 1660, kamersMetToegang: [3] }],
+    aanbelfuncties: [{ kamersMetToegang: [1, 2, 3, 4, 5, 6] }],
+    losseLaadpalen: [],
+    aftrekSituaties: {
+      verhuurderCriterium: [],
+      ruitoppervlakteOnvoldoende: [],
+      raamkozijnTeHoog: [],
+    },
     zorgwoning: false,
   },
 };

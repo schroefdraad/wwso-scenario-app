@@ -1,0 +1,33 @@
+{
+  "handicapVoorzieningenEuroPerPunt": 332,
+  "buitenruimte": {
+    "priveBasispunten": 2,
+    "privePuntenPerM2": 0.35,
+    "gemeenschappelijkPuntenPerM2": 0.75,
+    "maxPuntenTotaal": 15
+  },
+  "gemeenschappelijkeRuimten": {
+    "vertrekPuntenPerM2": 1,
+    "overigeRuimtePuntenPerM2": 0.75,
+    "zorgwoningPuntenPerWoning": 3
+  },
+  "parkeren": {
+    "typeIPunten": 9,
+    "typeIIPunten": 6,
+    "typeIIIPunten": 4,
+    "laadpaalPunten": 2
+  },
+  "woz": {
+    "drempelPercentage": 10,
+    "puntenHoger": 14,
+    "puntenGemiddeld": 12,
+    "puntenLager": 10,
+    "puntenOnbekend": 10
+  },
+  "bijzondereVoorzieningen": {
+    "aanbelfunctieMetVideoPunten": 0.25,
+    "losseLaadpaalPunten": 2,
+    "zorgwoningOpslagPercentage": 35
+  },
+  "aftrekPuntenPerSituatie": 4
+}

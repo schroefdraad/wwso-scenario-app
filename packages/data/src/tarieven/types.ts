@@ -105,6 +105,53 @@ export const SanitairMaxima = z.object({
 });
 export type SanitairMaxima = z.infer<typeof SanitairMaxima>;
 
+/** R8 — Buitenruimten (§2.8). */
+export const BuitenruimteTarief = z.object({
+  priveBasispunten: z.number(),
+  privePuntenPerM2: z.number(),
+  gemeenschappelijkPuntenPerM2: z.number(),
+  /** §2.8/§2.8.6: gezamenlijk maximum voor privé + gemeenschappelijk samen (B9). */
+  maxPuntenTotaal: z.number(),
+});
+export type BuitenruimteTarief = z.infer<typeof BuitenruimteTarief>;
+
+/** R9 — Gemeenschappelijke vertrekken, overige ruimten en voorzieningen (§2.9). */
+export const GemeenschappelijkeRuimtenTarief = z.object({
+  vertrekPuntenPerM2: z.number(),
+  overigeRuimtePuntenPerM2: z.number(),
+  /** §2.9.4: vuistregel voor zorgwoningen, vervangt de m²-berekening. */
+  zorgwoningPuntenPerWoning: z.number(),
+});
+export type GemeenschappelijkeRuimtenTarief = z.infer<typeof GemeenschappelijkeRuimtenTarief>;
+
+/** R10 — Gemeenschappelijke parkeerruimten (§2.10.3/§2.10.5). */
+export const ParkerenTarief = z.object({
+  typeIPunten: z.number(),
+  typeIIPunten: z.number(),
+  typeIIIPunten: z.number(),
+  laadpaalPunten: z.number(),
+});
+export type ParkerenTarief = z.infer<typeof ParkerenTarief>;
+
+/** R11 — Punten voor de WOZ-waarde (§2.11.2, drempels bij ±10%). */
+export const WozTarief = z.object({
+  drempelPercentage: z.number(),
+  puntenHoger: z.number(),
+  puntenGemiddeld: z.number(),
+  puntenLager: z.number(),
+  /** §2.11.1: zonder WOZ- én taxatiewaarde geldt automatisch het laagste puntenaantal. */
+  puntenOnbekend: z.number(),
+});
+export type WozTarief = z.infer<typeof WozTarief>;
+
+/** R12 — Bijzondere voorzieningen (§2.12). De 35%-zorgwoningopslag geldt op R1 t/m R11 en wordt bij de eindtelling (taak 7) toegepast, niet als R12-punten. */
+export const BijzondereVoorzieningenTarief = z.object({
+  aanbelfunctieMetVideoPunten: z.number(),
+  losseLaadpaalPunten: z.number(),
+  zorgwoningOpslagPercentage: z.number(),
+});
+export type BijzondereVoorzieningenTarief = z.infer<typeof BijzondereVoorzieningenTarief>;
+
 export const Tarievenset = z.object({
   peildatum: z.string().date(),
   huurprijstabel: z.array(HuurprijsRegel).min(1),
@@ -117,5 +164,14 @@ export const Tarievenset = z.object({
   sanitairBasisPunten: SanitairBasisPunten,
   sanitairExtraPunten: SanitairExtraPunten,
   sanitairMaxima: SanitairMaxima,
+  /** R7 — €/punt netto-investering in gehandicaptenvoorzieningen (§2.7). */
+  handicapVoorzieningenEuroPerPunt: z.number().positive(),
+  buitenruimte: BuitenruimteTarief,
+  gemeenschappelijkeRuimten: GemeenschappelijkeRuimtenTarief,
+  parkeren: ParkerenTarief,
+  woz: WozTarief,
+  bijzondereVoorzieningen: BijzondereVoorzieningenTarief,
+  /** R13 — aftrek per situatie (§2.13), als positief getal; de rubriek trekt het zelf af. */
+  aftrekPuntenPerSituatie: z.number().positive(),
 });
 export type Tarievenset = z.infer<typeof Tarievenset>;

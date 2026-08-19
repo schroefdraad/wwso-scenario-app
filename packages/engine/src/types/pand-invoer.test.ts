@@ -13,7 +13,7 @@ describe('PandInvoer — testpand van 6 kamers', () => {
     expect(JSON.parse(JSON.stringify(parsed))).toEqual(JSON.parse(JSON.stringify(testpand6Kamers)));
   });
 
-  it('gebruikt elk van de 13 ruimtetypen minstens één keer in de fixture-set', () => {
+  it('gebruikt elk van de 14 ruimtetypen minstens één keer in de fixture-set', () => {
     const gebruikt = new Set(testpand6Kamers.ruimtes.map((r) => r.type));
     for (const type of RuimteType.options) {
       expect(gebruikt.has(type), `type ontbreekt in fixture: ${type}`).toBe(true);
@@ -58,11 +58,31 @@ describe('PandInvoer — testpand van 6 kamers', () => {
       ...testpand6Kamers,
       handmatigePosten: {
         ...testpand6Kamers.handmatigePosten,
-        gemeenschappelijkeVertrekken: [
-          ...testpand6Kamers.handmatigePosten.gemeenschappelijkeVertrekken,
-          { kamer: 12, punten: 1 },
+        woonvoorzieningenHandicap: [
+          ...testpand6Kamers.handmatigePosten.woonvoorzieningenHandicap,
+          { nettoInvesteringEuro: 332, kamersMetToegang: [12] },
         ],
       },
+    };
+    const result = PandInvoer.safeParse(kapot);
+    expect(result.success).toBe(false);
+  });
+
+  it('wijst een gemeenschappelijke ruimte zonder aantalAdressenMetToegang af', () => {
+    const kapot = {
+      ...testpand6Kamers,
+      ruimtes: testpand6Kamers.ruimtes.map((r) =>
+        r.nr === 18 ? { ...r, aantalAdressenMetToegang: undefined } : r,
+      ),
+    };
+    const result = PandInvoer.safeParse(kapot);
+    expect(result.success).toBe(false);
+  });
+
+  it('wijst een parkeerplek af die naar een niet-bestaande ruimte verwijst', () => {
+    const kapot = {
+      ...testpand6Kamers,
+      parkeerplekken: [...testpand6Kamers.parkeerplekken, { ruimteNr: 99, type: 'I' as const, laadpaal: false }],
     };
     const result = PandInvoer.safeParse(kapot);
     expect(result.success).toBe(false);

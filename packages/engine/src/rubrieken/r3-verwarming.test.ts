@@ -132,6 +132,48 @@ describe('R3 — Verwarming en verkoeling (§2.3)', () => {
     expect(berekenR3(input).perKamer[1]).toBe(8);
   });
 
+  it('telt een verwarmd gemeenschappelijk vertrek mee als vertrek (§2.9.2)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 2,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Gemeenschappelijke woonkamer',
+          type: 'Gemeenschappelijk vertrek',
+          oppervlakteM2: 15,
+          verdieping: 0,
+          verwarmd: true,
+          verkoeld: false,
+          aantalAdressenMetToegang: 1,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1, 2] }],
+    });
+    // 2 pt / 2 kamers = 1 pt per kamer — los van de m²-punten die R9 apart telt
+    expect(berekenR3(input).perKamer[1]).toBe(1);
+    expect(berekenR3(input).perKamer[2]).toBe(1);
+  });
+
+  it('telt een verwarmde gemeenschappelijke overige ruimte mee als overige ruimte (§2.9.2)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Gemeenschappelijke fietsenberging',
+          type: 'Gemeenschappelijke overige ruimte',
+          oppervlakteM2: 5,
+          verdieping: 0,
+          verwarmd: true,
+          verkoeld: false,
+          aantalAdressenMetToegang: 1,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+    });
+    expect(berekenR3(input).perKamer[1]).toBe(1);
+  });
+
   it('deelt de punten van een gedeelde keuken door het aantal kamers, met kwartpuntsafronding', () => {
     const input = maakPandInvoer({
       aantalKamers: 3,

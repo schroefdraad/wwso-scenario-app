@@ -122,3 +122,28 @@ export const SanitairVoorziening = z.object({
   extra: SanitairExtraVoorzieningen,
 });
 export type SanitairVoorziening = z.infer<typeof SanitairVoorziening>;
+
+/**
+ * De drie soorten gemeenschappelijke parkeerplekken uit §2.10.3, met punten 9 / 6 / 4
+ * (bevestigd tegen wwso.xlsx, zie briefing "Bevestigd correct").
+ */
+export const ParkeerplekType = z.enum(['I', 'II', 'III']);
+export type ParkeerplekType = z.infer<typeof ParkeerplekType>;
+
+/**
+ * Eén gemeenschappelijke parkeerplek (R10, §2.10). Verwijst naar een Ruimte van het type
+ * 'Parkeerplek gemeenschappelijk', die `aantalAdressenMetToegang` levert voor de eerste
+ * deling; de tweede deling (door het aantal wooneenheden met toegang) komt uit de
+ * K1-K12-toewijzing, net als bij Keuken en SanitairVoorziening.
+ */
+export const GemeenschappelijkeParkeerplek = z.object({
+  ruimteNr: z.number().int().min(1).max(40),
+  type: ParkeerplekType,
+  /**
+   * §2.10.5: een laadpaal geeft 2 extra punten, maar die worden — anders dan de basispunten
+   * van de parkeerplek zelf — uitsluitend gedeeld door het aantal adressen, NIET ook nog
+   * door het aantal wooneenheden op het eigen adres. Zie briefing B10.
+   */
+  laadpaal: z.boolean(),
+});
+export type GemeenschappelijkeParkeerplek = z.infer<typeof GemeenschappelijkeParkeerplek>;

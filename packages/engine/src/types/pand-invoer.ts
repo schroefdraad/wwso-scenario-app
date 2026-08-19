@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { Pand } from './pand.js';
-import { Ruimte } from './ruimte.js';
+import { Ruimte, DUBBEL_GEDEELDE_RUIMTE_TYPES } from './ruimte.js';
 import { Toewijzing } from './toewijzing.js';
 import { HandmatigePosten } from './handmatige-posten.js';
-import { Keuken, SanitairVoorziening } from './voorzieningen.js';
+import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from './voorzieningen.js';
 
 /**
  * De volledige invoer voor één puntentelling: pand, ruimtes, de K1-K12-toewijzingsmatrix
@@ -18,6 +18,8 @@ export const PandInvoer = z
     toewijzing: Toewijzing,
     keukens: z.array(Keuken),
     sanitair: z.array(SanitairVoorziening),
+    /** R10 — gemeenschappelijke parkeerplekken, elk verwijzend naar een Ruimte. */
+    parkeerplekken: z.array(GemeenschappelijkeParkeerplek),
     handmatigePosten: HandmatigePosten,
   })
   .superRefine((data, ctx) => {
@@ -29,6 +31,16 @@ export const PandInvoer = z
         message: 'Ruimte-nummers moeten uniek zijn binnen het pand.',
       });
     }
+
+    data.ruimtes.forEach((ruimte, i) => {
+      if (DUBBEL_GEDEELDE_RUIMTE_TYPES.includes(ruimte.type) && ruimte.aantalAdressenMetToegang === undefined) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['ruimtes', i, 'aantalAdressenMetToegang'],
+          message: `Ruimte ${ruimte.nr} (${ruimte.type}) mist 'aantalAdressenMetToegang' — verplicht voor R8/R9/R10, zie §2.8.2/§2.9.1/§2.10.4.`,
+        });
+      }
+    });
 
     data.toewijzing.forEach((entry, i) => {
       if (!ruimteNrs.has(entry.ruimteNr)) {
@@ -68,14 +80,50 @@ export const PandInvoer = z
       }
     });
 
-    data.handmatigePosten.gemeenschappelijkeVertrekken.forEach((post, i) => {
-      if (post.kamer > data.pand.aantalKamers) {
+    data.parkeerplekken.forEach((plek, i) => {
+      if (!ruimteNrs.has(plek.ruimteNr)) {
         ctx.addIssue({
           code: 'custom',
-          path: ['handmatigePosten', 'gemeenschappelijkeVertrekken', i, 'kamer'],
-          message: `Kamer ${post.kamer} bestaat niet — pand heeft ${data.pand.aantalKamers} kamer(s).`,
+          path: ['parkeerplekken', i, 'ruimteNr'],
+          message: `Parkeerplek verwijst naar ruimte ${plek.ruimteNr}, die niet in ruimtes voorkomt.`,
         });
       }
     });
+
+    const kamerLijstCheck = (lijst: number[], pad: (string | number)[]) => {
+      const buitenBereik = lijst.filter((k) => k > data.pand.aantalKamers);
+      if (buitenBereik.length > 0) {
+        ctx.addIssue({
+          code: 'custom',
+          path: pad,
+          message: `Kamer(s) ${buitenBereik.join(', ')} bestaan niet — pand heeft ${data.pand.aantalKamers} kamer(s).`,
+        });
+      }
+    };
+
+    data.handmatigePosten.woonvoorzieningenHandicap.forEach((post, i) =>
+      kamerLijstCheck(post.kamersMetToegang, ['handmatigePosten', 'woonvoorzieningenHandicap', i, 'kamersMetToegang']),
+    );
+    data.handmatigePosten.aanbelfuncties.forEach((post, i) =>
+      kamerLijstCheck(post.kamersMetToegang, ['handmatigePosten', 'aanbelfuncties', i, 'kamersMetToegang']),
+    );
+    data.handmatigePosten.losseLaadpalen.forEach((post, i) =>
+      kamerLijstCheck(post.kamersMetToegang, ['handmatigePosten', 'losseLaadpalen', i, 'kamersMetToegang']),
+    );
+    kamerLijstCheck(data.handmatigePosten.aftrekSituaties.verhuurderCriterium, [
+      'handmatigePosten',
+      'aftrekSituaties',
+      'verhuurderCriterium',
+    ]);
+    kamerLijstCheck(data.handmatigePosten.aftrekSituaties.ruitoppervlakteOnvoldoende, [
+      'handmatigePosten',
+      'aftrekSituaties',
+      'ruitoppervlakteOnvoldoende',
+    ]);
+    kamerLijstCheck(data.handmatigePosten.aftrekSituaties.raamkozijnTeHoog, [
+      'handmatigePosten',
+      'aftrekSituaties',
+      'raamkozijnTeHoog',
+    ]);
   });
 export type PandInvoer = z.infer<typeof PandInvoer>;

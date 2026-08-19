@@ -1,4 +1,4 @@
-import type { PandInvoer } from '../types/index.js';
+import type { PandInvoer, RuimteType } from '../types/index.js';
 import {
   OVERIGE_RUIMTE_TYPES,
   VERKEERSRUIMTE_TYPES,
@@ -13,6 +13,20 @@ const PUNTEN_PER_VERWARMDE_OVERIGE_RUIMTE = 1;
 const MAX_OVERIGE_VERWARMD_PUNTEN = 4;
 const PUNTEN_PER_VERKOELD_VERTREK = 1;
 const MAX_VERKOELD_PUNTEN = 2;
+
+/**
+ * §2.9.2 (ontdekt bij het bouwen van R9, taak 6): "Punten voor voorzieningen, zoals verkoeling
+ * en verwarming, [...] die zich bevinden in gemeenschappelijke vertrekken en overige ruimten
+ * worden gewaardeerd volgens het woningwaarderingsstelsel." Een gemeenschappelijk vertrek is
+ * voor déze telling dus gewoon een vertrek, en een gemeenschappelijke overige ruimte gewoon
+ * een overige ruimte — de m²-punten van R9 zelf blijven apart (die tellen niet hier mee).
+ */
+const VERWARMING_VERTREK_TYPES: readonly RuimteType[] = [...VERTREK_TYPES, 'Gemeenschappelijk vertrek'];
+const VERWARMING_OVERIGE_TYPES: readonly RuimteType[] = [
+  ...OVERIGE_RUIMTE_TYPES,
+  ...VERKEERSRUIMTE_TYPES,
+  'Gemeenschappelijke overige ruimte',
+];
 
 /**
  * R3 — Verwarming en verkoeling (§2.3).
@@ -40,16 +54,13 @@ export function berekenR3(input: PandInvoer): RubriekResultaat {
 
   for (const [kamer, ruimtes] of perKamerRuimtes) {
     const vertrekkenVerwarmd = ruimtes.filter(
-      (r) => VERTREK_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd,
+      (r) => VERWARMING_VERTREK_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd,
     );
     const overigeVerwarmd = ruimtes.filter(
-      (r) =>
-        (OVERIGE_RUIMTE_TYPES.includes(r.ruimte.type) ||
-          VERKEERSRUIMTE_TYPES.includes(r.ruimte.type)) &&
-        r.ruimte.verwarmd,
+      (r) => VERWARMING_OVERIGE_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd,
     );
     const vertrekkenVerwarmdEnVerkoeld = ruimtes.filter(
-      (r) => VERTREK_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd && r.ruimte.verkoeld,
+      (r) => VERWARMING_VERTREK_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd && r.ruimte.verkoeld,
     );
 
     const vertrekPunten = vertrekkenVerwarmd.reduce(

@@ -48,6 +48,20 @@ export function rondAfOpHeleM2(m2: number): number {
   return Math.floor(m2 + 0.5);
 }
 
+/** Afronding op twee decimalen (§2.8.6: oppervlakte per categorie buitenruimte). */
+export function rondAfOp2Decimalen(x: number): number {
+  return Math.round(x * 100) / 100;
+}
+
+/** Een Map met alle kamernummers 1..aantalKamers, elk op 0 — startpunt voor "optellen per kamer". */
+export function nulPerKamer(aantalKamers: number): Map<number, number> {
+  const resultaat = new Map<number, number>();
+  for (let kamer = 1; kamer <= aantalKamers; kamer++) {
+    resultaat.set(kamer, 0);
+  }
+  return resultaat;
+}
+
 /** Eén ruimte met het aantal kamers dat er toegang toe heeft, gezien vanuit één kamer. */
 export interface ToegankelijkeRuimte {
   ruimte: Ruimte;

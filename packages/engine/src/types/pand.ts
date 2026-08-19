@@ -45,8 +45,15 @@ export type CoropGebied = z.infer<typeof CoropGebied>;
 export const Pand = z.object({
   adres: z.string().min(1),
   stad: z.string().min(1),
-  wozWaarde: z.number().positive(),
+  /**
+   * Optioneel sinds taak 6: §2.11.1 kent ook de situatie dat er geen WOZ-waarde bekend is.
+   * De motor valt dan terug op 85% van `taxatiewaardeEuro`, en bij afwezigheid van beide op
+   * het laagste puntenaantal (10 punten) — nooit een stille aanname op een van beide velden.
+   */
+  wozWaarde: z.number().positive().optional(),
   wozPeildatum: z.string().date(),
+  /** Taxatiewaarde door een Register-Taxateur (§2.11.1), alleen relevant als wozWaarde ontbreekt. */
+  taxatiewaardeEuro: z.number().positive().optional(),
   wozOppervlak: z.number().positive(),
   coropGebied: CoropGebied,
   energielabel: Energielabel,

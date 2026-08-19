@@ -1,4 +1,5 @@
 import type {
+  GemeenschappelijkeParkeerplek,
   HandmatigePosten,
   Keuken,
   KeukenBasiseisen,
@@ -29,7 +30,14 @@ const BASIS_PAND: Pand = {
 };
 
 const GEEN_HANDMATIGE_POSTEN: HandmatigePosten = {
-  gemeenschappelijkeVertrekken: [],
+  woonvoorzieningenHandicap: [],
+  aanbelfuncties: [],
+  losseLaadpalen: [],
+  aftrekSituaties: {
+    verhuurderCriterium: [],
+    ruitoppervlakteOnvoldoende: [],
+    raamkozijnTeHoog: [],
+  },
   zorgwoning: false,
 };
 
@@ -109,6 +117,7 @@ export function maakPandInvoer(opts: {
   toewijzing: ToewijzingEntry[];
   keukens?: Keuken[];
   sanitair?: SanitairVoorziening[];
+  parkeerplekken?: GemeenschappelijkeParkeerplek[];
   pand?: Partial<Pand>;
   handmatigePosten?: HandmatigePosten;
 }): PandInvoer {
@@ -118,6 +127,7 @@ export function maakPandInvoer(opts: {
     toewijzing: opts.toewijzing,
     keukens: opts.keukens ?? [],
     sanitair: opts.sanitair ?? [],
+    parkeerplekken: opts.parkeerplekken ?? [],
     handmatigePosten: opts.handmatigePosten ?? GEEN_HANDMATIGE_POSTEN,
   };
 }
