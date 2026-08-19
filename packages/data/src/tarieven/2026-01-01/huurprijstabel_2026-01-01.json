@@ -1,0 +1,1006 @@
+[
+  {
+    "punten": 0,
+    "maxHuurEuro": 0
+  },
+  {
+    "punten": 1,
+    "maxHuurEuro": 10.33
+  },
+  {
+    "punten": 2,
+    "maxHuurEuro": 20.56
+  },
+  {
+    "punten": 3,
+    "maxHuurEuro": 30.77
+  },
+  {
+    "punten": 4,
+    "maxHuurEuro": 40.89
+  },
+  {
+    "punten": 5,
+    "maxHuurEuro": 51.12
+  },
+  {
+    "punten": 6,
+    "maxHuurEuro": 61.29
+  },
+  {
+    "punten": 7,
+    "maxHuurEuro": 71.47
+  },
+  {
+    "punten": 8,
+    "maxHuurEuro": 81.62
+  },
+  {
+    "punten": 9,
+    "maxHuurEuro": 91.85
+  },
+  {
+    "punten": 10,
+    "maxHuurEuro": 102.06
+  },
+  {
+    "punten": 11,
+    "maxHuurEuro": 112.23
+  },
+  {
+    "punten": 12,
+    "maxHuurEuro": 122.38
+  },
+  {
+    "punten": 13,
+    "maxHuurEuro": 132.57
+  },
+  {
+    "punten": 14,
+    "maxHuurEuro": 142.76
+  },
+  {
+    "punten": 15,
+    "maxHuurEuro": 152.92
+  },
+  {
+    "punten": 16,
+    "maxHuurEuro": 163.13
+  },
+  {
+    "punten": 17,
+    "maxHuurEuro": 173.33
+  },
+  {
+    "punten": 18,
+    "maxHuurEuro": 183.54
+  },
+  {
+    "punten": 19,
+    "maxHuurEuro": 193.63
+  },
+  {
+    "punten": 20,
+    "maxHuurEuro": 203.87
+  },
+  {
+    "punten": 21,
+    "maxHuurEuro": 214.04
+  },
+  {
+    "punten": 22,
+    "maxHuurEuro": 224.29
+  },
+  {
+    "punten": 23,
+    "maxHuurEuro": 234.44
+  },
+  {
+    "punten": 24,
+    "maxHuurEuro": 244.59
+  },
+  {
+    "punten": 25,
+    "maxHuurEuro": 254.83
+  },
+  {
+    "punten": 26,
+    "maxHuurEuro": 264.95
+  },
+  {
+    "punten": 27,
+    "maxHuurEuro": 275.1
+  },
+  {
+    "punten": 28,
+    "maxHuurEuro": 285.37
+  },
+  {
+    "punten": 29,
+    "maxHuurEuro": 295.54
+  },
+  {
+    "punten": 30,
+    "maxHuurEuro": 305.73
+  },
+  {
+    "punten": 31,
+    "maxHuurEuro": 315.89
+  },
+  {
+    "punten": 32,
+    "maxHuurEuro": 326.12
+  },
+  {
+    "punten": 33,
+    "maxHuurEuro": 336.29
+  },
+  {
+    "punten": 34,
+    "maxHuurEuro": 346.45
+  },
+  {
+    "punten": 35,
+    "maxHuurEuro": 356.69
+  },
+  {
+    "punten": 36,
+    "maxHuurEuro": 366.9
+  },
+  {
+    "punten": 37,
+    "maxHuurEuro": 377.02
+  },
+  {
+    "punten": 38,
+    "maxHuurEuro": 387.18
+  },
+  {
+    "punten": 39,
+    "maxHuurEuro": 397.42
+  },
+  {
+    "punten": 40,
+    "maxHuurEuro": 407.58
+  },
+  {
+    "punten": 41,
+    "maxHuurEuro": 417.73
+  },
+  {
+    "punten": 42,
+    "maxHuurEuro": 427.95
+  },
+  {
+    "punten": 43,
+    "maxHuurEuro": 438.17
+  },
+  {
+    "punten": 44,
+    "maxHuurEuro": 448.3
+  },
+  {
+    "punten": 45,
+    "maxHuurEuro": 458.46
+  },
+  {
+    "punten": 46,
+    "maxHuurEuro": 468.73
+  },
+  {
+    "punten": 47,
+    "maxHuurEuro": 478.86
+  },
+  {
+    "punten": 48,
+    "maxHuurEuro": 489.09
+  },
+  {
+    "punten": 49,
+    "maxHuurEuro": 499.27
+  },
+  {
+    "punten": 50,
+    "maxHuurEuro": 509.44
+  },
+  {
+    "punten": 51,
+    "maxHuurEuro": 519.58
+  },
+  {
+    "punten": 52,
+    "maxHuurEuro": 529.8
+  },
+  {
+    "punten": 53,
+    "maxHuurEuro": 539.99
+  },
+  {
+    "punten": 54,
+    "maxHuurEuro": 550.19
+  },
+  {
+    "punten": 55,
+    "maxHuurEuro": 560.36
+  },
+  {
+    "punten": 56,
+    "maxHuurEuro": 570.54
+  },
+  {
+    "punten": 57,
+    "maxHuurEuro": 580.7
+  },
+  {
+    "punten": 58,
+    "maxHuurEuro": 590.95
+  },
+  {
+    "punten": 59,
+    "maxHuurEuro": 601.06
+  },
+  {
+    "punten": 60,
+    "maxHuurEuro": 611.28
+  },
+  {
+    "punten": 61,
+    "maxHuurEuro": 616.58
+  },
+  {
+    "punten": 62,
+    "maxHuurEuro": 621.84
+  },
+  {
+    "punten": 63,
+    "maxHuurEuro": 627.09
+  },
+  {
+    "punten": 64,
+    "maxHuurEuro": 632.41
+  },
+  {
+    "punten": 65,
+    "maxHuurEuro": 637.63
+  },
+  {
+    "punten": 66,
+    "maxHuurEuro": 642.97
+  },
+  {
+    "punten": 67,
+    "maxHuurEuro": 648.24
+  },
+  {
+    "punten": 68,
+    "maxHuurEuro": 653.44
+  },
+  {
+    "punten": 69,
+    "maxHuurEuro": 658.79
+  },
+  {
+    "punten": 70,
+    "maxHuurEuro": 664.02
+  },
+  {
+    "punten": 71,
+    "maxHuurEuro": 669.35
+  },
+  {
+    "punten": 72,
+    "maxHuurEuro": 674.58
+  },
+  {
+    "punten": 73,
+    "maxHuurEuro": 679.91
+  },
+  {
+    "punten": 74,
+    "maxHuurEuro": 685.17
+  },
+  {
+    "punten": 75,
+    "maxHuurEuro": 690.38
+  },
+  {
+    "punten": 76,
+    "maxHuurEuro": 695.67
+  },
+  {
+    "punten": 77,
+    "maxHuurEuro": 700.94
+  },
+  {
+    "punten": 78,
+    "maxHuurEuro": 706.23
+  },
+  {
+    "punten": 79,
+    "maxHuurEuro": 711.49
+  },
+  {
+    "punten": 80,
+    "maxHuurEuro": 716.8
+  },
+  {
+    "punten": 81,
+    "maxHuurEuro": 722.09
+  },
+  {
+    "punten": 82,
+    "maxHuurEuro": 727.34
+  },
+  {
+    "punten": 83,
+    "maxHuurEuro": 732.6
+  },
+  {
+    "punten": 84,
+    "maxHuurEuro": 737.95
+  },
+  {
+    "punten": 85,
+    "maxHuurEuro": 743.13
+  },
+  {
+    "punten": 86,
+    "maxHuurEuro": 748.46
+  },
+  {
+    "punten": 87,
+    "maxHuurEuro": 753.67
+  },
+  {
+    "punten": 88,
+    "maxHuurEuro": 759
+  },
+  {
+    "punten": 89,
+    "maxHuurEuro": 764.3
+  },
+  {
+    "punten": 90,
+    "maxHuurEuro": 769.54
+  },
+  {
+    "punten": 91,
+    "maxHuurEuro": 774.81
+  },
+  {
+    "punten": 92,
+    "maxHuurEuro": 780.09
+  },
+  {
+    "punten": 93,
+    "maxHuurEuro": 785.36
+  },
+  {
+    "punten": 94,
+    "maxHuurEuro": 790.62
+  },
+  {
+    "punten": 95,
+    "maxHuurEuro": 795.9
+  },
+  {
+    "punten": 96,
+    "maxHuurEuro": 801.2
+  },
+  {
+    "punten": 97,
+    "maxHuurEuro": 806.5
+  },
+  {
+    "punten": 98,
+    "maxHuurEuro": 811.77
+  },
+  {
+    "punten": 99,
+    "maxHuurEuro": 817.05
+  },
+  {
+    "punten": 100,
+    "maxHuurEuro": 822.35
+  },
+  {
+    "punten": 101,
+    "maxHuurEuro": 827.56
+  },
+  {
+    "punten": 102,
+    "maxHuurEuro": 832.87
+  },
+  {
+    "punten": 103,
+    "maxHuurEuro": 838.13
+  },
+  {
+    "punten": 104,
+    "maxHuurEuro": 843.38
+  },
+  {
+    "punten": 105,
+    "maxHuurEuro": 848.66
+  },
+  {
+    "punten": 106,
+    "maxHuurEuro": 853.95
+  },
+  {
+    "punten": 107,
+    "maxHuurEuro": 859.2
+  },
+  {
+    "punten": 108,
+    "maxHuurEuro": 864.55
+  },
+  {
+    "punten": 109,
+    "maxHuurEuro": 869.74
+  },
+  {
+    "punten": 110,
+    "maxHuurEuro": 875.11
+  },
+  {
+    "punten": 111,
+    "maxHuurEuro": 880.31
+  },
+  {
+    "punten": 112,
+    "maxHuurEuro": 885.6
+  },
+  {
+    "punten": 113,
+    "maxHuurEuro": 890.88
+  },
+  {
+    "punten": 114,
+    "maxHuurEuro": 896.12
+  },
+  {
+    "punten": 115,
+    "maxHuurEuro": 901.43
+  },
+  {
+    "punten": 116,
+    "maxHuurEuro": 906.72
+  },
+  {
+    "punten": 117,
+    "maxHuurEuro": 911.93
+  },
+  {
+    "punten": 118,
+    "maxHuurEuro": 917.25
+  },
+  {
+    "punten": 119,
+    "maxHuurEuro": 922.5
+  },
+  {
+    "punten": 120,
+    "maxHuurEuro": 927.76
+  },
+  {
+    "punten": 121,
+    "maxHuurEuro": 933.11
+  },
+  {
+    "punten": 122,
+    "maxHuurEuro": 938.38
+  },
+  {
+    "punten": 123,
+    "maxHuurEuro": 943.66
+  },
+  {
+    "punten": 124,
+    "maxHuurEuro": 948.93
+  },
+  {
+    "punten": 125,
+    "maxHuurEuro": 954.22
+  },
+  {
+    "punten": 126,
+    "maxHuurEuro": 959.49
+  },
+  {
+    "punten": 127,
+    "maxHuurEuro": 964.72
+  },
+  {
+    "punten": 128,
+    "maxHuurEuro": 970.03
+  },
+  {
+    "punten": 129,
+    "maxHuurEuro": 975.32
+  },
+  {
+    "punten": 130,
+    "maxHuurEuro": 980.64
+  },
+  {
+    "punten": 131,
+    "maxHuurEuro": 985.86
+  },
+  {
+    "punten": 132,
+    "maxHuurEuro": 991.17
+  },
+  {
+    "punten": 133,
+    "maxHuurEuro": 996.41
+  },
+  {
+    "punten": 134,
+    "maxHuurEuro": 1001.61
+  },
+  {
+    "punten": 135,
+    "maxHuurEuro": 1006.93
+  },
+  {
+    "punten": 136,
+    "maxHuurEuro": 1012.22
+  },
+  {
+    "punten": 137,
+    "maxHuurEuro": 1017.52
+  },
+  {
+    "punten": 138,
+    "maxHuurEuro": 1022.77
+  },
+  {
+    "punten": 139,
+    "maxHuurEuro": 1028.04
+  },
+  {
+    "punten": 140,
+    "maxHuurEuro": 1033.34
+  },
+  {
+    "punten": 141,
+    "maxHuurEuro": 1038.58
+  },
+  {
+    "punten": 142,
+    "maxHuurEuro": 1043.83
+  },
+  {
+    "punten": 143,
+    "maxHuurEuro": 1049.18
+  },
+  {
+    "punten": 144,
+    "maxHuurEuro": 1054.44
+  },
+  {
+    "punten": 145,
+    "maxHuurEuro": 1059.71
+  },
+  {
+    "punten": 146,
+    "maxHuurEuro": 1065
+  },
+  {
+    "punten": 147,
+    "maxHuurEuro": 1070.25
+  },
+  {
+    "punten": 148,
+    "maxHuurEuro": 1075.55
+  },
+  {
+    "punten": 149,
+    "maxHuurEuro": 1080.84
+  },
+  {
+    "punten": 150,
+    "maxHuurEuro": 1086.1
+  },
+  {
+    "punten": 151,
+    "maxHuurEuro": 1091.41
+  },
+  {
+    "punten": 152,
+    "maxHuurEuro": 1096.66
+  },
+  {
+    "punten": 153,
+    "maxHuurEuro": 1101.93
+  },
+  {
+    "punten": 154,
+    "maxHuurEuro": 1107.14
+  },
+  {
+    "punten": 155,
+    "maxHuurEuro": 1112.46
+  },
+  {
+    "punten": 156,
+    "maxHuurEuro": 1117.68
+  },
+  {
+    "punten": 157,
+    "maxHuurEuro": 1123.03
+  },
+  {
+    "punten": 158,
+    "maxHuurEuro": 1128.27
+  },
+  {
+    "punten": 159,
+    "maxHuurEuro": 1133.6
+  },
+  {
+    "punten": 160,
+    "maxHuurEuro": 1138.85
+  },
+  {
+    "punten": 161,
+    "maxHuurEuro": 1144.08
+  },
+  {
+    "punten": 162,
+    "maxHuurEuro": 1149.44
+  },
+  {
+    "punten": 163,
+    "maxHuurEuro": 1154.61
+  },
+  {
+    "punten": 164,
+    "maxHuurEuro": 1159.96
+  },
+  {
+    "punten": 165,
+    "maxHuurEuro": 1165.22
+  },
+  {
+    "punten": 166,
+    "maxHuurEuro": 1170.5
+  },
+  {
+    "punten": 167,
+    "maxHuurEuro": 1175.77
+  },
+  {
+    "punten": 168,
+    "maxHuurEuro": 1181.04
+  },
+  {
+    "punten": 169,
+    "maxHuurEuro": 1186.3
+  },
+  {
+    "punten": 170,
+    "maxHuurEuro": 1191.57
+  },
+  {
+    "punten": 171,
+    "maxHuurEuro": 1196.87
+  },
+  {
+    "punten": 172,
+    "maxHuurEuro": 1202.15
+  },
+  {
+    "punten": 173,
+    "maxHuurEuro": 1207.42
+  },
+  {
+    "punten": 174,
+    "maxHuurEuro": 1212.67
+  },
+  {
+    "punten": 175,
+    "maxHuurEuro": 1218.02
+  },
+  {
+    "punten": 176,
+    "maxHuurEuro": 1223.21
+  },
+  {
+    "punten": 177,
+    "maxHuurEuro": 1228.53
+  },
+  {
+    "punten": 178,
+    "maxHuurEuro": 1233.79
+  },
+  {
+    "punten": 179,
+    "maxHuurEuro": 1239.07
+  },
+  {
+    "punten": 180,
+    "maxHuurEuro": 1244.3
+  },
+  {
+    "punten": 181,
+    "maxHuurEuro": 1249.58
+  },
+  {
+    "punten": 182,
+    "maxHuurEuro": 1254.86
+  },
+  {
+    "punten": 183,
+    "maxHuurEuro": 1260.15
+  },
+  {
+    "punten": 184,
+    "maxHuurEuro": 1265.46
+  },
+  {
+    "punten": 185,
+    "maxHuurEuro": 1270.72
+  },
+  {
+    "punten": 186,
+    "maxHuurEuro": 1276.03
+  },
+  {
+    "punten": 187,
+    "maxHuurEuro": 1281.26
+  },
+  {
+    "punten": 188,
+    "maxHuurEuro": 1286.57
+  },
+  {
+    "punten": 189,
+    "maxHuurEuro": 1291.84
+  },
+  {
+    "punten": 190,
+    "maxHuurEuro": 1297.08
+  },
+  {
+    "punten": 191,
+    "maxHuurEuro": 1302.39
+  },
+  {
+    "punten": 192,
+    "maxHuurEuro": 1307.68
+  },
+  {
+    "punten": 193,
+    "maxHuurEuro": 1312.98
+  },
+  {
+    "punten": 194,
+    "maxHuurEuro": 1318.21
+  },
+  {
+    "punten": 195,
+    "maxHuurEuro": 1323.5
+  },
+  {
+    "punten": 196,
+    "maxHuurEuro": 1328.72
+  },
+  {
+    "punten": 197,
+    "maxHuurEuro": 1333.99
+  },
+  {
+    "punten": 198,
+    "maxHuurEuro": 1339.27
+  },
+  {
+    "punten": 199,
+    "maxHuurEuro": 1344.59
+  },
+  {
+    "punten": 200,
+    "maxHuurEuro": 1349.82
+  },
+  {
+    "punten": 201,
+    "maxHuurEuro": 1355.13
+  },
+  {
+    "punten": 202,
+    "maxHuurEuro": 1360.38
+  },
+  {
+    "punten": 203,
+    "maxHuurEuro": 1365.67
+  },
+  {
+    "punten": 204,
+    "maxHuurEuro": 1370.97
+  },
+  {
+    "punten": 205,
+    "maxHuurEuro": 1376.23
+  },
+  {
+    "punten": 206,
+    "maxHuurEuro": 1381.49
+  },
+  {
+    "punten": 207,
+    "maxHuurEuro": 1386.79
+  },
+  {
+    "punten": 208,
+    "maxHuurEuro": 1392.08
+  },
+  {
+    "punten": 209,
+    "maxHuurEuro": 1397.33
+  },
+  {
+    "punten": 210,
+    "maxHuurEuro": 1402.63
+  },
+  {
+    "punten": 211,
+    "maxHuurEuro": 1407.88
+  },
+  {
+    "punten": 212,
+    "maxHuurEuro": 1413.16
+  },
+  {
+    "punten": 213,
+    "maxHuurEuro": 1418.45
+  },
+  {
+    "punten": 214,
+    "maxHuurEuro": 1423.75
+  },
+  {
+    "punten": 215,
+    "maxHuurEuro": 1429.01
+  },
+  {
+    "punten": 216,
+    "maxHuurEuro": 1434.29
+  },
+  {
+    "punten": 217,
+    "maxHuurEuro": 1439.55
+  },
+  {
+    "punten": 218,
+    "maxHuurEuro": 1444.84
+  },
+  {
+    "punten": 219,
+    "maxHuurEuro": 1450.1
+  },
+  {
+    "punten": 220,
+    "maxHuurEuro": 1455.36
+  },
+  {
+    "punten": 221,
+    "maxHuurEuro": 1460.63
+  },
+  {
+    "punten": 222,
+    "maxHuurEuro": 1465.91
+  },
+  {
+    "punten": 223,
+    "maxHuurEuro": 1471.19
+  },
+  {
+    "punten": 224,
+    "maxHuurEuro": 1476.46
+  },
+  {
+    "punten": 225,
+    "maxHuurEuro": 1481.71
+  },
+  {
+    "punten": 226,
+    "maxHuurEuro": 1487.01
+  },
+  {
+    "punten": 227,
+    "maxHuurEuro": 1492.3
+  },
+  {
+    "punten": 228,
+    "maxHuurEuro": 1497.54
+  },
+  {
+    "punten": 229,
+    "maxHuurEuro": 1502.84
+  },
+  {
+    "punten": 230,
+    "maxHuurEuro": 1508.14
+  },
+  {
+    "punten": 231,
+    "maxHuurEuro": 1513.44
+  },
+  {
+    "punten": 232,
+    "maxHuurEuro": 1518.7
+  },
+  {
+    "punten": 233,
+    "maxHuurEuro": 1523.9
+  },
+  {
+    "punten": 234,
+    "maxHuurEuro": 1529.25
+  },
+  {
+    "punten": 235,
+    "maxHuurEuro": 1534.49
+  },
+  {
+    "punten": 236,
+    "maxHuurEuro": 1539.78
+  },
+  {
+    "punten": 237,
+    "maxHuurEuro": 1545.06
+  },
+  {
+    "punten": 238,
+    "maxHuurEuro": 1550.33
+  },
+  {
+    "punten": 239,
+    "maxHuurEuro": 1555.59
+  },
+  {
+    "punten": 240,
+    "maxHuurEuro": 1560.88
+  },
+  {
+    "punten": 241,
+    "maxHuurEuro": 1566.15
+  },
+  {
+    "punten": 242,
+    "maxHuurEuro": 1571.42
+  },
+  {
+    "punten": 243,
+    "maxHuurEuro": 1576.76
+  },
+  {
+    "punten": 244,
+    "maxHuurEuro": 1581.95
+  },
+  {
+    "punten": 245,
+    "maxHuurEuro": 1587.27
+  },
+  {
+    "punten": 246,
+    "maxHuurEuro": 1592.52
+  },
+  {
+    "punten": 247,
+    "maxHuurEuro": 1597.81
+  },
+  {
+    "punten": 248,
+    "maxHuurEuro": 1603.11
+  },
+  {
+    "punten": 249,
+    "maxHuurEuro": 1608.36
+  },
+  {
+    "punten": 250,
+    "maxHuurEuro": 1613.63
+  }
+]

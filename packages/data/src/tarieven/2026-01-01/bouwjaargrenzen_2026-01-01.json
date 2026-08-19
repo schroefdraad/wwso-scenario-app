@@ -1,0 +1,30 @@
+[
+  {
+    "totEnMetBouwjaar": 2099,
+    "factorPerM2": 0.65
+  },
+  {
+    "totEnMetBouwjaar": 2001,
+    "factorPerM2": 0.5
+  },
+  {
+    "totEnMetBouwjaar": 1999,
+    "factorPerM2": 0.35
+  },
+  {
+    "totEnMetBouwjaar": 1991,
+    "factorPerM2": 0.2
+  },
+  {
+    "totEnMetBouwjaar": 1983,
+    "factorPerM2": -0.05
+  },
+  {
+    "totEnMetBouwjaar": 1978,
+    "factorPerM2": -0.1
+  },
+  {
+    "totEnMetBouwjaar": 1976,
+    "factorPerM2": -0.15
+  }
+]
