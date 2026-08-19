@@ -107,36 +107,88 @@ export function kamersPerRuimte(input: PandInvoer): Map<number, number[]> {
 }
 
 /**
- * De rekenregel van §2.1.1.1 / §2.2.2.1, die op vierkante meters afrondt en niet op punten:
- *
- * 1. bepaal de oppervlakte per ruimte
- * 2. tel alle *privé* ruimten op en rond af op hele m²
- * 3. doe hetzelfde voor de *gemeenschappelijke* ruimten (na deling door het aantal kamers
- *    met toegang, conform het rekenvoorbeeld in §2.4.4: 40 m² / 4 bewoners = 10 m²)
- * 4. tel beide op en rond opnieuw af op hele m²
+ * De ruwe, ongeronde oppervlakte die één kamer "heeft": alle privéruimten van het gevraagde
+ * type opgeteld, plus per gedeelde ruimte het aan de kamer toegerekende deel (§2.1.5: delen
+ * door het aantal onzelfstandige woonruimten met toegang en gebruiksrecht).
  *
  * Een ruimte geldt hier als privé wanneer precies één kamer er toegang toe heeft.
+ *
+ * Dit is de grondslag zoals het beleidsboek hem beschrijft zónder rekenregel erbovenop —
+ * gebruikt door R4 (§2.4.4). R1 en R2 leggen er hun eigen m²-afronding overheen, zie
+ * `oppervlakteVolgensRekenregel`.
  */
-export function oppervlakteVolgensRekenregel(
+export function ongerondeOppervlakte(
   ruimtes: ToegankelijkeRuimte[],
   types: readonly RuimteType[],
 ): { priveM2: number; gedeeldM2: number; totaalM2: number } {
   const relevant = ruimtes.filter((r) => types.includes(r.ruimte.type));
 
-  const priveRuw = relevant
+  const priveM2 = relevant
     .filter((r) => r.nKamersMetToegang === 1)
     .reduce((som, r) => som + r.ruimte.oppervlakteM2, 0);
-  const gedeeldRuw = relevant
+  const gedeeldM2 = relevant
     .filter((r) => r.nKamersMetToegang > 1)
     .reduce((som, r) => som + r.ruimte.oppervlakteM2 / r.nKamersMetToegang, 0);
 
-  const priveM2 = rondAfOpHeleM2(priveRuw);
-  const gedeeldM2 = rondAfOpHeleM2(gedeeldRuw);
+  return { priveM2, gedeeldM2, totaalM2: priveM2 + gedeeldM2 };
+}
+
+/**
+ * De rekenregel van §2.2.1.1 (vertrekken) / §2.2.2.1 (overige ruimten), die op vierkante
+ * meters afrondt en niet op punten:
+ *
+ * 1. bepaal de oppervlakte per ruimte
+ * 2. tel alle *privé* ruimten op en rond af op hele m²
+ * 3. doe hetzelfde voor de *gemeenschappelijke* ruimten (na deling door het aantal kamers
+ *    met toegang)
+ * 4. tel beide op en rond opnieuw af op hele m²
+ *
+ * LET OP: beide paragrafen staan in de brontekst genummerd als "2.1.1.1 Rekenregels
+ * vertrekken" respectievelijk "2.2.2.1 Rekenregels vertrekken" — allebei fout (de eerste
+ * hoort 2.2.1.1 te zijn, de tweede gaat blijkens zijn inhoud over overige ruimten). De
+ * plaatsing in de documentstructuur is leidend, niet de kop.
+ *
+ * Deze rekenregel is expliciet gekoppeld aan rubriek 1 en 2 — elke variant sluit af met
+ * "Bepaal het puntenaantal voor de vertrekken / de overige ruimtes op basis van de m²".
+ * Andere rubrieken die met dezelfde oppervlakte rekenen (R4, §2.4.4) halen hem niet aan en
+ * gebruiken daarom `ongerondeOppervlakte`; R13 doet dat wél, want §2.13 verwijst met zoveel
+ * woorden naar "de totale oppervlakte van het onderdeel vertrekken (rubriek 1)".
+ */
+export function oppervlakteVolgensRekenregel(
+  ruimtes: ToegankelijkeRuimte[],
+  types: readonly RuimteType[],
+): { priveM2: number; gedeeldM2: number; totaalM2: number } {
+  const ruw = ongerondeOppervlakte(ruimtes, types);
+
+  const priveM2 = rondAfOpHeleM2(ruw.priveM2);
+  const gedeeldM2 = rondAfOpHeleM2(ruw.gedeeldM2);
 
   return { priveM2, gedeeldM2, totaalM2: rondAfOpHeleM2(priveM2 + gedeeldM2) };
 }
 
-/** De vertrekoppervlakte in hele m² — grondslag voor zowel R1 als R4 (§2.4.4). */
+/**
+ * De vertrekoppervlakte in hele m² volgens de rekenregel van rubriek 1 — de grondslag voor
+ * R1 zelf en voor R13, dat er in §2.13 letterlijk naar verwijst ("rubriek 1").
+ * R4 gebruikt bewust een ándere grondslag, zie `ongerondeVertrekOppervlakteM2`.
+ */
 export function vertrekOppervlakteM2(ruimtes: ToegankelijkeRuimte[]): number {
   return oppervlakteVolgensRekenregel(ruimtes, VERTREK_TYPES).totaalM2;
+}
+
+/**
+ * De vertrekoppervlakte zónder m²-afronding: "het totaal aantal m² oppervlakte die de huurder
+ * heeft als privé vertrekken en de aan huurder toe te rekenen gemeenschappelijke vertrekken"
+ * (§2.4.4), de grondslag voor R4.
+ *
+ * Waarom niet de afgeronde R1-uitkomst: de m²-afronding staat uitsluitend in de rekenregel
+ * van rubriek 1 (§2.2.1.1), die eindigt met "Bepaal het puntenaantal voor de vertrekken op
+ * basis van de m²" — een instructie voor rubriek 1, niet voor de rest van het stelsel. §2.4.4
+ * haalt die rekenregel niet aan en beschrijft de oppervlakte zelfstandig. Waar het
+ * beleidsboek de úitkomst van rubriek 1 bedoelt, zegt het dat expliciet (§2.13: "de totale
+ * oppervlakte van het onderdeel vertrekken (rubriek 1)"). Drie officiële Huurprijscheck-
+ * uitkomsten (golden master, Kleiweg 179-B) bevestigen dit: alleen de ongeronde grondslag
+ * reproduceert alle drie exact. Zie `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`.
+ */
+export function ongerondeVertrekOppervlakteM2(ruimtes: ToegankelijkeRuimte[]): number {
+  return ongerondeOppervlakte(ruimtes, VERTREK_TYPES).totaalM2;
 }

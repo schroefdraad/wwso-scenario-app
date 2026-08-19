@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-08-19 (na taak 7)
+Laatst bijgewerkt: 2026-08-19 (na taak 8 en de R4-beoordeling)
 
 ## Wat werkt
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine`, `packages/data` (data nog leeg)
@@ -12,7 +12,8 @@ Laatst bijgewerkt: 2026-08-19 (na taak 7)
 - Rubrieken R5 en R6 (keuken, sanitair) met de twee basiseisen-poorten uit §2.5.1 en §2.6.2, de aftopping van extra voorzieningen, en sanitair buiten de badkamer. Zie `outputs/RAPPORT_taak5_2026-08-19.md`
 - Rubrieken R7 t/m R13 (handicapvoorzieningen, buitenruimten, gemeenschappelijke ruimten, parkeren, WOZ, bijzondere voorzieningen, aftrekpunten), in de gecorrigeerde nummering uit het beleidsboek. R9 wordt nu automatisch afgeleid uit ruimtetypen in plaats van handmatig ingevoerd; R3 is uitgebreid zodat verwarming/verkoeling in gemeenschappelijke ruimten meetelt (§2.9.2). Zie `outputs/RAPPORT_taak6_2026-08-19.md`
 - Eindtelling in `packages/engine/src/eindtelling`: telt R1 t/m R13 per kamer op, past de zorgwoning-opslag (+35% op R1-11) en de monumentopslagen toe (Rijks 35%/10 punten afhankelijk van de contractdatum, gemeentelijk/provinciaal 15%, beschermd dorpsgezicht 5%), en rekent de huurprijs uit met extrapolatie boven 250 punten. Zie `outputs/RAPPORT_taak7_2026-08-19.md`
-- Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` (PDF + een lokale tekstextractie `beleidsboek-wwso-2026-01.txt` via `pdftotext -layout`) — dit is de bron van waarheid, niet `wwso.xlsx`. De PDF blijft leidend; de txt is alleen een grep-baar hulpmiddel
+- Golden-master validatie (taak 8) tegen 3 officiële Huurprijscheck-exports van hetzelfde pand (Kleiweg 179-B): **alle getoetste rubrieken én de drie eindtotalen (67 / 74 / 56) en huurprijzen matchen nu exact.** Zie `outputs/RAPPORT_taak8_2026-08-19.md` voor de ronde zelf en `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md` voor de twee correcties die daarvoor nodig waren: (1) R4 rekent op de ongeronde privé+gedeeld-oppervlakte in plaats van op de afgeronde R1-grondslag — de afrondingsregel van §2.2.1.1 hoort bij rubriek 1 en wordt door §2.4.4 niet aangehaald, terwijl §2.13 laat zien hoe het beleidsboek het formuleert als het de rubriek-1-uitkomst wél bedoelt; R2 en R13 blijven daarom ongewijzigd. (2) De kamer 6-fixture hergebruikte ten onrechte het sanitair van kamer 2 — de drie exports zijn met verschillende aannames ingevuld
+- Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` (PDF + een lokale tekstextractie `beleidsboek-wwso-2026-01.txt` via `pdftotext -layout`) — dit is de bron van waarheid, niet `wwso.xlsx`. De PDF blijft leidend; de txt is alleen een grep-baar hulpmiddel. Voor tabel-zware pagina's (en voor de golden-master PDF's) is de PDF ook via de Windows Runtime PDF-API naar PNG te renderen en visueel te lezen — betrouwbaarder dan `pdftotext` bij meerkoloms lay-outs, zie het PowerShell-recept in `outputs/RAPPORT_taak8_2026-08-19.md`
 
 Wel beschikbaar als input:
 - `resources/wwso.xlsx` — werkende puntentelling in Excel, 8 tabs, rubrieken R1 t/m R13. Dit is de specificatie voor de rekenmotor. Bevat 7 bekende open punten op tab `Toelichting`.
@@ -34,11 +35,16 @@ Wel beschikbaar als input:
 
 ## Openstaande beslissingen
 - UX van de kamertoewijzing (40 ruimten × 12 kamers). Voorstel volgt bij taak 12, vóór het bouwen.
-- Hoe om te gaan met verschillen tussen de engine en de officiële site bij taak 8: per verschil bepalen of de xlsx of de engine fout zit.
 - Hoe de kostencatalogus onderhouden wordt zodra er meerdere gebruikers zijn — nu nog een xlsx die handmatig wordt ingelezen.
 
+## Aandachtspunten voor een volgende golden-master ronde (geen openstaande beslissing)
+- **Eén-staps versus tweestaps m²-afronding bij R1** (bevinding D3, Hoefstraat). De drie Kleiweg-kamers geven bij beide methoden dezelfde uitkomst en onderscheiden ze dus niet — anders dan het taak-8-rapport suggereerde. Wacht op een pand dat het verschil wél laat zien.
+- **R2 heeft geen empirische dekking**: geen van de drie kamers heeft overige ruimten. De tweestaps-m²-afronding van R2 rust nu puur op de tekst van §2.2.2.1. Een pand met een berging of bijkeuken zou dat moeten bevestigen.
+- **D2, eenhandsmengkraan in een privékeuken** (0,75 versus 0,25 op `Slaapkamer 3 + keuken.pdf`).
+- Geen van de aangeleverde panden raakt monument, parkeren of gehandicaptenvoorzieningen.
+
 ## Modelkeuze
-Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
+Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair, afgerond), taak 8 (afgerond, inclusief de R4-beoordeling die eruit voortkwam), taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 8: golden-master validatie tegen `wwso.xlsx` en 3-5 panden van de officiële huurprijscheck-site. Eerste taak die de volledige keten (R1 t/m R13 + eindtelling) tegen een externe referentie zet — bij een afwijking geldt de rangorde beleidsboek → huurprijscheck-site → xlsx, en schakelt dit naar Opus (zie `plan/plan.md`). De 3-5 validatiepanden van de huurprijscheck-site moeten nog verzameld worden (actiepunt onderaan `plan/plan.md`).
+Taak 9: scenariomodel als mutaties bovenop de as-is situatie.

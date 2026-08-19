@@ -1,5 +1,6 @@
 import { getTarievenset } from '@wwso/data';
 import { describe, expect, it } from 'vitest';
+import { berekenR1 } from './r1-oppervlakte-vertrekken.js';
 import { berekenR4, toetsLabelGeldigheid } from './r4-energieprestatie.js';
 import { maakPandInvoer } from './test-utils.js';
 
@@ -15,7 +16,7 @@ const eenKamer = (pand: Parameters<typeof maakPandInvoer>[0]['pand']) =>
   });
 
 describe('R4 — Energieprestatie (§2.4)', () => {
-  it('past de energielabelfactor toe op de R1-grondslag', () => {
+  it('past de energielabelfactor toe op de vertrekoppervlakte', () => {
     const input = eenKamer({ energielabel: 'D', energielabelIngangsdatum: '2023-01-01' });
     // label D: 0,2 × 10 m² = 2 punten
     expect(berekenR4(input, tarievenset, PEILDATUM).perKamer[1]).toBe(2);
@@ -36,6 +37,29 @@ describe('R4 — Energieprestatie (§2.4)', () => {
     });
     // het rekenvoorbeeld uit §2.4.4: (20 + 40/4) × 0,65 = 19,50 punten
     expect(berekenR4(input, tarievenset, PEILDATUM).perKamer[1]).toBe(19.5);
+  });
+
+  it('rekent met de ONGERONDE oppervlakte, niet met de afgeronde R1-uitkomst (§2.4.4)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 3,
+      ruimtes: [
+        { nr: 1, naam: 'Slaapkamer', type: 'Privévertrek', oppervlakteM2: 12.4, verdieping: 0, verwarmd: true, verkoeld: false },
+        { nr: 2, naam: 'Keuken', type: 'Keuken', oppervlakteM2: 25, verdieping: 0, verwarmd: true, verkoeld: false },
+      ],
+      toewijzing: [
+        { ruimteNr: 1, kamers: [1] },
+        { ruimteNr: 2, kamers: [1, 2, 3] },
+      ],
+      pand: { energielabel: 'A', energielabelIngangsdatum: '2023-01-01' },
+    });
+
+    // R1 rondt twee keer af op hele m² (§2.2.1.1): 12,4 → 12, en 25/3 = 8,33 → 8, samen 20 m².
+    expect(berekenR1(input).perKamer[1]).toBe(20);
+
+    // R4 rekent op de ongeronde 12,4 + 8,333… = 20,733… m²:
+    //   20,7333 × 0,65 = 13,4767 → kwartpunt 13,50.
+    // Op de afgeronde R1-grondslag zou het 20 × 0,65 = 13,00 zijn — dit onderscheidt de twee.
+    expect(berekenR4(input, tarievenset, PEILDATUM).perKamer[1]).toBe(13.5);
   });
 
   it('valt terug op het bouwjaar als het pand geen label heeft', () => {

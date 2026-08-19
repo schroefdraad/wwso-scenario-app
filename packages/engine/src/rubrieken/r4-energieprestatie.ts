@@ -1,6 +1,11 @@
 import type { Tarievenset } from '@wwso/data';
 import type { MonumentStatus, PandInvoer } from '../types/index.js';
-import { rondAfOpKwartpunten, ruimtesPerKamer, vertrekOppervlakteM2 } from './gedeeld.js';
+import {
+  ongerondeVertrekOppervlakteM2,
+  rondAfOp2Decimalen,
+  rondAfOpKwartpunten,
+  ruimtesPerKamer,
+} from './gedeeld.js';
 import type { RubriekResultaat } from './types.js';
 
 /** Monumentsoorten die de uitzondering van §2.4.6.1 krijgen. Beschermd dorpsgezicht hoort er niet bij. */
@@ -92,7 +97,16 @@ function bepaalFactor(
 /**
  * R4 — Energieprestatie (§2.4). Punten per m² over "het totaal aantal m² oppervlakte die de
  * huurder heeft als privé vertrekken en de aan huurder toe te rekenen gemeenschappelijke
- * vertrekken" (§2.4.4) — dezelfde grondslag als R1, inclusief de m²-afronding.
+ * vertrekken" (§2.4.4).
+ *
+ * Die oppervlakte is bewust *niet* de afgeronde R1-uitkomst: de m²-afronding van §2.2.1.1
+ * hoort bij de rekenregel van rubriek 1 ("Bepaal het puntenaantal voor de vertrekken op basis
+ * van de m²") en wordt in §2.4.4 niet aangehaald. Waar het beleidsboek wél de uitkomst van
+ * rubriek 1 bedoelt, benoemt het die (§2.13). Er wordt dus één keer afgerond: op kwartpunten
+ * per rubriek (§2.1.6), na vermenigvuldiging met de labelfactor — precies zoals §2.8.2 het
+ * ook voordoet voor een gedeelde buitenruimte (30 m² / 4 → punten → kwartpuntsafronding).
+ * Drie officiële Huurprijscheck-uitkomsten bevestigen dit exact; zie
+ * `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`.
  *
  * `peildatum` bepaalt of het energielabel nog meetelt en welke tarievenset geldt; de engine
  * leidt die nooit zelf af uit de systeemklok (harde regel 2).
@@ -109,14 +123,14 @@ export function berekenR4(
   const { factor, grondslag } = bepaalFactor(input.pand, tarievenset, peildatum);
 
   for (const [kamer, ruimtes] of perKamerRuimtes) {
-    const oppervlakteM2 = vertrekOppervlakteM2(ruimtes);
+    const oppervlakteM2 = ongerondeVertrekOppervlakteM2(ruimtes);
     const ruwPunten = oppervlakteM2 * factor;
     const punten = rondAfOpKwartpunten(ruwPunten);
 
     perKamer[kamer] = punten;
     perKamerRuw[kamer] = ruwPunten;
     toelichting.push(
-      `R4 kamer ${kamer}: ${oppervlakteM2} m² (R1-grondslag) × ${factor} pt/m² [${grondslag}] → ${punten} pt`,
+      `R4 kamer ${kamer}: ${rondAfOp2Decimalen(oppervlakteM2)} m² (privé + toegerekend gedeeld, ongerond, §2.4.4) × ${factor} pt/m² [${grondslag}] → ${punten} pt`,
     );
   }
 

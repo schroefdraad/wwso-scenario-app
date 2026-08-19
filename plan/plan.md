@@ -18,7 +18,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 - [x] Taak 5: Rubrieken R5 en R6 (keuken, sanitair) — capping en deling per kamer **`⬆ Opus`** — meest verweven logica in de xlsx, een subtiele fout valt niet op in de uitkomst
 - [x] Taak 6: Rubrieken R7 t/m R13 — gecorrigeerde nummering geïmplementeerd. Zie `outputs/RAPPORT_taak6_2026-08-19.md`
 - [x] Taak 7: Eindtelling, huurprijs-lookup, monumentopslag. Zie `outputs/RAPPORT_taak7_2026-08-19.md`
-- [ ] Taak 8: Golden-master validatie tegen wwso.xlsx + 3-5 panden van de officiële huurprijscheck-site — bouwen en draaien op Sonnet, maar **`⬆ Opus`** zodra er een afwijking is: beoordelen of de xlsx of de engine fout zit is interpretatie van het beleidsboek
+- [x] Taak 8: Golden-master validatie tegen 3 officiële Huurprijscheck-exports (Kleiweg 179-B) — zie `outputs/RAPPORT_taak8_2026-08-19.md`. De R4-afwijking die daar gevonden werd is beoordeeld en opgelost (**`⬆ Opus`**, `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`): R4 rekent nu op de ongeronde privé+gedeeld-oppervlakte (§2.4.4), R2 en R13 blijven op de afgeronde rubriek-1-rekenregel. Daarbij kwam ook een fixture-fout bij kamer 6 aan het licht (sanitair van kamer 2 hergebruikt). **Alle drie de kamers matchen nu exact op elke rubriek, het eindtotaal en de huurprijs**
 
 ## Fase 2 — Scenario's en suggesties
 
@@ -46,6 +46,6 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 
 ## Actiepunten (geen code)
 
-- [ ] 3 tot 5 panden verzamelen met een bekende uitkomst van de officiële huurprijscheck-site, als validatieset voor taak 8
+- [x] Panden verzameld en gebruikt in taak 8: 3 kamers van hetzelfde pand (Kleiweg 179-B) volledig gevalideerd, 1 kamer (Hoefstraat) gedeeltelijk (WOZ-oppervlak ontbreekt op de bron). Geen van de aangeleverde panden raakt monument, parkeren of gehandicaptenvoorzieningen — extra panden voor die rubrieken blijven welkom bij een volgende validatieronde
 - [ ] Kostenkentallen bijwerken met echte cijfers en de statuskolom omzetten van `schatting` naar `offerte` of `bevestigd`
-- [ ] Bepalen wie de externe gebruiker is en welke rol die krijgt
+- [ ] Bepalen wie de externe gebruiker is en welke rol die krijgt — **bewust uitgesteld tot na de UX van taak 12** (kamertoewijzing); pas als er met het invoerscherm is gewerkt, is duidelijker wat een externe gebruiker nodig heeft
