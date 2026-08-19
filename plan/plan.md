@@ -16,7 +16,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 - [x] Taak 3: Tarieventabellen als versiedataset met peildatum (huurtabel, energielabel, bouwjaar, COROP)
 - [x] Taak 4: Rubrieken R1 t/m R4 (oppervlakte vertrekken, overige ruimten, verwarming, energieprestatie)
 - [ ] Taak 5: Rubrieken R5 en R6 (keuken, sanitair) — capping en deling per kamer **`⬆ Opus`** — meest verweven logica in de xlsx, een subtiele fout valt niet op in de uitkomst
-- [ ] Taak 6: Rubrieken R7 t/m R13 (gemeenschappelijk, buitenruimte, parkeren, WOZ, bijzonder, aftrek)
+- [ ] Taak 6: Rubrieken R7 t/m R13 — let op de **gecorrigeerde nummering** uit het beleidsboek: R7 woonvoorzieningen voor personen met een handicap (ontbreekt volledig in de xlsx), R8 buitenruimten, R9 gemeenschappelijke vertrekken/ruimten/voorzieningen, R10 gemeenschappelijke parkeerruimten, R11 WOZ, R12 bijzondere voorzieningen, R13 aftrekpunten. De xlsx hanteert vanaf R7 een verschoven nummering — zie briefing B1
 - [ ] Taak 7: Eindtelling, huurprijs-lookup, monumentopslag
 - [ ] Taak 8: Golden-master validatie tegen wwso.xlsx + 3-5 panden van de officiële huurprijscheck-site — bouwen en draaien op Sonnet, maar **`⬆ Opus`** zodra er een afwijking is: beoordelen of de xlsx of de engine fout zit is interpretatie van het beleidsboek
 

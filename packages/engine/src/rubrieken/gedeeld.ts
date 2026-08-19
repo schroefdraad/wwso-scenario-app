@@ -2,17 +2,13 @@ import type { PandInvoer } from '../types/index.js';
 import type { Ruimte, RuimteType } from '../types/index.js';
 
 /**
- * De "vertrekken" van §2.2.1 (R1): privévertrek plus de twee ruimtetypen die als vertrek
- * meetellen als ze gedeeld worden. Bron: Toelichting-tab R1 — "1 punt per m² privévertrek;
- * gedeelde vertrekken (keuken, badruimte) gedeeld door n_kamers met toegang."
+ * Vertrekken (§2.2.1). Het beleidsboek: "een ruimte die uitsluitend als keuken, badkamer of
+ * doucheruimte is bestemd is altijd een vertrek". Gemeenschappelijke vertrekken vallen onder
+ * rubriek 9 en horen hier dus niet bij.
  */
 export const VERTREK_TYPES: readonly RuimteType[] = ['Privévertrek', 'Keuken', 'Badruimte'];
 
-/**
- * De "overige ruimten" van §2.2.2 (R2), letterlijk overgenomen uit de Toelichting-tab.
- * Verkeersruimte telt bewust niet mee (zie Controles-tab, check 1: expliciet uitgezonderd
- * van de m²-vergelijking met het WOZ-oppervlak).
- */
+/** Overige ruimten (§2.2.2): bijkeuken, berging, wasruimte, kelder, toiletruimte. */
 export const OVERIGE_RUIMTE_TYPES: readonly RuimteType[] = [
   'Berging',
   'Bijkeuken',
@@ -22,20 +18,34 @@ export const OVERIGE_RUIMTE_TYPES: readonly RuimteType[] = [
 ];
 
 /**
- * Rondt af op hele punten (Excel-ROUND-gedrag voor positieve getallen), zoals Berekening!B18
- * ("Totaal punten, ROUND(subtotaal, 0)") en de taak-4-instructie voor R1 specifiek vragen.
+ * Verkeersruimten (§2.2.3) krijgen géén oppervlaktepunten in R1/R2, maar tellen in R3 wél
+ * mee voor verwarming (§2.3). Daarom een eigen constante in plaats van "gewoon weglaten".
+ */
+export const VERKEERSRUIMTE_TYPES: readonly RuimteType[] = ['Verkeersruimte'];
+
+/**
+ * Afronding per rubriek op kwartpunten (§2.1.6): "vanaf een achtste (1/8) punt naar boven",
+ * ofwel FLOOR(x + 0,125; 0,25). Het beleidsboek geeft 4,81 → 4,75 als voorbeeld.
+ * Geldt voor élke rubriek — ook R1, anders dan de taakomschrijving suggereerde.
+ */
+export function rondAfOpKwartpunten(x: number): number {
+  return Math.floor((x + 0.125) / 0.25) * 0.25;
+}
+
+/**
+ * Eindsaldering op hele punten (§2.1.7): vanaf 0,5 omhoog, daaronder omlaag.
+ * Alleen voor het totaal van alle rubrieken samen, niet per rubriek.
  */
 export function rondAfOpHelePunten(x: number): number {
   return Math.floor(x + 0.5);
 }
 
 /**
- * Kwartpuntsafronding zoals letterlijk voorgeschreven: FLOOR(x + 0.125, 0.25).
- * Gebruikt voor R2, R3 en (bij gebrek aan een uitzondering in taak 4) ook R4 — harde regel 7
- * noemt kwartpuntsafronding de standaard vóór de eindsom; taak 4 noemt R1 als enige uitzondering.
+ * Afronding van vierkante meters (§2.1.1.1): "Bij een getal dat eindigt op 0,50 m² wordt
+ * afgerond omhoog (28,51 → 29), bij 0,49 of lager naar beneden (15,43 → 15)."
  */
-export function rondAfOpKwartpunten(x: number): number {
-  return Math.floor((x + 0.125) / 0.25) * 0.25;
+export function rondAfOpHeleM2(m2: number): number {
+  return Math.floor(m2 + 0.5);
 }
 
 /** Eén ruimte met het aantal kamers dat er toegang toe heeft, gezien vanuit één kamer. */
@@ -45,14 +55,12 @@ export interface ToegankelijkeRuimte {
 }
 
 /**
- * Voor elke kamer: welke ruimtes zijn toegankelijk, en door hoeveel kamers elke ruimte in
- * totaal gedeeld wordt. Dat laatste is de deler uit harde regel 7 ("gedeelde ruimten worden
- * gedeeld door het aantal kamers met toegang") — hier één keer centraal berekend zodat elke
- * rubriekfunctie 'm niet opnieuw hoeft af te leiden.
+ * Voor elke kamer: welke ruimtes zijn toegankelijk, en door hoeveel kamers elke ruimte
+ * gedeeld wordt. Die deler volgt uit §2.1.5: punten worden alleen verdeeld over de bewoners
+ * die volgens het huurcontract toegang en gebruiksrecht hebben.
  */
 export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRuimte[]> {
   const ruimteBijNr = new Map(input.ruimtes.map((r) => [r.nr, r] as const));
-  const kamersPerRuimte = new Map(input.toewijzing.map((t) => [t.ruimteNr, t.kamers] as const));
 
   const resultaat = new Map<number, ToegankelijkeRuimte[]>();
   for (let kamer = 1; kamer <= input.pand.aantalKamers; kamer++) {
@@ -62,7 +70,7 @@ export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRui
   for (const entry of input.toewijzing) {
     const ruimte = ruimteBijNr.get(entry.ruimteNr);
     if (!ruimte) continue; // referentiële integriteit is al geborgd door PandInvoer-validatie
-    const nKamersMetToegang = kamersPerRuimte.get(entry.ruimteNr)?.length ?? entry.kamers.length;
+    const nKamersMetToegang = entry.kamers.length;
     for (const kamer of entry.kamers) {
       if (kamer > input.pand.aantalKamers) continue;
       resultaat.get(kamer)?.push({ ruimte, nKamersMetToegang });
@@ -73,12 +81,36 @@ export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRui
 }
 
 /**
- * De ruwe (ongeronde) vertrek-oppervlakte van R1 — de "grondbasis" waarop R4 zijn factor
- * toepast (Toelichting-tab: "Factor op m² (R1 grondbasis)"). Apart getrokken uit R1 zelf
- * zodat beide rubrieken gegarandeerd van exact dezelfde basis uitgaan.
+ * De rekenregel van §2.1.1.1 / §2.2.2.1, die op vierkante meters afrondt en niet op punten:
+ *
+ * 1. bepaal de oppervlakte per ruimte
+ * 2. tel alle *privé* ruimten op en rond af op hele m²
+ * 3. doe hetzelfde voor de *gemeenschappelijke* ruimten (na deling door het aantal kamers
+ *    met toegang, conform het rekenvoorbeeld in §2.4.4: 40 m² / 4 bewoners = 10 m²)
+ * 4. tel beide op en rond opnieuw af op hele m²
+ *
+ * Een ruimte geldt hier als privé wanneer precies één kamer er toegang toe heeft.
  */
-export function vertrekOppervlakteRuw(ruimtes: ToegankelijkeRuimte[]): number {
-  return ruimtes
-    .filter((r) => VERTREK_TYPES.includes(r.ruimte.type))
+export function oppervlakteVolgensRekenregel(
+  ruimtes: ToegankelijkeRuimte[],
+  types: readonly RuimteType[],
+): { priveM2: number; gedeeldM2: number; totaalM2: number } {
+  const relevant = ruimtes.filter((r) => types.includes(r.ruimte.type));
+
+  const priveRuw = relevant
+    .filter((r) => r.nKamersMetToegang === 1)
+    .reduce((som, r) => som + r.ruimte.oppervlakteM2, 0);
+  const gedeeldRuw = relevant
+    .filter((r) => r.nKamersMetToegang > 1)
     .reduce((som, r) => som + r.ruimte.oppervlakteM2 / r.nKamersMetToegang, 0);
+
+  const priveM2 = rondAfOpHeleM2(priveRuw);
+  const gedeeldM2 = rondAfOpHeleM2(gedeeldRuw);
+
+  return { priveM2, gedeeldM2, totaalM2: rondAfOpHeleM2(priveM2 + gedeeldM2) };
+}
+
+/** De vertrekoppervlakte in hele m² — grondslag voor zowel R1 als R4 (§2.4.4). */
+export function vertrekOppervlakteM2(ruimtes: ToegankelijkeRuimte[]): number {
+  return oppervlakteVolgensRekenregel(ruimtes, VERTREK_TYPES).totaalM2;
 }

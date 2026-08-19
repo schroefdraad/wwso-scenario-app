@@ -8,7 +8,8 @@ Laatst bijgewerkt: 2026-08-19
 - Supabase-connectie geverifieerd vanuit `apps/web` (zie `outputs/RAPPORT_taak1_2026-08-19.md`)
 - Datamodel in `packages/engine`: `Pand`, `Ruimte` (13 typen), K1-K12-`Toewijzing`, `HandmatigePosten` (R7 + zorgwoning), gebundeld in `PandInvoer` met referentiële validatie. Zie `outputs/RAPPORT_taak2_2026-08-19.md` voor de afweging rond de 2 ruimtetypen die de xlsx zelf nog mist (TODO-04)
 - Tarieventabellen in `packages/data`: huurprijstabel, energielabelfactoren, bouwjaargrenzen, COROP-gebieden, peildatum 1 januari 2026, met `getTarievenset(peildatum)`
-- Rubrieken R1-R4 in `packages/engine/src/rubrieken`: oppervlakte vertrekken, oppervlakte overige ruimten, verwarming/verkoeling, energieprestatie. Xlsx bevat geen ingevulde formules voor deze rubrieken — interpretatiekeuzes (deling per kamer, welke ruimtetypen tellen mee) staan expliciet in `outputs/RAPPORT_taak4_2026-08-19.md` en moeten bij taak 8 geverifieerd worden. Corrigeert onderweg een foutieve aanname uit taak 3 over de bouwjaargrenzen-tabel (geen ondergrens, wel een bovengrens bij 2099)
+- Rubrieken R1-R4 in `packages/engine/src/rubrieken`, **gevalideerd tegen het beleidsboek** en gecorrigeerd (zie `outputs/RAPPORT_correctie_taak4_2026-08-19.md`). Drie rekenvoorbeelden uit het beleidsboek zitten als test in de suite
+- Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` — dit is de bron van waarheid, niet `wwso.xlsx`
 
 Wel beschikbaar als input:
 - `resources/wwso.xlsx` — werkende puntentelling in Excel, 8 tabs, rubrieken R1 t/m R13. Dit is de specificatie voor de rekenmotor. Bevat 7 bekende open punten op tab `Toelichting`.
@@ -25,6 +26,9 @@ Wel beschikbaar als input:
 - Geen persoonsgegevens in de MVP. Alleen objectgegevens.
 - Koppeling rendementscalculator, gemeentelijke regels, zittende-huurderschakelaar en Shortlist-import: allemaal fase 4.
 
+## Belangrijkste bevinding tot nu toe
+`wwso.xlsx` is een interpretatie van het beleidsboek en wijkt op 15 punten af, waaronder een verschoven rubrieknummering vanaf R7 en een volledig ontbrekende rubriek 7 (woonvoorzieningen voor personen met een handicap). De volledige lijst staat in `briefings/BRIEFING_beleidsboek_vs_xlsx_2026-08-19.md`. Bij twijfel geldt: beleidsboek → officiële huurprijscheck-site → xlsx.
+
 ## Openstaande beslissingen
 - UX van de kamertoewijzing (40 ruimten × 12 kamers). Voorstel volgt bij taak 12, vóór het bouwen.
 - Hoe om te gaan met verschillen tussen de engine en de officiële site bij taak 8: per verschil bepalen of de xlsx of de engine fout zit.
@@ -34,4 +38,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 5 (⬆ Opus, stopmoment vóór het bouwen): rubrieken R5 en R6 — keuken en sanitair.
+Taak 5 (⬆ Opus): rubrieken R5 en R6 — keuken en sanitair. Het datamodel moet eerst uitgebreid worden met de voorzieningen én de twee basiseisen-poorten (§2.5.1, §2.6.2) — zie briefing B2 t/m B8. De twee interpretatievragen die dit taakonderdeel ophield zijn inmiddels beantwoord door het beleidsboek.

@@ -39,7 +39,7 @@ export const testpand6Kamers: PandInvoer = {
     { nr: 11, naam: 'Berging', type: 'Berging', oppervlakteM2: 3.0, verdieping: 0, verwarmd: false, verkoeld: false },
     { nr: 12, naam: 'Bijkeuken', type: 'Bijkeuken', oppervlakteM2: 2.4, verdieping: 0, verwarmd: false, verkoeld: false },
     { nr: 13, naam: 'Wasruimte', type: 'Wasruimte', oppervlakteM2: 2.1, verdieping: 0, verwarmd: false, verkoeld: false },
-    { nr: 14, naam: 'Zolderberging', type: 'Overige ruimte', oppervlakteM2: 5.0, verdieping: 3, verwarmd: false, verkoeld: false },
+    { nr: 14, naam: 'Zolderberging', type: 'Overige ruimte', oppervlakteM2: 5.0, verdieping: 3, verwarmd: false, verkoeld: false, zolder: { vasteTrap: false, beschotenDak: false } },
     { nr: 15, naam: 'Centrale hal', type: 'Verkeersruimte', oppervlakteM2: 6.8, verdieping: 0, verwarmd: true, verkoeld: false },
     { nr: 16, naam: 'Balkon kamer 1', type: 'Buitenruimte privé', oppervlakteM2: 4.0, verdieping: 1, verwarmd: false, verkoeld: false },
     { nr: 17, naam: 'Gedeelde achtertuin', type: 'Buitenruimte gemeenschappelijk', oppervlakteM2: 22.0, verdieping: 0, verwarmd: false, verkoeld: false },
