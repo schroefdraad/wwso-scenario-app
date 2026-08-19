@@ -63,5 +63,12 @@ export const Pand = z.object({
   aantalKamers: z.number().int().min(1).max(12),
   aantalWoningenInComplex: z.number().int().min(1),
   monument: MonumentStatus,
+  /**
+   * Datum van de huurovereenkomst. Alleen verplicht bij `monument: 'Rijks'` (gevalideerd in
+   * PandInvoer): §2.14.3 bepaalt de vorm van de monumentopslag aan de hand van deze datum —
+   * op of ná 1 juli 2024 geeft +35% op de maximale huurprijs, ervóór +10 punten in plaats
+   * daarvan (briefing B14). Voor de andere monumentcategorieën maakt de datum niets uit.
+   */
+  huurovereenkomstDatum: z.string().date().optional(),
 });
 export type Pand = z.infer<typeof Pand>;

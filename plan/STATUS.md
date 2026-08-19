@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-08-19 (na taak 6)
+Laatst bijgewerkt: 2026-08-19 (na taak 7)
 
 ## Wat werkt
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine`, `packages/data` (data nog leeg)
@@ -11,6 +11,7 @@ Laatst bijgewerkt: 2026-08-19 (na taak 6)
 - Rubrieken R1-R4 in `packages/engine/src/rubrieken`, **gevalideerd tegen het beleidsboek** en gecorrigeerd (zie `outputs/RAPPORT_correctie_taak4_2026-08-19.md`). Drie rekenvoorbeelden uit het beleidsboek zitten als test in de suite
 - Rubrieken R5 en R6 (keuken, sanitair) met de twee basiseisen-poorten uit §2.5.1 en §2.6.2, de aftopping van extra voorzieningen, en sanitair buiten de badkamer. Zie `outputs/RAPPORT_taak5_2026-08-19.md`
 - Rubrieken R7 t/m R13 (handicapvoorzieningen, buitenruimten, gemeenschappelijke ruimten, parkeren, WOZ, bijzondere voorzieningen, aftrekpunten), in de gecorrigeerde nummering uit het beleidsboek. R9 wordt nu automatisch afgeleid uit ruimtetypen in plaats van handmatig ingevoerd; R3 is uitgebreid zodat verwarming/verkoeling in gemeenschappelijke ruimten meetelt (§2.9.2). Zie `outputs/RAPPORT_taak6_2026-08-19.md`
+- Eindtelling in `packages/engine/src/eindtelling`: telt R1 t/m R13 per kamer op, past de zorgwoning-opslag (+35% op R1-11) en de monumentopslagen toe (Rijks 35%/10 punten afhankelijk van de contractdatum, gemeentelijk/provinciaal 15%, beschermd dorpsgezicht 5%), en rekent de huurprijs uit met extrapolatie boven 250 punten. Zie `outputs/RAPPORT_taak7_2026-08-19.md`
 - Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` (PDF + een lokale tekstextractie `beleidsboek-wwso-2026-01.txt` via `pdftotext -layout`) — dit is de bron van waarheid, niet `wwso.xlsx`. De PDF blijft leidend; de txt is alleen een grep-baar hulpmiddel
 
 Wel beschikbaar als input:
@@ -40,4 +41,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 7: eindtelling. Rubrieken R1 t/m R13 optellen per kamer (kwartpuntsafronding is al per rubriek gebeurd) en dan pas de eindsaldering op hele punten (§2.1.7). Daarna de zorgwoning-opslag (+35% op R1-11, bewust aangehouden uit taak 6), de monumentopslagen (§2.14, met de contractdatum-vertakking bij Rijksmonumenten uit briefing B14) en de huurprijs-lookup inclusief extrapolatie boven 250 punten (briefing B15).
+Taak 8: golden-master validatie tegen `wwso.xlsx` en 3-5 panden van de officiële huurprijscheck-site. Eerste taak die de volledige keten (R1 t/m R13 + eindtelling) tegen een externe referentie zet — bij een afwijking geldt de rangorde beleidsboek → huurprijscheck-site → xlsx, en schakelt dit naar Opus (zie `plan/plan.md`). De 3-5 validatiepanden van de huurprijscheck-site moeten nog verzameld worden (actiepunt onderaan `plan/plan.md`).

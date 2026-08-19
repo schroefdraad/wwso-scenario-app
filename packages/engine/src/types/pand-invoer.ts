@@ -32,6 +32,14 @@ export const PandInvoer = z
       });
     }
 
+    if (data.pand.monument === 'Rijks' && data.pand.huurovereenkomstDatum === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['pand', 'huurovereenkomstDatum'],
+        message: "Bij monument 'Rijks' is 'huurovereenkomstDatum' verplicht — die bepaalt de vorm van de monumentopslag (§2.14.3).",
+      });
+    }
+
     data.ruimtes.forEach((ruimte, i) => {
       if (DUBBEL_GEDEELDE_RUIMTE_TYPES.includes(ruimte.type) && ruimte.aantalAdressenMetToegang === undefined) {
         ctx.addIssue({

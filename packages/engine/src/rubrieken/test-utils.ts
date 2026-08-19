@@ -29,17 +29,26 @@ const BASIS_PAND: Pand = {
   monument: 'Geen',
 };
 
-const GEEN_HANDMATIGE_POSTEN: HandmatigePosten = {
-  woonvoorzieningenHandicap: [],
-  aanbelfuncties: [],
-  losseLaadpalen: [],
-  aftrekSituaties: {
-    verhuurderCriterium: [],
-    ruitoppervlakteOnvoldoende: [],
-    raamkozijnTeHoog: [],
-  },
-  zorgwoning: false,
-};
+/**
+ * Fabrieksfunctie, geen constante: `maakPandInvoer` gebruikt dit als default wanneer de
+ * aanroeper geen `handmatigePosten` meegeeft. Een gedeelde singleton-instantie zou hier een
+ * val zijn — een test die het geretourneerde object direct muteert (bijv.
+ * `input.handmatigePosten.zorgwoning = true`) zou dan onbedoeld ook andere tests raken die
+ * later dezelfde default aanroepen.
+ */
+function geenHandmatigePosten(): HandmatigePosten {
+  return {
+    woonvoorzieningenHandicap: [],
+    aanbelfuncties: [],
+    losseLaadpalen: [],
+    aftrekSituaties: {
+      verhuurderCriterium: [],
+      ruitoppervlakteOnvoldoende: [],
+      raamkozijnTeHoog: [],
+    },
+    zorgwoning: false,
+  };
+}
 
 /** Alle vijf basiseisen van §2.5.1 gehaald — het normale geval. */
 export const BASISEISEN_GEHAALD: KeukenBasiseisen = {
@@ -128,6 +137,6 @@ export function maakPandInvoer(opts: {
     keukens: opts.keukens ?? [],
     sanitair: opts.sanitair ?? [],
     parkeerplekken: opts.parkeerplekken ?? [],
-    handmatigePosten: opts.handmatigePosten ?? GEEN_HANDMATIGE_POSTEN,
+    handmatigePosten: opts.handmatigePosten ?? geenHandmatigePosten(),
   };
 }
