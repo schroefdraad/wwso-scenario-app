@@ -14,8 +14,9 @@ export type EnergielabelFactor = z.infer<typeof EnergielabelFactor>;
 
 /**
  * "totEnMetBouwjaar" is de bovengrens van een bouwjaarband (bv. 1999 dekt panden gebouwd
- * t/m 1999, ná de vorige, lagere grens). Panden gebouwd vóór de laagste grens (1976) vallen
- * buiten de tabel — de engine (taak 4) moet dat expliciet afvangen, niet stilzwijgend clampen.
+ * t/m 1999, ná de vorige, lagere grens). De tabel heeft geen ondergrens: de laagste band
+ * (1976) dekt elk ouder pand. Alleen een bouwjaar ná de hoogste grens (2099) valt buiten de
+ * tabel — de engine (taak 4) moet dát expliciet afvangen, niet stilzwijgend clampen.
  */
 export const BouwjaarFactor = z.object({
   totEnMetBouwjaar: z.number().int(),

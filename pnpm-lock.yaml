@@ -76,6 +76,9 @@ importers:
 
   packages/engine:
     dependencies:
+      '@wwso/data':
+        specifier: workspace:^
+        version: link:../data
       zod:
         specifier: ^4.4.3
         version: 4.4.3

@@ -7,7 +7,8 @@ Laatst bijgewerkt: 2026-08-19
 - Vitest, ESLint, Prettier werken op root- en packageniveau
 - Supabase-connectie geverifieerd vanuit `apps/web` (zie `outputs/RAPPORT_taak1_2026-08-19.md`)
 - Datamodel in `packages/engine`: `Pand`, `Ruimte` (13 typen), K1-K12-`Toewijzing`, `HandmatigePosten` (R7 + zorgwoning), gebundeld in `PandInvoer` met referentiële validatie. Zie `outputs/RAPPORT_taak2_2026-08-19.md` voor de afweging rond de 2 ruimtetypen die de xlsx zelf nog mist (TODO-04)
-- Tarieventabellen in `packages/data`: huurprijstabel, energielabelfactoren, bouwjaargrenzen, COROP-gebieden, peildatum 1 januari 2026, met `getTarievenset(peildatum)`. Zie `outputs/RAPPORT_taak3_2026-08-19.md` voor het randgeval bouwjaar < 1976
+- Tarieventabellen in `packages/data`: huurprijstabel, energielabelfactoren, bouwjaargrenzen, COROP-gebieden, peildatum 1 januari 2026, met `getTarievenset(peildatum)`
+- Rubrieken R1-R4 in `packages/engine/src/rubrieken`: oppervlakte vertrekken, oppervlakte overige ruimten, verwarming/verkoeling, energieprestatie. Xlsx bevat geen ingevulde formules voor deze rubrieken — interpretatiekeuzes (deling per kamer, welke ruimtetypen tellen mee) staan expliciet in `outputs/RAPPORT_taak4_2026-08-19.md` en moeten bij taak 8 geverifieerd worden. Corrigeert onderweg een foutieve aanname uit taak 3 over de bouwjaargrenzen-tabel (geen ondergrens, wel een bovengrens bij 2099)
 
 Wel beschikbaar als input:
 - `resources/wwso.xlsx` — werkende puntentelling in Excel, 8 tabs, rubrieken R1 t/m R13. Dit is de specificatie voor de rekenmotor. Bevat 7 bekende open punten op tab `Toelichting`.
@@ -33,4 +34,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair), taak 8 zodra er een validatieafwijking is, taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 4: rubrieken R1 t/m R4 (oppervlakte vertrekken, overige ruimten, verwarming/verkoeling, energieprestatie) implementeren als losse functies die punten per kamer plus een toelichtingsregel teruggeven.
+Taak 5 (⬆ Opus, stopmoment vóór het bouwen): rubrieken R5 en R6 — keuken en sanitair.
