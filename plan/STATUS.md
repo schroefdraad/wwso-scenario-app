@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-08-19 (na taak 9)
+Laatst bijgewerkt: 2026-08-19 (na taak 10)
 
 ## Wat werkt
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine`, `packages/data` (data nog leeg)
@@ -14,6 +14,7 @@ Laatst bijgewerkt: 2026-08-19 (na taak 9)
 - Eindtelling in `packages/engine/src/eindtelling`: telt R1 t/m R13 per kamer op, past de zorgwoning-opslag (+35% op R1-11) en de monumentopslagen toe (Rijks 35%/10 punten afhankelijk van de contractdatum, gemeentelijk/provinciaal 15%, beschermd dorpsgezicht 5%), en rekent de huurprijs uit met extrapolatie boven 250 punten. Zie `outputs/RAPPORT_taak7_2026-08-19.md`
 - Golden-master validatie (taak 8) tegen 3 officiële Huurprijscheck-exports van hetzelfde pand (Kleiweg 179-B): **alle getoetste rubrieken én de drie eindtotalen (67 / 74 / 56) en huurprijzen matchen nu exact.** Zie `outputs/RAPPORT_taak8_2026-08-19.md` voor de ronde zelf en `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md` voor de twee correcties die daarvoor nodig waren: (1) R4 rekent op de ongeronde privé+gedeeld-oppervlakte in plaats van op de afgeronde R1-grondslag — de afrondingsregel van §2.2.1.1 hoort bij rubriek 1 en wordt door §2.4.4 niet aangehaald, terwijl §2.13 laat zien hoe het beleidsboek het formuleert als het de rubriek-1-uitkomst wél bedoelt; R2 en R13 blijven daarom ongewijzigd. (2) De kamer 6-fixture hergebruikte ten onrechte het sanitair van kamer 2 — de drie exports zijn met verschillende aannames ingevuld
 - Scenariomodel in `packages/engine/src/scenario`: een scenario is een lijst mutaties (14 soorten, dekt pand/ruimte/toewijzing/keuken/sanitair/parkeerplek) die bovenop de as-is `PandInvoer` wordt toegepast met `pasScenarioToe`. Puur en immutable, met expliciete foutmeldingen bij een niet-bestaand of ongeldig doel. Een correctie op de as-is werkt automatisch door in elk scenario, zonder de mutatielijst aan te passen. Zie `outputs/RAPPORT_taak9_2026-08-19.md`
+- Kostencatalogus in `packages/data/src/kostencatalogus`: herhaalbaar geïmporteerd uit `resources/Kostenkentallen_WWSO_optimalisatie.xlsx` met `pnpm --filter @wwso/data run import:kostenkentallen` (49 maatregelen, versie 0.1, alle op status `schatting`). Versie komt uit de bron zelf (tab Toelichting), harde validatie op rubriekcode/status/dubbele id's, geen vooraf uitgerekende regio-prijs. Zie `outputs/RAPPORT_taak10_2026-08-19.md`
 - Het beleidsboek WWSO januari 2026 staat in `resources/beleidsboek/` (PDF + een lokale tekstextractie `beleidsboek-wwso-2026-01.txt` via `pdftotext -layout`) — dit is de bron van waarheid, niet `wwso.xlsx`. De PDF blijft leidend; de txt is alleen een grep-baar hulpmiddel. Voor tabel-zware pagina's (en voor de golden-master PDF's) is de PDF ook via de Windows Runtime PDF-API naar PNG te renderen en visueel te lezen — betrouwbaarder dan `pdftotext` bij meerkoloms lay-outs, zie het PowerShell-recept in `outputs/RAPPORT_taak8_2026-08-19.md`
 
 Wel beschikbaar als input:
@@ -48,4 +49,4 @@ Wel beschikbaar als input:
 Standaard Sonnet, net als in het Funda-project. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus`: taak 5 (keuken/sanitair, afgerond), taak 8 (afgerond, inclusief de R4-beoordeling die eruit voortkwam), taak 11 voor het ontwerp van de suggestie-engine, en taak 12 voor het UX-voorstel. Bij taak 11 en 12 alleen het ontwerp — de implementatie gaat daarna terug naar Sonnet.
 
 ## Volgende concrete actie
-Taak 10: kostencatalogus inlezen uit `Kostenkentallen_WWSO_optimalisatie.xlsx` (49 maatregelen, alle op status `schatting`) naar `packages/data`, herhaalbaar.
+Taak 11: suggestie-engine. **`⬆ Opus`** voor het ontwerp (hoe maatregelen combineren en per kamer waarderen), daarna Sonnet voor de implementatie.
