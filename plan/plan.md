@@ -32,7 +32,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 - [x] Taak 13: Resultaatscherm met opbouw per rubriek en de vier controles. Zie `outputs/RAPPORT_taak13_2026-08-20.md`. Vier controles gebouwd als pure, geteste engine-module (`packages/engine/src/controles/`); controle 2 ("ruimten zonder type") is structureel onmogelijk te schenden op een gevalideerde `PandInvoer` — bewust wel als echte check gebouwd, gedocumenteerd waarom hij altijd groen is.
 - [x] Taak 14: Scenariovergelijking met directe hertelling in de browser
 - [x] Taak 15: Opslaan en laden van deals met versiestempel
-- [ ] Taak 16: PDF-export van de puntenopbouw
+- [x] Taak 16: PDF-export van de puntenopbouw. Zie `outputs/RAPPORT_taak16_2026-08-21.md`. "PDF downloaden" op het resultaatscherm, client-side via `@react-pdf/renderer`, altijd volledig uitgeklapt (geen interactiviteit op papier); werkt automatisch ook voor scenario-resultaten, want `Resultaatscherm` was al prop-gedreven (taak 13/14).
 - [ ] Taak 17: Auth via magic link, org_id en Row Level Security
 
 ## Fase 4 — Na de MVP

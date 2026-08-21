@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { berekenEindtelling, voerControlesUit, type PandInvoer } from '@wwso/engine';
 import type { Tarievenset } from '@wwso/data';
 import { KamerRij } from './KamerRij';
 import { ControlesPaneel } from './ControlesPaneel';
+import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
 import styles from './styles.module.css';
 
 /**
@@ -26,10 +27,30 @@ export function Resultaatscherm({
 }) {
   const eindtelling = useMemo(() => berekenEindtelling(pand, tarievenset, peildatum), [pand, tarievenset, peildatum]);
   const controles = useMemo(() => voerControlesUit(pand), [pand]);
+  const [pdfStatus, setPdfStatus] = useState<'idle' | 'bezig' | 'fout'>('idle');
 
   const kamers = Object.keys(eindtelling.perKamer)
     .map(Number)
     .sort((a, b) => a - b);
+
+  async function downloadPdf() {
+    setPdfStatus('bezig');
+    try {
+      const [{ pdf }, { PuntenrapportDocument }] = await Promise.all([import('@react-pdf/renderer'), import('../../lib/pdf/PuntenrapportDocument')]);
+      const blob = await pdf(
+        <PuntenrapportDocument pand={pand} eindtelling={eindtelling} controles={controles} tarievensetPeildatum={peildatum} />,
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = puntenrapportBestandsnaam(pand, peildatum);
+      link.click();
+      URL.revokeObjectURL(url);
+      setPdfStatus('idle');
+    } catch {
+      setPdfStatus('fout');
+    }
+  }
 
   return (
     <div className={styles.wrap}>
@@ -38,6 +59,10 @@ export function Resultaatscherm({
         <span className={styles.kopSub}>
           {pand.pand.stad} · {pand.pand.aantalKamers} kamers · peildatum {peildatum}
         </span>
+        <button type="button" className={styles.pdfKnop} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
+          {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
+        </button>
+        {pdfStatus === 'fout' && <span className={styles.pdfFout}>PDF maken mislukt, probeer opnieuw</span>}
         <Link href="/pand/vergelijking" className={styles.vergelijkLink}>
           Vergelijk scenario&apos;s →
         </Link>
