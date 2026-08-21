@@ -1,6 +1,6 @@
-import type { PandInvoer } from '../types/index.js';
-import { PandInvoer as PandInvoerSchema } from '../types/pand-invoer.js';
-import type { Mutatie } from './types.js';
+import type { PandInvoer } from '../types/index';
+import { PandInvoer as PandInvoerSchema } from '../types/pand-invoer';
+import type { Mutatie } from './types';
 
 /** Gooit een duidelijke fout met welke mutatie het was en waarom hij niet kon worden toegepast. */
 function mutatieFout(mutatie: Mutatie, reden: string): never {
@@ -143,6 +143,29 @@ function pasMutatieToe(pand: PandInvoer, mutatie: Mutatie): PandInvoer {
         mutatieFout(mutatie, `ruimte ${mutatie.ruimteNr} heeft geen parkeerplek om te verwijderen.`);
       }
       return { ...pand, parkeerplekken: pand.parkeerplekken.filter((p) => p.ruimteNr !== mutatie.ruimteNr) };
+    }
+
+    case 'aanbelfunctie-toevoegen': {
+      return {
+        ...pand,
+        handmatigePosten: {
+          ...pand.handmatigePosten,
+          aanbelfuncties: [...pand.handmatigePosten.aanbelfuncties, { kamersMetToegang: mutatie.kamersMetToegang }],
+        },
+      };
+    }
+
+    case 'aftreksituatie-wijzigen': {
+      return {
+        ...pand,
+        handmatigePosten: {
+          ...pand.handmatigePosten,
+          aftrekSituaties: {
+            ...pand.handmatigePosten.aftrekSituaties,
+            [mutatie.situatie]: mutatie.kamers,
+          },
+        },
+      };
     }
   }
 }

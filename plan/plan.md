@@ -24,7 +24,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 
 - [x] Taak 9: Scenariomodel als mutaties bovenop de as-is situatie. Zie `outputs/RAPPORT_taak9_2026-08-19.md`
 - [x] Taak 10: Kostencatalogus inlezen uit Kostenkentallen_WWSO_optimalisatie.xlsx (herhaalbaar). Zie `outputs/RAPPORT_taak10_2026-08-19.md`
-- [ ] Taak 11: Suggestie-engine — marginale analyse per rubriek, pakketten Basis/Comfort/Maximaal, ranking op terugverdientijd **`⬆ Opus`** voor het ontwerp (hoe maatregelen combineren en per kamer waarderen), daarna Sonnet voor de implementatie
+- [x] Taak 11: Suggestie-engine — marginale analyse per rubriek, pakketten Basis/Comfort/Maximaal, ranking op terugverdientijd. Ontwerp door Opus, implementatie door Sonnet. Zie `outputs/RAPPORT_taak11_2026-08-20.md`. Toelichtingsdeck voor de externe gebruiker (Opus) al eerder opgeleverd als artifact, met een BTW-aanscherping die in deze implementatie is verwerkt.
 
 ## Fase 3 — Applicatie
 

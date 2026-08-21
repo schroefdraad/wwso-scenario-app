@@ -1,6 +1,6 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import { rondAfOp2Decimalen, rondAfOpHelePunten } from '../rubrieken/gedeeld.js';
+import type { PandInvoer } from '../types/index';
+import { rondAfOp2Decimalen, rondAfOpHelePunten } from '../rubrieken/gedeeld';
 import {
   berekenR1,
   berekenR2,
@@ -15,10 +15,10 @@ import {
   berekenR11,
   berekenR12,
   berekenR13,
-} from '../rubrieken/index.js';
-import { bepaalMaxHuur } from './huurprijs.js';
-import { bepaalMonumentopslag } from './monumentopslag.js';
-import type { EindtellingKamer, EindtellingResultaat, RubriekPunten } from './types.js';
+} from '../rubrieken/index';
+import { bepaalMaxHuur } from './huurprijs';
+import { bepaalMonumentopslag } from './monumentopslag';
+import type { EindtellingKamer, EindtellingResultaat, RubriekPunten, RubriekToelichting } from './types';
 
 /**
  * Eindtelling (§2.1.7/§2.1.8, §2.12.1, §2.14): telt de dertien rubrieken bij elkaar op tot de
@@ -83,6 +83,22 @@ export function berekenEindtelling(
       r13: r13.perKamer[kamer] ?? 0,
     };
 
+    const rubriekenRuw: RubriekPunten = {
+      r1: r1.perKamerRuw[kamer] ?? 0,
+      r2: r2.perKamerRuw[kamer] ?? 0,
+      r3: r3.perKamerRuw[kamer] ?? 0,
+      r4: r4.perKamerRuw[kamer] ?? 0,
+      r5: r5.perKamerRuw[kamer] ?? 0,
+      r6: r6.perKamerRuw[kamer] ?? 0,
+      r7: r7.perKamerRuw[kamer] ?? 0,
+      r8: r8.perKamerRuw[kamer] ?? 0,
+      r9: r9.perKamerRuw[kamer] ?? 0,
+      r10: r10.perKamerRuw[kamer] ?? 0,
+      r11: r11.perKamerRuw[kamer] ?? 0,
+      r12: r12.perKamerRuw[kamer] ?? 0,
+      r13: r13.perKamerRuw[kamer] ?? 0,
+    };
+
     const subtotaalR1TotEnMet11 =
       rubrieken.r1 +
       rubrieken.r2 +
@@ -111,6 +127,7 @@ export function berekenEindtelling(
 
     perKamer[kamer] = {
       rubrieken,
+      rubriekenRuw,
       subtotaalR1TotEnMet11,
       zorgwoningOpslagPunten,
       totaalVoorEindsaldering,
@@ -124,5 +141,21 @@ export function berekenEindtelling(
     };
   }
 
-  return { perKamer, toelichting };
+  const rubriekToelichting: RubriekToelichting = {
+    r1: r1.toelichting,
+    r2: r2.toelichting,
+    r3: r3.toelichting,
+    r4: r4.toelichting,
+    r5: r5.toelichting,
+    r6: r6.toelichting,
+    r7: r7.toelichting,
+    r8: r8.toelichting,
+    r9: r9.toelichting,
+    r10: r10.toelichting,
+    r11: r11.toelichting,
+    r12: r12.toelichting,
+    r13: r13.toelichting,
+  };
+
+  return { perKamer, toelichting, rubriekToelichting };
 }

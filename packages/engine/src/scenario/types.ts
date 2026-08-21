@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { Pand } from '../types/pand.js';
-import { Ruimte } from '../types/ruimte.js';
-import { KamerNummer } from '../types/toewijzing.js';
-import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from '../types/voorzieningen.js';
+import { Pand } from '../types/pand';
+import { Ruimte } from '../types/ruimte';
+import { KamerNummer } from '../types/toewijzing';
+import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from '../types/voorzieningen';
 
 /**
  * Een scenario is geen kopie van het pand, maar een lijst mutaties die bovenop de as-is
@@ -85,6 +85,28 @@ const ParkeerplekVerwijderen = z.object({
   ruimteNr: z.number().int().min(1).max(40),
 });
 
+/**
+ * R12.2 — aanbelfunctie met video toevoegen (taak 11, maatregel X-01). Er is bewust geen
+ * `-wijzigen`/`-verwijderen`-variant: geen van de 49 catalogusmaatregelen heeft die nodig
+ * (leave-one-out herbouwt vanaf de as-is), en vooraf een symmetrisch stel bouwen zou gokken
+ * naar een behoefte die nog niet bevestigd is — zelfde lijn als taak 9.
+ */
+const AanbelfunctieToevoegen = z.object({
+  soort: z.literal('aanbelfunctie-toevoegen'),
+  kamersMetToegang: z.array(KamerNummer).min(1),
+});
+
+/**
+ * R13 — een aftreksituatie herzien (taak 11, maatregelen A-01/A-02/A-03). Vervangt de volledige
+ * kamerlijst voor die situatie, net als `toewijzing-wijzigen` de volledige kamers-lijst van een
+ * ruimte vervangt — geen incrementeel toevoegen/verwijderen van één kamer.
+ */
+const AftreksituatieWijzigen = z.object({
+  soort: z.literal('aftreksituatie-wijzigen'),
+  situatie: z.enum(['verhuurderCriterium', 'ruitoppervlakteOnvoldoende', 'raamkozijnTeHoog']),
+  kamers: z.array(KamerNummer),
+});
+
 export const Mutatie = z.discriminatedUnion('soort', [
   PandPatch,
   RuimteToevoegen,
@@ -100,6 +122,8 @@ export const Mutatie = z.discriminatedUnion('soort', [
   ParkeerplekToevoegen,
   ParkeerplekWijzigen,
   ParkeerplekVerwijderen,
+  AanbelfunctieToevoegen,
+  AftreksituatieWijzigen,
 ]);
 export type Mutatie = z.infer<typeof Mutatie>;
 
