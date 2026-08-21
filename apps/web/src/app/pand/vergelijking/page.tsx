@@ -43,7 +43,21 @@ function VergelijkingContent() {
       return;
     }
     const context = haalPandOp();
-    setGeladen(context ? { pand: context.pand, tarievensetPeildatum: context.tarievensetPeildatum, kostencatalogusVersie: context.kostencatalogusVersie } : null);
+    setGeladen(
+      context
+        ? {
+            pand: context.pand,
+            tarievensetPeildatum: context.tarievensetPeildatum,
+            kostencatalogusVersie: context.kostencatalogusVersie,
+            // Draagt de deal-identiteit door vanuit /pand/nieuw?deal=<id> (backlog: as-is
+            // bewerken) — zonder dit zou "Deal opslaan" hier een DUPLICAAT aanmaken in plaats
+            // van de bestaande deal bij te werken.
+            deal: context.dealId
+              ? { id: context.dealId, naam: context.dealNaam ?? context.pand.pand.adres, scenarios: context.dealScenarios ?? [] }
+              : undefined,
+          }
+        : null,
+    );
   }, [dealParam]);
   /* eslint-enable react-hooks/set-state-in-effect */
 

@@ -8,6 +8,7 @@ import type {
   SoortWoning,
   ZolderKenmerken,
 } from '@wwso/engine';
+import type { ScenarioSelectie } from '../deals/types';
 
 /**
  * Gedenormaliseerde invoerstate (§7.2 van het UX-ontwerp, `outputs/RAPPORT_taak12_2026-08-20.md`):
@@ -64,6 +65,13 @@ export interface InvoerState {
   volgendeRuimteId: number;
   /** Laatst ingevoerde waarde voor `aantalAdressenMetToegang`, overgenomen bij de volgende gedeelde ruimte (§4.4 van het UX-ontwerp). */
   laatsteAantalAdressen?: string;
+  /**
+   * Gezet zodra deze as-is via `/pand/nieuw?deal=<id>` geladen is vanuit een opgeslagen deal
+   * (backlog: as-is achteraf aanpasbaar maken). "Doorrekenen" draagt dit door naar het
+   * resultaat-/vergelijkingsscherm zodat "Deal opslaan" dezelfde deal bijwerkt in plaats van een
+   * nieuwe aan te maken. Afwezig voor een nieuw, nog niet opgeslagen pand.
+   */
+  bewerktDeal?: { id: string; naam: string; scenarios: ScenarioSelectie[] };
 }
 
 export const NIEUW_PAND_VELDEN: PandVeldenState = {

@@ -31,6 +31,7 @@ export function Topbar() {
       <span className={styles.sub}>
         {n} kamer{n === 1 ? '' : 's'}
       </span>
+      {state.bewerktDeal && <span className={styles.sub}>· bewerkt deal &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
       <nav className={styles.sections}>
         <a className={styles.sectionLink} href="#sectie-pand">
           ① Pand <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
@@ -54,7 +55,12 @@ export function Topbar() {
         title={stap ?? undefined}
         onClick={() => {
           if (!pand) return;
-          slaPandOp({ pand });
+          slaPandOp({
+            pand,
+            dealId: state.bewerktDeal?.id,
+            dealNaam: state.bewerktDeal?.naam,
+            dealScenarios: state.bewerktDeal?.scenarios,
+          });
           router.push('/pand/resultaat');
         }}
       >

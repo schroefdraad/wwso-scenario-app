@@ -106,7 +106,16 @@ export function Vergelijking({
     const pakket = berekendePakketten[index];
     if (!pakket) return;
     const scenarioPand = pasScenarioToe(pand, pakket.scenario.mutaties);
-    slaPandOp({ pand: scenarioPand, tarievensetPeildatum: tarievenset.peildatum, kostencatalogusVersie: kostencatalogus.versie });
+    slaPandOp({
+      pand: scenarioPand,
+      tarievensetPeildatum: tarievenset.peildatum,
+      kostencatalogusVersie: kostencatalogus.versie,
+      // Behoudt de deal-koppeling op de heen-en-terug-reis naar het resultaatscherm (backlog:
+      // as-is bewerken) — anders verschijnt deze deal bij terugkeer hier als een nieuwe.
+      dealId,
+      dealNaam,
+      dealScenarios: slots.filter((s) => s.sleutels.size > 0).map((s) => ({ naam: s.naam, sleutels: [...s.sleutels] })),
+    });
     router.push('/pand/resultaat');
   }
 
@@ -141,6 +150,11 @@ export function Vergelijking({
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
+        {dealId && (
+          <Link href={`/pand/nieuw?deal=${dealId}`} className={styles.dealenLink}>
+            Pandgegevens bewerken →
+          </Link>
+        )}
         <Link href="/deals" className={styles.dealenLink}>
           Mijn deals →
         </Link>
