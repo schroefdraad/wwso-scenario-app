@@ -1,13 +1,44 @@
 'use client';
 
 import { ToiletType, type Keuken, type SanitairVoorziening } from '@wwso/engine';
-import { useEffect, type ReactNode } from 'react';
+import { alleTarievensets, type Tarievenset } from '@wwso/data';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
 import { useLade, type LadeSegment } from './LadeContext';
 import { Toggle } from './Toggle';
 import { nieuweKeuken, nieuwSanitair } from './ladeDefaults';
+import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
+import {
+  marginaalKeukenBoolean,
+  marginaalKeukenVolgendeKastruimte,
+  marginaalSanitairDoucheBad,
+  marginaalSanitairExtraBoolean,
+  marginaalSanitairVolgendeEenheid,
+  puntenToiletType,
+} from '../../lib/invoer/marginalePunten';
 import styles from './styles.module.css';
 import type { RuimteRij } from '../../lib/invoer/types';
+
+/**
+ * Pand + tarievenset voor de "punten per faciliteit"-badges (feedback Emma Morrison,
+ * 2026-08-21). `null` zolang de invoer nog niet compleet genoeg is om door te rekenen — de
+ * badges verdwijnen dan gewoon, net als de puntenstrip bovenin.
+ */
+function useRekencontext() {
+  const { state } = useInvoer();
+  return useMemo(() => {
+    const pand = projecteerNaarPandInvoer(state);
+    const tarievenset: Tarievenset | undefined = alleTarievensets().at(-1);
+    return { pand, tarievenset: tarievenset ?? null, peildatum: tarievenset?.peildatum ?? null };
+  }, [state]);
+}
+
+function PuntBadge({ waarde }: { waarde: number | null }) {
+  if (waarde === null) return null;
+  const afgerond = Math.round(waarde * 100) / 100;
+  const tekst = afgerond === 0 ? '0 pt' : `${afgerond > 0 ? '+' : ''}${afgerond.toLocaleString('nl-NL', { maximumFractionDigits: 2 })} pt`;
+  return <span className={`${styles.puntBadge} ${afgerond === 0 ? styles.puntBadgeNul : ''}`}>{tekst}</span>;
+}
 
 const KEUKEN_BASISEISEN: [keyof Keuken['basiseisen'], string][] = [
   ['aanEnAfvoerWater', 'Aan- en afvoer water'],
@@ -95,9 +126,15 @@ export function RuimteLade() {
 
 function KeukenPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
+  const { pand, tarievenset, peildatum } = useRekencontext();
   const keuken = rij.keuken;
   const zetKeuken = (patch: Partial<Omit<Keuken, 'ruimteNr'>>) =>
     dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: keuken ? { ...keuken, ...patch } : undefined } });
+
+  const puntVoor = (veld: keyof Omit<Keuken['extra'], 'extraKastruimteEenhedenVan60Cm'>): number | null =>
+    pand && tarievenset && peildatum ? marginaalKeukenBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null;
+  const puntVoorVolgendeKastruimte = (huidig: number): number | null =>
+    pand && tarievenset && peildatum ? marginaalKeukenVolgendeKastruimte(pand, tarievenset, peildatum, rij.nr, huidig) : null;
 
   if (!keuken) {
     return (
@@ -166,27 +203,27 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
 
       <div className={alleEisen ? undefined : styles.extraBlokDim}>
         <ExtraGroep titel="Kookplaat">
-          <ExtraCheck label="Inductie" checked={keuken.extra.kookplaatInductie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatInductie: v } })} />
-          <ExtraCheck label="Keramisch" checked={keuken.extra.kookplaatKeramisch} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatKeramisch: v } })} />
-          <ExtraCheck label="Gas" checked={keuken.extra.kookplaatGas} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatGas: v } })} />
+          <ExtraCheck label="Inductie" checked={keuken.extra.kookplaatInductie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatInductie: v } })} punten={puntVoor('kookplaatInductie')} />
+          <ExtraCheck label="Keramisch" checked={keuken.extra.kookplaatKeramisch} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatKeramisch: v } })} punten={puntVoor('kookplaatKeramisch')} />
+          <ExtraCheck label="Gas" checked={keuken.extra.kookplaatGas} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatGas: v } })} punten={puntVoor('kookplaatGas')} />
         </ExtraGroep>
         <ExtraGroep titel="Koelen en vriezen">
-          <ExtraCheck label="Koelkast" checked={keuken.extra.koelkast} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, koelkast: v } })} />
-          <ExtraCheck label="Vrieskast" checked={keuken.extra.vrieskast} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, vrieskast: v } })} />
+          <ExtraCheck label="Koelkast" checked={keuken.extra.koelkast} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, koelkast: v } })} punten={puntVoor('koelkast')} />
+          <ExtraCheck label="Vrieskast" checked={keuken.extra.vrieskast} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, vrieskast: v } })} punten={puntVoor('vrieskast')} />
         </ExtraGroep>
         <ExtraGroep titel="Oven en magnetron">
-          <ExtraCheck label="Oven elektrisch" checked={keuken.extra.ovenElektrisch} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, ovenElektrisch: v } })} />
-          <ExtraCheck label="Oven gas" checked={keuken.extra.ovenGas} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, ovenGas: v } })} />
-          <ExtraCheck label="Magnetron" checked={keuken.extra.magnetron} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, magnetron: v } })} />
+          <ExtraCheck label="Oven elektrisch" checked={keuken.extra.ovenElektrisch} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, ovenElektrisch: v } })} punten={puntVoor('ovenElektrisch')} />
+          <ExtraCheck label="Oven gas" checked={keuken.extra.ovenGas} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, ovenGas: v } })} punten={puntVoor('ovenGas')} />
+          <ExtraCheck label="Magnetron" checked={keuken.extra.magnetron} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, magnetron: v } })} punten={puntVoor('magnetron')} />
         </ExtraGroep>
         <ExtraGroep titel="Overige apparatuur">
-          <ExtraCheck label="Afzuiginstallatie" checked={keuken.extra.afzuiginstallatie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, afzuiginstallatie: v } })} />
-          <ExtraCheck label="Vaatwasmachine" checked={keuken.extra.vaatwasmachine} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, vaatwasmachine: v } })} />
+          <ExtraCheck label="Afzuiginstallatie" checked={keuken.extra.afzuiginstallatie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, afzuiginstallatie: v } })} punten={puntVoor('afzuiginstallatie')} />
+          <ExtraCheck label="Vaatwasmachine" checked={keuken.extra.vaatwasmachine} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, vaatwasmachine: v } })} punten={puntVoor('vaatwasmachine')} />
         </ExtraGroep>
         <ExtraGroep titel="Kranen">
-          <ExtraCheck label="Eenhandsmengkraan" checked={keuken.extra.eenhandsmengkraan} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, eenhandsmengkraan: v } })} />
-          <ExtraCheck label="Thermostatische mengkraan" checked={keuken.extra.thermostatischeMengkraan} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, thermostatischeMengkraan: v } })} />
-          <ExtraCheck label="Kokendwaterfunctie" checked={keuken.extra.kokendWaterfunctie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kokendWaterfunctie: v } })} />
+          <ExtraCheck label="Eenhandsmengkraan" checked={keuken.extra.eenhandsmengkraan} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, eenhandsmengkraan: v } })} punten={puntVoor('eenhandsmengkraan')} />
+          <ExtraCheck label="Thermostatische mengkraan" checked={keuken.extra.thermostatischeMengkraan} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, thermostatischeMengkraan: v } })} punten={puntVoor('thermostatischeMengkraan')} />
+          <ExtraCheck label="Kokendwaterfunctie" checked={keuken.extra.kokendWaterfunctie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kokendWaterfunctie: v } })} punten={puntVoor('kokendWaterfunctie')} />
         </ExtraGroep>
         <ExtraGroep titel="Kastruimte">
           <div className={styles.extraRij}>
@@ -198,6 +235,7 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
               value={keuken.extra.extraKastruimteEenhedenVan60Cm}
               onChange={(e) => zetKeuken({ extra: { ...keuken.extra, extraKastruimteEenhedenVan60Cm: Number(e.target.value) || 0 } })}
             />
+            <PuntBadge waarde={puntVoorVolgendeKastruimte(keuken.extra.extraKastruimteEenhedenVan60Cm)} />
           </div>
         </ExtraGroep>
         <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
@@ -208,9 +246,19 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
 
 function SanitairPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
+  const { pand, tarievenset, peildatum } = useRekencontext();
   const sanitair = rij.sanitair;
   const zetSanitair = (patch: Partial<Omit<SanitairVoorziening, 'ruimteNr'>>) =>
     dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { sanitair: sanitair ? { ...sanitair, ...patch } : undefined } });
+
+  const puntVoorExtra = (veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten'>): number | null =>
+    pand && tarievenset && peildatum ? marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null;
+  const puntVoorVolgendeEenheid = (veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten', huidig: number): number | null =>
+    pand && tarievenset && peildatum ? marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
+  const puntVoorDoucheBad = (veld: 'douche' | 'bad' | 'badDoucheCombinatie'): number | null =>
+    pand && tarievenset && peildatum ? marginaalSanitairDoucheBad(pand, tarievenset, peildatum, rij.nr, veld) : null;
+  const puntVoorToiletType = (type: SanitairVoorziening['toiletType']): number | null =>
+    pand && tarievenset && peildatum ? puntenToiletType(pand, tarievenset, peildatum, rij.nr, type) : null;
 
   if (!sanitair) {
     return (
@@ -248,6 +296,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             </option>
           ))}
         </select>
+        <PuntBadge waarde={puntVoorToiletType(sanitair.toiletType)} />
       </div>
       <div className={styles.veldrij}>
         <label htmlFor="s-wastafels">Aantal wastafels</label>
@@ -268,10 +317,12 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
           <label>Douche / bad</label>
           <span style={{ display: 'flex', gap: '1rem' }}>
             <label>
-              <input type="checkbox" checked={sanitair.douche} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ douche: e.target.checked })} /> Douche
+              <input type="checkbox" checked={sanitair.douche} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ douche: e.target.checked })} /> Douche{' '}
+              <PuntBadge waarde={puntVoorDoucheBad('douche')} />
             </label>
             <label>
-              <input type="checkbox" checked={sanitair.bad} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ bad: e.target.checked })} /> Bad
+              <input type="checkbox" checked={sanitair.bad} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ bad: e.target.checked })} /> Bad{' '}
+              <PuntBadge waarde={puntVoorDoucheBad('bad')} />
             </label>
             <label>
               <input
@@ -279,7 +330,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                 checked={sanitair.badDoucheCombinatie}
                 onChange={(e) => zetSanitair({ badDoucheCombinatie: e.target.checked, ...(e.target.checked ? { douche: false, bad: false } : {}) })}
               />{' '}
-              Combinatie
+              Combinatie <PuntBadge waarde={puntVoorDoucheBad('badDoucheCombinatie')} />
             </label>
           </span>
         </div>
@@ -324,8 +375,18 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
 
           <div className={alleEisen ? undefined : styles.extraBlokDim}>
             <ExtraGroep titel="Douche en bad">
-              <ExtraCheck label="Volledige doucheafscheiding" checked={sanitair.extra.doucheafscheidingVolledig} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, doucheafscheidingVolledig: v } })} />
-              <ExtraCheck label="Bubbelfunctie bad" checked={sanitair.extra.bubbelfunctieBad} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, bubbelfunctieBad: v } })} />
+              <ExtraCheck
+                label="Volledige doucheafscheiding"
+                checked={sanitair.extra.doucheafscheidingVolledig}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, doucheafscheidingVolledig: v } })}
+                punten={puntVoorExtra('doucheafscheidingVolledig')}
+              />
+              <ExtraCheck
+                label="Bubbelfunctie bad"
+                checked={sanitair.extra.bubbelfunctieBad}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, bubbelfunctieBad: v } })}
+                punten={puntVoorExtra('bubbelfunctieBad')}
+              />
             </ExtraGroep>
             <ExtraGroep titel="Comfort">
               <div className={styles.extraRij}>
@@ -337,6 +398,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.aantalHanddoekenradiatoren}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalHanddoekenradiatoren: Number(e.target.value) || 0 } })}
                 />
+                <PuntBadge waarde={puntVoorVolgendeEenheid('aantalHanddoekenradiatoren', sanitair.extra.aantalHanddoekenradiatoren)} />
               </div>
               <div className={styles.extraRij}>
                 <label>Stopcontacten (max. 2 per wastafel)</label>
@@ -347,13 +409,34 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.aantalStopcontacten}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalStopcontacten: Number(e.target.value) || 0 } })}
                 />
+                <PuntBadge waarde={puntVoorVolgendeEenheid('aantalStopcontacten', sanitair.extra.aantalStopcontacten)} />
               </div>
-              <ExtraCheck label="Ingebouwd kastje bij wastafel" checked={sanitair.extra.ingebouwdKastjeMetWastafel} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, ingebouwdKastjeMetWastafel: v } })} />
-              <ExtraCheck label="Kastruimte ≥ 40×40 cm" checked={sanitair.extra.kastruimte} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, kastruimte: v } })} />
+              <ExtraCheck
+                label="Ingebouwd kastje bij wastafel"
+                checked={sanitair.extra.ingebouwdKastjeMetWastafel}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, ingebouwdKastjeMetWastafel: v } })}
+                punten={puntVoorExtra('ingebouwdKastjeMetWastafel')}
+              />
+              <ExtraCheck
+                label="Kastruimte ≥ 40×40 cm"
+                checked={sanitair.extra.kastruimte}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, kastruimte: v } })}
+                punten={puntVoorExtra('kastruimte')}
+              />
             </ExtraGroep>
             <ExtraGroep titel="Kranen">
-              <ExtraCheck label="Eenhandsmengkraan" checked={sanitair.extra.eenhandsmengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: v } })} />
-              <ExtraCheck label="Thermostatische mengkraan" checked={sanitair.extra.thermostatischeMengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: v } })} />
+              <ExtraCheck
+                label="Eenhandsmengkraan"
+                checked={sanitair.extra.eenhandsmengkraan}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: v } })}
+                punten={puntVoorExtra('eenhandsmengkraan')}
+              />
+              <ExtraCheck
+                label="Thermostatische mengkraan"
+                checked={sanitair.extra.thermostatischeMengkraan}
+                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: v } })}
+                punten={puntVoorExtra('thermostatischeMengkraan')}
+              />
             </ExtraGroep>
             <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
           </div>
@@ -461,11 +544,12 @@ function ExtraGroep({ titel, children }: { titel: string; children: ReactNode })
   );
 }
 
-function ExtraCheck({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+function ExtraCheck({ label, checked, onChange, punten }: { label: string; checked: boolean; onChange: (v: boolean) => void; punten?: number | null }) {
   return (
     <div className={styles.extraRij}>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} id={`chk-${label}`} />
       <label htmlFor={`chk-${label}`}>{label}</label>
+      {punten !== undefined && <PuntBadge waarde={punten} />}
     </div>
   );
 }

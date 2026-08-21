@@ -789,6 +789,22 @@
   margin-top: 0.3rem;
 }
 
+.puntBadge {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.puntBadgeNul {
+  color: var(--ink-dim);
+  background: transparent;
+}
+
 .veldrij {
   display: flex;
   align-items: center;
