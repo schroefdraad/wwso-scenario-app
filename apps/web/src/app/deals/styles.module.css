@@ -1,0 +1,104 @@
+.wrap {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+  min-height: 100vh;
+}
+
+.kop {
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.kop h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.nieuwLink {
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.nieuwLink:hover {
+  text-decoration: underline;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.4rem;
+}
+
+.melding {
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.foutmelding {
+  color: var(--red);
+}
+
+.blok {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tabelScroll {
+  overflow-x: auto;
+}
+
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.tabel thead th {
+  background: var(--paper-sunken);
+  text-align: left;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.rij td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.rij:hover td {
+  background: var(--paper-sunken);
+}
+
+.naamCel {
+  font-weight: 600;
+}
+
+.dealLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.dealLink:hover {
+  text-decoration: underline;
+}
+
+.dim {
+  color: var(--ink-dim);
+}
