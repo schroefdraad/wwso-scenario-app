@@ -8,7 +8,13 @@ import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
-import { haalEnWisScenarioBewerkResultaatOp, slaScenarioBewerkStartOp } from '../../lib/vergelijking/scenarioBewerkBrug';
+import {
+  haalEnWisScenarioBewerkResultaatOp,
+  haalEnWisVergelijkingSnapshotOp,
+  slaScenarioBewerkStartOp,
+  slaVergelijkingSnapshotOp,
+  type VergelijkingSnapshot,
+} from '../../lib/vergelijking/scenarioBewerkBrug';
 import type { ScenarioSelectie } from '../../lib/deals/types';
 import { SamenvattingRij } from './SamenvattingRij';
 import { MaatregelTabel } from './MaatregelTabel';
@@ -30,6 +36,12 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
       ? { naam: opgeslagen.naam, soort: 'kandidaten' as const, sleutels: new Set(opgeslagen.sleutels) }
       : { naam: standaardNaam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
   });
+}
+
+/** Herstelt de sessionStorage-snapshot (array van sleutels, JSON-serialiseerbaar) terug naar
+ * `ScenarioSlot[]` (Set van sleutels) — het spiegelbeeld van de serialisatie in `bewerkHandmatig`. */
+function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] {
+  return slots.map((s) => (s.soort === 'kandidaten' ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) } : s));
 }
 
 export interface GeladenDeal {
@@ -77,11 +89,26 @@ export function Vergelijking({
   // Vangt het resultaat op van "Bewerk handmatig →" (backlog: AS-IS kopiëren naar een handmatig
   // scenario, feedback Emma Morrison, 2026-08-21) — sessionStorage bestaat niet tijdens SSR, dus
   // dit kan pas ná hydratie, net als de deal-brug elders in deze pagina.
+  //
+  // `/pand/nieuw` is een VOLLEDIGE navigatie: dit component unmount en remount op de heen- én
+  // de terugreis. Zonder de snapshot hieronder zou elke wijziging aan de andere twee slots, de
+  // deal-naam of een nog niet opgeslagen deal-koppeling verloren gaan zodra je één slot handmatig
+  // bewerkt — dat was de bug ("tweede scenario wist het eerste", "AS-IS-deal opslaan lukt niet").
+  // De snapshot wordt alleen toegepast wanneer er ook een `resultaat` is: een snapshot zonder
+  // resultaat is een verweesde snapshot van een afgebroken bewerking (Esc/browser-terug) en moet
+  // de huidige, verse pagina-state niet overschrijven.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const resultaat = haalEnWisScenarioBewerkResultaatOp();
+    const snapshot = haalEnWisVergelijkingSnapshotOp();
     if (!resultaat) return;
-    setSlots((prev) => prev.map((s, i) => (i === resultaat.slotIndex ? { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand } : s)));
+    const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
+    setSlots(basisSlots.map((s, i) => (i === resultaat.slotIndex ? { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand } : s)));
+    if (snapshot) {
+      setDealId(snapshot.dealId);
+      setDealNaam(snapshot.dealNaam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -122,10 +149,17 @@ export function Vergelijking({
   }
 
   function bewerkHandmatig(index: number) {
+    const terugUrl = dealId ? `/pand/vergelijking?deal=${dealId}` : '/pand/vergelijking';
+    slaVergelijkingSnapshotOp({
+      dealId,
+      dealNaam,
+      slots: slots.map((s) => (s.soort === 'kandidaten' ? { naam: s.naam, soort: 'kandidaten', sleutels: [...s.sleutels] } : s)),
+    });
     slaScenarioBewerkStartOp({
       asIsPand: pand,
       slotIndex: index,
       naam: slots[index].naam,
+      terugUrl,
       tarievensetPeildatum: tarievenset.peildatum,
       kostencatalogusVersie: kostencatalogus.versie,
     });

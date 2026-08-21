@@ -28,6 +28,7 @@ export interface InitieelScenario {
   asIsPand: PandInvoer;
   slotIndex: number;
   naam: string;
+  terugUrl: string;
 }
 
 export function InvoerProvider({
@@ -51,7 +52,11 @@ export function InvoerProvider({
         soort: 'CONCEPT_GELADEN',
         state: {
           ...pandInvoerNaarState(initieelScenario.asIsPand),
-          handmatigScenario: { slotIndex: initieelScenario.slotIndex, naam: initieelScenario.naam },
+          handmatigScenario: {
+            slotIndex: initieelScenario.slotIndex,
+            naam: initieelScenario.naam,
+            terugUrl: initieelScenario.terugUrl,
+          },
         },
       });
       return;

@@ -35,7 +35,7 @@ function NieuwPandContent() {
         setStatus('niet-gevonden');
         return;
       }
-      setInitieelScenario({ asIsPand: start.asIsPand, slotIndex: start.slotIndex, naam: start.naam });
+      setInitieelScenario({ asIsPand: start.asIsPand, slotIndex: start.slotIndex, naam: start.naam, terugUrl: start.terugUrl });
       setStatus('klaar');
       return;
     }

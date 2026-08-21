@@ -79,8 +79,12 @@ export interface InvoerState {
    * primaire knop draagt het bewerkte pand dan terug naar het vergelijkingsscherm in plaats van
    * naar het resultaatscherm te navigeren. Sluit elkaar uit met `bewerktDeal`: je bewerkt óf de
    * as-is van een deal, óf een los TO-BE-scenario, nooit allebei tegelijk.
+   *
+   * `terugUrl` is de exacte vergelijkingspagina-URL (met `?deal=<id>` indien van toepassing) om
+   * naar terug te navigeren — een hardgecodeerd `/pand/vergelijking` verliest anders de
+   * deal-koppeling van een reeds opgeslagen deal bij terugkeer.
    */
-  handmatigScenario?: { slotIndex: number; naam: string };
+  handmatigScenario?: { slotIndex: number; naam: string; terugUrl: string };
 }
 
 export const NIEUW_PAND_VELDEN: PandVeldenState = {

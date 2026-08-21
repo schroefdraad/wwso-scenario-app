@@ -59,7 +59,7 @@ export function Topbar() {
           if (!pand) return;
           if (state.handmatigScenario) {
             slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, bewerktPand: pand });
-            router.push('/pand/vergelijking');
+            router.push(state.handmatigScenario.terugUrl);
             return;
           }
           slaPandOp({
