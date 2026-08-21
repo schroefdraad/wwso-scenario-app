@@ -1,13 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { alleTarievensets, nieuwsteKostencatalogus } from '@wwso/data';
+import { huidigeVersiestempel } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import { PuntenStrip } from './PuntenStrip';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
+import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import styles from './styles.module.css';
 
 export function Topbar() {
@@ -16,6 +19,27 @@ export function Topbar() {
   const stap = useMemo(() => ontbrekendeStap(state), [state]);
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
   const n = parseInt(state.pand.aantalKamers, 10) || 0;
+  const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
+
+  async function dealVroegOpslaan() {
+    if (!pand) return;
+    setDealOpslaanStatus('bezig');
+    try {
+      const tarievenset = alleTarievensets().at(-1)!;
+      const kostencatalogus = nieuwsteKostencatalogus();
+      const invoer = {
+        naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloos pand'),
+        pandInvoer: pand,
+        scenarios: state.bewerktDeal?.scenarios ?? [],
+        versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
+      };
+      const deal = state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
+      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, scenarios: deal.scenarios } });
+      setDealOpslaanStatus('gelukt');
+    } catch {
+      setDealOpslaanStatus('fout');
+    }
+  }
 
   const pandCompleet = !!(
     state.pand.adres &&
@@ -49,6 +73,21 @@ export function Topbar() {
       <Link href="/deals" className={styles.sectionLink}>
         Mijn deals
       </Link>
+      {!state.handmatigScenario && (
+        <>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`}
+            disabled={!pand || dealOpslaanStatus === 'bezig'}
+            title={!pand ? (stap ?? undefined) : undefined}
+            onClick={dealVroegOpslaan}
+          >
+            {state.bewerktDeal ? 'Deal bijwerken' : 'Deal opslaan'}
+          </button>
+          {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
+          {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
+        </>
+      )}
       <PuntenStrip />
       <button
         type="button"

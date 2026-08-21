@@ -33,6 +33,7 @@ export type InvoerActie =
   | { soort: 'VOORBEELDPAND_GELADEN' }
   | { soort: 'ALLES_GEWIST' }
   | { soort: 'CONCEPT_GELADEN'; state: InvoerState }
+  | { soort: 'DEAL_GEKOPPELD'; deal: NonNullable<InvoerState['bewerktDeal']> }
   | { soort: 'AANBEL_GEWIJZIGD'; aan: boolean }
   | { soort: 'AANBEL_KAMER_GETOGGELD'; kamer: 'alle' | number }
   | { soort: 'LAADPAAL_GEWIJZIGD'; aan: boolean }
@@ -200,6 +201,9 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
 
     case 'CONCEPT_GELADEN':
       return actie.state;
+
+    case 'DEAL_GEKOPPELD':
+      return { ...state, bewerktDeal: actie.deal };
 
     case 'AANBEL_GEWIJZIGD':
       return { ...state, aanbelfunctieAan: actie.aan, aanbelfunctieKamers: actie.aan ? Array.from({ length: aantalKamers(state) }, (_, i) => i + 1) : [] };
