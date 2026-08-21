@@ -227,6 +227,11 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
 
   const alleEisen = SANITAIR_EISEN.every(([k]) => sanitair.extraEisen[k]);
   const extraAantal = Object.entries(sanitair.extra).filter(([, v]) => (typeof v === 'boolean' ? v : Number(v) > 0)).length;
+  // Een toiletruimte heeft per definitie geen douche/bad — de extra-voorzieningenpoort en de
+  // "Douche en bad"-groep leveren daar sowieso 0 punten op (§2.6.2 capt extra punten op de
+  // douche/bad-punten, die hier altijd 0 zijn), dus die secties tonen we niet: minder verwarrende
+  // velden voor een ruimte die ze toch nooit gebruikt (feedback Emma Morrison, 2026-08-21).
+  const isToiletruimte = rij.type === 'Toiletruimte';
 
   return (
     <div>
@@ -258,92 +263,102 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
           onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
         />
       </div>
-      <div className={styles.veldrij}>
-        <label>Douche / bad</label>
-        <span style={{ display: 'flex', gap: '1rem' }}>
-          <label>
-            <input type="checkbox" checked={sanitair.douche} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ douche: e.target.checked })} /> Douche
-          </label>
-          <label>
-            <input type="checkbox" checked={sanitair.bad} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ bad: e.target.checked })} /> Bad
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={sanitair.badDoucheCombinatie}
-              onChange={(e) => zetSanitair({ badDoucheCombinatie: e.target.checked, ...(e.target.checked ? { douche: false, bad: false } : {}) })}
-            />{' '}
-            Combinatie
-          </label>
-        </span>
-      </div>
-
-      <div className={styles.poortBlok}>
-        <div className={styles.poortMaster}>
-          <input
-            type="checkbox"
-            id="s-master"
-            checked={alleEisen}
-            onChange={(e) => {
-              const waarde = e.target.checked;
-              zetSanitair({ extraEisen: Object.fromEntries(SANITAIR_EISEN.map(([k]) => [k, waarde])) as SanitairVoorziening['extraEisen'] });
-            }}
-          />
-          <label htmlFor="s-master">Voldoet aan alle vijf de extra-eisen (§2.6.2)</label>
+      {!isToiletruimte && (
+        <div className={styles.veldrij}>
+          <label>Douche / bad</label>
+          <span style={{ display: 'flex', gap: '1rem' }}>
+            <label>
+              <input type="checkbox" checked={sanitair.douche} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ douche: e.target.checked })} /> Douche
+            </label>
+            <label>
+              <input type="checkbox" checked={sanitair.bad} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ bad: e.target.checked })} /> Bad
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={sanitair.badDoucheCombinatie}
+                onChange={(e) => zetSanitair({ badDoucheCombinatie: e.target.checked, ...(e.target.checked ? { douche: false, bad: false } : {}) })}
+              />{' '}
+              Combinatie
+            </label>
+          </span>
         </div>
-        {SANITAIR_EISEN.map(([key, label]) => (
-          <div className={styles.poortEis} key={key}>
-            <input
-              type="checkbox"
-              id={`s-eis-${key}`}
-              checked={sanitair.extraEisen[key]}
-              onChange={(e) => zetSanitair({ extraEisen: { ...sanitair.extraEisen, [key]: e.target.checked } })}
-            />
-            <label htmlFor={`s-eis-${key}`}>{label}</label>
-          </div>
-        ))}
-        <div className={`${styles.poortStatus} ${alleEisen ? styles.poortStatusOk : styles.poortStatusFout}`}>
-          {alleEisen
-            ? '✓ Voldoet. De extra voorzieningen hieronder tellen mee.'
-            : '✕ Voldoet niet. De basispunten voor toilet, wastafel en douche/bad blijven staan; de extra voorzieningen hieronder tellen niet mee.'}
-        </div>
-      </div>
+      )}
 
-      <div className={alleEisen ? undefined : styles.extraBlokDim}>
-        <ExtraGroep titel="Douche en bad">
-          <ExtraCheck label="Volledige doucheafscheiding" checked={sanitair.extra.doucheafscheidingVolledig} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, doucheafscheidingVolledig: v } })} />
-          <ExtraCheck label="Bubbelfunctie bad" checked={sanitair.extra.bubbelfunctieBad} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, bubbelfunctieBad: v } })} />
-        </ExtraGroep>
-        <ExtraGroep titel="Comfort">
-          <div className={styles.extraRij}>
-            <label>Handdoekenradiatoren</label>
-            <input
-              type="number"
-              min={0}
-              style={{ width: '4rem' }}
-              value={sanitair.extra.aantalHanddoekenradiatoren}
-              onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalHanddoekenradiatoren: Number(e.target.value) || 0 } })}
-            />
+      {isToiletruimte && (
+        <p className={styles.hint}>Een toiletruimte heeft geen douche/bad, dus de extra-voorzieningen daarvoor blijven hier verborgen — die leveren toch 0 punten op (§2.6.2).</p>
+      )}
+
+      {!isToiletruimte && (
+        <>
+          <div className={styles.poortBlok}>
+            <div className={styles.poortMaster}>
+              <input
+                type="checkbox"
+                id="s-master"
+                checked={alleEisen}
+                onChange={(e) => {
+                  const waarde = e.target.checked;
+                  zetSanitair({ extraEisen: Object.fromEntries(SANITAIR_EISEN.map(([k]) => [k, waarde])) as SanitairVoorziening['extraEisen'] });
+                }}
+              />
+              <label htmlFor="s-master">Voldoet aan alle vijf de extra-eisen (§2.6.2)</label>
+            </div>
+            {SANITAIR_EISEN.map(([key, label]) => (
+              <div className={styles.poortEis} key={key}>
+                <input
+                  type="checkbox"
+                  id={`s-eis-${key}`}
+                  checked={sanitair.extraEisen[key]}
+                  onChange={(e) => zetSanitair({ extraEisen: { ...sanitair.extraEisen, [key]: e.target.checked } })}
+                />
+                <label htmlFor={`s-eis-${key}`}>{label}</label>
+              </div>
+            ))}
+            <div className={`${styles.poortStatus} ${alleEisen ? styles.poortStatusOk : styles.poortStatusFout}`}>
+              {alleEisen
+                ? '✓ Voldoet. De extra voorzieningen hieronder tellen mee.'
+                : '✕ Voldoet niet. De basispunten voor toilet, wastafel en douche/bad blijven staan; de extra voorzieningen hieronder tellen niet mee.'}
+            </div>
           </div>
-          <div className={styles.extraRij}>
-            <label>Stopcontacten (max. 2 per wastafel)</label>
-            <input
-              type="number"
-              min={0}
-              style={{ width: '4rem' }}
-              value={sanitair.extra.aantalStopcontacten}
-              onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalStopcontacten: Number(e.target.value) || 0 } })}
-            />
+
+          <div className={alleEisen ? undefined : styles.extraBlokDim}>
+            <ExtraGroep titel="Douche en bad">
+              <ExtraCheck label="Volledige doucheafscheiding" checked={sanitair.extra.doucheafscheidingVolledig} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, doucheafscheidingVolledig: v } })} />
+              <ExtraCheck label="Bubbelfunctie bad" checked={sanitair.extra.bubbelfunctieBad} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, bubbelfunctieBad: v } })} />
+            </ExtraGroep>
+            <ExtraGroep titel="Comfort">
+              <div className={styles.extraRij}>
+                <label>Handdoekenradiatoren</label>
+                <input
+                  type="number"
+                  min={0}
+                  style={{ width: '4rem' }}
+                  value={sanitair.extra.aantalHanddoekenradiatoren}
+                  onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalHanddoekenradiatoren: Number(e.target.value) || 0 } })}
+                />
+              </div>
+              <div className={styles.extraRij}>
+                <label>Stopcontacten (max. 2 per wastafel)</label>
+                <input
+                  type="number"
+                  min={0}
+                  style={{ width: '4rem' }}
+                  value={sanitair.extra.aantalStopcontacten}
+                  onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalStopcontacten: Number(e.target.value) || 0 } })}
+                />
+              </div>
+              <ExtraCheck label="Ingebouwd kastje bij wastafel" checked={sanitair.extra.ingebouwdKastjeMetWastafel} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, ingebouwdKastjeMetWastafel: v } })} />
+              <ExtraCheck label="Kastruimte ≥ 40×40 cm" checked={sanitair.extra.kastruimte} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, kastruimte: v } })} />
+            </ExtraGroep>
+            <ExtraGroep titel="Kranen">
+              <ExtraCheck label="Eenhandsmengkraan" checked={sanitair.extra.eenhandsmengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: v } })} />
+              <ExtraCheck label="Thermostatische mengkraan" checked={sanitair.extra.thermostatischeMengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: v } })} />
+            </ExtraGroep>
+            <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
           </div>
-          <ExtraCheck label="Ingebouwd kastje bij wastafel" checked={sanitair.extra.ingebouwdKastjeMetWastafel} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, ingebouwdKastjeMetWastafel: v } })} />
-          <ExtraCheck label="Kastruimte ≥ 40×40 cm" checked={sanitair.extra.kastruimte} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, kastruimte: v } })} />
-        </ExtraGroep>
-        <ExtraGroep titel="Kranen">
-          <ExtraCheck label="Eenhandsmengkraan" checked={sanitair.extra.eenhandsmengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: v } })} />
-          <ExtraCheck label="Thermostatische mengkraan" checked={sanitair.extra.thermostatischeMengkraan} onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: v } })} />
-        </ExtraGroep>
-        <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

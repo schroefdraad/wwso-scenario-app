@@ -16,4 +16,4 @@ export const TYPE_GROEPEN: { label: string; types: RuimteType[] }[] = [
   { label: 'Parkeren (R10)', types: ['Parkeerplek gemeenschappelijk'] },
 ];
 
-export const QUICKADD_TYPES: RuimteType[] = ['Keuken', 'Badruimte', 'Toiletruimte', 'Berging', 'Verkeersruimte'];
+export const QUICKADD_TYPES: RuimteType[] = ['Keuken', 'Badruimte', 'Toiletruimte', 'Berging', 'Overige ruimte'];

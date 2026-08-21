@@ -11,6 +11,14 @@ const SOORT_WONING: PandVeldenState['soortWoning'][] = ['Meergezins', 'Eengezins
 const ENERGIELABELS = Energielabel.options;
 const MONUMENTSTATUSSEN = MonumentStatus.options;
 
+/**
+ * De WOZ-peildatum is per wet altijd 1 januari van het waarderingsjaar (Wet WOZ) — nooit een
+ * andere dag/maand. Een vrije datepicker liet dus onmogelijke datums toe; een jaartallen-select
+ * kan dat niet meer. Reikt 15 jaar terug, berekend vanaf het huidige jaar zodat de lijst niet
+ * jaarlijks handmatig bijgewerkt hoeft te worden.
+ */
+const WOZ_PEILDATUM_JAREN = Array.from({ length: 16 }, (_, i) => new Date().getFullYear() - i);
+
 function labelTekst(label: PandVeldenState['energielabel']): string {
   return label === 'Bouwjaar' ? 'Geen label bekend (val terug op bouwjaar)' : label;
 }
@@ -90,7 +98,19 @@ export function PandFormulier() {
           )}
           <div className={styles.veld}>
             <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
-            <input id="p-wozpeildatum" type="date" value={pand.wozPeildatum} onChange={(e) => zet('wozPeildatum', e.target.value)} />
+            <select
+              id="p-wozpeildatum"
+              value={pand.wozPeildatum.slice(0, 4)}
+              onChange={(e) => zet('wozPeildatum', e.target.value ? `${e.target.value}-01-01` : '')}
+            >
+              <option value="">— kies —</option>
+              {WOZ_PEILDATUM_JAREN.map((jaar) => (
+                <option key={jaar} value={jaar}>
+                  1 januari {jaar}
+                </option>
+              ))}
+            </select>
+            <span className={styles.hint}>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</span>
           </div>
           <div className={styles.veld}>
             <label htmlFor="p-wozopp">WOZ-oppervlak (m²)</label>
