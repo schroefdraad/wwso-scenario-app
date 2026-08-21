@@ -4,7 +4,8 @@ export function formateerEuro(bedrag: number, decimalen = 0): string {
   return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: decimalen, minimumFractionDigits: decimalen }).format(bedrag);
 }
 
-export function formateerEuroBand(band: Bandbreedte): string {
+export function formateerEuroBand(band: Bandbreedte | null): string {
+  if (!band) return '—';
   return `${formateerEuro(band.verwacht)} (${formateerEuro(band.optimistisch)}–${formateerEuro(band.pessimistisch)})`;
 }
 

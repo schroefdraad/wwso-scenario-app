@@ -204,7 +204,13 @@ export interface Pakket {
   verworpen: { kandidaatSleutel: string; reden: string }[];
   scenario: Scenario;
   waardering: PandWaardering;
-  investeringEuro: Bandbreedte;
+  /**
+   * `null` voor een handmatig bewerkt scenario (`bouwHandmatigScenario`): er is dan geen
+   * catalogusmaatregel om een investeringsbedrag uit af te leiden. Een vuistregel van €0 zou
+   * hier een verzonnen, oneindig rendement opleveren (zie `berekenMarginaalRendement`) — expliciet
+   * `null` is de eerlijke waarde.
+   */
+  investeringEuro: Bandbreedte | null;
   extraJaarhuurEuro: number;
   /** pakketwinst − Σ leave-one-out-bijdragen; kan negatief zijn bij drempeloverschrijding (§3 van het ontwerp). */
   restpostEuro: number;

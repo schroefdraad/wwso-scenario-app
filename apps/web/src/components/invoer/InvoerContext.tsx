@@ -23,14 +23,39 @@ export interface InitieelDeal {
   pandInvoer: PandInvoer;
 }
 
-export function InvoerProvider({ children, initieelDeal }: { children: ReactNode; initieelDeal?: InitieelDeal }) {
+/** Een AS-IS-kopie die als handmatig TO-BE-scenario bewerkt wordt (backlog: AS-IS kopiëren naar een handmatig scenario, feedback Emma Morrison, 2026-08-21 — via /pand/nieuw?scenario=<slot>). */
+export interface InitieelScenario {
+  asIsPand: PandInvoer;
+  slotIndex: number;
+  naam: string;
+}
+
+export function InvoerProvider({
+  children,
+  initieelDeal,
+  initieelScenario,
+}: {
+  children: ReactNode;
+  initieelDeal?: InitieelDeal;
+  initieelScenario?: InitieelScenario;
+}) {
   const [state, dispatch] = useReducer(invoerReducer, NIEUWE_INVOERSTATE);
   const eersteRenderKlaar = useRef(false);
 
-  // sessionStorage bestaat niet tijdens SSR — laden kan pas ná hydratie. Bij een expliciet
-  // meegegeven deal (navigatie via ?deal=<id>) heeft die voorrang boven een eventueel
-  // achtergebleven concept van een andere as-is.
+  // sessionStorage bestaat niet tijdens SSR — laden kan pas ná hydratie. Een expliciet
+  // meegegeven deal of scenario (navigatie via ?deal=<id> resp. ?scenario=<slot>) heeft
+  // voorrang boven een eventueel achtergebleven concept van een andere as-is.
   useEffect(() => {
+    if (initieelScenario) {
+      dispatch({
+        soort: 'CONCEPT_GELADEN',
+        state: {
+          ...pandInvoerNaarState(initieelScenario.asIsPand),
+          handmatigScenario: { slotIndex: initieelScenario.slotIndex, naam: initieelScenario.naam },
+        },
+      });
+      return;
+    }
     if (initieelDeal) {
       dispatch({
         soort: 'CONCEPT_GELADEN',
@@ -44,7 +69,7 @@ export function InvoerProvider({ children, initieelDeal }: { children: ReactNode
     const concept = haalConceptOp();
     if (concept) dispatch({ soort: 'CONCEPT_GELADEN', state: concept });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initieelDeal?.id]);
+  }, [initieelDeal?.id, initieelScenario?.slotIndex]);
 
   // Bewaart elke wijziging tijdens het typen (§backlog: refresh/terug vóór "Doorrekenen" verloor
   // tot nu toe alle invoer). De eerste keer overslaan: dat is de initiële, nog niet met een

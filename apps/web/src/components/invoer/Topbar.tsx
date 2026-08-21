@@ -7,6 +7,7 @@ import { useInvoer } from './InvoerContext';
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import { PuntenStrip } from './PuntenStrip';
 import { slaPandOp } from '../../lib/resultaat/opslag';
+import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import styles from './styles.module.css';
 
 export function Topbar() {
@@ -32,6 +33,7 @@ export function Topbar() {
         {n} kamer{n === 1 ? '' : 's'}
       </span>
       {state.bewerktDeal && <span className={styles.sub}>· bewerkt deal &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
+      {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
       <nav className={styles.sections}>
         <a className={styles.sectionLink} href="#sectie-pand">
           ① Pand <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
@@ -55,6 +57,11 @@ export function Topbar() {
         title={stap ?? undefined}
         onClick={() => {
           if (!pand) return;
+          if (state.handmatigScenario) {
+            slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, bewerktPand: pand });
+            router.push('/pand/vergelijking');
+            return;
+          }
           slaPandOp({
             pand,
             dealId: state.bewerktDeal?.id,
@@ -64,7 +71,7 @@ export function Topbar() {
           router.push('/pand/resultaat');
         }}
       >
-        Doorrekenen →
+        {state.handmatigScenario ? 'Gebruik als scenario →' : 'Doorrekenen →'}
       </button>
       {state.ruimtes.length > 0 && (
         <button

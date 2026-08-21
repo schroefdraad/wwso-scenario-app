@@ -3,6 +3,7 @@ import { Pand } from '../types/pand';
 import { Ruimte } from '../types/ruimte';
 import { KamerNummer } from '../types/toewijzing';
 import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from '../types/voorzieningen';
+import { PandInvoer } from '../types/pand-invoer';
 
 /**
  * Een scenario is geen kopie van het pand, maar een lijst mutaties die bovenop de as-is
@@ -22,6 +23,21 @@ const PandPatch = z.object({
   soort: z.literal('pand-patch'),
   /** Willekeurige subset van Pand-velden — bijv. { energielabel: 'A', energielabelIngangsdatum: '2026-06-01' }. */
   patch: Pand.partial(),
+});
+
+/**
+ * Vervangt de volledige as-is door een expliciet meegegeven, al gevalideerd TO-BE-pand — geen
+ * incrementele patch (backlog: AS-IS kopiëren naar een handmatig te bewerken TO-BE scenario,
+ * feedback Emma Morrison, 2026-08-21). Bewust géén diff tegen de as-is: de gebruiker bewerkt een
+ * kopie van het hele invoerformulier vrij (ruimtes toevoegen/verwijderen, keuken/sanitair
+ * wijzigen, alles), en het terugrekenen van zo'n vrije bewerking naar een minimale mutatielijst
+ * zou fragiel zijn en niets toevoegen — de mutatielijst is hier per definitie altijd exact één
+ * item. Moet als ENIGE mutatie in een `Scenario` staan; latere mutaties zouden zinloos zijn
+ * omdat deze mutatie de as-is toch al volledig vervangt.
+ */
+const VervangPand = z.object({
+  soort: z.literal('vervang-pand'),
+  pand: PandInvoer,
 });
 
 const RuimteToevoegen = z.object({
@@ -109,6 +125,7 @@ const AftreksituatieWijzigen = z.object({
 
 export const Mutatie = z.discriminatedUnion('soort', [
   PandPatch,
+  VervangPand,
   RuimteToevoegen,
   RuimteWijzigen,
   RuimteVerwijderen,

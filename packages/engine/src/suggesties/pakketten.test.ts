@@ -8,7 +8,7 @@ import { stelSuggestiesOp } from './suggesties';
 import { analyseerMarge } from './marge-analyse';
 import { standaardRegistry } from './registry/index';
 import { nieuwBudget } from './waardering';
-import { bouwVrijScenario, type PoolItem } from './pakketten';
+import { bouwHandmatigScenario, bouwVrijScenario, type PoolItem } from './pakketten';
 import type { MaatregelContext, SuggestieOpties } from './types';
 
 const tarievenset = getTarievenset('2026-01-01');
@@ -31,8 +31,11 @@ describe('pakketten — Basis ⊆ Comfort ⊆ Maximaal', () => {
   });
 
   it('investering en extra jaarhuur stijgen monotoon van Basis naar Comfort naar Maximaal', () => {
-    expect(basis.investeringEuro.verwacht).toBeLessThanOrEqual(comfort.investeringEuro.verwacht);
-    expect(comfort.investeringEuro.verwacht).toBeLessThanOrEqual(maximaal.investeringEuro.verwacht);
+    expect(basis.investeringEuro).not.toBeNull();
+    expect(comfort.investeringEuro).not.toBeNull();
+    expect(maximaal.investeringEuro).not.toBeNull();
+    expect(basis.investeringEuro!.verwacht).toBeLessThanOrEqual(comfort.investeringEuro!.verwacht);
+    expect(comfort.investeringEuro!.verwacht).toBeLessThanOrEqual(maximaal.investeringEuro!.verwacht);
     expect(basis.extraJaarhuurEuro).toBeLessThanOrEqual(comfort.extraJaarhuurEuro);
     expect(comfort.extraJaarhuurEuro).toBeLessThanOrEqual(maximaal.extraJaarhuurEuro);
   });
@@ -301,3 +304,47 @@ describe('bouwVrijScenario — vrij samengesteld scenario (taak 14: "maatregelen
     expect(alleenS05.regels[0].maatregelId).toBe('S-05');
   });
 });
+
+describe('bouwHandmatigScenario — vrij bewerkt TO-BE-pand (backlog: AS-IS kopiëren naar een handmatig scenario)', () => {
+  it('rekent het bewerkte pand écht door en zet de mutatielijst op precies één vervang-pand-mutatie', () => {
+    const bewerkt = pasScenarioToe(testpand6Kamers, [{ soort: 'pand-patch', patch: { energielabel: 'A' } }]);
+    const scenario = bouwHandmatigScenario('Mijn scenario', testpand6Kamers, bewerkt, tarievenset, peildatum, nieuwBudget(2000));
+
+    expect(scenario.naam).toBe('Mijn scenario');
+    expect(scenario.scenario.mutaties).toEqual([{ soort: 'vervang-pand', pand: bewerkt }]);
+    expect(scenario.regels).toHaveLength(0);
+
+    const asIsEindtelling = berekenEindtelling(testpand6Kamers, tarievenset, peildatum);
+    const bewerktEindtelling = berekenEindtelling(bewerkt, tarievenset, peildatum);
+    const asIsJaarhuur = Object.values(asIsEindtelling.perKamer).reduce((s, k) => s + k.maxHuurEuro * 12, 0);
+    const bewerktJaarhuur = Object.values(bewerktEindtelling.perKamer).reduce((s, k) => s + k.maxHuurEuro * 12, 0);
+    expect(scenario.extraJaarhuurEuro).toBeCloseTo(Math.round((bewerktJaarhuur - asIsJaarhuur) * 100) / 100, 2);
+  });
+
+  it('laat investering/terugverdientijd/rendement/ΔBAR expliciet null — geen geraden €0', () => {
+    const bewerkt = pasScenarioToe(testpand6Kamers, [{ soort: 'pand-patch', patch: { energielabel: 'A' } }]);
+    const scenario = bouwHandmatigScenario('Mijn scenario', testpand6Kamers, bewerkt, tarievenset, peildatum, nieuwBudget(2000));
+
+    expect(scenario.investeringEuro).toBeNull();
+    expect(scenario.terugverdientijdJaren).toBeNull();
+    expect(scenario.marginaalBrutoRendementPct).toBeNull();
+    expect(scenario.deltaBarProcentpunt).toBeNull();
+  });
+
+  it('levert exact hetzelfde pand terug als het handmatig bewerkte pand, ongeacht wat er in de as-is verandert', () => {
+    const bewerkt = pasScenarioToe(testpand6Kamers, [
+      { soort: 'ruimte-wijzigen', ruimteNr: 1, patch: { oppervlakteM2: 25 } },
+    ]);
+    const scenario = bouwHandmatigScenario('Groter pand', testpand6Kamers, bewerkt, tarievenset, peildatum, nieuwBudget(2000));
+    expect(scenario.waardering.perKamer[1]?.totaalPunten).toBeGreaterThan(
+      pandWaarderingVanTestpand6Kamers().perKamer[1]?.totaalPunten ?? 0,
+    );
+  });
+});
+
+function pandWaarderingVanTestpand6Kamers() {
+  const eindtelling = berekenEindtelling(testpand6Kamers, tarievenset, peildatum);
+  const perKamer: Record<number, { totaalPunten: number }> = {};
+  for (const [k, v] of Object.entries(eindtelling.perKamer)) perKamer[Number(k)] = { totaalPunten: v.totaalPunten };
+  return { perKamer };
+}

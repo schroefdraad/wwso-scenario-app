@@ -153,6 +153,20 @@ describe('pasScenarioToe — mutatiesoorten', () => {
     expect(() => pasScenarioToe(asIs, mutaties)).toThrow(/ongeldig pand/);
   });
 
+  it('vervang-pand negeert de as-is volledig en levert exact het meegegeven pand op', () => {
+    const asIs = maakAsIs();
+    const bewerkt = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [{ nr: 1, naam: 'Enige kamer', type: 'Privévertrek', oppervlakteM2: 50, verdieping: 0, verwarmd: true, verkoeld: false }],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+      pand: { energielabel: 'A' },
+    });
+    const mutaties: Mutatie[] = [{ soort: 'vervang-pand', pand: bewerkt }];
+    const resultaat = pasScenarioToe(asIs, mutaties);
+    expect(resultaat).toEqual(bewerkt);
+    expect(resultaat.pand.aantalKamers).toBe(1);
+  });
+
   it('muteert de oorspronkelijke as-is invoer nooit', () => {
     const asIs = maakAsIs();
     const kopieVoorAf = JSON.parse(JSON.stringify(asIs));

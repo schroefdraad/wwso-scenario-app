@@ -45,6 +45,7 @@ export function MaatregelTabel({
               {slots.map((slot, i) => (
                 <th key={i} className={styles.checkCel}>
                   {slot.naam}
+                  {slot.soort === 'handmatig' && <span className={styles.vergunningBadge}>handmatig bewerkt</span>}
                 </th>
               ))}
             </tr>
@@ -69,9 +70,10 @@ export function MaatregelTabel({
                       <td key={i} className={styles.checkCel}>
                         <input
                           type="checkbox"
-                          checked={slot.sleutels.has(k.kandidaat.sleutel)}
+                          checked={slot.soort === 'kandidaten' && slot.sleutels.has(k.kandidaat.sleutel)}
                           onChange={() => onToggle(i, k.kandidaat.sleutel)}
                           aria-label={`${k.kandidaat.omschrijving} in ${slot.naam}`}
+                          title={slot.soort === 'handmatig' ? 'Dit scenario is handmatig bewerkt — aanvinken zet het terug naar losse maatregelen.' : undefined}
                         />
                       </td>
                     ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { huidigeVersiestempel, pasScenarioToe, type KandidaatWaardering, type Pakket, type PandInvoer, type PandWaardering } from '@wwso/engine';
@@ -8,6 +8,7 @@ import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
+import { haalEnWisScenarioBewerkResultaatOp, slaScenarioBewerkStartOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import type { ScenarioSelectie } from '../../lib/deals/types';
 import { SamenvattingRij } from './SamenvattingRij';
 import { MaatregelTabel } from './MaatregelTabel';
@@ -16,15 +17,18 @@ import styles from './styles.module.css';
 const STANDAARD_NAMEN = ['Scenario 1', 'Scenario 2', 'Scenario 3'];
 
 function standaardSlots(): ScenarioSlot[] {
-  return STANDAARD_NAMEN.map((naam) => ({ naam, sleutels: new Set<string>() }));
+  return STANDAARD_NAMEN.map((naam) => ({ naam, soort: 'kandidaten' as const, sleutels: new Set<string>() }));
 }
 
 /** Vult de drie vaste slots met de scenario's van een geladen deal (taak 15); ontbrekende slots
- * blijven leeg met een standaardnaam. */
+ * blijven leeg met een standaardnaam. Een opgeslagen deal kent alleen kandidaten-scenario's —
+ * een handmatig bewerkt scenario wordt (nog) niet meeopgeslagen, zie `dealOpslaan`. */
 function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
   return STANDAARD_NAMEN.map((standaardNaam, i) => {
     const opgeslagen = scenarios[i];
-    return opgeslagen ? { naam: opgeslagen.naam, sleutels: new Set(opgeslagen.sleutels) } : { naam: standaardNaam, sleutels: new Set<string>() };
+    return opgeslagen
+      ? { naam: opgeslagen.naam, soort: 'kandidaten' as const, sleutels: new Set(opgeslagen.sleutels) }
+      : { naam: standaardNaam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
   });
 }
 
@@ -70,19 +74,34 @@ export function Vergelijking({
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
 
+  // Vangt het resultaat op van "Bewerk handmatig →" (backlog: AS-IS kopiëren naar een handmatig
+  // scenario, feedback Emma Morrison, 2026-08-21) — sessionStorage bestaat niet tijdens SSR, dus
+  // dit kan pas ná hydratie, net als de deal-brug elders in deze pagina.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const resultaat = haalEnWisScenarioBewerkResultaatOp();
+    if (!resultaat) return;
+    setSlots((prev) => prev.map((s, i) => (i === resultaat.slotIndex ? { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand } : s)));
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   const pakket0 = useScenarioPakket(pand, slots[0], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const pakket1 = useScenarioPakket(pand, slots[1], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const pakket2 = useScenarioPakket(pand, slots[2], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const berekendePakketten = [pakket0, pakket1, pakket2];
+  const heeftHandmatigSlot = slots.some((s) => s.soort === 'handmatig');
 
   function toggle(slotIndex: number, sleutel: string) {
     setSlots((prev) =>
       prev.map((s, i) => {
         if (i !== slotIndex) return s;
-        const nieuw = new Set(s.sleutels);
-        if (nieuw.has(sleutel)) nieuw.delete(sleutel);
-        else nieuw.add(sleutel);
-        return { ...s, sleutels: nieuw };
+        // Aanvinken van een losse maatregel zet een handmatig-bewerkt slot terug naar
+        // kandidaten-modus — dezelfde discipline als "Leegmaken": een expliciete gebruikersactie
+        // vervangt het vorige scenario, nooit een stille samenvoeging van twee bronnen.
+        const sleutels = s.soort === 'kandidaten' ? new Set(s.sleutels) : new Set<string>();
+        if (sleutels.has(sleutel)) sleutels.delete(sleutel);
+        else sleutels.add(sleutel);
+        return { naam: s.naam, soort: 'kandidaten' as const, sleutels };
       }),
     );
   }
@@ -95,11 +114,29 @@ export function Vergelijking({
     setSlots((prev) =>
       prev.map((s, i) => {
         if (i !== index) return s;
-        if (soort === 'leeg') return { ...s, sleutels: new Set() };
+        if (soort === 'leeg') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
         const bron = pakketten[soort];
-        return { ...s, sleutels: new Set(bron.regels.map((r) => r.kandidaat.sleutel)) };
+        return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(bron.regels.map((r) => r.kandidaat.sleutel)) };
       }),
     );
+  }
+
+  function bewerkHandmatig(index: number) {
+    slaScenarioBewerkStartOp({
+      asIsPand: pand,
+      slotIndex: index,
+      naam: slots[index].naam,
+      tarievensetPeildatum: tarievenset.peildatum,
+      kostencatalogusVersie: kostencatalogus.versie,
+    });
+    router.push(`/pand/nieuw?scenario=${index}`);
+  }
+
+  /** Alleen kandidaten-slots zijn (nu) opslaanbaar — zie de toelichting bij `dealOpslaan`. */
+  function opslaanbareScenarios(): ScenarioSelectie[] {
+    return slots
+      .filter((s): s is Extract<ScenarioSlot, { soort: 'kandidaten' }> => s.soort === 'kandidaten' && s.sleutels.size > 0)
+      .map((s) => ({ naam: s.naam, sleutels: [...s.sleutels] }));
   }
 
   function bekijkResultaat(index: number) {
@@ -114,7 +151,7 @@ export function Vergelijking({
       // as-is bewerken) — anders verschijnt deze deal bij terugkeer hier als een nieuwe.
       dealId,
       dealNaam,
-      dealScenarios: slots.filter((s) => s.sleutels.size > 0).map((s) => ({ naam: s.naam, sleutels: [...s.sleutels] })),
+      dealScenarios: opslaanbareScenarios(),
     });
     router.push('/pand/resultaat');
   }
@@ -123,7 +160,12 @@ export function Vergelijking({
     setOpslaanStatus('bezig');
     setOpslaanFoutmelding(undefined);
     try {
-      const scenarios: ScenarioSelectie[] = slots.filter((s) => s.sleutels.size > 0).map((s) => ({ naam: s.naam, sleutels: [...s.sleutels] }));
+      // Handmatig bewerkte scenario's zijn nog niet op te slaan: ze bevatten een volledig
+      // PandInvoer i.p.v. kandidaat-sleutels, en `ScenarioSelectie` (het opslagformaat, taak 15)
+      // kent alleen dat laatste. Zo'n slot wordt dus stilzwijgend NIET meegenomen in de deal —
+      // `heeftHandmatigSlot` waarschuwt daar expliciet voor bij de opslaanknop, geen stille
+      // dataverlies zonder melding (harde regel 4).
+      const scenarios = opslaanbareScenarios();
       const invoer = { naam: dealNaam, pandInvoer: pand, scenarios, versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus) };
       const deal = dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
       setDealId(deal.id);
@@ -166,12 +208,16 @@ export function Vergelijking({
             {nietBeoordeeldAantal === 1 ? 'wordt' : 'worden'} hier niet getoond.
           </p>
         )}
+        {heeftHandmatigSlot && (
+          <p className={styles.hint}>Een handmatig bewerkt scenario wordt nog niet meeopgeslagen in de deal — alleen de losse-maatregelen-scenario&apos;s.</p>
+        )}
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
           kolommen={slots.map((slot, i) => ({ naam: slot.naam, pakket: berekendePakketten[i] }))}
           onNaamWijzig={naamWijzig}
           onSnelVullen={snelVullen}
           onBekijkResultaat={bekijkResultaat}
+          onBewerkHandmatig={bewerkHandmatig}
           heeftVerwervingswaarde={verwervingswaardeEuro !== undefined}
         />
         <MaatregelTabel kandidaten={kandidaten} slots={slots} onToggle={toggle} />

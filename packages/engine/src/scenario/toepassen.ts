@@ -22,6 +22,9 @@ function pasMutatieToe(pand: PandInvoer, mutatie: Mutatie): PandInvoer {
     case 'pand-patch':
       return { ...pand, pand: { ...pand.pand, ...mutatie.patch } };
 
+    case 'vervang-pand':
+      return mutatie.pand;
+
     case 'ruimte-toevoegen': {
       if (pand.ruimtes.some((r) => r.nr === mutatie.ruimte.nr)) {
         mutatieFout(mutatie, `ruimte ${mutatie.ruimte.nr} bestaat al.`);

@@ -72,6 +72,15 @@ export interface InvoerState {
    * nieuwe aan te maken. Afwezig voor een nieuw, nog niet opgeslagen pand.
    */
   bewerktDeal?: { id: string; naam: string; scenarios: ScenarioSelectie[] };
+  /**
+   * Gezet zodra dit scherm een AS-IS-kopie is die als handmatig TO-BE-scenario bewerkt wordt
+   * (via `/pand/nieuw?scenario=<slot>`, backlog: AS-IS kopiëren naar een handmatig scenario,
+   * feedback Emma Morrison, 2026-08-21) — niet een echte nieuwe/bestaande pand-invoer. De
+   * primaire knop draagt het bewerkte pand dan terug naar het vergelijkingsscherm in plaats van
+   * naar het resultaatscherm te navigeren. Sluit elkaar uit met `bewerktDeal`: je bewerkt óf de
+   * as-is van een deal, óf een los TO-BE-scenario, nooit allebei tegelijk.
+   */
+  handmatigScenario?: { slotIndex: number; naam: string };
 }
 
 export const NIEUW_PAND_VELDEN: PandVeldenState = {

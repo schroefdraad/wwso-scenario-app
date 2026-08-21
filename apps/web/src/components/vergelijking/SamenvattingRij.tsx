@@ -20,6 +20,7 @@ export function SamenvattingRij({
   onNaamWijzig,
   onSnelVullen,
   onBekijkResultaat,
+  onBewerkHandmatig,
   heeftVerwervingswaarde,
 }: {
   asIsWaardering: PandWaardering;
@@ -27,6 +28,7 @@ export function SamenvattingRij({
   onNaamWijzig: (index: number, naam: string) => void;
   onSnelVullen: (index: number, soort: 'basis' | 'comfort' | 'maximaal' | 'leeg') => void;
   onBekijkResultaat: (index: number) => void;
+  onBewerkHandmatig: (index: number) => void;
   heeftVerwervingswaarde: boolean;
 }) {
   return (
@@ -47,6 +49,9 @@ export function SamenvattingRij({
             </button>
             <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'maximaal')}>
               Maximaal
+            </button>
+            <button type="button" className={styles.btn} onClick={() => onBewerkHandmatig(i)}>
+              Bewerk handmatig →
             </button>
             {kolom.pakket && (
               <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'leeg')}>

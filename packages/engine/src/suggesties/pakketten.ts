@@ -3,7 +3,7 @@ import type { PandInvoer } from '../types/index';
 import { pasScenarioToe } from '../scenario/index';
 import type { Mutatie } from '../scenario/index';
 import { berekenDeltaBar, berekenInvestering, berekenMarginaalRendement, berekenTerugverdientijd, telBandbreedtesOp, totaalUitOpbouw } from './kosten';
-import { extraJaarhuur, pandWaarderingVan, waardeerScenario, type RekenBudget } from './waardering';
+import { berekenEindtellingMetBudget, extraJaarhuur, pandWaarderingVan, waardeerScenario, type RekenBudget } from './waardering';
 import type { Kandidaat, KandidaatWaardering, MaatregelContext, MaatregelDefinitie, Pakket, PandWaardering, SuggestieOpties } from './types';
 
 /** Eén kandidaat plus zijn registry-definitie — de bouwsteen van zowel de algoritmische pakketopbouw als een vrij samengesteld scenario (taak 14). */
@@ -345,4 +345,48 @@ export function bouwVrijScenario(
   }
 
   return bouwPakketResultaat(naam, state, [], asIsWaardering, asIs, ctxBasis, tarievenset, peildatum, kostencatalogus, uitvoeringsjaar, verwervingswaardeEuro, budget);
+}
+
+/**
+ * Bouwt een scenario uit een VOLLEDIG handmatig bewerkt TO-BE-pand (backlog: AS-IS kopiëren
+ * naar een vrij te bewerken scenario, feedback Emma Morrison, 2026-08-21) — in tegenstelling
+ * tot `bouwVrijScenario` (dat een lijst catalogusmaatregelen toepast) is hier geen
+ * kostencatalogus-koppeling: de gebruiker bewerkte het pand rechtstreeks in het invoerscherm,
+ * niet via een geregistreerde maatregel. `investeringEuro`/`terugverdientijdJaren`/
+ * `marginaalBrutoRendementPct`/`deltaBarProcentpunt` blijven daarom expliciet `null` — een
+ * geraden investering van €0 zou een oneindig rendement suggereren (zie
+ * `berekenMarginaalRendement`), en dat is geen eerlijker antwoord dan gewoon "onbekend".
+ *
+ * De mutatielijst bestaat uit precies één `vervang-pand`-mutatie: het terugrekenen van een vrije
+ * bewerking (ruimtes toevoegen/verwijderen, keuken/sanitair wijzigen, alles) naar een minimale
+ * diff zou fragiel zijn en geen informatie toevoegen die de gebruiker nodig heeft.
+ */
+export function bouwHandmatigScenario(
+  naam: string,
+  asIs: PandInvoer,
+  bewerktPand: PandInvoer,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  budget: RekenBudget,
+): Pakket {
+  const mutaties: Mutatie[] = [{ soort: 'vervang-pand', pand: bewerktPand }];
+  const asIsWaardering = pandWaarderingVan(berekenEindtellingMetBudget(budget, asIs, tarievenset, peildatum));
+  const { waardering } = waardeerScenario(asIs, mutaties, tarievenset, peildatum, budget);
+  const extraJaarhuurEuro = extraJaarhuur(asIsWaardering, waardering);
+
+  return {
+    naam,
+    regels: [],
+    verworpen: [],
+    scenario: { naam, mutaties },
+    waardering,
+    investeringEuro: null,
+    extraJaarhuurEuro,
+    restpostEuro: 0,
+    terugverdientijdJaren: null,
+    marginaalBrutoRendementPct: null,
+    deltaBarProcentpunt: null,
+    vergunningplichtig: [],
+    ontbrekendeKosten: [],
+  };
 }
