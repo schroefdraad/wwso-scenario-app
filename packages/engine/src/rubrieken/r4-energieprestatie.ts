@@ -58,10 +58,12 @@ function bepaalFactor(
   let factor: number;
   let grondslag: string;
 
+  // energielabelIngangsdatum is bij een echt label (energielabel !== 'Bouwjaar') altijd
+  // gezet — afgedwongen door PandInvoer.superRefine.
   const ongeldigReden =
     pand.energielabel === 'Bouwjaar'
       ? 'geen-label'
-      : toetsLabelGeldigheid(pand.energielabelIngangsdatum, peildatum);
+      : toetsLabelGeldigheid(pand.energielabelIngangsdatum!, peildatum);
 
   if (ongeldigReden === null) {
     const regel = tarievenset.energielabelfactoren.find((f) => f.label === pand.energielabel);

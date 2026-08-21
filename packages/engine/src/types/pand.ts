@@ -57,7 +57,13 @@ export const Pand = z.object({
   wozOppervlak: z.number().positive(),
   coropGebied: CoropGebied,
   energielabel: Energielabel,
-  energielabelIngangsdatum: z.string().date(),
+  /**
+   * Alleen verplicht bij een echt label (gevalideerd in PandInvoer): bij `energielabel:
+   * 'Bouwjaar'` valt R4 direct terug op de bouwjaargrens en wordt dit veld nooit gelezen
+   * (zie `berekenR4`) — het onvoorwaardelijk eisen ervan zette "Doorrekenen" in de UI dan
+   * permanent op slot voor een veld dat het formulier terecht niet eens toont.
+   */
+  energielabelIngangsdatum: z.string().date().optional(),
   bouwjaar: z.number().int().min(1000).max(3000),
   soortWoning: SoortWoning,
   aantalKamers: z.number().int().min(1).max(12),

@@ -40,6 +40,14 @@ export const PandInvoer = z
       });
     }
 
+    if (data.pand.energielabel !== 'Bouwjaar' && data.pand.energielabelIngangsdatum === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['pand', 'energielabelIngangsdatum'],
+        message: "Bij een echt energielabel (niet 'Bouwjaar') is 'energielabelIngangsdatum' verplicht — die bepaalt of het label nog geldig is (§2.4.3).",
+      });
+    }
+
     data.ruimtes.forEach((ruimte, i) => {
       if (DUBBEL_GEDEELDE_RUIMTE_TYPES.includes(ruimte.type) && ruimte.aantalAdressenMetToegang === undefined) {
         ctx.addIssue({
