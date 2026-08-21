@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR1, berekenR3, berekenR4, berekenR5, berekenR6, berekenR8, berekenR11 } from '../rubrieken/index.js';
-import { berekenEindtelling } from './eindtelling.js';
-import { kleiweg179bKamer2 } from '../fixtures/golden-master/kleiweg-179b-kamer2.js';
-import { kleiweg179bKamer3 } from '../fixtures/golden-master/kleiweg-179b-kamer3.js';
-import { kleiweg179bKamer6 } from '../fixtures/golden-master/kleiweg-179b-kamer6.js';
+import { berekenR1, berekenR3, berekenR4, berekenR5, berekenR6, berekenR8, berekenR11 } from '../rubrieken/index';
+import { berekenEindtelling } from './eindtelling';
+import { kleiweg179bKamer2 } from '../fixtures/golden-master/kleiweg-179b-kamer2';
+import { kleiweg179bKamer3 } from '../fixtures/golden-master/kleiweg-179b-kamer3';
+import { kleiweg179bKamer6 } from '../fixtures/golden-master/kleiweg-179b-kamer6';
 
 const tarievenset = getTarievenset('2026-01-01');
 const peildatum = '2026-01-01';

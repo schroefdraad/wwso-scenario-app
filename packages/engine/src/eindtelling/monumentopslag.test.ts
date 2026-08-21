@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Pand } from '../types/index.js';
-import { bepaalMonumentopslag } from './monumentopslag.js';
+import type { Pand } from '../types/index';
+import { bepaalMonumentopslag } from './monumentopslag';
 
 const BASIS_PAND: Pand = {
   adres: 'Teststraat 1',

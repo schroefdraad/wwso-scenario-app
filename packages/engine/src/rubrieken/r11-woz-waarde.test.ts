@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR11 } from './r11-woz-waarde.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR11 } from './r11-woz-waarde';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 // Groot-Rijnmond: 3884 €/m² gemiddeld (tarieven.test.ts)

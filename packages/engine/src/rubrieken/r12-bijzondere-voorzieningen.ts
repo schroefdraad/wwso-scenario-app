@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import { nulPerKamer, rondAfOpKwartpunten } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer } from '../types/index';
+import { nulPerKamer, rondAfOpKwartpunten } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /**
  * R12 — Bijzondere voorzieningen (§2.12). Het beleidsboek bundelt hier drie heel verschillende

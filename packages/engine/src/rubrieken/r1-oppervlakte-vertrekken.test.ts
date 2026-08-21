@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { berekenR1 } from './r1-oppervlakte-vertrekken.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR1 } from './r1-oppervlakte-vertrekken';
+import { maakPandInvoer } from './test-utils';
 
 describe('R1 — Oppervlakte vertrekken (§2.2.1)', () => {
   it('telt 1 punt per m², met de m²-afronding van §2.1.1.1', () => {

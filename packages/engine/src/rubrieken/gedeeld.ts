@@ -1,5 +1,5 @@
-import type { PandInvoer } from '../types/index.js';
-import type { Ruimte, RuimteType } from '../types/index.js';
+import type { PandInvoer } from '../types/index';
+import type { Ruimte, RuimteType } from '../types/index';
 
 /**
  * Vertrekken (§2.2.1). Het beleidsboek: "een ruimte die uitsluitend als keuken, badkamer of

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alleKostencatalogi, getKostencatalogus, nieuwsteKostencatalogus } from './index.js';
+import { alleKostencatalogi, getKostencatalogus, nieuwsteKostencatalogus } from './index';
 
 describe('kostencatalogus — steekproeven tegen resources/Kostenkentallen_WWSO_optimalisatie.xlsx', () => {
   const catalogus = getKostencatalogus('0.1');

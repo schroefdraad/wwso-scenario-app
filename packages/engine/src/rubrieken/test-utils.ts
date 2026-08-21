@@ -11,7 +11,7 @@ import type {
   SanitairExtraVoorzieningen,
   SanitairVoorziening,
   ToewijzingEntry,
-} from '../types/index.js';
+} from '../types/index';
 
 const BASIS_PAND: Pand = {
   adres: 'Teststraat 1',

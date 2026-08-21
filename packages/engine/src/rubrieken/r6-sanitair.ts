@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer, Ruimte, SanitairVoorziening } from '../types/index.js';
-import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer, Ruimte, SanitairVoorziening } from '../types/index';
+import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /** Alle vijf eisen van §2.6.2 moeten aanwezig zijn, anders vervallen álle extra punten. */
 function voldoetAanExtraEisen(post: SanitairVoorziening): boolean {

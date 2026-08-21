@@ -1,8 +1,8 @@
 import { getTarievenset } from '@wwso/data';
 import { describe, expect, it } from 'vitest';
-import { berekenR1 } from './r1-oppervlakte-vertrekken.js';
-import { berekenR4, toetsLabelGeldigheid } from './r4-energieprestatie.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR1 } from './r1-oppervlakte-vertrekken';
+import { berekenR4, toetsLabelGeldigheid } from './r4-energieprestatie';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 const PEILDATUM = '2026-01-01';

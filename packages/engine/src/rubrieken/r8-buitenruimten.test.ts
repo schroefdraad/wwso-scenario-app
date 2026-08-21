@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR8 } from './r8-buitenruimten.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR8 } from './r8-buitenruimten';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 

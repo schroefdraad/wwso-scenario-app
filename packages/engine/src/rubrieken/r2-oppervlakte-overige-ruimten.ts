@@ -1,11 +1,11 @@
-import type { PandInvoer } from '../types/index.js';
+import type { PandInvoer } from '../types/index';
 import {
   OVERIGE_RUIMTE_TYPES,
   oppervlakteVolgensRekenregel,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
-} from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+} from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 const PUNT_PER_M2 = 0.75;
 const ZOLDER_AFTREK = 5;

@@ -1,7 +1,7 @@
 import kostencatalogus_0_1 from './0.1/kostencatalogus_0.1.json';
-import { Kostencatalogus } from './types.js';
+import { Kostencatalogus } from './types';
 
-export * from './types.js';
+export * from './types';
 
 /**
  * Eén regel per versie, net als bij de tarievensets. Bij een nieuwe import (na een bijgewerkte

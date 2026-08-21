@@ -1,11 +1,11 @@
-import type { PandInvoer } from '../types/index.js';
+import type { PandInvoer } from '../types/index';
 import {
   VERTREK_TYPES,
   oppervlakteVolgensRekenregel,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
-} from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+} from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /**
  * R1 — Oppervlakte vertrekken (§2.2.1). 1 punt per m², waarbij de afronding op **vierkante

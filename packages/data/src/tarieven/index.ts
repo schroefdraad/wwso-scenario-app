@@ -4,9 +4,9 @@ import bouwjaargrenzen_2026_01_01 from './2026-01-01/bouwjaargrenzen_2026-01-01.
 import corop_2026_01_01 from './2026-01-01/corop_2026-01-01.json';
 import voorzieningen_2026_01_01 from './2026-01-01/voorzieningen_2026-01-01.json';
 import rubrieken7_13_2026_01_01 from './2026-01-01/rubrieken7-13_2026-01-01.json';
-import { Tarievenset } from './types.js';
+import { Tarievenset } from './types';
 
-export * from './types.js';
+export * from './types';
 
 /**
  * Eén item per peildatum. Op 1 januari komt er een nieuwe dataset bij — dan wordt hier een

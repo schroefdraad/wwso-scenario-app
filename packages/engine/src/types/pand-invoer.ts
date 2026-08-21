@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { Pand } from './pand.js';
-import { Ruimte, DUBBEL_GEDEELDE_RUIMTE_TYPES } from './ruimte.js';
-import { Toewijzing } from './toewijzing.js';
-import { HandmatigePosten } from './handmatige-posten.js';
-import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from './voorzieningen.js';
+import { Pand } from './pand';
+import { Ruimte, DUBBEL_GEDEELDE_RUIMTE_TYPES } from './ruimte';
+import { Toewijzing } from './toewijzing';
+import { HandmatigePosten } from './handmatige-posten';
+import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from './voorzieningen';
 
 /**
  * De volledige invoer voor één puntentelling: pand, ruimtes, de K1-K12-toewijzingsmatrix

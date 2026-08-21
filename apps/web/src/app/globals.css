@@ -1,12 +1,51 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Ontwerptokens invoerscherm (taak 12, §7.1 van outputs/RAPPORT_taak12_2026-08-20.md) */
+  --paper: #f4f5f2;
+  --paper-raised: #ffffff;
+  --paper-sunken: #eaece6;
+  --line: #d7dace;
+  --line-strong: #b3b8a8;
+  --ink: #1d2018;
+  --ink-dim: #5a5f52;
+  --accent: #2f6a53;
+  --accent-ink: #ffffff;
+  --accent-soft: #dbe9e1;
+  --amber: #92620f;
+  --amber-soft: #f4e3c2;
+  --red: #a83a2c;
+  --red-soft: #f5dcd6;
+  --green: #2f7a49;
+  --green-soft: #dcefe0;
+  --shadow: rgba(29, 32, 24, 0.12);
+  --radius: 8px;
+  --radius-sm: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --paper: #16181a;
+    --paper-raised: #1c1f21;
+    --paper-sunken: #121314;
+    --line: #2c302b;
+    --line-strong: #3e433c;
+    --ink: #e7e8e2;
+    --ink-dim: #a1a698;
+    --accent: #6fb894;
+    --accent-ink: #0c1512;
+    --accent-soft: #1c332a;
+    --amber: #d9a44e;
+    --amber-soft: #362a10;
+    --red: #dd8c7c;
+    --red-soft: #3a1e18;
+    --green: #7bc79a;
+    --green-soft: #1a3324;
+    --shadow: rgba(0, 0, 0, 0.4);
   }
 }
 

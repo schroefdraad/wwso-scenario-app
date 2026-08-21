@@ -1,0 +1,111 @@
+'use client';
+
+import { useInvoer } from './InvoerContext';
+import { KamerChipStrip } from './KamerChipStrip';
+import { Toggle } from './Toggle';
+import styles from './styles.module.css';
+import type { InvoerState } from '../../lib/invoer/types';
+
+const AFTREK_KOLOMMEN: { key: keyof InvoerState['aftrekSituaties']; label: string; titel: string }[] = [
+  { key: 'verhuurderCriterium', label: 'Verhuurder-criterium', titel: 'Hoofdverblijf verhuurder + woonruimte/sanitair alleen via diens vertrek bereikbaar' },
+  { key: 'ruitoppervlakteOnvoldoende', label: 'Ruit < 0,75 m²', titel: 'Ruitoppervlakte hoofdwoonvertrek < 0,75 m²' },
+  { key: 'raamkozijnTeHoog', label: 'Raamkozijn > 1,60 m', titel: 'Laagste raamkozijn hoofdwoonvertrek > 1,60 m boven de vloer' },
+];
+
+export function OverigePosten() {
+  const { state, dispatch } = useInvoer();
+  const n = parseInt(state.pand.aantalKamers, 10) || 0;
+  const poortOpen = n > 0;
+
+  return (
+    <section className={styles.blok} id="sectie-overig">
+      <div className={styles.blokKop}>
+        <h2>③ Overige posten</h2>
+      </div>
+      <div className={styles.blokInhoud}>
+        {!poortOpen && (
+          <div className={styles.inertOverlay}>
+            <span>Vul eerst het aantal kamers in (sectie ①)</span>
+          </div>
+        )}
+
+        <div className={styles.postBlok}>
+          <div className={styles.postKop}>
+            <Toggle checked={state.aanbelfunctieAan} label="Aanbelfunctie met video" onChange={(v) => dispatch({ soort: 'AANBEL_GEWIJZIGD', aan: v })} />
+            <strong>Aanbelfunctie met video- en audioverbinding aanwezig (R12.2)</strong>
+          </div>
+          {state.aanbelfunctieAan && (
+            <div className={styles.postDetail}>
+              <span className={styles.hint}>Kamers met toegang</span>
+              <div style={{ marginTop: '0.3rem' }}>
+                <KamerChipStrip
+                  aantalKamers={n}
+                  geselecteerd={state.aanbelfunctieKamers}
+                  ariaLabel="Kamers met toegang tot de aanbelfunctie"
+                  onToggle={(kamer) => dispatch({ soort: 'AANBEL_KAMER_GETOGGELD', kamer })}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.postBlok}>
+          <div className={styles.postKop}>
+            <Toggle checked={state.losseLaadpaalAan} label="Losse laadpaal" onChange={(v) => dispatch({ soort: 'LAADPAAL_GEWIJZIGD', aan: v })} />
+            <strong>Losse laadpaal aanwezig (R12.3)</strong>
+          </div>
+          <span className={styles.hint}>Een laadpaal bij een gemeenschappelijke parkeerplek hoort niet hier maar bij die parkeerplek (R10).</span>
+          {state.losseLaadpaalAan && (
+            <div className={styles.postDetail}>
+              <span className={styles.hint}>Kamers met toegang</span>
+              <div style={{ marginTop: '0.3rem' }}>
+                <KamerChipStrip
+                  aantalKamers={n}
+                  geselecteerd={state.losseLaadpaalKamers}
+                  ariaLabel="Kamers met toegang tot de losse laadpaal"
+                  onToggle={(kamer) => dispatch({ soort: 'LAADPAAL_KAMER_GETOGGELD', kamer })}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.postBlok}>
+          <strong>Aftrekpunten (§2.13)</strong>
+          <div style={{ overflowX: 'auto' }}>
+            <table className={styles.aftrek}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left' }}>Kamer</th>
+                  {AFTREK_KOLOMMEN.map((k) => (
+                    <th key={k.key} title={k.titel}>
+                      {k.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: n }, (_, i) => i + 1).map((kamer) => (
+                  <tr key={kamer}>
+                    <td style={{ textAlign: 'left' }}>Kamer {kamer}</td>
+                    {AFTREK_KOLOMMEN.map((k) => (
+                      <td key={k.key}>
+                        <input
+                          type="checkbox"
+                          checked={state.aftrekSituaties[k.key].includes(kamer)}
+                          aria-label={`${k.label}, kamer ${kamer}`}
+                          onChange={() => dispatch({ soort: 'AFTREKSITUATIE_GETOGGELD', situatie: k.key, kamer })}
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <span className={styles.hint}>Elke situatie kost 4 punten per kamer; een kamer die in twee kolommen staat verliest 8 punten.</span>
+        </div>
+      </div>
+    </section>
+  );
+}

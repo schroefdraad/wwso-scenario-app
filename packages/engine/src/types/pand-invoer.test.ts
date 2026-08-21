@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { PandInvoer, RuimteType } from './index.js';
-import { testpand6Kamers } from '../fixtures/testpand-6kamers.js';
+import { PandInvoer, RuimteType } from './index';
+import { testpand6Kamers } from '../fixtures/testpand-6kamers';
 
 describe('PandInvoer — testpand van 6 kamers', () => {
   it('parseert zonder fouten', () => {

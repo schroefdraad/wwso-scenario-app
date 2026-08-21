@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer, ParkeerplekType } from '../types/index.js';
-import { kamersPerRuimte, nulPerKamer, rondAfOpKwartpunten } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer, ParkeerplekType } from '../types/index';
+import { kamersPerRuimte, nulPerKamer, rondAfOpKwartpunten } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 function puntenVoorType(type: ParkeerplekType, tarievenset: Tarievenset): number {
   const t = tarievenset.parkeren;

@@ -1,7 +1,7 @@
 import { getTarievenset } from '@wwso/data';
 import { describe, expect, it } from 'vitest';
-import { bepaalAanrechtBasispunten, berekenR5 } from './r5-keuken.js';
-import { BASISEISEN_GEHAALD, maakKeuken, maakPandInvoer } from './test-utils.js';
+import { bepaalAanrechtBasispunten, berekenR5 } from './r5-keuken';
+import { BASISEISEN_GEHAALD, maakKeuken, maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 const banden = tarievenset.keukenAanrechtBasispunten;

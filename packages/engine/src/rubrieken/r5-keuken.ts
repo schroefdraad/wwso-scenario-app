@@ -1,7 +1,7 @@
 import type { KeukenAanrechtBand, Tarievenset } from '@wwso/data';
-import type { Keuken, PandInvoer } from '../types/index.js';
-import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { Keuken, PandInvoer } from '../types/index';
+import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /** Alle vijf basiseisen van §2.5.1 moeten aanwezig zijn, anders vervalt de hele rubriek voor deze keuken. */
 function voldoetAanBasiseisen(keuken: Keuken): boolean {

@@ -1,4 +1,4 @@
-import type { PandInvoer } from '../../types/index.js';
+import type { PandInvoer } from '../../types/index';
 
 /**
  * Golden-master scenario — Kleiweg 179-B, Rotterdam, "2e slaapkamer" (16 m²).

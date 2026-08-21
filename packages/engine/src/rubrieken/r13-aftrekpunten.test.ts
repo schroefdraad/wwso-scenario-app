@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR13 } from './r13-aftrekpunten.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR13 } from './r13-aftrekpunten';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 

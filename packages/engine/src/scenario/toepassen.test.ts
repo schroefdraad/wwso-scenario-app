@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenEindtelling } from '../eindtelling/index.js';
-import { maakPandInvoer, BASISEISEN_GEHAALD, GEEN_KEUKEN_EXTRA } from '../rubrieken/test-utils.js';
-import { pasScenarioToe } from './toepassen.js';
-import type { Mutatie } from './types.js';
+import { berekenEindtelling } from '../eindtelling/index';
+import { maakPandInvoer, BASISEISEN_GEHAALD, GEEN_KEUKEN_EXTRA } from '../rubrieken/test-utils';
+import { pasScenarioToe } from './toepassen';
+import type { Mutatie } from './types';
 
 const tarievenset = getTarievenset('2026-01-01');
 

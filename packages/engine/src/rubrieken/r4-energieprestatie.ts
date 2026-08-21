@@ -1,12 +1,12 @@
 import type { Tarievenset } from '@wwso/data';
-import type { MonumentStatus, PandInvoer } from '../types/index.js';
+import type { MonumentStatus, PandInvoer } from '../types/index';
 import {
   ongerondeVertrekOppervlakteM2,
   rondAfOp2Decimalen,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
-} from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+} from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /** Monumentsoorten die de uitzondering van §2.4.6.1 krijgen. Beschermd dorpsgezicht hoort er niet bij. */
 const MONUMENT_ZONDER_MINPUNTEN: readonly MonumentStatus[] = ['Rijks', 'Gemeente', 'Provinciaal'];

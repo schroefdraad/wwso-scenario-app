@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { berekenR3 } from './r3-verwarming.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR3 } from './r3-verwarming';
+import { maakPandInvoer } from './test-utils';
 
 const vertrek = (nr: number, opts: { verwarmd: boolean; verkoeld: boolean }) => ({
   nr,

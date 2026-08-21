@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import { rondAfOp2Decimalen, rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer } from '../types/index';
+import { rondAfOp2Decimalen, rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /**
  * R8 — Buitenruimten (§2.8).

@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import { rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer } from '../types/index';
+import { rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /**
  * R9 — Gemeenschappelijke vertrekken, overige ruimten en voorzieningen (§2.9).

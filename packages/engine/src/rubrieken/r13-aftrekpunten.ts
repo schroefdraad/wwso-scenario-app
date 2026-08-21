@@ -1,7 +1,7 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import { rondAfOpKwartpunten, ruimtesPerKamer, vertrekOppervlakteM2 } from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer } from '../types/index';
+import { rondAfOpKwartpunten, ruimtesPerKamer, vertrekOppervlakteM2 } from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 /**
  * R13 — Aftrekpunten (§2.13). Vier situaties, elk onafhankelijk −4 punten — een kamer die aan

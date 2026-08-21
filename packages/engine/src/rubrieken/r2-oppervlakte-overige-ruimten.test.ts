@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { berekenR2 } from './r2-oppervlakte-overige-ruimten.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR2 } from './r2-oppervlakte-overige-ruimten';
+import { maakPandInvoer } from './test-utils';
 
 describe('R2 — Oppervlakte overige ruimten (§2.2.2)', () => {
   it('telt 0,75 punt per m² over de afgeronde oppervlakte', () => {

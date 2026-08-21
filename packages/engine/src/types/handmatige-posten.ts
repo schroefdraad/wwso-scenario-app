@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { KamerNummer } from './toewijzing.js';
+import { KamerNummer } from './toewijzing';
 
 /**
  * R7 — Woonvoorzieningen voor personen met een handicap (§2.7). Ontbreekt volledig in

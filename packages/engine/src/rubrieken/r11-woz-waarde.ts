@@ -1,6 +1,6 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index.js';
-import type { RubriekResultaat } from './types.js';
+import type { PandInvoer } from '../types/index';
+import type { RubriekResultaat } from './types';
 
 export interface WozUitkomst {
   punten: number;

@@ -1,12 +1,12 @@
-import type { PandInvoer, RuimteType } from '../types/index.js';
+import type { PandInvoer, RuimteType } from '../types/index';
 import {
   OVERIGE_RUIMTE_TYPES,
   VERKEERSRUIMTE_TYPES,
   VERTREK_TYPES,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
-} from './gedeeld.js';
-import type { RubriekResultaat } from './types.js';
+} from './gedeeld';
+import type { RubriekResultaat } from './types';
 
 const PUNTEN_PER_VERWARMD_VERTREK = 2;
 const PUNTEN_PER_VERWARMDE_OVERIGE_RUIMTE = 1;

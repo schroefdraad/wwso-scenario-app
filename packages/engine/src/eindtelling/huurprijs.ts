@@ -1,5 +1,5 @@
 import type { Tarievenset } from '@wwso/data';
-import { rondAfOp2Decimalen } from '../rubrieken/gedeeld.js';
+import { rondAfOp2Decimalen } from '../rubrieken/gedeeld';
 
 export interface HuurprijsUitkomst {
   maxHuurEuro: number;

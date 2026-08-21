@@ -1,4 +1,4 @@
-import type { PandInvoer } from '../types/index.js';
+import type { PandInvoer } from '../types/index';
 
 /**
  * Synthetisch testpand, niet uit de xlsx overgenomen: wwso.xlsx bevat geen enkel ingevuld

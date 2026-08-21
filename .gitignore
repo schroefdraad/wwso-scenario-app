@@ -42,3 +42,6 @@ yarn-error.log*
 
 # Supabase lokale ontwikkelbestanden
 .supabase/
+
+.vercel
+.env*

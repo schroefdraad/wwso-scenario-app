@@ -1,0 +1,856 @@
+.page {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--paper-raised);
+  border-bottom: 1px solid var(--line);
+  padding: 0.6rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+.titel {
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.sub {
+  color: var(--ink-dim);
+  font-size: 0.82rem;
+}
+
+.sections {
+  display: flex;
+  gap: 0.3rem;
+  margin-left: 0.5rem;
+}
+
+.sectionLink {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 0.82rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sectionLink:hover {
+  background: var(--paper-sunken);
+}
+
+.badge {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.68rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--paper-sunken);
+  color: var(--ink-dim);
+}
+
+.badgeOk {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.badgeWarn {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.puntenstrip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.82rem;
+  background: var(--paper-sunken);
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+}
+
+.btn {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.btn:hover {
+  background: var(--paper-sunken);
+}
+
+.btnPrimair {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btnPrimair:hover {
+  filter: brightness(1.06);
+}
+
+.btnPrimair:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.btnKlein {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.76rem;
+  border-radius: 5px;
+}
+
+.btnGhost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.btnGhost:hover {
+  background: var(--paper-sunken);
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.4rem 1.4rem 6rem;
+}
+
+.blok {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  position: relative;
+  scroll-margin-top: 4.5rem;
+}
+
+.blokKop {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.blokKop h2 {
+  font-size: 1.02rem;
+  margin: 0;
+}
+
+.telling {
+  color: var(--ink-dim);
+  font-size: 0.82rem;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+}
+
+.blokInhoud {
+  padding: 1.1rem 1.2rem 1.3rem;
+  position: relative;
+}
+
+.inertOverlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  font-size: 0.88rem;
+  color: var(--ink-dim);
+  text-align: center;
+  padding: 1rem;
+}
+
+.inertOverlay span {
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+}
+
+.pandGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.8rem 1rem;
+}
+
+.veld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.veld label {
+  font-size: 0.74rem;
+  color: var(--ink-dim);
+}
+
+.veldGate label {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.veldGate input {
+  border-color: var(--accent);
+  font-weight: 700;
+  font-size: 1.05rem;
+  width: 6rem;
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  margin-top: 0.15rem;
+}
+
+:global(input),
+:global(select) {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.45rem;
+  font: inherit;
+  color: inherit;
+}
+
+:global(input:focus-visible),
+:global(select:focus-visible),
+:global(button:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.toggle {
+  position: relative;
+  width: 2.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.toggle input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.toggleTrack {
+  position: absolute;
+  inset: 0;
+  background: var(--line-strong);
+  border-radius: 999px;
+  transition: background 0.15s;
+  pointer-events: none;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: var(--paper-raised);
+  border-radius: 50%;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 2px var(--shadow);
+  pointer-events: none;
+}
+
+.toggle input:checked ~ .toggleTrack {
+  background: var(--accent);
+}
+
+.toggle input:checked ~ .toggleThumb {
+  transform: translateX(1rem);
+}
+
+/* Grid */
+
+.gridScroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.grid {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+}
+
+.grid thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper-sunken);
+  z-index: 2;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+
+.grid td {
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.grid tbody tr:hover {
+  background: var(--paper-sunken);
+}
+
+.rijLeeg {
+  background: var(--amber-soft);
+}
+
+.colNr {
+  width: 2.4rem;
+  color: var(--ink-dim);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.colNaam input {
+  width: 11rem;
+}
+
+.colType select {
+  width: 11.5rem;
+}
+
+.colM2 input {
+  width: 4.4rem;
+  text-align: right;
+}
+
+.colVerd input {
+  width: 3rem;
+  text-align: right;
+}
+
+.colBool {
+  text-align: center;
+  width: 2.6rem;
+}
+
+.colAdr {
+  width: 5.4rem;
+}
+
+.colAdr input {
+  width: 3.6rem;
+}
+
+.overgenomen {
+  font-size: 0.65rem;
+  font-style: italic;
+  color: var(--ink-dim);
+  display: block;
+}
+
+.colToegang {
+  min-width: 280px;
+}
+
+.colVoorz {
+  width: 5.4rem;
+}
+
+.colActies {
+  width: 3.6rem;
+  text-align: right;
+}
+
+.chipstrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.22rem;
+  align-items: center;
+}
+
+.chip {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  min-width: 1.7rem;
+  height: 1.7rem;
+  padding: 0 0.35rem;
+  font-size: 0.72rem;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.chip:hover {
+  border-color: var(--accent);
+}
+
+.chipAlle {
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.chipOn {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.colToegangLeeg {
+  background: var(--amber-soft);
+  border-radius: 6px;
+}
+
+.voorzBadges {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.voorzBadgeBtn {
+  border: 1px dashed var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  width: 1.9rem;
+  height: 1.9rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voorzBadgeBtnActief {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.gridFooter {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.2rem 0.2rem;
+  flex-wrap: wrap;
+}
+
+.quickadd {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.tellerRechts {
+  margin-left: auto;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+
+/* Toewijzingsoverzicht */
+
+.overzicht {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-top: 1rem;
+}
+
+.overzichtSummary {
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.overzichtSummary::-webkit-details-marker {
+  display: none;
+}
+
+.overzichtWarn {
+  font-weight: 400;
+  color: var(--amber);
+  font-size: 0.8rem;
+}
+
+.overzichtInhoud {
+  padding: 0 1rem 1rem;
+  overflow-x: auto;
+}
+
+.matrix {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.matrix th,
+.matrix td {
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+}
+
+.matrixRownaam {
+  text-align: left !important;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.matrix thead th {
+  background: var(--paper-sunken);
+}
+
+.matrixCel {
+  cursor: pointer;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  color: var(--ink-dim);
+  background: none;
+  border: 1px solid var(--line);
+}
+
+.matrixCelOn {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.matrixRijLeeg td {
+  background: var(--amber-soft);
+}
+
+/* Waarschuwingen */
+
+.waarschuwingen {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.waarschuwingen li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  background: var(--amber-soft);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+.waarschuwingen li button {
+  margin-left: auto;
+}
+
+.geenWaarschuwingen {
+  color: var(--green);
+  font-size: 0.84rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+/* Overige posten */
+
+.postBlok {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.postKop {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.postDetail {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+}
+
+.aftrek {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-top: 0.4rem;
+}
+
+.aftrek th,
+.aftrek td {
+  border: 1px solid var(--line);
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+}
+
+.aftrek thead th {
+  background: var(--paper-sunken);
+  font-weight: 600;
+  font-size: 0.76rem;
+}
+
+/* Drawer */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 22, 18, 0.35);
+  z-index: 40;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(540px, 92vw);
+  background: var(--paper-raised);
+  border-left: 1px solid var(--line);
+  z-index: 41;
+  box-shadow: -8px 0 24px var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerKop {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.drawerKop h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.drawerBody {
+  padding: 1rem 1.2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.segmenten {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.segmentBtn {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.segmentBtnAan {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.segmentBtnActief {
+  box-shadow: 0 0 0 2px var(--ink) inset;
+  font-weight: 600;
+}
+
+.poortBlok {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 0.8rem 0.9rem;
+  margin: 0.7rem 0 1rem;
+}
+
+.poortMaster {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  font-size: 0.86rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--line);
+}
+
+.poortEis {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.28rem 0;
+  font-size: 0.84rem;
+}
+
+.poortStatus {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.poortStatusOk {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.poortStatusFout {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.extraGroep {
+  margin-bottom: 0.9rem;
+}
+
+.extraGroep h4 {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  margin: 0 0 0.4rem;
+}
+
+.extraRij {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.22rem 0;
+  font-size: 0.84rem;
+}
+
+.extraBlokDim {
+  opacity: 0.45;
+}
+
+.extraCount {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+  margin-top: 0.3rem;
+}
+
+.veldrij {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.veldrij label {
+  font-size: 0.84rem;
+  min-width: 9rem;
+}
+
+.veldrij input,
+.veldrij select {
+  flex: 1;
+  max-width: 12rem;
+}
+
+.drawerFooter {
+  padding: 0.9rem 1.2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+#toastRegion,
+.toastRegion {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.toast {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.84rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.toast button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-family: inherit;
+}
+
+@media (max-width: 780px) {
+  .pandGrid {
+    grid-template-columns: 1fr;
+  }
+}

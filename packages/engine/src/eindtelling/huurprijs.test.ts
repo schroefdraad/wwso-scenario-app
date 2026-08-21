@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { bepaalMaxHuur } from './huurprijs.js';
+import { bepaalMaxHuur } from './huurprijs';
 
 const tarievenset = getTarievenset('2026-01-01');
 

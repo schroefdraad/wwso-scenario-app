@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getTarievenset } from './index.js';
+import { getTarievenset } from './index';
 
 describe('getTarievenset — steekproeven tegen resources/wwso.xlsx, tab Tabellen', () => {
   const set = getTarievenset('2026-01-01');

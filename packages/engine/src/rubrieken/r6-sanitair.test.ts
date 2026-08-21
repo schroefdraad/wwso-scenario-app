@@ -1,7 +1,7 @@
 import { getTarievenset } from '@wwso/data';
 import { describe, expect, it } from 'vitest';
-import { berekenR6 } from './r6-sanitair.js';
-import { GEEN_SANITAIR_EXTRA, maakPandInvoer, maakSanitair } from './test-utils.js';
+import { berekenR6 } from './r6-sanitair';
+import { GEEN_SANITAIR_EXTRA, maakPandInvoer, maakSanitair } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 

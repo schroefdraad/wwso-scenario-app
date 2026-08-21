@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR10 } from './r10-parkeren.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR10 } from './r10-parkeren';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 

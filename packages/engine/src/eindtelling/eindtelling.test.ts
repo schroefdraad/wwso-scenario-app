@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenEindtelling } from './eindtelling.js';
-import { bepaalMaxHuur } from './huurprijs.js';
-import { maakPandInvoer } from '../rubrieken/test-utils.js';
+import { berekenEindtelling } from './eindtelling';
+import { bepaalMaxHuur } from './huurprijs';
+import { maakPandInvoer } from '../rubrieken/test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 const peildatum = '2026-01-01';

@@ -1,4 +1,4 @@
-import type { Pand } from '../types/index.js';
+import type { Pand } from '../types/index';
 
 export interface MonumentUitkomst {
   /** Percentage-opslag op de maximale huurprijs (0, 5, 15 of 35). */

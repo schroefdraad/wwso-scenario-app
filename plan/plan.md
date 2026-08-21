@@ -28,7 +28,7 @@ Loopt een taak zonder dat merkteken toch structureel vast? Dat is meestal een te
 
 ## Fase 3 — Applicatie
 
-- [ ] Taak 12: Invoerscherm inclusief kamertoewijzing — **`⬆ Opus`** voor het UX-voorstel (40 ruimten × 12 kamers), Sonnet voor het bouwen
+- [x] Taak 12: Invoerscherm inclusief kamertoewijzing. UX-voorstel door Opus (chip-per-rij i.p.v. matrix, gevalideerd met een HTML-prototype), implementatie door Sonnet. Zie `outputs/RAPPORT_taak12_2026-08-20.md` — inclusief een belangrijke bevinding: Turbopack kan `.js`-gesuffixte relatieve imports niet naar `.ts` herleiden, gefixt door alle relatieve imports in `packages/engine`/`packages/data` (84 bestanden) van dat achtervoegsel te ontdoen.
 - [ ] Taak 13: Resultaatscherm met opbouw per rubriek en de vier controles
 - [ ] Taak 14: Scenariovergelijking met directe hertelling in de browser
 - [ ] Taak 15: Opslaan en laden van deals met versiestempel

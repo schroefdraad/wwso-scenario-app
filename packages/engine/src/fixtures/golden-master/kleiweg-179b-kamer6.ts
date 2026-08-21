@@ -1,5 +1,5 @@
-import type { PandInvoer } from '../../types/index.js';
-import { kleiweg179bKamer2 } from './kleiweg-179b-kamer2.js';
+import type { PandInvoer } from '../../types/index';
+import { kleiweg179bKamer2 } from './kleiweg-179b-kamer2';
 
 /**
  * Golden-master scenario — Kleiweg 179-B, Rotterdam, "6e slaapkamer" (11,3 m²).

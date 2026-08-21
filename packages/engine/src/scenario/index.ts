@@ -1,2 +1,2 @@
-export * from './types.js';
-export * from './toepassen.js';
+export * from './types';
+export * from './toepassen';

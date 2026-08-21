@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR7 } from './r7-woonvoorzieningen-handicap.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR7 } from './r7-woonvoorzieningen-handicap';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getTarievenset } from '@wwso/data';
-import { berekenR12 } from './r12-bijzondere-voorzieningen.js';
-import { maakPandInvoer } from './test-utils.js';
+import { berekenR12 } from './r12-bijzondere-voorzieningen';
+import { maakPandInvoer } from './test-utils';
 
 const tarievenset = getTarievenset('2026-01-01');
 
