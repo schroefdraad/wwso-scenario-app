@@ -31,6 +31,7 @@ export type InvoerActie =
   | { soort: 'SCAFFOLD_PRIVEVERTREKKEN' }
   | { soort: 'VOORBEELDPAND_GELADEN' }
   | { soort: 'ALLES_GEWIST' }
+  | { soort: 'CONCEPT_GELADEN'; state: InvoerState }
   | { soort: 'AANBEL_GEWIJZIGD'; aan: boolean }
   | { soort: 'AANBEL_KAMER_GETOGGELD'; kamer: 'alle' | number }
   | { soort: 'LAADPAAL_GEWIJZIGD'; aan: boolean }
@@ -196,6 +197,9 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
     case 'ALLES_GEWIST':
       return { ...NIEUWE_INVOERSTATE };
 
+    case 'CONCEPT_GELADEN':
+      return actie.state;
+
     case 'AANBEL_GEWIJZIGD':
       return { ...state, aanbelfunctieAan: actie.aan, aanbelfunctieKamers: actie.aan ? Array.from({ length: aantalKamers(state) }, (_, i) => i + 1) : [] };
 
@@ -270,7 +274,7 @@ function voorbeeldpandNaarState(): InvoerState {
       wozOppervlak: String(p.pand.wozOppervlak),
       coropGebied: p.pand.coropGebied,
       energielabel: p.pand.energielabel,
-      energielabelIngangsdatum: p.pand.energielabelIngangsdatum,
+      energielabelIngangsdatum: p.pand.energielabelIngangsdatum ?? '',
       bouwjaar: String(p.pand.bouwjaar),
       monument: p.pand.monument,
       huurovereenkomstDatum: p.pand.huurovereenkomstDatum ?? '',
