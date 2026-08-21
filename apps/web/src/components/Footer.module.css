@@ -1,0 +1,52 @@
+.footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  background: var(--paper-sunken);
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+
+.versieKnop {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.versieKnop:hover {
+  color: var(--ink);
+}
+
+.log {
+  padding: 0 1rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 640px;
+}
+
+.logEntry ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.logEntry li {
+  margin-bottom: 0.15rem;
+  line-height: 1.4;
+}
+
+.logKop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--ink);
+}
+
+.logKop strong {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+}
