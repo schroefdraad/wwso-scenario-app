@@ -1,0 +1,283 @@
+.wrap {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+  min-height: 100vh;
+}
+
+.kop {
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.kop h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.kopSub {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.dealOpslaan {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.dealNaamVeld {
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  width: 14rem;
+}
+
+.opslaanGelukt {
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.opslaanFout {
+  color: var(--red);
+  font-size: 0.8rem;
+  max-width: 20rem;
+}
+
+.dealenLink {
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.dealenLink:hover {
+  text-decoration: underline;
+}
+
+.main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.4rem;
+}
+
+.hint {
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  margin: 0 0 1rem;
+}
+
+/* Samenvatting */
+
+.samenvatting {
+  display: grid;
+  grid-template-columns: 12rem repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.4rem;
+}
+
+.samenvattingCel {
+  background: var(--paper-raised);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.samenvattingLabel {
+  background: var(--paper-sunken);
+  color: var(--ink-dim);
+  font-size: 0.76rem;
+  display: flex;
+  align-items: center;
+}
+
+.samenvattingKop {
+  background: var(--paper-sunken);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.samenvattingKopNaam {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.samenvattingKopNaam input {
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0.1rem 0.2rem;
+  width: 8rem;
+  color: var(--ink);
+}
+
+.samenvattingWaarde {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+}
+
+.samenvattingWaardePositief {
+  color: var(--accent);
+}
+
+.samenvattingWaardeNegatief {
+  color: var(--red);
+}
+
+.snelStart {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.74rem;
+  color: var(--ink);
+  font-family: inherit;
+}
+
+.btn:hover {
+  background: var(--paper-sunken);
+}
+
+.btnPrimair {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btnLink {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: inherit;
+}
+
+/* Maatregeltabel */
+
+.blok {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.blokKop {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.blokKop h2 {
+  font-size: 1rem;
+  margin: 0 0 0.2rem;
+}
+
+.tabelScroll {
+  overflow-x: auto;
+}
+
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabel thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper-sunken);
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.rubriekRij td {
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  background: var(--paper-sunken);
+  color: var(--ink-dim);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.maatregelRij td {
+  padding: 0.4rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.maatregelOmschrijving {
+  max-width: 26rem;
+}
+
+.maatregelId {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  color: var(--ink-dim);
+  font-size: 0.76rem;
+  margin-right: 0.4rem;
+}
+
+.vergunningBadge {
+  display: inline-block;
+  font-size: 0.68rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  margin-left: 0.4rem;
+}
+
+.tvtCel {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.checkCel {
+  text-align: center;
+}
+
+.checkCel input {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+
+.checkCelUit {
+  color: var(--ink-dim);
+  text-align: center;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+}
