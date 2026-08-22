@@ -71,7 +71,15 @@ export function haalEnWisScenarioBewerkResultaatOp(): ScenarioBewerkResultaat | 
 
 const VergelijkingSlotSnapshot = z.discriminatedUnion('soort', [
   z.object({ naam: z.string(), soort: z.literal('kandidaten'), sleutels: z.array(z.string()) }),
-  z.object({ naam: z.string(), soort: z.literal('handmatig'), pand: PandInvoer }),
+  z.object({
+    naam: z.string(),
+    soort: z.literal('handmatig'),
+    pand: PandInvoer,
+    /** Sleutels uit de kandidatenlijst tegen DIT bewerkte pand (backlog 2026-08-22: handmatig
+     * scenario + standaardmaatregelen) — niet de gedeelde as-is-lijst. */
+    sleutels: z.array(z.string()),
+    handmatigeInvesteringEuro: z.number(),
+  }),
 ]);
 
 const VergelijkingSnapshot = z.object({

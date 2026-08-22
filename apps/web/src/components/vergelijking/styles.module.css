@@ -77,6 +77,30 @@
   margin: 0 0 1rem;
 }
 
+.handmatigInvesteringVeld {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  margin-top: 0.6rem;
+}
+
+.handmatigInvesteringVeld input {
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  width: 8rem;
+}
+
+.handmatigBlok + .handmatigBlok {
+  margin-top: 1rem;
+}
+
 /* Samenvatting */
 
 .samenvatting {

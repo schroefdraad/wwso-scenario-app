@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { huidigeVersiestempel, pasScenarioToe, type KandidaatWaardering, type Pakket, type PandInvoer, type PandWaardering } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
-import { useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
+import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import {
@@ -18,6 +18,7 @@ import {
 import type { ScenarioSelectie } from '../../lib/deals/types';
 import { SamenvattingRij } from './SamenvattingRij';
 import { MaatregelTabel } from './MaatregelTabel';
+import { HandmatigMaatregelen } from './HandmatigMaatregelen';
 import styles from './styles.module.css';
 
 const STANDAARD_NAMEN = ['Scenario 1', 'Scenario 2', 'Scenario 3'];
@@ -41,7 +42,11 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
 /** Herstelt de sessionStorage-snapshot (array van sleutels, JSON-serialiseerbaar) terug naar
  * `ScenarioSlot[]` (Set van sleutels) — het spiegelbeeld van de serialisatie in `bewerkHandmatig`. */
 function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] {
-  return slots.map((s) => (s.soort === 'kandidaten' ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) } : s));
+  return slots.map((s) =>
+    s.soort === 'kandidaten'
+      ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) }
+      : { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: new Set(s.sleutels), handmatigeInvesteringEuro: s.handmatigeInvesteringEuro },
+  );
 }
 
 export interface GeladenDeal {
@@ -103,7 +108,15 @@ export function Vergelijking({
     const snapshot = haalEnWisVergelijkingSnapshotOp();
     if (!resultaat) return;
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
-    setSlots(basisSlots.map((s, i) => (i === resultaat.slotIndex ? { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand } : s)));
+    setSlots(
+      basisSlots.map((s, i) => {
+        if (i !== resultaat.slotIndex) return s;
+        // Was dit slot al handmatig bewerkt (bijv. de kamer nog wat verder aangepast), dan blijven
+        // eerder gekozen maatregelen/investering behouden — alleen het pand zelf wordt vervangen.
+        const behoud = s.soort === 'handmatig' ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro } : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0 };
+        return { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand, ...behoud };
+      }),
+    );
     if (snapshot) {
       setDealId(snapshot.dealId);
       setDealNaam(snapshot.dealNaam);
@@ -112,9 +125,17 @@ export function Vergelijking({
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const pakket0 = useScenarioPakket(pand, slots[0], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
-  const pakket1 = useScenarioPakket(pand, slots[1], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
-  const pakket2 = useScenarioPakket(pand, slots[2], kandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
+  // Drie expliciete aanroepen (rules-of-hooks: geen .map over een hook), zelfde patroon als de
+  // useScenarioPakket-aanroepen eronder. `null` voor een kandidaten-slot, anders de maatregelen
+  // die specifiek op DAT bewerkte pand van toepassing zijn (backlog 2026-08-22).
+  const handmatigeKandidaten0 = useHandmatigeKandidaten(slots[0], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidaten1 = useHandmatigeKandidaten(slots[1], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidaten2 = useHandmatigeKandidaten(slots[2], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidatenPerSlot = [handmatigeKandidaten0, handmatigeKandidaten1, handmatigeKandidaten2];
+
+  const pakket0 = useScenarioPakket(pand, slots[0], kandidaten, handmatigeKandidaten0, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
+  const pakket1 = useScenarioPakket(pand, slots[1], kandidaten, handmatigeKandidaten1, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
+  const pakket2 = useScenarioPakket(pand, slots[2], kandidaten, handmatigeKandidaten2, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const berekendePakketten = [pakket0, pakket1, pakket2];
   const heeftHandmatigSlot = slots.some((s) => s.soort === 'handmatig');
 
@@ -131,6 +152,25 @@ export function Vergelijking({
         return { naam: s.naam, soort: 'kandidaten' as const, sleutels };
       }),
     );
+  }
+
+  /** Zet een maatregel aan/uit op een handmatig-slot ZONDER het bewerkte pand te verliezen — in
+   * tegenstelling tot `toggle()`, die een handmatig-slot juist terugzet naar kandidaten-modus
+   * (dat blijft de manier om een handmatige bewerking helemaal los te laten). */
+  function toggleHandmatigeMaatregel(slotIndex: number, sleutel: string) {
+    setSlots((prev) =>
+      prev.map((s, i) => {
+        if (i !== slotIndex || s.soort !== 'handmatig') return s;
+        const sleutels = new Set(s.sleutels);
+        if (sleutels.has(sleutel)) sleutels.delete(sleutel);
+        else sleutels.add(sleutel);
+        return { ...s, sleutels };
+      }),
+    );
+  }
+
+  function zetHandmatigeInvestering(slotIndex: number, euro: number) {
+    setSlots((prev) => prev.map((s, i) => (i === slotIndex && s.soort === 'handmatig' ? { ...s, handmatigeInvesteringEuro: euro } : s)));
   }
 
   function naamWijzig(index: number, naam: string) {
@@ -153,7 +193,11 @@ export function Vergelijking({
     slaVergelijkingSnapshotOp({
       dealId,
       dealNaam,
-      slots: slots.map((s) => (s.soort === 'kandidaten' ? { naam: s.naam, soort: 'kandidaten', sleutels: [...s.sleutels] } : s)),
+      slots: slots.map((s) =>
+        s.soort === 'kandidaten'
+          ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: [...s.sleutels] }
+          : { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro },
+      ),
     });
     slaScenarioBewerkStartOp({
       asIsPand: pand,
@@ -255,6 +299,22 @@ export function Vergelijking({
           heeftVerwervingswaarde={verwervingswaardeEuro !== undefined}
         />
         <MaatregelTabel kandidaten={kandidaten} slots={slots} onToggle={toggle} />
+        {slots.map((slot, i) => {
+          if (slot.soort !== 'handmatig') return null;
+          const resultaat = handmatigeKandidatenPerSlot[i];
+          return (
+            <div key={i} className={styles.handmatigBlok}>
+              <HandmatigMaatregelen
+                slotNaam={slot.naam}
+                kandidaten={resultaat?.kandidaten ?? []}
+                geselecteerd={slot.sleutels}
+                handmatigeInvesteringEuro={slot.handmatigeInvesteringEuro}
+                onToggle={(sleutel) => toggleHandmatigeMaatregel(i, sleutel)}
+                onInvesteringWijzig={(euro) => zetHandmatigeInvestering(i, euro)}
+              />
+            </div>
+          );
+        })}
       </main>
     </div>
   );

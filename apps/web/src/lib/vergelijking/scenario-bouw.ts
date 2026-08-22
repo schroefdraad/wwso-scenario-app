@@ -1,7 +1,9 @@
 import {
   analyseerMarge,
   berekenEindtelling,
+  bouwHandmatigScenarioMetMaatregelen,
   bouwVrijScenario,
+  genereerEnWaardeerKandidaten,
   nieuwBudget,
   standaardRegistry,
   type KandidaatWaardering,
@@ -50,6 +52,68 @@ export function bouwScenarioUitSleutels(
     asIs,
     regels,
     ctxBasis,
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    kostencatalogus.aannames.prijspeilJaar,
+    verwervingswaardeEuro,
+    nieuwBudget(2000),
+  );
+}
+
+/**
+ * Genereert en waardeert de maatregelen die specifiek van toepassing zijn op een handmatig
+ * bewerkt TO-BE-pand (backlog 2026-08-22: "handmatig een extra kamer realiseren en dan verder
+ * maatregelen toevoegen") — bijv. airco of een kitchenette in een net toegevoegde kamer, die in
+ * de gedeelde as-is-kandidatenlijst van de vergelijkingspagina niet voorkomen omdat die kamer
+ * daar nog niet bestaat. Duur genoeg (volledige kandidaatgeneratie + solo-waardering van alle
+ * catalogusmaatregelen) om als aparte, memoïseerbare stap te laten staan — zie
+ * `useHandmatigeKandidaten`, die dit resultaat ÉÉN keer per bewerkt pand berekent en hergebruikt
+ * voor zowel de checkbox-lijst als het uiteindelijke pakket.
+ */
+export function berekenKandidatenVoorHandmatigPand(
+  bewerktPand: PandInvoer,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  kostencatalogus: Kostencatalogus,
+): { ctxBasis: MaatregelContext; kandidaten: KandidaatWaardering[] } {
+  return genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+}
+
+/**
+ * Bouwt het gecombineerde pakket voor een handmatig scenario met erbovenop gekozen
+ * standaardmaatregelen (backlog 2026-08-22): de handmatige investering (het kosten-veld dat de
+ * gebruiker zelf invult voor de herindeling) plus de catalogusmaatregelkosten tellen op tot één
+ * Investering/Terugverdientijd/Rendement — zie `bouwHandmatigScenarioMetMaatregelen` in
+ * `@wwso/engine` voor de precieze berekening.
+ */
+export function bouwHandmatigScenarioMetMaatregelenUitSleutels(
+  naam: string,
+  asIs: PandInvoer,
+  bewerktPand: PandInvoer,
+  geselecteerdeSleutels: ReadonlySet<string>,
+  handmatigeInvesteringEuro: number,
+  kandidatenTegenBewerkt: { ctxBasis: MaatregelContext; kandidaten: readonly KandidaatWaardering[] },
+  tarievenset: Tarievenset,
+  peildatum: string,
+  kostencatalogus: Kostencatalogus,
+  verwervingswaardeEuro: number | undefined,
+): Pakket {
+  const regels: PoolItem[] = kandidatenTegenBewerkt.kandidaten
+    .filter((k) => geselecteerdeSleutels.has(k.kandidaat.sleutel))
+    .map((waardering) => {
+      const definitie = standaardRegistry.get(waardering.maatregel.id);
+      if (!definitie) throw new Error(`Geen registry-definitie gevonden voor maatregel ${waardering.maatregel.id}.`);
+      return { waardering, definitie };
+    });
+
+  return bouwHandmatigScenarioMetMaatregelen(
+    naam,
+    asIs,
+    bewerktPand,
+    regels,
+    handmatigeInvesteringEuro,
+    kandidatenTegenBewerkt.ctxBasis,
     tarievenset,
     peildatum,
     kostencatalogus,
