@@ -379,6 +379,11 @@
   width: 3.6rem;
 }
 
+.colAdrOntbreekt {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+
 .overgenomen {
   font-size: 0.65rem;
   font-style: italic;

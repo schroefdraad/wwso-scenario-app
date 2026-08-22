@@ -113,7 +113,13 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
               type="number"
               min={1}
               value={rij.aantalAdressenMetToegang}
-              placeholder="1"
+              // Bewust GEEN placeholder="1": die zag er in deze compacte tabel visueel bijna
+              // hetzelfde uit als een echt ingevulde "1", waardoor een leeg (dus ongeldig) veld
+              // per ongeluk als "al ingevuld" gelezen werd (gemeld door een gebruiker,
+              // 2026-08-22 — "Doorrekenen" bleef geblokkeerd zonder zichtbare reden). De
+              // amber-rand hieronder maakt een leeg verplicht veld nu wél in één oogopslag
+              // herkenbaar, in plaats van een placeholder die op een waarde lijkt.
+              className={!rij.aantalAdressenMetToegang ? styles.colAdrOntbreekt : undefined}
               aria-label={`Aantal adressen met toegang, ruimte ${rij.nr}`}
               onChange={(e) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { aantalAdressenMetToegang: e.target.value } })}
             />
