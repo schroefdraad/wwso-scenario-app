@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.3.1';
+export const APP_VERSIE = '0.3.2';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.3.2',
+    datum: '2026-08-22',
+    wijzigingen: [
+      'Bugfix: "Doorrekenen"/"Deal opslaan" kon uitgeschakeld blijven zonder enige zichtbare reden — de knop en de puntenstrip laten nu altijd zien wat er nog ontbreekt',
+      'Bugfix: een leeg "aantal adressen met toegang"-veld bij een gedeelde ruimte zag eruit als al ingevuld — nu duidelijk herkenbaar met een amber rand zolang het leeg is',
+    ],
+  },
   {
     versie: '0.3.1',
     datum: '2026-08-22',
