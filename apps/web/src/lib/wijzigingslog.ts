@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.3.2';
+export const APP_VERSIE = '0.4.0';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.4.0',
+    datum: '2026-08-22',
+    wijzigingen: [
+      'Een handmatig bewerkt scenario (bijv. een extra kamer erbij) kan nu ook standaardmaatregelen krijgen mét een eigen kosten/terugverdientijd-berekening — inclusief maatregelen die specifiek op de nieuwe kamer van toepassing zijn',
+    ],
+  },
   {
     versie: '0.3.2',
     datum: '2026-08-22',
