@@ -21,8 +21,8 @@ const MAX_VERKOELD_PUNTEN = 2;
  * voor déze telling dus gewoon een vertrek, en een gemeenschappelijke overige ruimte gewoon
  * een overige ruimte — de m²-punten van R9 zelf blijven apart (die tellen niet hier mee).
  */
-const VERWARMING_VERTREK_TYPES: readonly RuimteType[] = [...VERTREK_TYPES, 'Gemeenschappelijk vertrek'];
-const VERWARMING_OVERIGE_TYPES: readonly RuimteType[] = [
+export const VERWARMING_VERTREK_TYPES: readonly RuimteType[] = [...VERTREK_TYPES, 'Gemeenschappelijk vertrek'];
+export const VERWARMING_OVERIGE_TYPES: readonly RuimteType[] = [
   ...OVERIGE_RUIMTE_TYPES,
   ...VERKEERSRUIMTE_TYPES,
   'Gemeenschappelijke overige ruimte',

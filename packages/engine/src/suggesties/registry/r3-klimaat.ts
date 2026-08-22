@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import type { MaatregelDefinitie } from '../types';
+import { VERWARMING_OVERIGE_TYPES, VERWARMING_VERTREK_TYPES } from '../../rubrieken/r3-verwarming';
 import { vereistParameter } from './hulp';
+
+/** Ruimtetypen die volgens §2.3 (R3) daadwerkelijk verwarmingspunten opleveren — buitenruimtes
+ * en parkeerplekken (bijv. "Buitenruimte privé", "Parkeerplek gemeenschappelijk") staan hier
+ * bewust buiten: `berekenR3` telt die nooit mee, dus "verwarmen" zou daar 0 punten opleveren en
+ * bovendien fysiek/vergunningtechnisch onzinnig zijn als suggestie. */
+const VERWARMBARE_TYPES = [...VERWARMING_VERTREK_TYPES, ...VERWARMING_OVERIGE_TYPES];
 
 /** V-01/V-02 — verwarming toevoegen aan een onverwarmde toegankelijke ruimte. Zelfde mutatie, alternatieve maatregelen. */
 function verwarmingDefinitie(id: string, omschrijving: (naam: string, nr: number) => string, waarschuwing?: string): MaatregelDefinitie {
@@ -12,7 +19,7 @@ function verwarmingDefinitie(id: string, omschrijving: (naam: string, nr: number
     puntenrelevant: true,
     kandidaten(ctx) {
       return ctx.pand.ruimtes
-        .filter((r) => !r.verwarmd)
+        .filter((r) => !r.verwarmd && VERWARMBARE_TYPES.includes(r.type))
         .map((r) => ({
           sleutel: `${id}#ruimte:${r.nr}`,
           maatregelId: id,
@@ -48,9 +55,8 @@ const V03: MaatregelDefinitie = {
   vergunningBrontekst: 'Soms melding (buitenunit)',
   puntenrelevant: true,
   kandidaten(ctx) {
-    const VERTREK = ['Privévertrek', 'Keuken', 'Badruimte', 'Gemeenschappelijk vertrek'];
     return ctx.pand.ruimtes
-      .filter((r) => VERTREK.includes(r.type) && r.verwarmd && !r.verkoeld)
+      .filter((r) => VERWARMING_VERTREK_TYPES.includes(r.type) && r.verwarmd && !r.verkoeld)
       .map((r) => ({
         sleutel: `V-03#ruimte:${r.nr}`,
         maatregelId: 'V-03',
@@ -86,10 +92,9 @@ const V04: MaatregelDefinitie<V04Params> = {
   nietBeoordeeldReden: vereistParameter('vereist welke (maximaal vier) ruimtes de multisplit-airco krijgen'),
   kandidaten(ctx, parameters) {
     if (!parameters) return [];
-    const VERTREK = ['Privévertrek', 'Keuken', 'Badruimte', 'Gemeenschappelijk vertrek'];
     const geldig = parameters.ruimteNrs.filter((nr) => {
       const r = ctx.pand.ruimtes.find((x) => x.nr === nr);
-      return r && VERTREK.includes(r.type) && r.verwarmd && !r.verkoeld;
+      return r && VERWARMING_VERTREK_TYPES.includes(r.type) && r.verwarmd && !r.verkoeld;
     });
     if (geldig.length === 0) return [];
     return [

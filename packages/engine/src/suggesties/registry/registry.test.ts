@@ -107,6 +107,35 @@ describe('registry — hoeveelheid volgt de catalogus-eenheid, niet het aantal g
   });
 });
 
+describe('registry — V-01/V-02 verwarmen alleen ruimtetypen die R3-punten opleveren', () => {
+  // Bug (gemeld door een gebruiker, 2026-08-22): de suggestie-engine stelde voor om een
+  // buitenruimte te "verwarmen" voor meer punten. `berekenR3` (rubrieken/r3-verwarming.ts) telt
+  // "Buitenruimte privé"/"Buitenruimte gemeenschappelijk"/"Parkeerplek gemeenschappelijk" nooit
+  // mee als verwarmbaar — zo'n suggestie zou dus altijd 0 punten opleveren én is fysiek/
+  // vergunningtechnisch onzinnig. `testpand6Kamers` heeft ruimte 16/17/20 (buitenruimte/
+  // parkeerplek, alle drie onverwarmd) precies om dit gat te dichten.
+  const ctx: MaatregelContext = (() => {
+    const eindtelling = berekenEindtelling(testpand6Kamers, tarievenset, peildatum);
+    const marge = analyseerMarge(testpand6Kamers, tarievenset, eindtelling);
+    return { pand: testpand6Kamers, tarievenset, peildatum, eindtelling, marge };
+  })();
+
+  it.each(['V-01', 'V-02'])('%s genereert geen kandidaat voor een onverwarmde buitenruimte of parkeerplek', (id) => {
+    const definitie = standaardRegistry.get(id)!;
+    const kandidaten = definitie.kandidaten(ctx);
+    const doelRuimteNrs = kandidaten.map((k) => k.doel.nr);
+    expect(doelRuimteNrs).not.toContain(16); // Balkon kamer 1 — Buitenruimte privé
+    expect(doelRuimteNrs).not.toContain(17); // Gedeelde achtertuin — Buitenruimte gemeenschappelijk
+    expect(doelRuimteNrs).not.toContain(20); // Gedeelde parkeerplaats — Parkeerplek gemeenschappelijk
+  });
+
+  it('V-01 genereert wél een kandidaat voor een onverwarmde overige ruimte (Zolderberging, ruimte 14)', () => {
+    const definitie = standaardRegistry.get('V-01')!;
+    const kandidaten = definitie.kandidaten(ctx);
+    expect(kandidaten.map((k) => k.doel.nr)).toContain(14);
+  });
+});
+
 describe('registry — dekkingsgat: K-04/K-06/K-07 op een keuken die ze nog mist', () => {
   // De keuken in BEIDE bestaande fixtures heeft al een koelkast, een afzuiginstallatie en een
   // magnetron. K-04, K-06 en K-07 filteren daarom in elke bestaande test hun eigen kandidaat
