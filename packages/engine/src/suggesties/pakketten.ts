@@ -155,9 +155,16 @@ function bouwTier(
  * toegepast (bijv. een `extra`-patch die A's velden meeneemt) — bij het weglaten van A moet B's
  * mutatie dus opnieuw gegenereerd worden tegen de staat ZONDER A, niet hergebruikt worden.
  */
-function mutatiesVoorSubset(regels: GroeiState['regels'], asIs: PandInvoer, ctxBasis: MaatregelContext): Mutatie[] {
-  let mutaties: Mutatie[] = [];
-  let pand = asIs;
+/**
+ * `vastePrefix` (leeg voor de gewone pakketopbouw en `bouwVrijScenario`) is een mutatielijst die
+ * bij ELKE subset onvoorwaardelijk vooraf toegepast wordt — gebruikt door
+ * `bouwHandmatigScenarioMetMaatregelen` om de `vervang-pand`-mutatie (het handmatig bewerkte
+ * TO-BE-pand) als vaste basis te houden terwijl de leave-one-out-analyse alleen varieert over de
+ * dáárbovenop gekozen catalogusmaatregelen.
+ */
+function mutatiesVoorSubset(regels: GroeiState['regels'], asIs: PandInvoer, ctxBasis: MaatregelContext, vastePrefix: readonly Mutatie[] = []): Mutatie[] {
+  let mutaties: Mutatie[] = [...vastePrefix];
+  let pand = pasScenarioToe(asIs, mutaties);
   for (const regel of regels) {
     const ctxHuidig: MaatregelContext = { ...ctxBasis, pand };
     const nieuwe = regel.item.definitie.mutaties(ctxHuidig, regel.item.waardering.kandidaat);
@@ -174,11 +181,12 @@ function leaveOneOutBijdragen(
   tarievenset: Tarievenset,
   peildatum: string,
   budget: RekenBudget,
+  vastePrefix: readonly Mutatie[] = [],
 ): Map<string, number> {
   const bijdragen = new Map<string, number>();
   for (let i = 0; i < state.regels.length; i++) {
     const subset = state.regels.filter((_, j) => j !== i);
-    const zonderMutaties = mutatiesVoorSubset(subset, asIs, ctxBasis);
+    const zonderMutaties = mutatiesVoorSubset(subset, asIs, ctxBasis, vastePrefix);
     const { waardering } = waardeerScenario(asIs, zonderMutaties, tarievenset, peildatum, budget);
     bijdragen.set(state.regels[i].item.waardering.kandidaat.sleutel, extraJaarhuur(waardering, state.waardering));
   }
@@ -198,10 +206,15 @@ function bouwPakketResultaat(
   uitvoeringsjaar: number,
   verwervingswaardeEuro: number | undefined,
   budget: RekenBudget,
+  vastePrefix: readonly Mutatie[] = [],
+  handmatigeInvesteringEuro = 0,
 ): Pakket {
-  const bijdragen = leaveOneOutBijdragen(state, asIs, ctxBasis, tarievenset, peildatum, budget);
+  const bijdragen = leaveOneOutBijdragen(state, asIs, ctxBasis, tarievenset, peildatum, budget, vastePrefix);
   const extraJaarhuurEuro = extraJaarhuur(asIsWaardering, state.waardering);
-  const investeringEuro = telBandbreedtesOp(state.regels.map((r) => r.item.waardering.investeringEuro));
+  const investeringEuro = telBandbreedtesOp([
+    ...state.regels.map((r) => r.item.waardering.investeringEuro),
+    { optimistisch: handmatigeInvesteringEuro, verwacht: handmatigeInvesteringEuro, pessimistisch: handmatigeInvesteringEuro },
+  ]);
   const restpostEuro = Math.round((extraJaarhuurEuro - [...bijdragen.values()].reduce((s, v) => s + v, 0)) * 100) / 100;
 
   const vergunningplichtig = state.regels
@@ -389,4 +402,78 @@ export function bouwHandmatigScenario(
     vergunningplichtig: [],
     ontbrekendeKosten: [],
   };
+}
+
+/**
+ * Combineert een handmatig bewerkt TO-BE-pand (`bouwHandmatigScenario`) met standaard
+ * catalogusmaatregelen daarbovenop — bijv. airco of een kitchenette in een net toegevoegde kamer
+ * (backlog, 2026-08-22: "handmatig starten om een extra kamer te realiseren en dan verder
+ * maatregelen toevoegen"). In tegenstelling tot `bouwHandmatigScenario` is Investering/
+ * Terugverdientijd/Rendement hier WEL bekend, want de gebruiker geeft de kosten van het
+ * handmatige deel (de herindeling zelf, waar geen catalogusprijs voor bestaat) zelf op via
+ * `handmatigeInvesteringEuro`; de maatregelkosten daarbovenop komen zoals altijd uit de
+ * kostencatalogus. De twee tellen op tot één Investering/Terugverdientijd/Rendement over de
+ * VOLLEDIGE jaarhuurwinst (kamer + maatregelen samen) — geen aparte "onbekend"-status meer nodig
+ * zodra er een echt bedrag is om mee te rekenen.
+ *
+ * `ctxTegenBewerkt` moet tegen `bewerktPand` opgebouwd zijn (bijv. via
+ * `genereerEnWaardeerKandidaten(bewerktPand, ...)`), niet tegen de as-is — anders bestaan de
+ * ruimtenummers van een net toegevoegde kamer niet in de kandidaat-generatie.
+ */
+export function bouwHandmatigScenarioMetMaatregelen(
+  naam: string,
+  asIs: PandInvoer,
+  bewerktPand: PandInvoer,
+  regels: PoolItem[],
+  handmatigeInvesteringEuro: number,
+  ctxTegenBewerkt: MaatregelContext,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  kostencatalogus: Kostencatalogus,
+  uitvoeringsjaar: number,
+  verwervingswaardeEuro: number | undefined,
+  budget: RekenBudget,
+): Pakket {
+  const asIsWaardering = pandWaarderingVan(berekenEindtellingMetBudget(budget, asIs, tarievenset, peildatum));
+  const vervangMutatie: Mutatie = { soort: 'vervang-pand', pand: bewerktPand };
+  const { waardering: bewerktWaardering } = waardeerScenario(asIs, [vervangMutatie], tarievenset, peildatum, budget);
+
+  let state: GroeiState = {
+    mutaties: [vervangMutatie],
+    pand: bewerktPand,
+    waardering: bewerktWaardering,
+    regels: [],
+    gebruikteAlternatieven: new Map(),
+  };
+
+  for (const item of regels) {
+    const ctxHuidig: MaatregelContext = { ...ctxTegenBewerkt, pand: state.pand };
+    const nieuweMutaties = item.definitie.mutaties(ctxHuidig, item.waardering.kandidaat);
+    const totaleMutaties = [...state.mutaties, ...nieuweMutaties];
+    const { pand: nieuwPand, waardering: nieuweWaardering } = waardeerScenario(state.pand, nieuweMutaties, tarievenset, peildatum, budget);
+    state = {
+      mutaties: totaleMutaties,
+      pand: nieuwPand,
+      waardering: nieuweWaardering,
+      regels: [...state.regels, { item, mutaties: nieuweMutaties }],
+      gebruikteAlternatieven: state.gebruikteAlternatieven,
+    };
+  }
+
+  return bouwPakketResultaat(
+    naam,
+    state,
+    [],
+    asIsWaardering,
+    asIs,
+    ctxTegenBewerkt,
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    uitvoeringsjaar,
+    verwervingswaardeEuro,
+    budget,
+    [vervangMutatie],
+    handmatigeInvesteringEuro,
+  );
 }

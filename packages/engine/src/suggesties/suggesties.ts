@@ -1,11 +1,12 @@
+import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import type { PandInvoer } from '../types/index';
 import { berekenEindtelling } from '../eindtelling/index';
 import { analyseerMarge } from './marge-analyse';
 import { genereerKandidaten } from './kandidaten';
-import { nieuwBudget, pandWaarderingVan, waardeerKandidaatSolo, waardeerScenario } from './waardering';
+import { berekenEindtellingMetBudget, nieuwBudget, pandWaarderingVan, waardeerKandidaatSolo, waardeerScenario, type RekenBudget } from './waardering';
 import { stelPakkettenSamen } from './pakketten';
 import { standaardRegistry, valideerRegistryOfGooiFout } from './registry/index';
-import type { KandidaatWaardering, MaatregelContext, MargeSignaal, SuggestieOpties, SuggestieResultaat } from './types';
+import type { KandidaatWaardering, MaatregelContext, MaatregelRegistry, MargeSignaal, SuggestieOpties, SuggestieResultaat } from './types';
 import { huidigeVersiestempel } from '../versiestempel';
 
 const DEFAULT_MAX_EINDTELLINGEN = 2000;
@@ -77,6 +78,52 @@ export function stelSuggestiesOp(asIs: PandInvoer, opties: SuggestieOpties): Sug
     waarschuwingen,
     aantalEindtellingen: budget.teller.aantal,
   };
+}
+
+export interface KandidatenTegenPandResultaat {
+  ctxBasis: MaatregelContext;
+  kandidaten: KandidaatWaardering[];
+  nietBeoordeeld: { maatregelId: string; reden: string }[];
+}
+
+/**
+ * Genereert en waardeert (solo) alle kandidaten tegen een WILLEKEURIG pand — niet per se de
+ * as-is. `stelSuggestiesOp` doet dit intern voor de as-is (inclusief de duurdere
+ * Basis/Comfort/Maximaal-pakketopbouw); dit is de kale variant daarvan, gebruikt door de
+ * scenariovergelijking om standaardmaatregelen te vinden die specifiek van toepassing zijn op
+ * een handmatig bewerkt TO-BE-pand (bijv. airco of een kitchenette in een net toegevoegde kamer)
+ * — dezelfde laag-A-garantie (nooit geschat, altijd doorgerekend via `berekenEindtelling`), maar
+ * zonder pakketopbouw die hier niet relevant is.
+ */
+export function genereerEnWaardeerKandidaten(
+  pand: PandInvoer,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  kostencatalogus: Kostencatalogus,
+  budget: RekenBudget,
+  opties?: { registry?: MaatregelRegistry; maatregelParameters?: Record<string, unknown>; uitgeslotenMaatregelen?: readonly string[] },
+): KandidatenTegenPandResultaat {
+  const registry = opties?.registry ?? standaardRegistry;
+  const eindtelling = berekenEindtellingMetBudget(budget, pand, tarievenset, peildatum);
+  const marge = analyseerMarge(pand, tarievenset, eindtelling);
+  const ctxBasis: MaatregelContext = { pand, tarievenset, peildatum, eindtelling, marge };
+  const uitvoeringsjaar = kostencatalogus.aannames.prijspeilJaar;
+
+  const { kandidaten, nietBeoordeeld } = genereerKandidaten(ctxBasis, registry, kostencatalogus, {
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    maatregelParameters: opties?.maatregelParameters,
+    uitgeslotenMaatregelen: opties?.uitgeslotenMaatregelen,
+  });
+
+  const gewaardeerd: KandidaatWaardering[] = [];
+  for (const { kandidaat, definitie } of kandidaten) {
+    const waardering = waardeerKandidaatSolo(pand, ctxBasis, kandidaat, definitie, kostencatalogus, uitvoeringsjaar, tarievenset, peildatum, budget);
+    if (waardering) gewaardeerd.push(waardering);
+  }
+
+  return { ctxBasis, kandidaten: gewaardeerd, nietBeoordeeld };
 }
 
 /**

@@ -8,7 +8,8 @@ import { stelSuggestiesOp } from './suggesties';
 import { analyseerMarge } from './marge-analyse';
 import { standaardRegistry } from './registry/index';
 import { nieuwBudget } from './waardering';
-import { bouwHandmatigScenario, bouwVrijScenario, type PoolItem } from './pakketten';
+import { bouwHandmatigScenario, bouwHandmatigScenarioMetMaatregelen, bouwVrijScenario, type PoolItem } from './pakketten';
+import { genereerEnWaardeerKandidaten } from './suggesties';
 import type { MaatregelContext, SuggestieOpties } from './types';
 
 const tarievenset = getTarievenset('2026-01-01');
@@ -339,6 +340,86 @@ describe('bouwHandmatigScenario — vrij bewerkt TO-BE-pand (backlog: AS-IS kopi
     expect(scenario.waardering.perKamer[1]?.totaalPunten).toBeGreaterThan(
       pandWaarderingVanTestpand6Kamers().perKamer[1]?.totaalPunten ?? 0,
     );
+  });
+});
+
+describe('bouwHandmatigScenarioMetMaatregelen — handmatige kamer + standaardmaatregelen samen (backlog 2026-08-22)', () => {
+  // Kamer 7 bestaat nog niet in testpand6Kamers (dat kent er 6) — realiseert 'm hier handmatig
+  // met een nieuw, onverwarmd privévertrek, exact het scenario uit de melding ("handmatig
+  // starten om een extra kamer te realiseren en dan verder maatregelen toevoegen").
+  const bewerktPand = pasScenarioToe(testpand6Kamers, [
+    { soort: 'pand-patch', patch: { aantalKamers: 7 } },
+    {
+      soort: 'ruimte-toevoegen',
+      ruimte: { nr: 21, naam: 'Nieuwe kamer', type: 'Privévertrek', oppervlakteM2: 14, verdieping: 0, verwarmd: false, verkoeld: false },
+      kamers: [7],
+    },
+  ]);
+
+  it('genereerEnWaardeerKandidaten vindt een maatregel op de NET TOEGEVOEGDE kamer, die in de as-is niet bestaat', () => {
+    const asIsResultaat = genereerEnWaardeerKandidaten(testpand6Kamers, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+    expect(asIsResultaat.kandidaten.some((k) => k.kandidaat.doel.nr === 21)).toBe(false);
+
+    const bewerktResultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+    const v01OpNieuweKamer = bewerktResultaat.kandidaten.find((k) => k.maatregel.id === 'V-01' && k.kandidaat.doel.nr === 21);
+    expect(v01OpNieuweKamer).toBeDefined();
+  });
+
+  it('telt de handmatige investering en de maatregelkosten op tot één Investering/Terugverdientijd — niet langer "onbekend"', () => {
+    const bewerktResultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+    const v01 = bewerktResultaat.kandidaten.find((k) => k.maatregel.id === 'V-01' && k.kandidaat.doel.nr === 21)!;
+    const definitie = standaardRegistry.get('V-01')!;
+    const regels: PoolItem[] = [{ waardering: v01, definitie }];
+
+    const HANDMATIGE_INVESTERING = 15000;
+    const scenario = bouwHandmatigScenarioMetMaatregelen(
+      'Kamer 7 + radiator',
+      testpand6Kamers,
+      bewerktPand,
+      regels,
+      HANDMATIGE_INVESTERING,
+      bewerktResultaat.ctxBasis,
+      tarievenset,
+      peildatum,
+      kostencatalogus,
+      kostencatalogus.aannames.prijspeilJaar,
+      undefined,
+      nieuwBudget(2000),
+    );
+
+    expect(scenario.investeringEuro).not.toBeNull();
+    expect(scenario.investeringEuro!.verwacht).toBeCloseTo(HANDMATIGE_INVESTERING + v01.investeringEuro.verwacht, 2);
+    expect(scenario.terugverdientijdJaren).not.toBeNull();
+    expect(scenario.marginaalBrutoRendementPct).not.toBeNull();
+
+    // De jaarhuurwinst is het gecombineerde effect van de nieuwe kamer ÉN de radiator, tegen de
+    // ECHTE as-is (niet tegen het al-bewerkte pand) — dus meer dan de radiator alleen zou geven.
+    expect(scenario.extraJaarhuurEuro).toBeGreaterThan(v01.extraJaarhuurEuro);
+
+    // De mutatielijst begint met de vervang-pand-mutatie, gevolgd door de maatregelmutatie(s).
+    expect(scenario.scenario.mutaties[0]).toEqual({ soort: 'vervang-pand', pand: bewerktPand });
+    expect(scenario.scenario.mutaties.length).toBeGreaterThan(1);
+  });
+
+  it('zonder gekozen maatregelen (alleen de handmatige investering) is de jaarhuurwinst gelijk aan bouwHandmatigScenario', () => {
+    const kaal = bouwHandmatigScenario('Alleen kamer 7', testpand6Kamers, bewerktPand, tarievenset, peildatum, nieuwBudget(2000));
+    const bewerktResultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+    const metNulMaatregelen = bouwHandmatigScenarioMetMaatregelen(
+      'Alleen kamer 7 (met investering)',
+      testpand6Kamers,
+      bewerktPand,
+      [],
+      5000,
+      bewerktResultaat.ctxBasis,
+      tarievenset,
+      peildatum,
+      kostencatalogus,
+      kostencatalogus.aannames.prijspeilJaar,
+      undefined,
+      nieuwBudget(2000),
+    );
+    expect(metNulMaatregelen.extraJaarhuurEuro).toBeCloseTo(kaal.extraJaarhuurEuro, 2);
+    expect(metNulMaatregelen.investeringEuro).toEqual({ optimistisch: 5000, verwacht: 5000, pessimistisch: 5000 });
   });
 });
 
