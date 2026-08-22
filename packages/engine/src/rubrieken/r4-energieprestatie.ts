@@ -58,12 +58,15 @@ function bepaalFactor(
   let factor: number;
   let grondslag: string;
 
-  // energielabelIngangsdatum is bij een echt label (energielabel !== 'Bouwjaar') altijd
-  // gezet — afgedwongen door PandInvoer.superRefine.
+  // energielabelIngangsdatum is altijd optioneel (ook bij een echt label) — ontbreekt hij, dan
+  // is de geldigheid van het label onbekend en valt R4 terug op de bouwjaargrens, exact zoals
+  // bij een vervallen of vereenvoudigd label.
   const ongeldigReden =
     pand.energielabel === 'Bouwjaar'
       ? 'geen-label'
-      : toetsLabelGeldigheid(pand.energielabelIngangsdatum!, peildatum);
+      : pand.energielabelIngangsdatum === undefined
+        ? 'ingangsdatum-onbekend'
+        : toetsLabelGeldigheid(pand.energielabelIngangsdatum, peildatum);
 
   if (ongeldigReden === null) {
     const regel = tarievenset.energielabelfactoren.find((f) => f.label === pand.energielabel);
@@ -86,7 +89,9 @@ function bepaalFactor(
     grondslag =
       ongeldigReden === 'geen-label'
         ? `bouwjaar ${pand.bouwjaar} (geen label)`
-        : `bouwjaar ${pand.bouwjaar} (label ${ongeldigReden})`;
+        : ongeldigReden === 'ingangsdatum-onbekend'
+          ? `bouwjaar ${pand.bouwjaar} (label ${pand.energielabel}, ingangsdatum onbekend)`
+          : `bouwjaar ${pand.bouwjaar} (label ${ongeldigReden})`;
   }
 
   if (factor < 0 && MONUMENT_ZONDER_MINPUNTEN.includes(pand.monument)) {

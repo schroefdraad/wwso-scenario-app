@@ -88,7 +88,7 @@ describe('PandInvoer — testpand van 6 kamers', () => {
     expect(result.success).toBe(false);
   });
 
-  describe('energielabelIngangsdatum — alleen verplicht bij een echt label', () => {
+  describe('energielabelIngangsdatum — altijd optioneel', () => {
     it('accepteert energielabel "Bouwjaar" zonder ingangsdatum', () => {
       const zonderDatum = {
         ...testpand6Kamers,
@@ -98,13 +98,13 @@ describe('PandInvoer — testpand van 6 kamers', () => {
       expect(result.success).toBe(true);
     });
 
-    it('wijst een echt energielabel zonder ingangsdatum af', () => {
+    it('accepteert ook een echt energielabel zonder ingangsdatum — geldigheid is dan onbekend, geen verplicht veld', () => {
       const zonderDatum = {
         ...testpand6Kamers,
         pand: { ...testpand6Kamers.pand, energielabel: 'D' as const, energielabelIngangsdatum: undefined },
       };
       const result = PandInvoer.safeParse(zonderDatum);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
   });
 });

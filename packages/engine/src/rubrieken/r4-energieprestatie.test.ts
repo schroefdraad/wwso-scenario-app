@@ -135,6 +135,22 @@ describe('R4 — Energieprestatie (§2.4)', () => {
     const input = eenKamer({ energielabel: 'Bouwjaar', bouwjaar: 2150 });
     expect(() => berekenR4(input, tarievenset, PEILDATUM)).toThrow(/Geen bouwjaargrens gevonden/);
   });
+
+  it('valt terug op de bouwjaargrens bij een echt label zonder ingangsdatum (ingangsdatum is optioneel)', () => {
+    // Regressietest: energielabelIngangsdatum is niet langer verplicht bij een echt label
+    // (voorheen afgedwongen door PandInvoer.superRefine). Zonder ingangsdatum is de geldigheid
+    // van het label onbekend, dus dezelfde bouwjaar-fallback als een vervallen label — nooit een
+    // gegokte geldigheid.
+    const metLabel = eenKamer({ energielabel: 'D', energielabelIngangsdatum: '2023-01-01', bouwjaar: 1900 });
+    const zonderIngangsdatum = eenKamer({ energielabel: 'D', energielabelIngangsdatum: undefined, bouwjaar: 1900 });
+    const zonderLabel = eenKamer({ energielabel: 'Bouwjaar', bouwjaar: 1900 });
+
+    expect(berekenR4(metLabel, tarievenset, PEILDATUM).perKamer[1]).toBe(2); // 0,2 × 10 m² (label D)
+    expect(berekenR4(zonderIngangsdatum, tarievenset, PEILDATUM).perKamer[1]).toBe(-1.5); // bouwjaargrens 1900
+    expect(berekenR4(zonderIngangsdatum, tarievenset, PEILDATUM).perKamer[1]).toBe(
+      berekenR4(zonderLabel, tarievenset, PEILDATUM).perKamer[1],
+    );
+  });
 });
 
 describe('toetsLabelGeldigheid', () => {

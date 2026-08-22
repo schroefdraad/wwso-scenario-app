@@ -46,8 +46,7 @@ export function Topbar() {
     state.pand.stad &&
     state.pand.coropGebied &&
     state.pand.wozOppervlak &&
-    state.pand.bouwjaar &&
-    (state.pand.energielabel === 'Bouwjaar' || state.pand.energielabelIngangsdatum)
+    state.pand.bouwjaar
   );
 
   return (

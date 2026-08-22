@@ -86,9 +86,11 @@ const E08 = energieDefinitie('E-08', 'mogelijk-melding', 'Soms melding');
  */
 function e09AutoKandidaat(ctx: MaatregelContext) {
   if (ctx.pand.pand.energielabel === 'Bouwjaar') return null;
-  // energielabelIngangsdatum is bij een echt label altijd gezet — afgedwongen door
-  // PandInvoer.superRefine.
-  const reden = toetsLabelGeldigheid(ctx.pand.pand.energielabelIngangsdatum!, ctx.peildatum);
+  // energielabelIngangsdatum is altijd optioneel — ontbreekt hij, dan is de geldigheid van het
+  // huidige label onbekend (niet aantoonbaar vervallen óf aantoonbaar geldig), dus geen
+  // automatische herregistratie-suggestie: dat zou een geldigheid gokken die niemand kent.
+  if (ctx.pand.pand.energielabelIngangsdatum === undefined) return null;
+  const reden = toetsLabelGeldigheid(ctx.pand.pand.energielabelIngangsdatum, ctx.peildatum);
   if (reden === 'vervallen' || reden === 'vereenvoudigd-label') return ctx.pand.pand.energielabel;
   return null;
 }

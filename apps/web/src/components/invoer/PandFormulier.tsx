@@ -149,13 +149,16 @@ export function PandFormulier() {
           </div>
           {pand.energielabel !== 'Bouwjaar' && (
             <div className={styles.veld}>
-              <label htmlFor="p-labeldatum">Ingangsdatum label</label>
+              <label htmlFor="p-labeldatum">Ingangsdatum label (optioneel)</label>
               <input
                 id="p-labeldatum"
                 type="date"
                 value={pand.energielabelIngangsdatum}
                 onChange={(e) => zet('energielabelIngangsdatum', e.target.value)}
               />
+              <span className={styles.hint}>
+                Onbekend? Laat leeg — de motor valt dan terug op de bouwjaargrenzen (R4), net als bij een vervallen label.
+              </span>
             </div>
           )}
           <div className={styles.veld}>

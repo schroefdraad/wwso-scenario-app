@@ -22,9 +22,6 @@ export function projecteerNaarPandInvoer(state: InvoerState): PandInvoer | null 
   const bouwjaar = naarGetal(state.pand.bouwjaar);
   if (wozOppervlak === undefined || bouwjaar === undefined) return null;
   if (!state.pand.adres || !state.pand.stad || !state.pand.coropGebied) return null;
-  // Alleen verplicht bij een echt label — bij 'Bouwjaar' toont het formulier dit veld niet
-  // eens (zie PandFormulier.tsx), dus onvoorwaardelijk eisen zou "Doorrekenen" op slot zetten.
-  if (state.pand.energielabel !== 'Bouwjaar' && !state.pand.energielabelIngangsdatum) return null;
 
   const ruimtes = state.ruimtes
     .map((r) => toRuimte(r))
@@ -110,7 +107,6 @@ export function ontbrekendeStap(state: InvoerState): string | null {
   if (!state.pand.coropGebied) return 'Kies een COROP-gebied';
   if (naarGetal(state.pand.wozOppervlak) === undefined) return 'Vul het WOZ-oppervlak in';
   if (naarGetal(state.pand.bouwjaar) === undefined) return 'Vul het bouwjaar in';
-  if (state.pand.energielabel !== 'Bouwjaar' && !state.pand.energielabelIngangsdatum) return 'Vul de ingangsdatum van het energielabel in';
   const onvolledigeRuimte = state.ruimtes.find((r) => !r.naam || naarGetal(r.oppervlakteM2) === undefined);
   if (onvolledigeRuimte) return `Ruimte ${onvolledigeRuimte.nr}: vul naam en oppervlakte in`;
   return null;
