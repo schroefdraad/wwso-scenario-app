@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useInvoer } from './InvoerContext';
 import { berekenPuntenstrip } from '../../lib/invoer/afgeleide-staat';
-import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
+import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import styles from './styles.module.css';
 
 /**
@@ -16,7 +16,10 @@ export function PuntenStrip() {
   const punten = useMemo(() => berekenPuntenstrip(pand), [pand]);
 
   if (!punten) {
-    return <div className={styles.puntenstrip}>nog niet compleet</div>;
+    // title toont dezelfde reden als de (uitgeschakelde) Doorrekenen-knop — anders bleef "nog
+    // niet compleet" hier een onverklaarde doodlopende weg zodra ontbrekendeStap() zelf niets
+    // afwijst maar de volledige Zod-validatie in projecteerNaarPandInvoer dat wél doet.
+    return <div className={styles.puntenstrip} title={ontbrekendeStap(state) ?? undefined}>nog niet compleet</div>;
   }
 
   const kamers = Object.keys(punten)

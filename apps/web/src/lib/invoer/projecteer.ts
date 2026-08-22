@@ -9,24 +9,25 @@ function naarGetal(waarde: string): number | undefined {
 }
 
 /**
- * Zet de gedenormaliseerde invoerstate om naar het echte `PandInvoer`-model (§7.2 van het
- * UX-ontwerp). Een `RuimteRij` zonder toegewezen kamers levert GEEN toewijzing-entry op (anders
- * faalt `Toewijzing.min(1)` op die entry) — dat is precies het stille-verlies-risico dat de
- * waarschuwingenlijst in `afgeleideStaat.ts` los opvangt.
+ * Bouwt de kandidaat-`PandInvoer` op uit de invoerstate, zonder te valideren — gedeeld tussen
+ * `projecteerNaarPandInvoer` (die er wél op valideert) en `pandInvoerValidatiefout` (die bij een
+ * validatiefout de reden teruggeeft). `undefined` als de invoer nog te onvolledig is om
+ * ÜBERHAUPT een kandidaat op te bouwen (bijv. geen ruimtes) — dat is geen validatiefout maar een
+ * eerdere, door `ontbrekendeStap` al met een eigen boodschap afgedekte stap.
  */
-export function projecteerNaarPandInvoer(state: InvoerState): PandInvoer | null {
+function bouwPandKandidaat(state: InvoerState): PandInvoer | undefined {
   const aantalKamers = naarGetal(state.pand.aantalKamers);
-  if (aantalKamers === undefined || state.ruimtes.length === 0) return null;
+  if (aantalKamers === undefined || state.ruimtes.length === 0) return undefined;
 
   const wozOppervlak = naarGetal(state.pand.wozOppervlak);
   const bouwjaar = naarGetal(state.pand.bouwjaar);
-  if (wozOppervlak === undefined || bouwjaar === undefined) return null;
-  if (!state.pand.adres || !state.pand.stad || !state.pand.coropGebied) return null;
+  if (wozOppervlak === undefined || bouwjaar === undefined) return undefined;
+  if (!state.pand.adres || !state.pand.stad || !state.pand.coropGebied) return undefined;
 
   const ruimtes = state.ruimtes
     .map((r) => toRuimte(r))
     .filter((r): r is NonNullable<typeof r> => r !== null);
-  if (ruimtes.length !== state.ruimtes.length) return null;
+  if (ruimtes.length !== state.ruimtes.length) return undefined;
 
   const toewijzing = state.ruimtes
     .filter((r) => r.kamers.length > 0)
@@ -76,8 +77,41 @@ export function projecteerNaarPandInvoer(state: InvoerState): PandInvoer | null 
     },
   };
 
+  return kandidaat;
+}
+
+/**
+ * Zet de gedenormaliseerde invoerstate om naar het echte, gevalideerde `PandInvoer`-model
+ * (§7.2 van het UX-ontwerp). `null` zolang de invoer nog te onvolledig is óf niet aan het
+ * schema voldoet — gebruik `ontbrekendeStap` om de gebruiker te vertellen wélke van de twee, en
+ * waarom (zie `pandInvoerValidatiefout`).
+ */
+export function projecteerNaarPandInvoer(state: InvoerState): PandInvoer | null {
+  const kandidaat = bouwPandKandidaat(state);
+  if (kandidaat === undefined) return null;
   const resultaat = PandInvoerSchema.safeParse(kandidaat);
   return resultaat.success ? resultaat.data : null;
+}
+
+/**
+ * Geeft de eerste Zod-validatiefout als leesbare boodschap, of `null` als de kandidaat nog niet
+ * op te bouwen is (`ontbrekendeStap`'s eigen checks dekken die stap al af) óf wél geldig is.
+ *
+ * Bestaat om precies het gat te dichten dat de melding "wordt niet compleet" (2026-08-22)
+ * blootlegde: `ontbrekendeStap` checkte maar een handvol velden met de hand, terwijl
+ * `projecteerNaarPandInvoer` op het VOLLEDIGE schema valideert (bijv. `aantalAdressenMetToegang`
+ * verplicht bij een gedeelde ruimte, §2.8.2/§2.9.1/§2.10.4) — een kandidaat kon zo silent falen
+ * op een regel die nergens in de UI werd genoemd, met "Doorrekenen" blijvend uitgeschakeld en
+ * geen enkele aanwijzing waarom.
+ */
+function pandInvoerValidatiefout(state: InvoerState): string | null {
+  const kandidaat = bouwPandKandidaat(state);
+  if (kandidaat === undefined) return null;
+  const resultaat = PandInvoerSchema.safeParse(kandidaat);
+  if (resultaat.success) return null;
+  const issue = resultaat.error.issues[0];
+  const pad = issue.path.join('.');
+  return pad ? `${issue.message} (${pad})` : issue.message;
 }
 
 function toRuimte(r: RuimteRij) {
@@ -109,5 +143,5 @@ export function ontbrekendeStap(state: InvoerState): string | null {
   if (naarGetal(state.pand.bouwjaar) === undefined) return 'Vul het bouwjaar in';
   const onvolledigeRuimte = state.ruimtes.find((r) => !r.naam || naarGetal(r.oppervlakteM2) === undefined);
   if (onvolledigeRuimte) return `Ruimte ${onvolledigeRuimte.nr}: vul naam en oppervlakte in`;
-  return null;
+  return pandInvoerValidatiefout(state);
 }
