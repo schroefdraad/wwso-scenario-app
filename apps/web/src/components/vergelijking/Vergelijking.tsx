@@ -27,15 +27,22 @@ function standaardSlots(): ScenarioSlot[] {
   return STANDAARD_NAMEN.map((naam) => ({ naam, soort: 'kandidaten' as const, sleutels: new Set<string>() }));
 }
 
-/** Vult de drie vaste slots met de scenario's van een geladen deal (taak 15); ontbrekende slots
- * blijven leeg met een standaardnaam. Een opgeslagen deal kent alleen kandidaten-scenario's —
- * een handmatig bewerkt scenario wordt (nog) niet meeopgeslagen, zie `dealOpslaan`. */
+/** Vult de drie vaste slots met de scenario's van een geladen deal (taak 15, uitgebreid
+ * 2026-08-22 met handmatige scenario's); ontbrekende slots blijven leeg met een standaardnaam. */
 function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
   return STANDAARD_NAMEN.map((standaardNaam, i) => {
     const opgeslagen = scenarios[i];
-    return opgeslagen
-      ? { naam: opgeslagen.naam, soort: 'kandidaten' as const, sleutels: new Set(opgeslagen.sleutels) }
-      : { naam: standaardNaam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
+    if (!opgeslagen) return { naam: standaardNaam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
+    if (opgeslagen.soort === 'handmatig') {
+      return {
+        naam: opgeslagen.naam,
+        soort: 'handmatig' as const,
+        pand: opgeslagen.pand,
+        sleutels: new Set(opgeslagen.sleutels),
+        handmatigeInvesteringEuro: opgeslagen.handmatigeInvesteringEuro,
+      };
+    }
+    return { naam: opgeslagen.naam, soort: 'kandidaten' as const, sleutels: new Set(opgeslagen.sleutels) };
   });
 }
 
@@ -137,7 +144,6 @@ export function Vergelijking({
   const pakket1 = useScenarioPakket(pand, slots[1], kandidaten, handmatigeKandidaten1, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const pakket2 = useScenarioPakket(pand, slots[2], kandidaten, handmatigeKandidaten2, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const berekendePakketten = [pakket0, pakket1, pakket2];
-  const heeftHandmatigSlot = slots.some((s) => s.soort === 'handmatig');
 
   function toggle(slotIndex: number, sleutel: string) {
     setSlots((prev) =>
@@ -210,11 +216,16 @@ export function Vergelijking({
     router.push(`/pand/nieuw?scenario=${index}`);
   }
 
-  /** Alleen kandidaten-slots zijn (nu) opslaanbaar — zie de toelichting bij `dealOpslaan`. */
+  /** Een leeg kandidaten-slot (geen enkele maatregel aangevinkt) draagt geen informatie en wordt
+   * overgeslagen; een handmatig-slot wordt altijd opgeslagen — de bewerkte kamer zelf is de
+   * inhoud, ook zonder extra maatregelen erbovenop (backlog 2026-08-22). */
   function opslaanbareScenarios(): ScenarioSelectie[] {
-    return slots
-      .filter((s): s is Extract<ScenarioSlot, { soort: 'kandidaten' }> => s.soort === 'kandidaten' && s.sleutels.size > 0)
-      .map((s) => ({ naam: s.naam, sleutels: [...s.sleutels] }));
+    return slots.flatMap((s): ScenarioSelectie[] => {
+      if (s.soort === 'handmatig') {
+        return [{ soort: 'handmatig', naam: s.naam, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro }];
+      }
+      return s.sleutels.size > 0 ? [{ soort: 'kandidaten', naam: s.naam, sleutels: [...s.sleutels] }] : [];
+    });
   }
 
   function bekijkResultaat(index: number) {
@@ -238,11 +249,6 @@ export function Vergelijking({
     setOpslaanStatus('bezig');
     setOpslaanFoutmelding(undefined);
     try {
-      // Handmatig bewerkte scenario's zijn nog niet op te slaan: ze bevatten een volledig
-      // PandInvoer i.p.v. kandidaat-sleutels, en `ScenarioSelectie` (het opslagformaat, taak 15)
-      // kent alleen dat laatste. Zo'n slot wordt dus stilzwijgend NIET meegenomen in de deal —
-      // `heeftHandmatigSlot` waarschuwt daar expliciet voor bij de opslaanknop, geen stille
-      // dataverlies zonder melding (harde regel 4).
       const scenarios = opslaanbareScenarios();
       const invoer = { naam: dealNaam, pandInvoer: pand, scenarios, versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus) };
       const deal = dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
@@ -285,9 +291,6 @@ export function Vergelijking({
             {nietBeoordeeldAantal} maatregel{nietBeoordeeldAantal === 1 ? '' : 'en'} vere{nietBeoordeeldAantal === 1 ? 'ist' : 'isen'} extra invoer en{' '}
             {nietBeoordeeldAantal === 1 ? 'wordt' : 'worden'} hier niet getoond.
           </p>
-        )}
-        {heeftHandmatigSlot && (
-          <p className={styles.hint}>Een handmatig bewerkt scenario wordt nog niet meeopgeslagen in de deal — alleen de losse-maatregelen-scenario&apos;s.</p>
         )}
         <SamenvattingRij
           asIsWaardering={asIsWaardering}

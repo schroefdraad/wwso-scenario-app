@@ -26,7 +26,9 @@ describe('parseDealRij', () => {
     expect(deal.id).toBe('d1e5a5b0-0000-4000-8000-000000000001');
     expect(deal.naam).toBe('Crooswijkseweg 95-A03');
     expect(deal.pandInvoer.pand.adres).toBe(testpand6Kamers.pand.adres);
-    expect(deal.scenarios).toEqual([{ naam: 'Scenario 1', sleutels: ['K-03#keuken:7'] }]);
+    // `soort` ontbreekt in de rauwe rij (legacy, vóór 2026-08-22) — valt terug op 'kandidaten',
+    // het enige type dat toen bestond, geen gok.
+    expect(deal.scenarios).toEqual([{ soort: 'kandidaten', naam: 'Scenario 1', sleutels: ['K-03#keuken:7'] }]);
     expect(deal.versiestempel).toEqual({
       tarievensetPeildatum: '2026-01-01',
       kostencatalogusVersie: '0.1',
@@ -42,6 +44,31 @@ describe('parseDealRij', () => {
 
   it('gooit een fout bij een corrupte scenarios-kolom', () => {
     const rij = geldigeRij({ scenarios: [{ naam: 'Scenario 1' }] });
+    expect(() => parseDealRij(rij)).toThrow();
+  });
+
+  it('parseert een handmatig bewerkt scenario (backlog 2026-08-22: handmatige kamer + maatregelen)', () => {
+    const rij = geldigeRij({
+      scenarios: [
+        {
+          soort: 'handmatig',
+          naam: 'Kamer 7',
+          pand: testpand6Kamers,
+          sleutels: ['K-01#kamer:7'],
+          handmatigeInvesteringEuro: 15000,
+        },
+      ],
+    });
+    const deal = parseDealRij(rij);
+    expect(deal.scenarios).toEqual([
+      { soort: 'handmatig', naam: 'Kamer 7', pand: testpand6Kamers, sleutels: ['K-01#kamer:7'], handmatigeInvesteringEuro: 15000 },
+    ]);
+  });
+
+  it('gooit een fout bij een handmatig scenario zonder geldig pand', () => {
+    const rij = geldigeRij({
+      scenarios: [{ soort: 'handmatig', naam: 'Kamer 7', pand: { pand: { adres: 'Onvolledig' } }, sleutels: [], handmatigeInvesteringEuro: 0 }],
+    });
     expect(() => parseDealRij(rij)).toThrow();
   });
 });
