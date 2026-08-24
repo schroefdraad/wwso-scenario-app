@@ -39,8 +39,8 @@ export function MaatregelTabel({
           <thead>
             <tr>
               <th>Maatregel</th>
-              <th>Solo +€/jr</th>
-              <th>Solo investering</th>
+              <th>+€/jr</th>
+              <th>Investering</th>
               <th>TVT</th>
               {slots.map((slot, i) => (
                 <th key={i} className={styles.checkCel}>
@@ -61,7 +61,11 @@ export function MaatregelTabel({
                     <td className={styles.maatregelOmschrijving}>
                       <span className={styles.maatregelId}>{k.maatregel.id}</span>
                       {k.kandidaat.omschrijving}
-                      {VERGUNNING_LABEL[k.vergunningKlasse] && <span className={styles.vergunningBadge}>{VERGUNNING_LABEL[k.vergunningKlasse]}</span>}
+                      {VERGUNNING_LABEL[k.vergunningKlasse] && (
+                        <span className={styles.vergunningBadge} title={k.maatregel.vergunningOfMelding}>
+                          {VERGUNNING_LABEL[k.vergunningKlasse]}
+                        </span>
+                      )}
                     </td>
                     <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
                     <td className={styles.tvtCel}>{formateerEuro(k.investeringEuro.verwacht)}</td>
