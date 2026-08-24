@@ -9,7 +9,19 @@ function priveVertrekVan(ctx: MaatregelContext, kamer: number) {
   return ruimtes.find((r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1)?.ruimte;
 }
 
-/** S-01 — eigen wastafel op de kamer. Bestaat er al sanitair op de privéruimte, dan wordt de wastafel erbij gezet. */
+/**
+ * S-01 — eigen wastafel op de kamer. Bestaat er al sanitair op de privéruimte, dan wordt de
+ * wastafel erbij gezet.
+ *
+ * Bugfix (2026-08-24, gevonden door de gebruiker op de Crooswijkseweg-testdeal): buiten een
+ * badkamer geldt een cap van 1 punt per vertrek voor wastafels (§2.6.1, `wastafelPuntenPerVertrekBuitenBadkamer`)
+ * — de privé-doelruimte van deze maatregel is per definitie nooit een badkamer (`priveVertrekVan`
+ * filtert op 'Privévertrek'). Had die kamer al 1 wastafel (1 punt, dus al aan de cap), dan
+ * leverde "nog een wastafel erbij" altijd 0 extra punten op — de maatregel werd toch aangeboden,
+ * mét investeringsbedrag, voor 0 punten winst. Nu wordt eerst gecontroleerd of de volgende
+ * wastafel de cap daadwerkelijk verder vult (zelfde soort drempel-check als K-03 al deed voor het
+ * aanrecht) — is dat niet zo, dan verschijnt de kandidaat niet.
+ */
 const S01: MaatregelDefinitie = {
   id: 'S-01',
   doelSoort: 'kamer',
@@ -17,17 +29,24 @@ const S01: MaatregelDefinitie = {
   vergunningBrontekst: 'Nee',
   puntenrelevant: true,
   kandidaten(ctx) {
-    const bestaand = new Set(ctx.pand.sanitair.map((s) => s.ruimteNr));
+    const { wastafel } = ctx.tarievenset.sanitairBasisPunten;
+    const { wastafelPuntenPerVertrekBuitenBadkamer: cap } = ctx.tarievenset.sanitairMaxima;
+    const bestaandBijRuimte = new Map(ctx.pand.sanitair.map((s) => [s.ruimteNr, s] as const));
     const kandidaten = [];
     for (let kamer = 1; kamer <= ctx.pand.pand.aantalKamers; kamer++) {
       const vertrek = priveVertrekVan(ctx, kamer);
       if (!vertrek) continue;
+      const bestaand = bestaandBijRuimte.get(vertrek.nr);
+      const huidigeWastafels = bestaand?.aantalWastafels ?? 0;
+      const huidigePunten = Math.min(huidigeWastafels * wastafel, cap);
+      const puntenMetErbij = Math.min((huidigeWastafels + 1) * wastafel, cap);
+      if (puntenMetErbij <= huidigePunten) continue;
       kandidaten.push({
         sleutel: `S-01#kamer:${kamer}`,
         maatregelId: 'S-01',
         doel: { soort: 'kamer' as const, nr: kamer },
         hoeveelheid: 1,
-        omschrijving: bestaand.has(vertrek.nr)
+        omschrijving: bestaand
           ? `Extra wastafel op kamer ${kamer} (ruimte ${vertrek.nr})`
           : `Wastafel op kamer ${kamer} (ruimte ${vertrek.nr})`,
       });
