@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.4.2';
+export const APP_VERSIE = '0.4.3';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.4.3',
+    datum: '2026-08-24',
+    wijzigingen: [
+      'Inloggen via magic link (e-mail) — alleen bekende e-mailadressen krijgen toegang tot deals',
+      'Maatregeltabel: de "melding"-badge (bijv. bij split-airco) toont nu bij hovering een tooltip met de reden',
+      'Kolomkoppen "Solo +€/jr"/"Solo investering" ingekort naar "+€/jr"/"Investering"',
+    ],
+  },
   {
     versie: '0.4.2',
     datum: '2026-08-24',
