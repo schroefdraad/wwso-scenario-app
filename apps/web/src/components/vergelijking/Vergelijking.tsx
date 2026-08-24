@@ -245,6 +245,20 @@ export function Vergelijking({
     router.push('/pand/resultaat');
   }
 
+  /** Zelfde reis als `bekijkResultaat`, maar dan voor de as-is kolom zelf — voorheen alleen
+   * bereikbaar via de browser-terugknop (feedback tijdens het testen, 2026-08-24). */
+  function bekijkAsIsResultaat() {
+    slaPandOp({
+      pand,
+      tarievensetPeildatum: tarievenset.peildatum,
+      kostencatalogusVersie: kostencatalogus.versie,
+      dealId,
+      dealNaam,
+      dealScenarios: opslaanbareScenarios(),
+    });
+    router.push('/pand/resultaat');
+  }
+
   async function dealOpslaan() {
     setOpslaanStatus('bezig');
     setOpslaanFoutmelding(undefined);
@@ -298,6 +312,7 @@ export function Vergelijking({
           onNaamWijzig={naamWijzig}
           onSnelVullen={snelVullen}
           onBekijkResultaat={bekijkResultaat}
+          onBekijkAsIsResultaat={bekijkAsIsResultaat}
           onBewerkHandmatig={bewerkHandmatig}
           heeftVerwervingswaarde={verwervingswaardeEuro !== undefined}
         />

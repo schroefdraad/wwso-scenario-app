@@ -20,6 +20,7 @@ export function SamenvattingRij({
   onNaamWijzig,
   onSnelVullen,
   onBekijkResultaat,
+  onBekijkAsIsResultaat,
   onBewerkHandmatig,
   heeftVerwervingswaarde,
 }: {
@@ -28,6 +29,7 @@ export function SamenvattingRij({
   onNaamWijzig: (index: number, naam: string) => void;
   onSnelVullen: (index: number, soort: 'basis' | 'comfort' | 'maximaal' | 'leeg') => void;
   onBekijkResultaat: (index: number) => void;
+  onBekijkAsIsResultaat: () => void;
   onBewerkHandmatig: (index: number) => void;
   heeftVerwervingswaarde: boolean;
 }) {
@@ -50,14 +52,6 @@ export function SamenvattingRij({
             <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'maximaal')}>
               Maximaal
             </button>
-            <button type="button" className={styles.btn} onClick={() => onBewerkHandmatig(i)}>
-              Bewerk handmatig →
-            </button>
-            {kolom.pakket && (
-              <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'leeg')}>
-                Leegmaken
-              </button>
-            )}
           </div>
         </div>
       ))}
@@ -128,14 +122,30 @@ export function SamenvattingRij({
       ))}
 
       <div className={styles.samenvattingLabel} />
-      <div className={styles.samenvattingCel} />
+      <div className={styles.samenvattingCel}>
+        <div className={styles.linkStapel}>
+          <button type="button" className={styles.btnLink} onClick={onBekijkAsIsResultaat}>
+            Bekijk volledig resultaat →
+          </button>
+        </div>
+      </div>
       {kolommen.map((kolom, i) => (
         <div key={i} className={styles.samenvattingCel}>
-          {kolom.pakket && (
-            <button type="button" className={styles.btnLink} onClick={() => onBekijkResultaat(i)}>
-              Bekijk volledig resultaat →
+          <div className={styles.linkStapel}>
+            {kolom.pakket && (
+              <button type="button" className={styles.btnLink} onClick={() => onBekijkResultaat(i)}>
+                Bekijk volledig resultaat →
+              </button>
+            )}
+            <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
+              Bewerk handmatig →
             </button>
-          )}
+            {kolom.pakket && (
+              <button type="button" className={styles.btnLink} onClick={() => onSnelVullen(i, 'leeg')}>
+                Leegmaken
+              </button>
+            )}
+          </div>
         </div>
       ))}
     </div>

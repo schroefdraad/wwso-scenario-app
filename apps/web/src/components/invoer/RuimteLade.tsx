@@ -299,19 +299,31 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
         <PuntBadge waarde={puntVoorToiletType(sanitair.toiletType)} />
       </div>
       <div className={styles.veldrij}>
-        <label htmlFor="s-wastafels">Aantal wastafels</label>
-        <input id="s-wastafels" type="number" min={0} value={sanitair.aantalWastafels} onChange={(e) => zetSanitair({ aantalWastafels: Number(e.target.value) || 0 })} />
-      </div>
-      <div className={styles.veldrij}>
-        <label htmlFor="s-meerpersoons">Meerpersoonswastafels</label>
+        <label htmlFor="s-wastafels">{isToiletruimte ? 'Aantal fonteintjes' : 'Aantal wastafels'}</label>
         <input
-          id="s-meerpersoons"
+          id="s-wastafels"
           type="number"
           min={0}
-          value={sanitair.aantalMeerpersoonswastafels}
-          onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
+          max={isToiletruimte ? 1 : undefined}
+          value={sanitair.aantalWastafels}
+          onChange={(e) => {
+            const waarde = Number(e.target.value) || 0;
+            zetSanitair({ aantalWastafels: isToiletruimte ? Math.min(1, Math.max(0, waarde)) : waarde });
+          }}
         />
       </div>
+      {!isToiletruimte && (
+        <div className={styles.veldrij}>
+          <label htmlFor="s-meerpersoons">Meerpersoonswastafels</label>
+          <input
+            id="s-meerpersoons"
+            type="number"
+            min={0}
+            value={sanitair.aantalMeerpersoonswastafels}
+            onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
+          />
+        </div>
+      )}
       {!isToiletruimte && (
         <div className={styles.veldrij}>
           <label>Douche / bad</label>

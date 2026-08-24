@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.4.1';
+export const APP_VERSIE = '0.4.2';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.4.2',
+    datum: '2026-08-24',
+    wijzigingen: [
+      'Sanitair-lade: in een toiletruimte heet "wastafel" nu "fonteintje", max. 1 per toiletruimte, geen meerpersoonswastafel-optie meer',
+      'Onder AS-IS op de scenariopagina staat nu ook "Bekijk volledig resultaat →" — voorheen alleen bereikbaar via de browser-terugknop',
+      'Resultaatscherm en PDF tonen nu ook het totaal (som over alle kamers) aan maandhuur en jaarhuur, naast de puntenopbouw per kamer',
+      'Knoppen per scenario-kolom herordend: "Bekijk volledig resultaat", "Bewerk handmatig" en "Leegmaken" staan nu als drie tekstlinks onder elkaar',
+    ],
+  },
   {
     versie: '0.4.1',
     datum: '2026-08-22',

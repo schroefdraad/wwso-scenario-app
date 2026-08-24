@@ -75,6 +75,33 @@
   overflow: hidden;
 }
 
+.totalenBlok {
+  display: flex;
+  gap: 2rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.totalenCel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.totalenLabel {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+
+.totalenWaarde {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .blokKop {
   padding: 0.9rem 1.2rem;
   border-bottom: 1px solid var(--line);

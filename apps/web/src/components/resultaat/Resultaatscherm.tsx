@@ -2,12 +2,16 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { berekenEindtelling, voerControlesUit, type PandInvoer } from '@wwso/engine';
+import { berekenEindtelling, pandWaarderingVan, voerControlesUit, type PandInvoer } from '@wwso/engine';
 import type { Tarievenset } from '@wwso/data';
 import { KamerRij } from './KamerRij';
 import { ControlesPaneel } from './ControlesPaneel';
 import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
 import styles from './styles.module.css';
+
+function formateerEuro(bedrag: number): string {
+  return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(bedrag);
+}
 
 /**
  * Resultaatscherm (taak 13) — bewust prop-driven, niet route-gekoppeld: `pand` komt van buitenaf
@@ -26,6 +30,7 @@ export function Resultaatscherm({
   titel?: string;
 }) {
   const eindtelling = useMemo(() => berekenEindtelling(pand, tarievenset, peildatum), [pand, tarievenset, peildatum]);
+  const waardering = useMemo(() => pandWaarderingVan(eindtelling), [eindtelling]);
   const controles = useMemo(() => voerControlesUit(pand), [pand]);
   const [pdfStatus, setPdfStatus] = useState<'idle' | 'bezig' | 'fout'>('idle');
 
@@ -68,6 +73,16 @@ export function Resultaatscherm({
         </Link>
       </header>
       <main className={styles.main}>
+        <section className={styles.totalenBlok}>
+          <div className={styles.totalenCel}>
+            <span className={styles.totalenLabel}>Totaal maandhuur</span>
+            <span className={styles.totalenWaarde}>{formateerEuro(waardering.brutoJaarhuurEuro / 12)}</span>
+          </div>
+          <div className={styles.totalenCel}>
+            <span className={styles.totalenLabel}>Totaal jaarhuur</span>
+            <span className={styles.totalenWaarde}>{formateerEuro(waardering.brutoJaarhuurEuro)}</span>
+          </div>
+        </section>
         <section className={styles.blok}>
           <div className={styles.blokKop}>
             <h2>Punten en huurprijs per kamer</h2>

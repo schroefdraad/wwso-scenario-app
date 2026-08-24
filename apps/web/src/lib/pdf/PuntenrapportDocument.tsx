@@ -1,5 +1,5 @@
 import { Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer';
-import type { ControleResultaat, EindtellingResultaat, PandInvoer } from '@wwso/engine';
+import { pandWaarderingVan, type ControleResultaat, type EindtellingResultaat, type PandInvoer } from '@wwso/engine';
 import { RUBRIEK_LABELS, RUBRIEK_VOLGORDE } from '../resultaat/rubriek-labels';
 import { filterToelichtingVoorKamer, toegankelijkeRuimteNrsVoorKamer } from '../resultaat/toelichting-filter';
 
@@ -41,6 +41,18 @@ const stijl = StyleSheet.create({
     color: KLEUR.inktZwak,
   },
   headerLijn: { borderBottomWidth: 1.5, borderBottomColor: KLEUR.accent, marginTop: 10, marginBottom: 16 },
+
+  totalenBlok: {
+    flexDirection: 'row',
+    gap: 28,
+    backgroundColor: KLEUR.accentZacht,
+    borderRadius: 2,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginBottom: 16,
+  },
+  totalenLabel: { fontSize: 7.5, color: KLEUR.inktZacht, textTransform: 'uppercase' },
+  totalenWaarde: { fontSize: 13, fontFamily: 'Helvetica-Bold', color: KLEUR.accent, marginTop: 1 },
 
   kamerBlok: { marginBottom: 16 },
   kamerKop: {
@@ -143,6 +155,7 @@ export function PuntenrapportDocument({
     .map(Number)
     .sort((a, b) => a - b);
   const gegenereerdOp = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+  const waardering = pandWaarderingVan(eindtelling);
 
   return (
     <Document title={`Puntentelling ${pand.pand.adres}`}>
@@ -156,6 +169,17 @@ export function PuntenrapportDocument({
           {pand.pand.stad} · {pand.pand.aantalKamers} kamer{pand.pand.aantalKamers === 1 ? '' : 's'} · tarieven peildatum {tarievensetPeildatum}
         </Text>
         <View style={stijl.headerLijn} />
+
+        <View style={stijl.totalenBlok}>
+          <View>
+            <Text style={stijl.totalenLabel}>Totaal maandhuur</Text>
+            <Text style={stijl.totalenWaarde}>{euro(waardering.brutoJaarhuurEuro / 12)}</Text>
+          </View>
+          <View>
+            <Text style={stijl.totalenLabel}>Totaal jaarhuur</Text>
+            <Text style={stijl.totalenWaarde}>{euro(waardering.brutoJaarhuurEuro)}</Text>
+          </View>
+        </View>
 
         {kamers.map((kamer) => {
           const resultaat = eindtelling.perKamer[kamer];

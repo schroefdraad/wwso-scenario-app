@@ -202,6 +202,14 @@
   cursor: pointer;
   font-size: 0.78rem;
   font-family: inherit;
+  text-align: left;
+}
+
+.linkStapel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
 }
 
 /* Maatregeltabel */
