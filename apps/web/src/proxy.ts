@@ -11,10 +11,22 @@ import { NextResponse, type NextRequest } from 'next/server';
  * Inloggen zelf is open (iedereen kan een magic link aanvragen) — of een ingelogde gebruiker ook
  * daadwerkelijk data ziet, hangt af van `allowed_emails` via RLS (zie
  * supabase/migrations/0002_auth_allowlist.sql), niet van deze proxy.
+ *
+ * Handmatige, tijdelijke schakelaar (2026-08-24, zie plan.md): de ingebouwde Supabase-mailer
+ * staat maar 2 magic-link-mails per uur toe (gedeeld over het hele project) — te storend tijdens
+ * een testsessie met meerdere mensen kort na elkaar. Vercel env var `AUTH_VEREIST=false` slaat
+ * de login-check hieronder over; run dan OOK `supabase/toggle-auth-uit.sql` (anders blijft de
+ * database zelf via RLS alsnog alles blokkeren voor een niet-ingelogde/anon-sessie). Terugzetten:
+ * env var weghalen of op 'true' zetten + `supabase/toggle-auth-aan.sql` draaien. Ontbreekt de env
+ * var, dan staat auth gewoon AAN — een vergeten instelling opent nooit stilzwijgend de app.
  */
+const AUTH_VEREIST = process.env.AUTH_VEREIST !== 'false';
+
 const PUBLIEKE_PADEN = ['/login', '/auth/callback'];
 
 export async function proxy(request: NextRequest) {
+  if (!AUTH_VEREIST) return NextResponse.next();
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
