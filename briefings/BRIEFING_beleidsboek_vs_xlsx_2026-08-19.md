@@ -228,3 +228,17 @@ De golden-master validatie wint hierdoor aan waarde en verandert van karakter. E
 
 ### Gevolg voor de kostenkentallen
 Maatregelen die punten opleveren via een poort (een keuken die niet aan de basiseisen voldoet, een badruimte die niet aan de vijf eisen voor extra voorzieningen voldoet) hebben een sprongsgewijs rendement: de eerste investering die de poort opent, ontsluit ineens alle extra punten. Dat is relevant voor de suggestie-engine van taak 11 en staat haaks op een lineaire vuistregel per maatregel.
+
+---
+
+## F. Aanvulling — precisering §2.6.2 en praktijkgevolg (2026-08-24)
+
+Bij het beantwoorden van een vraag van de gebruiker over sanitair buiten een badruimte bleek de uitleg in B8/C hierboven op één punt onnauwkeurig geformuleerd, ook al was de rekenmotor zelf al correct.
+
+**Letterlijke tekst §2.6.2:** *"Het is mogelijk om extra punten te krijgen voor sanitaire voorzieningen die zich bevinden in een **bad- of doucheruimte**. Maar het aantal punten voor extra voorzieningen kan niet meer zijn dan het totaalaantal punten voor de douche, het bad en/of bad/douche gezamenlijk."*
+
+§2.6.2 is dus op zichzelf al beperkt tot een bad- of doucheruimte — niet "overal met een aftopping erbovenop" zoals eerder in gesprek geformuleerd. Belangrijk: dat is geen apart geëtiketteerd ruimtetype (`Ruimte.type` in het datamodel), maar functioneel bepaald — één van de vijf eisen voor extra punten is zelf al *"een douche of bad met aansluitpunten voor warm en koud water"*. Zonder douche/bad kan een ruimte dus per definitie niet aan die eis voldoen, en is er geen "bad- of doucheruimte" in de zin van dit artikel.
+
+**Waarom de rekenmotor toch al correct was:** `berekenSanitair` (`r6-sanitair.ts`) toetst dit niet via `ruimte.type`, maar via de aftopping `Math.min(extraRuw, doucheBad)` op de sanitaire post zelf. Heeft een post geen douche/bad, dan is `doucheBad = 0` en capt elke extra voorziening (ook bij — inconsistent — wél aangevinkte eisen-checkboxes) automatisch op 0. Dat komt op hetzelfde neer als "dit is geen bad-/doucheruimte, dus §2.6.2 is niet van toepassing", alleen technisch afgedwongen via de aftopping in plaats van een roomtype-check. Geen codewijziging nodig — wel de uitleg in dit document en richting de gebruiker aangescherpt.
+
+**Aanleiding, met een echt gevonden bug:** dezelfde sessie bracht via een gebruikerstest op de Crooswijkseweg-testdeal een bug aan het licht in maatregel S-01 ("wastafel op kamer", `suggesties/registry/r6-sanitair.ts`) — die bood zichzelf altijd aan, ook als de kamer al aan de wastafel-cap zat (§2.6.1: max. 1 punt per vertrek buiten de badkamer), wat een investering voor gegarandeerd 0 punten opleverde. Gefixt met een drempel-check vóór het genereren van de kandidaat, regressietest toegevoegd (`r6-sanitair-registry.test.ts`). Zie `plan/plan.md`, Backlog-sectie, voor het volledige verslag.
