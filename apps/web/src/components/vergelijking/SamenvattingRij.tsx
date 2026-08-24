@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import type { Pakket, PandWaardering } from '@wwso/engine';
 import { formateerEuro, formateerEuroBand, formateerJarenBand, formateerPctBand } from '../../lib/vergelijking/formatteren';
 import styles from './styles.module.css';
@@ -16,6 +17,7 @@ export interface ScenarioKolom {
  */
 export function SamenvattingRij({
   asIsWaardering,
+  asIsDealId,
   kolommen,
   onNaamWijzig,
   onSnelVullen,
@@ -25,6 +27,10 @@ export function SamenvattingRij({
   heeftVerwervingswaarde,
 }: {
   asIsWaardering: PandWaardering;
+  /** Alleen gezet als de as-is al als deal is opgeslagen — "Bewerk handmatig" voor as-is
+   * navigeert naar de bewerkbare kopie van díe deal, net als het vroegere "Pandgegevens
+   * bewerken"-linkje uit de paginakop (nu hier, naast de scenario-links, voor consistentie). */
+  asIsDealId: string | undefined;
   kolommen: ScenarioKolom[];
   onNaamWijzig: (index: number, naam: string) => void;
   onSnelVullen: (index: number, soort: 'basis' | 'comfort' | 'maximaal' | 'leeg') => void;
@@ -127,6 +133,11 @@ export function SamenvattingRij({
           <button type="button" className={styles.btnLink} onClick={onBekijkAsIsResultaat}>
             Bekijk volledig resultaat →
           </button>
+          {asIsDealId && (
+            <Link href={`/pand/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
+              Bewerk handmatig →
+            </Link>
+          )}
         </div>
       </div>
       {kolommen.map((kolom, i) => (

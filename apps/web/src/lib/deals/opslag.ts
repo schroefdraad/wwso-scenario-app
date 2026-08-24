@@ -1,6 +1,5 @@
 import type { PandInvoer, Versiestempel } from '@wwso/engine';
-import { supabase } from '../supabase';
-import { PLACEHOLDER_ORG_ID } from './org';
+import { supabase } from '../supabase/client';
 import { parseDealRij, type Deal, type ScenarioSelectie } from './types';
 
 export interface DealInvoer {
@@ -25,7 +24,7 @@ function naarRij(invoer: DealInvoer) {
 export async function maakDealAan(invoer: DealInvoer): Promise<Deal> {
   const { data, error } = await supabase
     .from('deals')
-    .insert({ org_id: PLACEHOLDER_ORG_ID, ...naarRij(invoer) })
+    .insert(naarRij(invoer))
     .select()
     .single();
   if (error) throw new Error(`Deal opslaan mislukt: ${error.message}`);

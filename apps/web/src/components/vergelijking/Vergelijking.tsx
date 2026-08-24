@@ -290,11 +290,6 @@ export function Vergelijking({
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
-        {dealId && (
-          <Link href={`/pand/nieuw?deal=${dealId}`} className={styles.dealenLink}>
-            Pandgegevens bewerken →
-          </Link>
-        )}
         <Link href="/deals" className={styles.dealenLink}>
           Mijn deals →
         </Link>
@@ -308,6 +303,7 @@ export function Vergelijking({
         )}
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
+          asIsDealId={dealId}
           kolommen={slots.map((slot, i) => ({ naam: slot.naam, pakket: berekendePakketten[i] }))}
           onNaamWijzig={naamWijzig}
           onSnelVullen={snelVullen}

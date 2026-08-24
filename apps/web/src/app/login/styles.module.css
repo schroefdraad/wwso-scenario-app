@@ -1,0 +1,85 @@
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  padding: 1.5rem;
+}
+
+.kaart {
+  width: 100%;
+  max-width: 22rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+}
+
+.kaart h1 {
+  font-size: 1.15rem;
+  margin: 0 0 0.3rem;
+}
+
+.sub {
+  color: var(--ink-dim);
+  font-size: 0.88rem;
+  margin: 0 0 1.2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form label {
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+}
+
+.form input {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+.form button {
+  margin-top: 0.4rem;
+  padding: 0.55rem 0.8rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.melding {
+  font-size: 0.92rem;
+}
+
+.foutmelding {
+  color: #b3403a;
+  font-size: 0.85rem;
+}
+
+.hint {
+  margin-top: 1.2rem;
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+}
+
+.hint code {
+  font-size: 0.9em;
+}

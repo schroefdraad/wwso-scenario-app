@@ -6,9 +6,16 @@
   color: var(--ink-dim);
 }
 
+.rij {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .versieKnop {
   display: block;
-  width: 100%;
+  flex: 1;
   padding: 0.5rem 1rem;
   background: transparent;
   border: none;
@@ -20,6 +27,30 @@
 
 .versieKnop:hover {
   color: var(--ink);
+}
+
+.gebruiker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+}
+
+.uitlogKnop {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.15rem 0.5rem;
+  font: inherit;
+  font-size: 0.74rem;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.uitlogKnop:hover {
+  color: var(--ink);
+  border-color: var(--ink-dim);
 }
 
 .log {
