@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { huidigeVersiestempel, pasScenarioToe, type KandidaatWaardering, type Pakket, type PandInvoer, type PandWaardering } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
+import { nieuweSelectieNaToggle } from '../../lib/vergelijking/scenario-bouw';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import {
@@ -152,9 +153,8 @@ export function Vergelijking({
         // Aanvinken van een losse maatregel zet een handmatig-bewerkt slot terug naar
         // kandidaten-modus — dezelfde discipline als "Leegmaken": een expliciete gebruikersactie
         // vervangt het vorige scenario, nooit een stille samenvoeging van twee bronnen.
-        const sleutels = s.soort === 'kandidaten' ? new Set(s.sleutels) : new Set<string>();
-        if (sleutels.has(sleutel)) sleutels.delete(sleutel);
-        else sleutels.add(sleutel);
+        const huidigeSleutels = s.soort === 'kandidaten' ? s.sleutels : new Set<string>();
+        const sleutels = nieuweSelectieNaToggle(kandidaten, huidigeSleutels, sleutel);
         return { naam: s.naam, soort: 'kandidaten' as const, sleutels };
       }),
     );
@@ -167,9 +167,8 @@ export function Vergelijking({
     setSlots((prev) =>
       prev.map((s, i) => {
         if (i !== slotIndex || s.soort !== 'handmatig') return s;
-        const sleutels = new Set(s.sleutels);
-        if (sleutels.has(sleutel)) sleutels.delete(sleutel);
-        else sleutels.add(sleutel);
+        const handmatigeKandidaten = handmatigeKandidatenPerSlot[i]?.kandidaten ?? [];
+        const sleutels = nieuweSelectieNaToggle(handmatigeKandidaten, s.sleutels, sleutel);
         return { ...s, sleutels };
       }),
     );

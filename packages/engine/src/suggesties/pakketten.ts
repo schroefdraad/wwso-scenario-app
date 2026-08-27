@@ -12,7 +12,8 @@ export interface PoolItem {
   definitie: MaatregelDefinitie;
 }
 
-function doelSleutel(kandidaat: Kandidaat): string {
+/** Groepeersleutel voor een kandidaat-doel (rubriek/kamer/ruimte/...) — gedeeld met de UI-kant voor alternatiefGroep-uitsluiting bij handmatige selectie. */
+export function doelSleutel(kandidaat: Kandidaat): string {
   return `${kandidaat.doel.soort}:${kandidaat.doel.nr ?? ''}`;
 }
 

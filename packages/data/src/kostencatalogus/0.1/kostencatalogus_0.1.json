@@ -14,18 +14,18 @@
       "id": "K-01",
       "rubriek": "R5",
       "categorie": "Keuken",
-      "maatregel": "Kitchenette/keukenblokje per kamer (1,0-1,2 m, spoelbak, 2-pits, koelkastje) incl. plaatsing",
+      "maatregel": "Kitchenette/keukenblok 122 cm per kamer (spoelbak+kraan, inductieplaat, afzuigkap, 2x boven-/onderkast, 2x stopcontact) incl. plaatsing",
       "eenheid": "per kamer",
-      "kostenMinEuro": 1200,
-      "kostenVerwachtEuro": 1900,
-      "kostenMaxEuro": 3000,
-      "effectOpPuntentelling": "Verschuift keukenpunten van gedeeld naar privé: de kamer deelt de keukenpunten niet meer door het aantal kamers met toegang. Aanrechtlengte bepaalt de basispunten.",
-      "puntenIndicatie": "Grote sprong bij 4+ kamers",
+      "kostenMinEuro": 2485,
+      "kostenVerwachtEuro": 2485,
+      "kostenMaxEuro": 2485,
+      "effectOpPuntentelling": "Verschuift keukenpunten van gedeeld naar privé: de kamer deelt de keukenpunten niet meer door het aantal kamers met toegang. Aanrechtlengte 122 cm.",
+      "puntenIndicatie": "8 pt (aanrecht 122 cm)",
       "vergunningOfMelding": "Nee (wel bouwbesluit/ventilatie)",
       "doorlooptijd": "1-2 weken",
-      "bron": "Schatting Claude, NL marktprijzen 2026",
-      "status": "schatting",
-      "laatstBijgewerkt": "2026-08-19"
+      "bron": "Offerte leverancier, keukenblok 122cm/8pt (resources/Kosten per keukenblok.xlsx), 2026-08-26",
+      "status": "offerte",
+      "laatstBijgewerkt": "2026-08-26"
     },
     {
       "id": "K-02",
@@ -33,16 +33,16 @@
       "categorie": "Keuken",
       "maatregel": "Water- en afvoeraansluiting + elektragroep naar kamer trekken (t.b.v. kitchenette)",
       "eenheid": "per kamer",
-      "kostenMinEuro": 600,
-      "kostenVerwachtEuro": 1100,
-      "kostenMaxEuro": 2200,
+      "kostenMinEuro": 1761.5,
+      "kostenVerwachtEuro": 1761.5,
+      "kostenMaxEuro": 1761.5,
       "effectOpPuntentelling": "Randvoorwaarde voor K-01, geen zelfstandige puntenwinst.",
       "puntenIndicatie": "0 (enabler)",
       "vergunningOfMelding": "Nee",
       "doorlooptijd": "1 week",
-      "bron": "Schatting Claude, NL marktprijzen 2026",
-      "status": "schatting",
-      "laatstBijgewerkt": "2026-08-19"
+      "bron": "Offerte leverancier, keukenblok 122/240cm (resources/Kosten per keukenblok.xlsx), 2026-08-26",
+      "status": "offerte",
+      "laatstBijgewerkt": "2026-08-26"
     },
     {
       "id": "K-03",
@@ -391,15 +391,15 @@
       "maatregel": "Split-airco (verwarmen én koelen) per kamer",
       "eenheid": "per kamer",
       "kostenMinEuro": 1500,
-      "kostenVerwachtEuro": 2300,
+      "kostenVerwachtEuro": 1500,
       "kostenMaxEuro": 3500,
       "effectOpPuntentelling": "Levert bovenop verwarming 1 pt per verkoeld vertrek, met een maximum van 2 pt per kamer.",
       "puntenIndicatie": "+1 pt (max 2)",
       "vergunningOfMelding": "Soms melding (buitenunit)",
       "doorlooptijd": "1 week",
-      "bron": "Schatting Claude, NL marktprijzen 2026",
+      "bron": "Inschatting gebruiker, 2026-08-26",
       "status": "schatting",
-      "laatstBijgewerkt": "2026-08-19"
+      "laatstBijgewerkt": "2026-08-26"
     },
     {
       "id": "V-04",
@@ -842,6 +842,23 @@
       "bron": "Schatting Claude, NL marktprijzen 2026",
       "status": "schatting",
       "laatstBijgewerkt": "2026-08-19"
+    },
+    {
+      "id": "K-09",
+      "rubriek": "R5",
+      "categorie": "Keuken",
+      "maatregel": "Kitchenette/keukenblok 240 cm per kamer (spoelbak+kraan, inductieplaat, afzuigkap, elektrische oven, vaatwasser, koelkast, 2x bovenkast) incl. plaatsing",
+      "eenheid": "per kamer",
+      "kostenMinEuro": 3171.6,
+      "kostenVerwachtEuro": 3171.6,
+      "kostenMaxEuro": 3171.6,
+      "effectOpPuntentelling": "Verschuift keukenpunten van gedeeld naar privé, zelfde principe als K-01 maar met aanrechtlengte 240 cm (grotere basispunten-drempel).",
+      "puntenIndicatie": "14 pt (aanrecht 240 cm)",
+      "vergunningOfMelding": "Nee (wel bouwbesluit/ventilatie)",
+      "doorlooptijd": "1-2 weken",
+      "bron": "Offerte leverancier, keukenblok 240cm/14pt (resources/Kosten per keukenblok.xlsx), 2026-08-26",
+      "status": "offerte",
+      "laatstBijgewerkt": "2026-08-26"
     }
   ]
 }

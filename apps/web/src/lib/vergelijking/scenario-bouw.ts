@@ -3,6 +3,7 @@ import {
   berekenEindtelling,
   bouwHandmatigScenarioMetMaatregelen,
   bouwVrijScenario,
+  doelSleutel,
   genereerEnWaardeerKandidaten,
   nieuwBudget,
   standaardRegistry,
@@ -13,6 +14,38 @@ import {
   type PoolItem,
 } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
+
+/**
+ * Toggle-logica voor de handmatige maatregeltabellen (`MaatregelTabel`/`HandmatigMaatregelen`).
+ * Checkboxes zijn bewust onafhankelijk (de gebruiker kiest expliciet, zie `MaatregelTabel.tsx`),
+ * BEHALVE binnen dezelfde `alternatiefGroep` + doel: twee varianten van dezelfde fysieke
+ * plek (bijv. K-01/K-09 kitchenette in dezelfde kamer) leveren allebei een `keuken-toevoegen`-
+ * mutatie op hetzelfde ruimteNr, wat `pasMutatieToe` een harde `mutatieFout` laat gooien —
+ * onopgevangen, midden in een render-`useMemo`, dus een kapotte pagina. Aanvinken van de ene
+ * vinkt daarom automatisch de andere alternatieven voor hetzelfde doel uit.
+ */
+export function nieuweSelectieNaToggle(kandidaten: readonly KandidaatWaardering[], huidigeSleutels: ReadonlySet<string>, sleutel: string): Set<string> {
+  const nieuw = new Set(huidigeSleutels);
+  if (nieuw.has(sleutel)) {
+    nieuw.delete(sleutel);
+    return nieuw;
+  }
+
+  const kandidaat = kandidaten.find((k) => k.kandidaat.sleutel === sleutel);
+  const alternatiefGroep = kandidaat ? standaardRegistry.get(kandidaat.maatregel.id)?.alternatiefGroep : undefined;
+  if (kandidaat && alternatiefGroep) {
+    const doel = doelSleutel(kandidaat.kandidaat);
+    for (const ander of kandidaten) {
+      if (ander.kandidaat.sleutel === sleutel || !nieuw.has(ander.kandidaat.sleutel)) continue;
+      if (standaardRegistry.get(ander.maatregel.id)?.alternatiefGroep === alternatiefGroep && doelSleutel(ander.kandidaat) === doel) {
+        nieuw.delete(ander.kandidaat.sleutel);
+      }
+    }
+  }
+
+  nieuw.add(sleutel);
+  return nieuw;
+}
 
 /**
  * Bouwt een scenario uit een set gekozen kandidaat-sleutels (taak 14 — "maatregelen aan- en

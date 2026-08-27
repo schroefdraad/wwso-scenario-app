@@ -4,8 +4,8 @@ import { alleKostencatalogi, getKostencatalogus, nieuwsteKostencatalogus } from 
 describe('kostencatalogus — steekproeven tegen resources/Kostenkentallen_WWSO_optimalisatie.xlsx', () => {
   const catalogus = getKostencatalogus('0.1');
 
-  it('bevat alle 49 maatregelen uit de xlsx', () => {
-    expect(catalogus.maatregelen).toHaveLength(49);
+  it('bevat alle 50 maatregelen uit de xlsx', () => {
+    expect(catalogus.maatregelen).toHaveLength(50);
   });
 
   it('leest de aannames exact, als fractie in plaats van percentage', () => {
@@ -22,10 +22,23 @@ describe('kostencatalogus — steekproeven tegen resources/Kostenkentallen_WWSO_
       rubriek: 'R5',
       categorie: 'Keuken',
       eenheid: 'per kamer',
-      kostenMinEuro: 1200,
-      kostenVerwachtEuro: 1900,
-      kostenMaxEuro: 3000,
-      status: 'schatting',
+      kostenMinEuro: 2485,
+      kostenVerwachtEuro: 2485,
+      kostenMaxEuro: 2485,
+      status: 'offerte',
+    });
+  });
+
+  it('leest de nieuwe 240cm-kitchenettevariant exact', () => {
+    const k09 = catalogus.maatregelen.find((m) => m.id === 'K-09');
+    expect(k09).toMatchObject({
+      rubriek: 'R5',
+      categorie: 'Keuken',
+      eenheid: 'per kamer',
+      kostenMinEuro: 3171.6,
+      kostenVerwachtEuro: 3171.6,
+      kostenMaxEuro: 3171.6,
+      status: 'offerte',
     });
   });
 

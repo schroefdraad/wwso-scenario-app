@@ -1,6 +1,6 @@
 'use client';
 
-import { ToiletType, type Keuken, type SanitairVoorziening } from '@wwso/engine';
+import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, ToiletType, type Keuken, type SanitairVoorziening } from '@wwso/engine';
 import { alleTarievensets, type Tarievenset } from '@wwso/data';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
@@ -136,15 +136,30 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
   const puntVoorVolgendeKastruimte = (huidig: number): number | null =>
     pand && tarievenset && peildatum ? marginaalKeukenVolgendeKastruimte(pand, tarievenset, peildatum, rij.nr, huidig) : null;
 
+  const vulKitchenetteIn = (preset: Omit<Keuken, 'ruimteNr'>) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: { ...preset } } });
+
   if (!keuken) {
     return (
-      <div className={styles.veldrij}>
-        <label>Keuken aanwezig</label>
-        <Toggle
-          checked={false}
-          label="Keuken aanwezig"
-          onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: v ? nieuweKeuken() : undefined } })}
-        />
+      <div>
+        <div className={styles.veldrij}>
+          <label>Keuken aanwezig</label>
+          <Toggle
+            checked={false}
+            label="Keuken aanwezig"
+            onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: v ? nieuweKeuken() : undefined } })}
+          />
+        </div>
+        <div className={styles.veldrij}>
+          <span className={styles.hint}>Snel invullen:</span>
+          <div className={styles.quickadd}>
+            <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => vulKitchenetteIn(KITCHENETTE_122_PRESET)}>
+              Kitchenette 122 cm
+            </button>
+            <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => vulKitchenetteIn(KITCHENETTE_240_PRESET)}>
+              Kitchenette 240 cm
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -157,6 +172,17 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
       <div className={styles.veldrij}>
         <label>Keuken aanwezig</label>
         <Toggle checked label="Keuken aanwezig" onChange={(v) => !v && dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: undefined } })} />
+      </div>
+      <div className={styles.veldrij}>
+        <span className={styles.hint}>Snel invullen (overschrijft de velden hieronder):</span>
+        <div className={styles.quickadd}>
+          <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => vulKitchenetteIn(KITCHENETTE_122_PRESET)}>
+            Kitchenette 122 cm
+          </button>
+          <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => vulKitchenetteIn(KITCHENETTE_240_PRESET)}>
+            Kitchenette 240 cm
+          </button>
+        </div>
       </div>
       <div className={styles.veldrij}>
         <label htmlFor="k-aanrecht">Aanrechtlengte (m)</label>

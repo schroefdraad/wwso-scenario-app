@@ -23,7 +23,8 @@ const ALLE_DEFINITIES = [
   ...procMaatregelen,
 ];
 
-/** De standaardregistry: één definitie per catalogusregel uit kostencatalogus 0.1 (49 maatregelen). */
+/** De standaardregistry: één definitie per catalogusregel uit kostencatalogus 0.1 (50 maatregelen). */
 export const standaardRegistry: MaatregelRegistry = new Map(ALLE_DEFINITIES.map((d) => [d.id, d]));
 
 export * from './validatie';
+export { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, type KitchenettePreset } from './r5-keuken';

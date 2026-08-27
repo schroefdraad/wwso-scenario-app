@@ -1,5 +1,5 @@
 import type { KeukenAanrechtBand } from '@wwso/data';
-import type { KeukenExtraVoorzieningen } from '../../types/index';
+import type { Keuken, KeukenExtraVoorzieningen } from '../../types/index';
 import { bepaalAanrechtBasispunten } from '../../rubrieken/r5-keuken';
 import { kamersPerRuimte, ruimtesPerKamer } from '../../rubrieken/gedeeld';
 import type { Mutatie } from '../../scenario/index';
@@ -36,79 +36,120 @@ function priveVertrekVan(ctx: MaatregelContext, kamer: number) {
   return ruimtes.find((r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1)?.ruimte;
 }
 
-/**
- * K-01 — kitchenette per kamer. De catalogus geeft geen apart m²-veld voor de kitchenette, dus
- * de keuken wordt toegevoegd aan de BESTAANDE privéruimte van de kamer (§2.5: `Keuken.ruimteNr`
- * hoeft geen ruimtetype 'Keuken' te hebben — "denk aan een open keuken"). Dat voorkomt een
- * gegokte extra vierkante meter.
- *
- * Interpretatie (conservatieve ondergrens, zichtbaar): aanrecht 1,00 m (ondergrens van
- * "1,0-1,2 m"), alle basiseisen aanwezig, koelkast inbegrepen, GEEN kookplaat — "2-pits" laat
- * het type (inductie/keramisch/gas) in het midden en die verschillen in punten.
- */
-const K01: MaatregelDefinitie = {
-  id: 'K-01',
-  doelSoort: 'kamer',
-  vergunningKlasse: 'geen',
-  vergunningBrontekst: 'Nee (wel bouwbesluit/ventilatie)',
-  puntenrelevant: true,
-  vereist: ['K-02'],
-  kandidaten(ctx) {
-    const kandidaten: Kandidaat[] = [];
-    const keukenRuimtes = new Set(ctx.pand.keukens.map((k) => k.ruimteNr));
-    for (let kamer = 1; kamer <= ctx.pand.pand.aantalKamers; kamer++) {
-      const vertrek = priveVertrekVan(ctx, kamer);
-      if (!vertrek || keukenRuimtes.has(vertrek.nr)) continue;
-      kandidaten.push({
-        sleutel: `K-01#kamer:${kamer}`,
-        maatregelId: 'K-01',
-        doel: { soort: 'kamer', nr: kamer },
-        hoeveelheid: 1,
-        omschrijving: `Kitchenette plaatsen in kamer ${kamer} (ruimte ${vertrek.nr})`,
-        interpretatie:
-          'Aanrecht 1,00 m (ondergrens van de opgegeven bandbreedte), koelkast inbegrepen, geen kookplaat meegeteld — type (inductie/keramisch/gas) is niet gespecificeerd in de catalogustekst.',
-      });
-    }
-    return kandidaten;
-  },
-  mutaties(ctx, kandidaat) {
-    const vertrek = priveVertrekVan(ctx, kandidaat.doel.nr!);
-    if (!vertrek) return [];
-    const mutatie: Mutatie = {
-      soort: 'keuken-toevoegen',
-      keuken: {
-        ruimteNr: vertrek.nr,
-        aanrechtlengteM: 1.0,
-        basiseisen: {
-          aanEnAfvoerWater: true,
-          vastKookaansluitpunt: true,
-          aanrechtbladMinimaal1MeterInEenStuk: true,
-          tweeInbouwkastenVan50Cm: true,
-          waterdichteWandafwerking: true,
-        },
-        extra: {
-          afzuiginstallatie: false,
-          kookplaatInductie: false,
-          kookplaatKeramisch: false,
-          kookplaatGas: false,
-          koelkast: true,
-          vrieskast: false,
-          ovenElektrisch: false,
-          ovenGas: false,
-          magnetron: false,
-          vaatwasmachine: false,
-          extraKastruimteEenhedenVan60Cm: 0,
-          eenhandsmengkraan: false,
-          thermostatischeMengkraan: false,
-          kokendWaterfunctie: false,
-        },
-      },
-    };
-    return [mutatie];
-  },
+/** Kitchenette-preset: aanrechtlengte + basiseisen + extra, herbruikbaar buiten de registry (invoerpagina-snelinvulling). */
+export type KitchenettePreset = Omit<Keuken, 'ruimteNr'>;
+
+const KITCHENETTE_BASISEISEN: Keuken['basiseisen'] = {
+  aanEnAfvoerWater: true,
+  vastKookaansluitpunt: true,
+  aanrechtbladMinimaal1MeterInEenStuk: true,
+  tweeInbouwkastenVan50Cm: true,
+  waterdichteWandafwerking: true,
 };
 
-/** K-02 — water/afvoer/elektra t.b.v. kitchenette. Zuivere kostenrider van K-01, nooit zelfstandig kandidaat. */
+const KITCHENETTE_EXTRA_LEEG: Keuken['extra'] = {
+  afzuiginstallatie: false,
+  kookplaatInductie: false,
+  kookplaatKeramisch: false,
+  kookplaatGas: false,
+  koelkast: false,
+  vrieskast: false,
+  ovenElektrisch: false,
+  ovenGas: false,
+  magnetron: false,
+  vaatwasmachine: false,
+  extraKastruimteEenhedenVan60Cm: 0,
+  eenhandsmengkraan: false,
+  thermostatischeMengkraan: false,
+  kokendWaterfunctie: false,
+};
+
+/**
+ * K-01 — kitchenette 122 cm. Uit de offerte (`resources/Kosten per keukenblok.xlsx`, 122cm-tab):
+ * spoelbak+kraan, inductieplaat, afzuigkap — geen koelkast, oven of vaatwasser (staan niet op de
+ * inclusieflijst van deze variant).
+ */
+export const KITCHENETTE_122_PRESET: KitchenettePreset = {
+  aanrechtlengteM: 1.22,
+  basiseisen: KITCHENETTE_BASISEISEN,
+  extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true },
+};
+
+/**
+ * K-09 — kitchenette 240 cm, alternatief voor K-01 op dezelfde kamer. Inclusieflijst uit de
+ * offerte (240cm-tab): spoelbak+kraan, inductieplaat, afzuigkap, elektrische oven, vaatwasser,
+ * koelkast.
+ */
+export const KITCHENETTE_240_PRESET: KitchenettePreset = {
+  aanrechtlengteM: 2.4,
+  basiseisen: KITCHENETTE_BASISEISEN,
+  extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true, ovenElektrisch: true, vaatwasmachine: true, koelkast: true },
+};
+
+/**
+ * Bouwt K-01/K-09: kitchenette-varianten die concurreren om dezelfde kamer (`alternatiefGroep`,
+ * een pakket kiest hoogstens één per kamer). Beide vereisen K-02 als kostenrider — de offerte
+ * laat zien dat loodgieterswerk/elektra/EV-fee voor beide varianten identiek zijn, alleen het
+ * blok zelf (materiaal/inhuizen/plaatsing) verschilt. De catalogus geeft geen apart m²-veld voor
+ * de kitchenette, dus de keuken wordt toegevoegd aan de BESTAANDE privéruimte van de kamer (§2.5:
+ * `Keuken.ruimteNr` hoeft geen ruimtetype 'Keuken' te hebben — "denk aan een open keuken"). Dat
+ * voorkomt een gegokte extra vierkante meter.
+ */
+function kitchenetteVariant(
+  id: string,
+  preset: KitchenettePreset,
+  omschrijving: (kamer: number, ruimteNr: number) => string,
+  interpretatie: string,
+): MaatregelDefinitie {
+  return {
+    id,
+    doelSoort: 'kamer',
+    vergunningKlasse: 'geen',
+    vergunningBrontekst: 'Nee (wel bouwbesluit/ventilatie)',
+    puntenrelevant: true,
+    vereist: ['K-02'],
+    alternatiefGroep: 'K-kitchenette',
+    kandidaten(ctx) {
+      const kandidaten: Kandidaat[] = [];
+      const keukenRuimtes = new Set(ctx.pand.keukens.map((k) => k.ruimteNr));
+      for (let kamer = 1; kamer <= ctx.pand.pand.aantalKamers; kamer++) {
+        const vertrek = priveVertrekVan(ctx, kamer);
+        if (!vertrek || keukenRuimtes.has(vertrek.nr)) continue;
+        kandidaten.push({
+          sleutel: `${id}#kamer:${kamer}`,
+          maatregelId: id,
+          doel: { soort: 'kamer', nr: kamer },
+          hoeveelheid: 1,
+          omschrijving: omschrijving(kamer, vertrek.nr),
+          interpretatie,
+        });
+      }
+      return kandidaten;
+    },
+    mutaties(ctx, kandidaat) {
+      const vertrek = priveVertrekVan(ctx, kandidaat.doel.nr!);
+      if (!vertrek) return [];
+      const mutatie: Mutatie = { soort: 'keuken-toevoegen', keuken: { ruimteNr: vertrek.nr, ...preset } };
+      return [mutatie];
+    },
+  };
+}
+
+const K01 = kitchenetteVariant(
+  'K-01',
+  KITCHENETTE_122_PRESET,
+  (kamer, ruimteNr) => `Kitchenette 122 cm plaatsen in kamer ${kamer} (ruimte ${ruimteNr})`,
+  'Aanrecht 1,22 m, inductieplaat + afzuigkap volgens de offerte (122cm-tab) — geen koelkast, oven of vaatwasser: staan niet op de inclusieflijst van deze variant.',
+);
+
+const K09 = kitchenetteVariant(
+  'K-09',
+  KITCHENETTE_240_PRESET,
+  (kamer, ruimteNr) => `Kitchenette 240 cm plaatsen in kamer ${kamer} (ruimte ${ruimteNr})`,
+  'Aanrecht 2,40 m, inductieplaat + afzuigkap + elektrische oven + vaatwasser + koelkast volgens de offerte (240cm-tab). Alternatief voor K-01 op dezelfde kamer.',
+);
+
+/** K-02 — water/afvoer/elektra t.b.v. kitchenette. Zuivere kostenrider van K-01/K-09, nooit zelfstandig kandidaat. */
 const K02: MaatregelDefinitie = {
   id: 'K-02',
   doelSoort: 'kamer',
@@ -224,4 +265,4 @@ const K08 = eenvoudigeExtraMaatregel(
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const r5KeukenMaatregelen: MaatregelDefinitie<any>[] = [K01, K02, K03, K04, K05, K06, K07, K08];
+export const r5KeukenMaatregelen: MaatregelDefinitie<any>[] = [K01, K02, K03, K04, K05, K06, K07, K08, K09];

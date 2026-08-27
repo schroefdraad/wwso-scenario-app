@@ -22,9 +22,9 @@ describe('registry — bijectie en brontekst-drift', () => {
     expect(resultaat.onbekendInCatalogus).toEqual([]);
   });
 
-  it('de registry dekt alle 49 maatregelen uit kostencatalogus 0.1', () => {
-    expect(kostencatalogus.maatregelen.length).toBe(49);
-    expect(standaardRegistry.size).toBe(49);
+  it('de registry dekt alle 50 maatregelen uit kostencatalogus 0.1', () => {
+    expect(kostencatalogus.maatregelen.length).toBe(50);
+    expect(standaardRegistry.size).toBe(50);
   });
 
   it('de vergunningtekst in de registry is byte-identiek aan de catalogustekst (drift-check)', () => {
