@@ -94,10 +94,14 @@ export function slaVergelijkingSnapshotOp(snapshot: VergelijkingSnapshot): void 
 }
 
 /**
- * `null` als er niets (geldigs) staat opgeslagen. Verwijdert de sleutel na het lezen — bedoeld
- * om ALLEEN samen met `haalEnWisScenarioBewerkResultaatOp` gelezen te worden: een snapshot zonder
- * bijbehorend resultaat is een verweesde/oude snapshot (bijv. van een afgebroken bewerking via
- * de browser-terugknop) en moet genegeerd worden, niet toegepast op een onverwante pagina.
+ * `null` als er niets (geldigs) staat opgeslagen. Verwijdert de sleutel na het lezen.
+ *
+ * Sinds 2026-09-01 zet /pand/vergelijking deze snapshot vóór ELKE volledige navigatie weg
+ * (zowel "Bewerk handmatig →" naar /pand/nieuw als "Bekijk volledig resultaat →" naar
+ * /pand/resultaat), dus een snapshot zonder bijbehorend `ScenarioBewerkResultaat` is geen
+ * verweesde state meer om te negeren — hij betekent nu "kom terug van /pand/resultaat, of een
+ * afgebroken /pand/nieuw-bewerking (Esc/browser-terug)". In beide gevallen is de snapshot precies
+ * de staat van vóór vertrek en dus veilig om altijd toe te passen (zie `Vergelijking.tsx`).
  */
 export function haalEnWisVergelijkingSnapshotOp(): VergelijkingSnapshot | null {
   const ruw = sessionStorage.getItem(SNAPSHOT_KEY);

@@ -29,6 +29,7 @@ export default function ResultaatPagina() {
   }
 
   const tarievenset = bepaalTarievenset(context.tarievensetPeildatum);
+  const terugUrl = context.dealId ? `/pand/vergelijking?deal=${context.dealId}` : '/pand/vergelijking';
 
-  return <Resultaatscherm pand={context.pand} tarievenset={tarievenset} peildatum={tarievenset.peildatum} />;
+  return <Resultaatscherm pand={context.pand} tarievenset={tarievenset} peildatum={tarievenset.peildatum} terugUrl={terugUrl} />;
 }

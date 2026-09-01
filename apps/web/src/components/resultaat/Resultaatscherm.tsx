@@ -23,11 +23,21 @@ export function Resultaatscherm({
   tarievenset,
   peildatum,
   titel,
+  terugUrl = '/pand/vergelijking',
 }: {
   pand: PandInvoer;
   tarievenset: Tarievenset;
   peildatum: string;
   titel?: string;
+  /**
+   * URL voor "Vergelijk scenario's →". Zonder `?deal=<id>` (de default) valt /pand/vergelijking
+   * terug op een sessionStorage-restje i.p.v. de deal opnieuw uit Supabase te halen — dat restje
+   * kan het zojuist bekeken SCENARIO-pand bevatten, wat dan abusievelijk als AS-IS verschijnt en
+   * een niet-opgeslagen scenario-wijziging (bijv. een handmatig toegevoegde kamer) laat verdwijnen
+   * zodra je nadien via een correcte ?deal=-link terugkeert. Zelfde bugklasse als de Topbar-fix
+   * van 2026-08-22, hier gemist omdat Resultaatscherm nooit de dealId doorkreeg.
+   */
+  terugUrl?: string;
 }) {
   const eindtelling = useMemo(() => berekenEindtelling(pand, tarievenset, peildatum), [pand, tarievenset, peildatum]);
   const waardering = useMemo(() => pandWaarderingVan(eindtelling), [eindtelling]);
@@ -68,7 +78,7 @@ export function Resultaatscherm({
           {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
         </button>
         {pdfStatus === 'fout' && <span className={styles.pdfFout}>PDF maken mislukt, probeer opnieuw</span>}
-        <Link href="/pand/vergelijking" className={styles.vergelijkLink}>
+        <Link href={terugUrl} className={styles.vergelijkLink}>
           Vergelijk scenario&apos;s →
         </Link>
       </header>

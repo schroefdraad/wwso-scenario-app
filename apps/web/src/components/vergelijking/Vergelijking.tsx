@@ -99,31 +99,35 @@ export function Vergelijking({
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
 
-  // Vangt het resultaat op van "Bewerk handmatig →" (backlog: AS-IS kopiëren naar een handmatig
-  // scenario, feedback Emma Morrison, 2026-08-21) — sessionStorage bestaat niet tijdens SSR, dus
-  // dit kan pas ná hydratie, net als de deal-brug elders in deze pagina.
+  // Herstelt lokale (mogelijk nog niet opgeslagen) slots-state na een volledige navigatie weg van
+  // deze pagina en terug — sessionStorage bestaat niet tijdens SSR, dus dit kan pas ná hydratie.
+  // Twee routes zetten deze snapshot vóór vertrek: "Bewerk handmatig →" (naar /pand/nieuw) en
+  // "Bekijk volledig resultaat →" (naar /pand/resultaat). Beide unmounten dit component; zonder
+  // snapshot zou elke niet-opgeslagen wijziging (een net toegevoegde kamer, een andere slotnaam,
+  // een nog niet opgeslagen deal-koppeling) verloren gaan zodra je terugkeert — dat was de bug
+  // ("kamer toevoegen bij een scenario en dan het resultaat bekijken liet 'm weer verdwijnen").
   //
-  // `/pand/nieuw` is een VOLLEDIGE navigatie: dit component unmount en remount op de heen- én
-  // de terugreis. Zonder de snapshot hieronder zou elke wijziging aan de andere twee slots, de
-  // deal-naam of een nog niet opgeslagen deal-koppeling verloren gaan zodra je één slot handmatig
-  // bewerkt — dat was de bug ("tweede scenario wist het eerste", "AS-IS-deal opslaan lukt niet").
-  // De snapshot wordt alleen toegepast wanneer er ook een `resultaat` is: een snapshot zonder
-  // resultaat is een verweesde snapshot van een afgebroken bewerking (Esc/browser-terug) en moet
-  // de huidige, verse pagina-state niet overschrijven.
+  // Een snapshot zónder `resultaat` is dus GEEN verweesde state meer om te negeren (dat was hij
+  // vóór 2026-09-01 wél, toen alleen de /pand/nieuw-route deze snapshot zette): hij betekent nu
+  // "kom terug van /pand/resultaat, of een afgebroken /pand/nieuw-bewerking" — in beide gevallen
+  // is de snapshot precies de staat van vóór vertrek en dus veilig om toe te passen.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const resultaat = haalEnWisScenarioBewerkResultaatOp();
     const snapshot = haalEnWisVergelijkingSnapshotOp();
-    if (!resultaat) return;
+    if (!snapshot && !resultaat) return;
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
     setSlots(
-      basisSlots.map((s, i) => {
-        if (i !== resultaat.slotIndex) return s;
-        // Was dit slot al handmatig bewerkt (bijv. de kamer nog wat verder aangepast), dan blijven
-        // eerder gekozen maatregelen/investering behouden — alleen het pand zelf wordt vervangen.
-        const behoud = s.soort === 'handmatig' ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro } : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0 };
-        return { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand, ...behoud };
-      }),
+      resultaat
+        ? basisSlots.map((s, i) => {
+            if (i !== resultaat.slotIndex) return s;
+            // Was dit slot al handmatig bewerkt (bijv. de kamer nog wat verder aangepast), dan
+            // blijven eerder gekozen maatregelen/investering behouden — alleen het pand zelf
+            // wordt vervangen.
+            const behoud = s.soort === 'handmatig' ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro } : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0 };
+            return { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand, ...behoud };
+          })
+        : basisSlots,
     );
     if (snapshot) {
       setDealId(snapshot.dealId);
@@ -193,8 +197,9 @@ export function Vergelijking({
     );
   }
 
-  function bewerkHandmatig(index: number) {
-    const terugUrl = dealId ? `/pand/vergelijking?deal=${dealId}` : '/pand/vergelijking';
+  /** Slaat de huidige (mogelijk nog niet opgeslagen) slots-state op, te herstellen door de
+   * useEffect hierboven zodra deze pagina na een volledige navigatie weg opnieuw mount. */
+  function slaSnapshotOp() {
     slaVergelijkingSnapshotOp({
       dealId,
       dealNaam,
@@ -204,6 +209,11 @@ export function Vergelijking({
           : { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro },
       ),
     });
+  }
+
+  function bewerkHandmatig(index: number) {
+    const terugUrl = dealId ? `/pand/vergelijking?deal=${dealId}` : '/pand/vergelijking';
+    slaSnapshotOp();
     slaScenarioBewerkStartOp({
       asIsPand: pand,
       slotIndex: index,
@@ -231,6 +241,7 @@ export function Vergelijking({
     const pakket = berekendePakketten[index];
     if (!pakket) return;
     const scenarioPand = pasScenarioToe(pand, pakket.scenario.mutaties);
+    slaSnapshotOp();
     slaPandOp({
       pand: scenarioPand,
       tarievensetPeildatum: tarievenset.peildatum,
@@ -247,6 +258,7 @@ export function Vergelijking({
   /** Zelfde reis als `bekijkResultaat`, maar dan voor de as-is kolom zelf — voorheen alleen
    * bereikbaar via de browser-terugknop (feedback tijdens het testen, 2026-08-24). */
   function bekijkAsIsResultaat() {
+    slaSnapshotOp();
     slaPandOp({
       pand,
       tarievensetPeildatum: tarievenset.peildatum,
