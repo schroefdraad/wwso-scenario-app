@@ -102,6 +102,25 @@ export function marginaalSanitairVolgendeEenheid(
   return marginaal(patchSanitairExtra(pand, ruimteNr, { [veld]: huidig + 1 }), patchSanitairExtra(pand, ruimteNr, { [veld]: huidig }), tarievenset, peildatum);
 }
 
+/**
+ * Marginale waarde van de eerstvolgende (meerpersoons)wastafel — los van `extra`, want deze
+ * velden staan direct op `SanitairVoorziening` (§2.6.1). Buiten de badkamer geldt een cap per
+ * vertrek (`wastafelPuntenPerVertrekBuitenBadkamer`/meerpersoons-variant), en die punten tellen
+ * altijd mee, ook als de vijf extra-eisen van §2.6.2 niet gehaald zijn — die eisen gaten alleen
+ * `extra`. Voorheen ontbrak hier elke badge, waardoor het leek alsof een wastafel in een
+ * niet-badkamer-ruimte 0 punten opleverde zolang de eisen-poort niet gehaald was.
+ */
+export function marginaalSanitairVolgendeWastafel(
+  pand: PandInvoer,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  ruimteNr: number,
+  veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels',
+  huidig: number,
+): number | null {
+  return marginaal(patchSanitair(pand, ruimteNr, { [veld]: huidig + 1 }), patchSanitair(pand, ruimteNr, { [veld]: huidig }), tarievenset, peildatum);
+}
+
 /** Marginale waarde van douche, bad of de bad/douche-combinatie los. */
 export function marginaalSanitairDoucheBad(
   pand: PandInvoer,

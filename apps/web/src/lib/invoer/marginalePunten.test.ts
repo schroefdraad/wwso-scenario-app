@@ -7,6 +7,7 @@ import {
   marginaalSanitairDoucheBad,
   marginaalSanitairExtraBoolean,
   marginaalSanitairVolgendeEenheid,
+  marginaalSanitairVolgendeWastafel,
   puntenToiletType,
 } from './marginalePunten';
 
@@ -66,6 +67,48 @@ describe('marginalePunten', () => {
     const waarde = marginaalKeukenVolgendeKastruimte(pand, tarievenset, peildatum, ruimte7, huidig);
     expect(waarde).not.toBeNull();
     expect(typeof waarde).toBe('number');
+  });
+
+  it('wastafel op een slaapkamer (Privévertrek) telt mee, ook als de vijf extra-eisen niet gehaald zijn', () => {
+    // Ruimte 1 is een Privévertrek zonder sanitair in de fixture — voegt er hier één toe zonder
+    // één van de §2.6.2-eisen aan te vinken, om te bevestigen dat de badge (net als de motor,
+    // zie r6-sanitair.ts) de basispunten voor wastafel/toilet/douche/bad nooit aan die eisen-poort
+    // koppelt. Dat is precies de verwarring die deze badge moet wegnemen.
+    const pandMetSlaapkamerWastafel = {
+      ...pand,
+      sanitair: [
+        ...pand.sanitair,
+        {
+          ruimteNr: 1,
+          toiletType: 'Geen' as const,
+          aantalWastafels: 0,
+          aantalMeerpersoonswastafels: 0,
+          douche: false,
+          bad: false,
+          badDoucheCombinatie: false,
+          extraEisen: {
+            waterdichteVloerafwerking: false,
+            vrijeHoogte2MeterOverHelft: false,
+            waterdichteWandafwerking: false,
+            wastafelMetMengkraanEnSpiegel: false,
+            doucheOfBadMetWarmEnKoudWater: false,
+          },
+          extra: {
+            bubbelfunctieBad: false,
+            doucheafscheidingVolledig: false,
+            aantalHanddoekenradiatoren: 0,
+            ingebouwdKastjeMetWastafel: false,
+            kastruimte: false,
+            aantalStopcontacten: 0,
+            eenhandsmengkraan: false,
+            thermostatischeMengkraan: false,
+          },
+        },
+      ],
+    };
+    const waarde = marginaalSanitairVolgendeWastafel(pandMetSlaapkamerWastafel, tarievenset, peildatum, 1, 'aantalWastafels', 0);
+    expect(waarde).not.toBeNull();
+    expect(waarde!).toBeGreaterThan(0);
   });
 
   it('geeft null terug in plaats van te crashen als de motor faalt (onbekend COROP-gebied)', () => {

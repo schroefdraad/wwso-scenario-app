@@ -14,6 +14,7 @@ import {
   marginaalSanitairDoucheBad,
   marginaalSanitairExtraBoolean,
   marginaalSanitairVolgendeEenheid,
+  marginaalSanitairVolgendeWastafel,
   puntenToiletType,
 } from '../../lib/invoer/marginalePunten';
 import styles from './styles.module.css';
@@ -285,6 +286,8 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
     pand && tarievenset && peildatum ? marginaalSanitairDoucheBad(pand, tarievenset, peildatum, rij.nr, veld) : null;
   const puntVoorToiletType = (type: SanitairVoorziening['toiletType']): number | null =>
     pand && tarievenset && peildatum ? puntenToiletType(pand, tarievenset, peildatum, rij.nr, type) : null;
+  const puntVoorVolgendeWastafel = (veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels', huidig: number): number | null =>
+    pand && tarievenset && peildatum ? marginaalSanitairVolgendeWastafel(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
 
   if (!sanitair) {
     return (
@@ -337,6 +340,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             zetSanitair({ aantalWastafels: isToiletruimte ? Math.min(1, Math.max(0, waarde)) : waarde });
           }}
         />
+        <PuntBadge waarde={puntVoorVolgendeWastafel('aantalWastafels', sanitair.aantalWastafels)} />
       </div>
       {!isToiletruimte && (
         <div className={styles.veldrij}>
@@ -348,6 +352,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             value={sanitair.aantalMeerpersoonswastafels}
             onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
           />
+          <PuntBadge waarde={puntVoorVolgendeWastafel('aantalMeerpersoonswastafels', sanitair.aantalMeerpersoonswastafels)} />
         </div>
       )}
       {!isToiletruimte && (
