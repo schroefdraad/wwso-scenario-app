@@ -87,6 +87,10 @@ const VergelijkingSlotSnapshot = z.discriminatedUnion('soort', [
 const VergelijkingSnapshot = z.object({
   dealId: z.string().optional(),
   dealNaam: z.string(),
+  /** Backlog 2026-09-04 — zelfde reden als dealNaam hierboven: een nog niet opgeslagen notitie/map
+   * mag niet verloren gaan bij een volledige navigatie weg van de vergelijkingspagina en terug. */
+  dealNotitie: z.string(),
+  dealMap: z.string(),
   slots: z.array(VergelijkingSlotSnapshot),
 });
 export type VergelijkingSnapshot = z.infer<typeof VergelijkingSnapshot>;

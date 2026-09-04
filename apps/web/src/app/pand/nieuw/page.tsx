@@ -53,7 +53,7 @@ function NieuwPandContent() {
           setStatus('niet-gevonden');
           return;
         }
-        setInitieelDeal({ id: deal.id, naam: deal.naam, scenarios: deal.scenarios, pandInvoer: deal.pandInvoer });
+        setInitieelDeal({ id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, pandInvoer: deal.pandInvoer });
         setStatus('klaar');
       })
       .catch(() => setStatus('niet-gevonden'));

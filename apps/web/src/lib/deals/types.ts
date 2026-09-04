@@ -55,6 +55,12 @@ const DealRij = z.object({
   engine_versie: z.string(),
   aangemaakt: z.string(),
   bijgewerkt: z.string(),
+  /** Backlog (2026-09-04): vrije notitie + persoonlijke ordening (map). `.default('')` als extra
+   * vangnet naast de DB-default (`supabase/migrations/0003_deals_notitie_map.sql`) — deze
+   * migratie is handmatig te draaien, dus een omgeving die 'm nog niet draaide mag niet
+   * onnodig hard falen. */
+  notitie: z.string().default(''),
+  map: z.string().default(''),
 });
 
 /** App-facing vorm (camelCase, met de PandInvoer al gevalideerd en het versiestempel gebundeld
@@ -62,6 +68,12 @@ const DealRij = z.object({
 export interface Deal {
   id: string;
   naam: string;
+  /** Vrije notitie bij deze deal, zichtbaar in het deals-overzicht (backlog 2026-09-04). Lege
+   * string = geen notitie, nooit `null` — de rest van de app hoeft dat onderscheid niet te maken. */
+  notitie: string;
+  /** Persoonlijke ordening: hoogstens één map per deal, vrije tekst (backlog 2026-09-04). Lege
+   * string = geen map. */
+  map: string;
   pandInvoer: PandInvoer;
   scenarios: ScenarioSelectie[];
   versiestempel: Versiestempel;
@@ -81,6 +93,8 @@ export function parseDealRij(ruw: unknown): Deal {
   return {
     id: rij.id,
     naam: rij.naam,
+    notitie: rij.notitie,
+    map: rij.map,
     pandInvoer,
     scenarios: rij.scenarios,
     versiestempel: {

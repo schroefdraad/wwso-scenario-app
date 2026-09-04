@@ -20,6 +20,16 @@
   margin: 0;
 }
 
+.mapFilter {
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
 .nieuwLink {
   margin-left: auto;
   color: var(--accent);
@@ -101,4 +111,12 @@
 
 .dim {
   color: var(--ink-dim);
+}
+
+.notitieCel {
+  color: var(--ink-dim);
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

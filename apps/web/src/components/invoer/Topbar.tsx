@@ -29,12 +29,14 @@ export function Topbar() {
       const kostencatalogus = nieuwsteKostencatalogus();
       const invoer = {
         naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloos pand'),
+        notitie: state.bewerktDeal?.notitie ?? '',
+        map: state.bewerktDeal?.map ?? '',
         pandInvoer: pand,
         scenarios: state.bewerktDeal?.scenarios ?? [],
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
       const deal = state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
-      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, scenarios: deal.scenarios } });
+      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios } });
       setDealOpslaanStatus('gelukt');
     } catch {
       setDealOpslaanStatus('fout');
@@ -104,6 +106,8 @@ export function Topbar() {
             pand,
             dealId: state.bewerktDeal?.id,
             dealNaam: state.bewerktDeal?.naam,
+            dealNotitie: state.bewerktDeal?.notitie,
+            dealMap: state.bewerktDeal?.map,
             dealScenarios: state.bewerktDeal?.scenarios,
           });
           router.push('/pand/resultaat');

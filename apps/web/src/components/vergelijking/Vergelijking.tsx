@@ -71,6 +71,8 @@ function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] 
 export interface GeladenDeal {
   id: string;
   naam: string;
+  notitie: string;
+  map: string;
   scenarios: ScenarioSelectie[];
 }
 
@@ -105,6 +107,8 @@ export function Vergelijking({
   const [slots, setSlots] = useState<ScenarioSlot[]>(() => (geladenDeal ? slotsUitScenarios(geladenDeal.scenarios) : standaardSlots()));
   const [dealId, setDealId] = useState<string | undefined>(geladenDeal?.id);
   const [dealNaam, setDealNaam] = useState(geladenDeal?.naam ?? pand.pand.adres);
+  const [dealNotitie, setDealNotitie] = useState(geladenDeal?.notitie ?? '');
+  const [dealMap, setDealMap] = useState(geladenDeal?.map ?? '');
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
 
@@ -143,6 +147,8 @@ export function Vergelijking({
     if (snapshot) {
       setDealId(snapshot.dealId);
       setDealNaam(snapshot.dealNaam);
+      setDealNotitie(snapshot.dealNotitie);
+      setDealMap(snapshot.dealMap);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -228,6 +234,8 @@ export function Vergelijking({
     slaVergelijkingSnapshotOp({
       dealId,
       dealNaam,
+      dealNotitie,
+      dealMap,
       slots: slots.map((s) => {
         if (s.soort === 'kandidaten') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: [...s.sleutels] };
         if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
@@ -294,6 +302,8 @@ export function Vergelijking({
       // as-is bewerken) — anders verschijnt deze deal bij terugkeer hier als een nieuwe.
       dealId,
       dealNaam,
+      dealNotitie,
+      dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
     router.push('/pand/resultaat');
@@ -309,6 +319,8 @@ export function Vergelijking({
       kostencatalogusVersie: kostencatalogus.versie,
       dealId,
       dealNaam,
+      dealNotitie,
+      dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
     router.push('/pand/resultaat');
@@ -319,7 +331,14 @@ export function Vergelijking({
     setOpslaanFoutmelding(undefined);
     try {
       const scenarios = opslaanbareScenarios();
-      const invoer = { naam: dealNaam, pandInvoer: pand, scenarios, versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus) };
+      const invoer = {
+        naam: dealNaam,
+        notitie: dealNotitie,
+        map: dealMap,
+        pandInvoer: pand,
+        scenarios,
+        versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
+      };
       const deal = dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
       setDealId(deal.id);
       setOpslaanStatus('gelukt');
@@ -339,6 +358,13 @@ export function Vergelijking({
         </span>
         <div className={styles.dealOpslaan}>
           <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de deal" className={styles.dealNaamVeld} />
+          <input
+            value={dealMap}
+            onChange={(e) => setDealMap(e.target.value)}
+            aria-label="Map (persoonlijke ordening)"
+            placeholder="📁 (geen map)"
+            className={styles.dealMapVeld}
+          />
           <button type="button" className={`${styles.btn} ${styles.btnPrimair}`} onClick={dealOpslaan} disabled={opslaanStatus === 'bezig'}>
             {dealId ? 'Deal bijwerken' : 'Deal opslaan'}
           </button>
@@ -348,6 +374,14 @@ export function Vergelijking({
         <Link href="/deals" className={styles.dealenLink}>
           Mijn deals →
         </Link>
+        <textarea
+          value={dealNotitie}
+          onChange={(e) => setDealNotitie(e.target.value)}
+          aria-label="Notitie bij deze deal"
+          placeholder="Notitie bij deze deal (optioneel, zichtbaar in het deals-overzicht)…"
+          className={styles.dealNotitieVeld}
+          rows={2}
+        />
       </header>
       <main className={styles.main}>
         {nietBeoordeeldAantal > 0 && (

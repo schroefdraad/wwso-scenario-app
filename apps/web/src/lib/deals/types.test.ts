@@ -25,6 +25,10 @@ describe('parseDealRij', () => {
 
     expect(deal.id).toBe('d1e5a5b0-0000-4000-8000-000000000001');
     expect(deal.naam).toBe('Crooswijkseweg 95-A03');
+    // `notitie`/`map` ontbreken in de rauwe rij (legacy, vóór 2026-09-04) — vallen terug op '',
+    // wat toen "geen notitie/map" betekende, geen gok.
+    expect(deal.notitie).toBe('');
+    expect(deal.map).toBe('');
     expect(deal.pandInvoer.pand.adres).toBe(testpand6Kamers.pand.adres);
     // `soort` ontbreekt in de rauwe rij (legacy, vóór 2026-08-22) — valt terug op 'kandidaten',
     // het enige type dat toen bestond, geen gok.
@@ -109,5 +113,12 @@ describe('parseDealRij', () => {
   it('gooit een fout bij een energielabel-scenario met een ongeldig label', () => {
     const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label X', doelLabel: 'X' }] });
     expect(() => parseDealRij(rij)).toThrow();
+  });
+
+  it('parseert een notitie en map (backlog 2026-09-04)', () => {
+    const rij = geldigeRij({ notitie: 'Interessant pand, wachten op WOZ-beschikking.', map: 'Rotterdam-Zuid' });
+    const deal = parseDealRij(rij);
+    expect(deal.notitie).toBe('Interessant pand, wachten op WOZ-beschikking.');
+    expect(deal.map).toBe('Rotterdam-Zuid');
   });
 });

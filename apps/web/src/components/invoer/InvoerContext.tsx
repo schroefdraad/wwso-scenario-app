@@ -19,6 +19,8 @@ const InvoerContext = createContext<InvoerContextWaarde | null>(null);
 export interface InitieelDeal {
   id: string;
   naam: string;
+  notitie: string;
+  map: string;
   scenarios: ScenarioSelectie[];
   pandInvoer: PandInvoer;
 }
@@ -66,7 +68,7 @@ export function InvoerProvider({
         soort: 'CONCEPT_GELADEN',
         state: {
           ...pandInvoerNaarState(initieelDeal.pandInvoer),
-          bewerktDeal: { id: initieelDeal.id, naam: initieelDeal.naam, scenarios: initieelDeal.scenarios },
+          bewerktDeal: { id: initieelDeal.id, naam: initieelDeal.naam, notitie: initieelDeal.notitie, map: initieelDeal.map, scenarios: initieelDeal.scenarios },
         },
       });
       return;

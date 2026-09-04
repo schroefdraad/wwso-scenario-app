@@ -4,6 +4,10 @@ import { parseDealRij, type Deal, type ScenarioSelectie } from './types';
 
 export interface DealInvoer {
   naam: string;
+  /** Backlog 2026-09-04 — lege string, geen `undefined`: de aanroeper beslist expliciet wat de
+   * notitie/map moeten worden, ook als dat "ongewijzigd laten" is (zie de aanroepers). */
+  notitie: string;
+  map: string;
   pandInvoer: PandInvoer;
   scenarios: ScenarioSelectie[];
   versiestempel: Versiestempel;
@@ -12,6 +16,8 @@ export interface DealInvoer {
 function naarRij(invoer: DealInvoer) {
   return {
     naam: invoer.naam,
+    notitie: invoer.notitie,
+    map: invoer.map,
     pand_invoer: invoer.pandInvoer,
     scenarios: invoer.scenarios,
     tarievenset_peildatum: invoer.versiestempel.tarievensetPeildatum,

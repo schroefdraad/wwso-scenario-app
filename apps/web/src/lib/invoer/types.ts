@@ -82,7 +82,7 @@ export interface InvoerState {
    * resultaat-/vergelijkingsscherm zodat "Deal opslaan" dezelfde deal bijwerkt in plaats van een
    * nieuwe aan te maken. Afwezig voor een nieuw, nog niet opgeslagen pand.
    */
-  bewerktDeal?: { id: string; naam: string; scenarios: ScenarioSelectie[] };
+  bewerktDeal?: { id: string; naam: string; notitie: string; map: string; scenarios: ScenarioSelectie[] };
   /**
    * Gezet zodra dit scherm een AS-IS-kopie is die als handmatig TO-BE-scenario bewerkt wordt
    * (via `/pand/nieuw?scenario=<slot>`, backlog: AS-IS kopiëren naar een handmatig scenario,

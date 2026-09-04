@@ -36,7 +36,7 @@ function VergelijkingContent() {
             pand: deal.pandInvoer,
             tarievensetPeildatum: deal.versiestempel.tarievensetPeildatum,
             kostencatalogusVersie: deal.versiestempel.kostencatalogusVersie,
-            deal: { id: deal.id, naam: deal.naam, scenarios: deal.scenarios },
+            deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios },
           });
         })
         .catch(() => setGeladen(null));
@@ -53,7 +53,13 @@ function VergelijkingContent() {
             // bewerken) — zonder dit zou "Deal opslaan" hier een DUPLICAAT aanmaken in plaats
             // van de bestaande deal bij te werken.
             deal: context.dealId
-              ? { id: context.dealId, naam: context.dealNaam ?? context.pand.pand.adres, scenarios: context.dealScenarios ?? [] }
+              ? {
+                  id: context.dealId,
+                  naam: context.dealNaam ?? context.pand.pand.adres,
+                  notitie: context.dealNotitie ?? '',
+                  map: context.dealMap ?? '',
+                  scenarios: context.dealScenarios ?? [],
+                }
               : undefined,
           }
         : null,

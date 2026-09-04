@@ -26,6 +26,11 @@ const OpgeslagenPandContext = z.object({
   kostencatalogusVersie: z.string().optional(),
   dealId: z.string().optional(),
   dealNaam: z.string().optional(),
+  /** Backlog 2026-09-04 — zelfde reden als dealNaam: zonder dit zou een notitie/map die nog niet
+   * opgeslagen is (alleen op de vergelijkingspagina getypt) verloren kunnen gaan als je via
+   * /pand/nieuw?deal=<id> de as-is bewerkt en weer teruggaat zonder tussentijds op te slaan. */
+  dealNotitie: z.string().optional(),
+  dealMap: z.string().optional(),
   dealScenarios: z.array(ScenarioSelectie).optional(),
 });
 export type OpgeslagenPandContext = z.infer<typeof OpgeslagenPandContext>;
