@@ -48,6 +48,15 @@ export function PandFormulier() {
   };
 
   const gemeenteKandidaten = pand.stad ? gemeentesVoorWoonplaats(pand.stad) : [];
+  /** Bij een eenduidige of onbekende stad blijft de volledige lijst beschikbaar (vrij te
+   * overschrijven); bij een meerduidige stad (bijv. "Aalst", drie gemeentes) heeft kiezen uit
+   * alle 342 gemeentes geen toegevoegde waarde — de juiste zit toch al in de kandidatenlijst. */
+  const gemeenteOpties =
+    gemeenteKandidaten.length > 1
+      ? pand.gemeente && !gemeenteKandidaten.includes(pand.gemeente)
+        ? [pand.gemeente, ...gemeenteKandidaten]
+        : gemeenteKandidaten
+      : ALLE_GEMEENTES;
 
   return (
     <section className={styles.blok} id="sectie-pand">
@@ -68,7 +77,7 @@ export function PandFormulier() {
             <label htmlFor="p-gemeente">Gemeente</label>
             <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
               <option value="">— kies —</option>
-              {ALLE_GEMEENTES.map((g) => (
+              {gemeenteOpties.map((g) => (
                 <option key={g} value={g}>
                   {g}
                 </option>
