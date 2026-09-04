@@ -65,6 +65,24 @@ export function PandFormulier() {
             <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
           </div>
           <div className={styles.veld}>
+            <label htmlFor="p-gemeente">Gemeente</label>
+            <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
+              <option value="">— kies —</option>
+              {ALLE_GEMEENTES.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+            {gemeenteKandidaten.length > 1 ? (
+              <span className={styles.hint}>
+                "{pand.stad}" komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
+              </span>
+            ) : (
+              <span className={styles.hint}>Automatisch gesuggereerd op basis van "Stad" — bepaalt de huurtabel (§2.11).</span>
+            )}
+          </div>
+          <div className={styles.veld}>
             <label htmlFor="p-soort">Soort woning</label>
             <select id="p-soort" value={pand.soortWoning} onChange={(e) => zet('soortWoning', e.target.value as PandVeldenState['soortWoning'])}>
               {SOORT_WONING.map((s) => (
@@ -141,30 +159,6 @@ export function PandFormulier() {
             />
           </div>
           <div className={styles.veld}>
-            <label htmlFor="p-gemeente">Gemeente</label>
-            <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
-              <option value="">— kies —</option>
-              {ALLE_GEMEENTES.map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
-              ))}
-            </select>
-            {gemeenteKandidaten.length > 1 ? (
-              <span className={styles.hint}>
-                "{pand.stad}" komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
-              </span>
-            ) : (
-              <span className={styles.hint}>Automatisch gesuggereerd op basis van "Stad" — wijzig hier indien nodig.</span>
-            )}
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-corop">COROP-gebied</label>
-            <input id="p-corop" value={pand.coropGebied} readOnly />
-            <span className={styles.hint}>Volgt automatisch uit de gemeente hierboven — bepaalt de huurtabel (§2.11).</span>
-          </div>
-
-          <div className={styles.veld}>
             <label htmlFor="p-label">Energielabel</label>
             <select id="p-label" value={pand.energielabel} onChange={(e) => zet('energielabel', e.target.value as PandVeldenState['energielabel'])}>
               {ENERGIELABELS.map((l) => (
@@ -191,39 +185,6 @@ export function PandFormulier() {
               </span>
             </div>
           )}
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplus">Inschatting kosten label A+ (€)</label>
-            <input
-              id="p-label-kosten-aplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlus}
-              onChange={(e) => zet('energielabelKostenAPlus', e.target.value)}
-            />
-            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplusplus">Inschatting kosten label A++ (€)</label>
-            <input
-              id="p-label-kosten-aplusplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlusPlus}
-              onChange={(e) => zet('energielabelKostenAPlusPlus', e.target.value)}
-            />
-            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplusplusplus">Inschatting kosten label A+++ (€)</label>
-            <input
-              id="p-label-kosten-aplusplusplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlusPlusPlus}
-              onChange={(e) => zet('energielabelKostenAPlusPlusPlus', e.target.value)}
-            />
-            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
-          </div>
           <div className={styles.veld}>
             <label htmlFor="p-bouwjaar">Bouwjaar</label>
             <input id="p-bouwjaar" type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
@@ -255,6 +216,43 @@ export function PandFormulier() {
             <label>Zorgwoning</label>
             <Toggle checked={pand.zorgwoning} onChange={(v) => zet('zorgwoning', v)} label="Zorgwoning" />
             <span className={styles.hint}>+35% op R1 t/m R11 (§2.12.1)</span>
+          </div>
+        </div>
+
+        <div className={styles.subKop}>
+          <h3>Energielabel-kosteninschattingen</h3>
+          <span className={styles.hint}>Eigen inschatting per doellabel, voor de energielabel-scenariovergelijking. Leeg = niet haalbaar of niet relevant voor dit pand.</span>
+        </div>
+        <div className={styles.pandGrid}>
+          <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplus">Kosten label A+ (€)</label>
+            <input
+              id="p-label-kosten-aplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlus}
+              onChange={(e) => zet('energielabelKostenAPlus', e.target.value)}
+            />
+          </div>
+          <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplusplus">Kosten label A++ (€)</label>
+            <input
+              id="p-label-kosten-aplusplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlusPlus}
+              onChange={(e) => zet('energielabelKostenAPlusPlus', e.target.value)}
+            />
+          </div>
+          <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplusplusplus">Kosten label A+++ (€)</label>
+            <input
+              id="p-label-kosten-aplusplusplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlusPlusPlus}
+              onChange={(e) => zet('energielabelKostenAPlusPlusPlus', e.target.value)}
+            />
           </div>
         </div>
       </div>
