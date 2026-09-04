@@ -71,4 +71,15 @@ describe('parseDealRij', () => {
     });
     expect(() => parseDealRij(rij)).toThrow();
   });
+
+  it('parseert een energielabel-scenario (Tussenfase-taak C, 2026-09-04)', () => {
+    const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }] });
+    const deal = parseDealRij(rij);
+    expect(deal.scenarios).toEqual([{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }]);
+  });
+
+  it('gooit een fout bij een energielabel-scenario met een ongeldig label', () => {
+    const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label X', doelLabel: 'X' }] });
+    expect(() => parseDealRij(rij)).toThrow();
+  });
 });

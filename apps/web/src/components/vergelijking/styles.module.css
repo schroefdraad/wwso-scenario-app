@@ -153,6 +153,16 @@
   color: var(--ink);
 }
 
+.energielabelWissel {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.74rem;
+  color: var(--ink);
+  max-width: 100%;
+}
+
 .samenvattingWaarde {
   font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
 }
@@ -163,12 +173,6 @@
 
 .samenvattingWaardeNegatief {
   color: var(--red);
-}
-
-.snelStart {
-  display: flex;
-  gap: 0.3rem;
-  flex-wrap: wrap;
 }
 
 .btn {

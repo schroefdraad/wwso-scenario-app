@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { huidigeVersiestempel, pasScenarioToe, type KandidaatWaardering, type Pakket, type PandInvoer, type PandWaardering } from '@wwso/engine';
+import { huidigeVersiestempel, pasScenarioToe, type Energielabel, type KandidaatWaardering, type PandInvoer, type PandWaardering } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
-import { nieuweSelectieNaToggle } from '../../lib/vergelijking/scenario-bouw';
+import { beschikbareEnergielabelDoelen, nieuweSelectieNaToggle } from '../../lib/vergelijking/scenario-bouw';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import {
@@ -43,6 +43,9 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
         handmatigeInvesteringEuro: opgeslagen.handmatigeInvesteringEuro,
       };
     }
+    if (opgeslagen.soort === 'energielabel') {
+      return { naam: opgeslagen.naam, soort: 'energielabel' as const, doelLabel: opgeslagen.doelLabel };
+    }
     return { naam: opgeslagen.naam, soort: 'kandidaten' as const, sleutels: new Set(opgeslagen.sleutels) };
   });
 }
@@ -50,11 +53,11 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
 /** Herstelt de sessionStorage-snapshot (array van sleutels, JSON-serialiseerbaar) terug naar
  * `ScenarioSlot[]` (Set van sleutels) — het spiegelbeeld van de serialisatie in `bewerkHandmatig`. */
 function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] {
-  return slots.map((s) =>
-    s.soort === 'kandidaten'
-      ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) }
-      : { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: new Set(s.sleutels), handmatigeInvesteringEuro: s.handmatigeInvesteringEuro },
-  );
+  return slots.map((s) => {
+    if (s.soort === 'kandidaten') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) };
+    if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
+    return { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: new Set(s.sleutels), handmatigeInvesteringEuro: s.handmatigeInvesteringEuro };
+  });
 }
 
 export interface GeladenDeal {
@@ -76,7 +79,6 @@ export function Vergelijking({
   kostencatalogus,
   verwervingswaardeEuro,
   kandidaten,
-  pakketten,
   asIsWaardering,
   nietBeoordeeldAantal,
   geladenDeal,
@@ -87,7 +89,6 @@ export function Vergelijking({
   kostencatalogus: Kostencatalogus;
   verwervingswaardeEuro: number | undefined;
   kandidaten: readonly KandidaatWaardering[];
-  pakketten: { basis: Pakket; comfort: Pakket; maximaal: Pakket };
   asIsWaardering: PandWaardering;
   nietBeoordeeldAantal: number;
   geladenDeal?: GeladenDeal;
@@ -186,13 +187,19 @@ export function Vergelijking({
     setSlots((prev) => prev.map((s, i) => (i === index ? { ...s, naam } : s)));
   }
 
-  function snelVullen(index: number, soort: 'basis' | 'comfort' | 'maximaal' | 'leeg') {
+  function leegmaken(index: number) {
+    setSlots((prev) => prev.map((s, i) => (i === index ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set<string>() } : s)));
+  }
+
+  /** Wisselknop (Tussenfase-taak C): `null` (de "Geen"-optie) maakt het slot weer leeg, net als
+   * `leegmaken` — kiezen van een label vervangt het scenario altijd volledig, nooit een stille
+   * samenvoeging met eerder gekozen maatregelen. */
+  function wisselEnergielabel(index: number, doelLabel: Energielabel | null) {
     setSlots((prev) =>
       prev.map((s, i) => {
         if (i !== index) return s;
-        if (soort === 'leeg') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
-        const bron = pakketten[soort];
-        return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(bron.regels.map((r) => r.kandidaat.sleutel)) };
+        if (doelLabel === null) return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set<string>() };
+        return { naam: s.naam, soort: 'energielabel' as const, doelLabel };
       }),
     );
   }
@@ -203,11 +210,11 @@ export function Vergelijking({
     slaVergelijkingSnapshotOp({
       dealId,
       dealNaam,
-      slots: slots.map((s) =>
-        s.soort === 'kandidaten'
-          ? { naam: s.naam, soort: 'kandidaten' as const, sleutels: [...s.sleutels] }
-          : { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro },
-      ),
+      slots: slots.map((s) => {
+        if (s.soort === 'kandidaten') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: [...s.sleutels] };
+        if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
+        return { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro };
+      }),
     });
   }
 
@@ -232,6 +239,9 @@ export function Vergelijking({
     return slots.flatMap((s): ScenarioSelectie[] => {
       if (s.soort === 'handmatig') {
         return [{ soort: 'handmatig', naam: s.naam, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro }];
+      }
+      if (s.soort === 'energielabel') {
+        return [{ soort: 'energielabel', naam: s.naam, doelLabel: s.doelLabel }];
       }
       return s.sleutels.size > 0 ? [{ soort: 'kandidaten', naam: s.naam, sleutels: [...s.sleutels] }] : [];
     });
@@ -315,9 +325,15 @@ export function Vergelijking({
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
           asIsDealId={dealId}
-          kolommen={slots.map((slot, i) => ({ naam: slot.naam, pakket: berekendePakketten[i] }))}
+          kolommen={slots.map((slot, i) => ({
+            naam: slot.naam,
+            pakket: berekendePakketten[i],
+            energielabelDoel: slot.soort === 'energielabel' ? slot.doelLabel : null,
+          }))}
+          energielabelOpties={beschikbareEnergielabelDoelen(pand)}
           onNaamWijzig={naamWijzig}
-          onSnelVullen={snelVullen}
+          onLeegmaken={leegmaken}
+          onWisselEnergielabel={wisselEnergielabel}
           onBekijkResultaat={bekijkResultaat}
           onBekijkAsIsResultaat={bekijkAsIsResultaat}
           onBewerkHandmatig={bewerkHandmatig}

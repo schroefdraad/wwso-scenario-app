@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
-import { bouwHandmatigScenario, nieuwBudget, type KandidaatWaardering, type MaatregelContext, type PandInvoer, type Pakket } from '@wwso/engine';
+import { bouwHandmatigScenario, nieuwBudget, type Energielabel, type KandidaatWaardering, type MaatregelContext, type PandInvoer, type Pakket } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
-import { bouwHandmatigScenarioMetMaatregelenUitSleutels, bouwScenarioUitSleutels, berekenKandidatenVoorHandmatigPand } from './scenario-bouw';
+import { bouwEnergielabelScenarioMetKosten, bouwHandmatigScenarioMetMaatregelenUitSleutels, bouwScenarioUitSleutels, berekenKandidatenVoorHandmatigPand } from './scenario-bouw';
 
 /**
- * Een scenario-slot komt uit precies één van twee bronnen (backlog: AS-IS kopiëren naar een
- * handmatig scenario, feedback Emma Morrison, 2026-08-21): een set kandidaat-sleutels uit de
- * suggestie-engine (taak 14, het bestaande pad), of een volledig zelf bewerkt TO-BE-pand
- * (`/pand/nieuw?scenario=<slot>`, dit backlog-item). Een handmatig-slot kan zelf óók
+ * Een scenario-slot komt uit precies één van drie bronnen: een set kandidaat-sleutels uit de
+ * suggestie-engine (taak 14, het bestaande pad), een volledig zelf bewerkt TO-BE-pand (backlog
+ * 2026-08-21: AS-IS kopiëren naar een handmatig scenario, `/pand/nieuw?scenario=<slot>`), of een
+ * doellabel-wisselknop (Tussenfase-taak C, 2026-09-04). Een handmatig-slot kan zelf óók
  * kandidaat-sleutels dragen (backlog 2026-08-22: "handmatig een kamer realiseren en dan verder
  * maatregelen toevoegen") — dat zijn dan sleutels uit de kandidatenlijst tegen HET BEWERKTE PAND
  * (`useHandmatigeKandidaten`), niet uit de gedeelde as-is-lijst, plus een handmatig ingevuld
@@ -15,7 +15,8 @@ import { bouwHandmatigScenarioMetMaatregelenUitSleutels, bouwScenarioUitSleutels
  */
 export type ScenarioSlot =
   | { naam: string; soort: 'kandidaten'; sleutels: ReadonlySet<string> }
-  | { naam: string; soort: 'handmatig'; pand: PandInvoer; sleutels: ReadonlySet<string>; handmatigeInvesteringEuro: number };
+  | { naam: string; soort: 'handmatig'; pand: PandInvoer; sleutels: ReadonlySet<string>; handmatigeInvesteringEuro: number }
+  | { naam: string; soort: 'energielabel'; doelLabel: Energielabel };
 
 export interface HandmatigeKandidatenResultaat {
   ctxBasis: MaatregelContext;
@@ -63,6 +64,9 @@ export function useScenarioPakket(
   verwervingswaardeEuro: number | undefined,
 ): Pakket | null {
   return useMemo(() => {
+    if (slot.soort === 'energielabel') {
+      return bouwEnergielabelScenarioMetKosten(slot.naam, pand, slot.doelLabel, tarievenset, peildatum, verwervingswaardeEuro);
+    }
     if (slot.soort === 'handmatig') {
       // Zonder gekozen maatregelen én zonder ingevulde handmatige investering is er nog
       // helemaal geen kostinformatie — dan blijft Investering/Terugverdientijd expliciet

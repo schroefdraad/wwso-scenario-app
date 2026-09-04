@@ -162,6 +162,39 @@ export function PandFormulier() {
             </div>
           )}
           <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplus">Inschatting kosten label A+ (€)</label>
+            <input
+              id="p-label-kosten-aplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlus}
+              onChange={(e) => zet('energielabelKostenAPlus', e.target.value)}
+            />
+            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
+          </div>
+          <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplusplus">Inschatting kosten label A++ (€)</label>
+            <input
+              id="p-label-kosten-aplusplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlusPlus}
+              onChange={(e) => zet('energielabelKostenAPlusPlus', e.target.value)}
+            />
+            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
+          </div>
+          <div className={styles.veld}>
+            <label htmlFor="p-label-kosten-aplusplusplus">Inschatting kosten label A+++ (€)</label>
+            <input
+              id="p-label-kosten-aplusplusplus"
+              type="number"
+              min={0}
+              value={pand.energielabelKostenAPlusPlusPlus}
+              onChange={(e) => zet('energielabelKostenAPlusPlusPlus', e.target.value)}
+            />
+            <span className={styles.hint}>Leeg = niet haalbaar of niet relevant voor dit pand.</span>
+          </div>
+          <div className={styles.veld}>
             <label htmlFor="p-bouwjaar">Bouwjaar</label>
             <input id="p-bouwjaar" type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
           </div>

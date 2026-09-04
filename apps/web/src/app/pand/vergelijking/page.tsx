@@ -88,7 +88,6 @@ function VergelijkingContent() {
       kostencatalogus={kostencatalogus}
       verwervingswaardeEuro={undefined}
       kandidaten={resultaat.kandidaten}
-      pakketten={resultaat.pakketten}
       asIsWaardering={resultaat.asIs}
       nietBeoordeeldAantal={resultaat.nietBeoordeeld.length}
       geladenDeal={geladen.deal}

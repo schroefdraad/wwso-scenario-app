@@ -1,12 +1,12 @@
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
-import type { PandInvoer } from '../types/index';
+import type { Energielabel, PandInvoer } from '../types/index';
 import { pasScenarioToe } from '../scenario/index';
 import type { Mutatie } from '../scenario/index';
 import { berekenDeltaBar, berekenInvestering, berekenMarginaalRendement, berekenTerugverdientijd, telBandbreedtesOp, totaalUitOpbouw } from './kosten';
 import { berekenEindtellingMetBudget, extraJaarhuur, pandWaarderingVan, waardeerScenario, type RekenBudget } from './waardering';
-import type { Kandidaat, KandidaatWaardering, MaatregelContext, MaatregelDefinitie, Pakket, PandWaardering, SuggestieOpties } from './types';
+import type { Bandbreedte, Kandidaat, KandidaatWaardering, MaatregelContext, MaatregelDefinitie, Pakket, PandWaardering } from './types';
 
-/** Eén kandidaat plus zijn registry-definitie — de bouwsteen van zowel de algoritmische pakketopbouw als een vrij samengesteld scenario (taak 14). */
+/** Eén kandidaat plus zijn registry-definitie — de bouwsteen van een vrij samengesteld scenario (taak 14). */
 export interface PoolItem {
   waardering: KandidaatWaardering;
   definitie: MaatregelDefinitie;
@@ -17,136 +17,15 @@ export function doelSleutel(kandidaat: Kandidaat): string {
   return `${kandidaat.doel.soort}:${kandidaat.doel.nr ?? ''}`;
 }
 
-/** Deterministische sortering (§3 van het ontwerp): solo-TVT oplopend, dan hogere jaarhuur, dan lagere investering, dan alfabetisch. */
-function sorteerVoorGreedy(pool: PoolItem[]): PoolItem[] {
-  return [...pool].sort((a, b) => {
-    const tvtA = a.waardering.terugverdientijdJaren?.verwacht ?? Infinity;
-    const tvtB = b.waardering.terugverdientijdJaren?.verwacht ?? Infinity;
-    if (tvtA !== tvtB) return tvtA - tvtB;
-    if (a.waardering.extraJaarhuurEuro !== b.waardering.extraJaarhuurEuro) return b.waardering.extraJaarhuurEuro - a.waardering.extraJaarhuurEuro;
-    if (a.waardering.investeringEuro.verwacht !== b.waardering.investeringEuro.verwacht) return a.waardering.investeringEuro.verwacht - b.waardering.investeringEuro.verwacht;
-    if (a.waardering.maatregel.id !== b.waardering.maatregel.id) return a.waardering.maatregel.id.localeCompare(b.waardering.maatregel.id);
-    return a.waardering.kandidaat.sleutel.localeCompare(b.waardering.kandidaat.sleutel);
-  });
-}
-
 interface GroeiState {
   mutaties: Mutatie[];
   pand: PandInvoer;
   waardering: PandWaardering;
   regels: { item: PoolItem; mutaties: Mutatie[] }[];
-  gebruikteAlternatieven: Map<string, string>;
 }
 
 function nieuweGroeiState(asIs: PandInvoer, waardering: PandWaardering): GroeiState {
-  return { mutaties: [], pand: asIs, waardering, regels: [], gebruikteAlternatieven: new Map() };
-}
-
-/**
- * Eén poging om een kandidaat aan de groeiende pakketstaat toe te voegen (§2/§3 van het
- * ontwerp): de mutaties worden VERS gegenereerd tegen de HUIDIGE staat (nooit tegen de as-is),
- * en alleen geaccepteerd bij een positieve marginale bijdrage in déze context.
- */
-function probeerToevoegen(
-  state: GroeiState,
-  item: PoolItem,
-  ctxBasis: MaatregelContext,
-  tarievenset: Tarievenset,
-  peildatum: string,
-  budget: RekenBudget,
-  gekozenAlternatieven: Record<string, string> | undefined,
-): boolean {
-  const { definitie, waardering: kw } = item;
-
-  if (definitie.alternatiefGroep) {
-    const groepSleutel = `${definitie.alternatiefGroep}:${doelSleutel(kw.kandidaat)}`;
-    const bezet = state.gebruikteAlternatieven.get(groepSleutel);
-    if (bezet && bezet !== definitie.id) return false;
-    const voorkeur = gekozenAlternatieven?.[definitie.alternatiefGroep];
-    if (bezet === undefined && voorkeur && voorkeur !== definitie.id) return false;
-  }
-
-  const ctxHuidig: MaatregelContext = { ...ctxBasis, pand: state.pand };
-  const nieuweMutaties = definitie.mutaties(ctxHuidig, kw.kandidaat);
-  const totaleMutaties = [...state.mutaties, ...nieuweMutaties];
-  const { pand: nieuwPand, waardering: nieuweWaardering } = waardeerScenario(state.pand, nieuweMutaties, tarievenset, peildatum, budget);
-  const marginaleBijdrage = extraJaarhuur(state.waardering, nieuweWaardering);
-
-  if (marginaleBijdrage <= 0) return false;
-
-  state.mutaties = totaleMutaties;
-  state.pand = nieuwPand;
-  state.waardering = nieuweWaardering;
-  state.regels.push({ item, mutaties: nieuweMutaties });
-  if (definitie.alternatiefGroep) {
-    state.gebruikteAlternatieven.set(`${definitie.alternatiefGroep}:${doelSleutel(kw.kandidaat)}`, definitie.id);
-  }
-  return true;
-}
-
-/**
- * Bouwt één pakkettier: start bij `voorState` (het vorige pakket, al opgebouwd), voegt de
- * nieuwe kandidaten van deze tier greedy toe, en test verworpen kandidaten daarna precies één
- * keer opnieuw (stabilisatiepass) — begrensd op één pass voor de looptijd en het determinisme.
- *
- * BEKENDE BEPERKING (bewust niet opgelost, zie `outputs/RAPPORT_taak11_2026-08-20.md`): deze
- * greedy-aanpak vindt geen paar kandidaten die allebei SOLO €0 opleveren maar alleen SAMEN
- * winst geven (een "echte wederzijdse afhankelijkheid") — geen van beide krijgt ooit de kans
- * om als eerste geaccepteerd te worden, en herhaalde losse stabilisatiepasses lossen dat niet
- * op omdat de staat dan nooit verandert. Wél correct afgehandeld: het veelvoorkomende geval
- * waarin minstens één kandidaat solo al positief is en de andere pas op basis daarvan meedoet
- * (bijv. S-04 + K-08 op de fixture — zie `additiviteit.test.ts`), want dan bepaalt de
- * sorteervolgorde (oplopend op solo-TVT) vanzelf een gunstige toevoegvolgorde.
- *
- * Voor de huidige kostencatalogus (49 maatregelen) is er geen bekend paar dat het eerste,
- * onopgeloste geval raakt — elke maatregel met puntenimpact heeft op zichzelf al een reëel
- * effect op minstens één kamer. Een oplossing (bijv. verworpen kandidaten ook als PAREN
- * herproberen in de stabilisatiepass, begrensd tot paren om combinatorische explosie te
- * voorkomen) is bewust niet gebouwd tot een concreet geval zich aandient.
- */
-function bouwTier(
-  voorState: GroeiState,
-  nieuwePool: PoolItem[],
-  ctxBasis: MaatregelContext,
-  tarievenset: Tarievenset,
-  peildatum: string,
-  budget: RekenBudget,
-  opties: SuggestieOpties,
-): { state: GroeiState; verworpen: { kandidaatSleutel: string; reden: string }[] } {
-  const state: GroeiState = {
-    mutaties: [...voorState.mutaties],
-    pand: voorState.pand,
-    waardering: voorState.waardering,
-    regels: [...voorState.regels],
-    gebruikteAlternatieven: new Map(voorState.gebruikteAlternatieven),
-  };
-
-  const gesorteerd = sorteerVoorGreedy(nieuwePool);
-  const restanten = gesorteerd.filter((item) => {
-    const al = state.regels.some((r) => r.item.waardering.kandidaat.sleutel === item.waardering.kandidaat.sleutel);
-    return !al;
-  });
-
-  const verworpenReden = new Map<string, string>();
-  const nogTeProberen: PoolItem[] = [];
-  for (const item of restanten) {
-    const geaccepteerd = probeerToevoegen(state, item, ctxBasis, tarievenset, peildatum, budget, opties.gekozenAlternatieven);
-    if (!geaccepteerd) {
-      verworpenReden.set(item.waardering.kandidaat.sleutel, 'geen marginale winst in dit pakket');
-      nogTeProberen.push(item);
-    }
-  }
-
-  // Stabilisatiepass: één herkansing tegen de definitieve tussenstand.
-  const verworpenNaStabilisatie: { kandidaatSleutel: string; reden: string }[] = [];
-  for (const item of nogTeProberen) {
-    const geaccepteerd = probeerToevoegen(state, item, ctxBasis, tarievenset, peildatum, budget, opties.gekozenAlternatieven);
-    if (!geaccepteerd) {
-      verworpenNaStabilisatie.push({ kandidaatSleutel: item.waardering.kandidaat.sleutel, reden: verworpenReden.get(item.waardering.kandidaat.sleutel)! });
-    }
-  }
-
-  return { state, verworpen: verworpenNaStabilisatie };
+  return { mutaties: [], pand: asIs, waardering, regels: [] };
 }
 
 /**
@@ -155,13 +34,12 @@ function bouwTier(
  * voor leave-one-out: de OPGESLAGEN mutaties van regel B kunnen ervan uitgaan dat regel A al is
  * toegepast (bijv. een `extra`-patch die A's velden meeneemt) — bij het weglaten van A moet B's
  * mutatie dus opnieuw gegenereerd worden tegen de staat ZONDER A, niet hergebruikt worden.
- */
-/**
- * `vastePrefix` (leeg voor de gewone pakketopbouw en `bouwVrijScenario`) is een mutatielijst die
- * bij ELKE subset onvoorwaardelijk vooraf toegepast wordt — gebruikt door
- * `bouwHandmatigScenarioMetMaatregelen` om de `vervang-pand`-mutatie (het handmatig bewerkte
- * TO-BE-pand) als vaste basis te houden terwijl de leave-one-out-analyse alleen varieert over de
- * dáárbovenop gekozen catalogusmaatregelen.
+ *
+ * `vastePrefix` (leeg voor `bouwVrijScenario`) is een mutatielijst die bij ELKE subset
+ * onvoorwaardelijk vooraf toegepast wordt — gebruikt door `bouwHandmatigScenarioMetMaatregelen`
+ * om de `vervang-pand`-mutatie (het handmatig bewerkte TO-BE-pand) als vaste basis te houden
+ * terwijl de leave-one-out-analyse alleen varieert over de dáárbovenop gekozen
+ * catalogusmaatregelen.
  */
 function mutatiesVoorSubset(regels: GroeiState['regels'], asIs: PandInvoer, ctxBasis: MaatregelContext, vastePrefix: readonly Mutatie[] = []): Mutatie[] {
   let mutaties: Mutatie[] = [...vastePrefix];
@@ -253,81 +131,20 @@ function bouwPakketResultaat(
   };
 }
 
-export interface PakkettenResultaat {
-  basis: Pakket;
-  comfort: Pakket;
-  maximaal: Pakket;
-  aantalEindtellingen: number;
-}
-
-/**
- * Stelt de drie pakketten samen (§3 en §6 van het ontwerp): Basis ⊆ Comfort ⊆ Maximaal, per
- * constructie afgedwongen doordat elke tier verder bouwt op de vorige. Filtert op de
- * SOLO-terugverdientijd (nooit op de pakketwinst, die kent immers pas na opbouw een waarde).
- */
-export function stelPakkettenSamen(
-  asIs: PandInvoer,
-  soloResultaten: { waardering: KandidaatWaardering; definitie: MaatregelDefinitie }[],
-  ctxBasis: MaatregelContext,
-  tarievenset: Tarievenset,
-  peildatum: string,
-  kostencatalogus: Kostencatalogus,
-  uitvoeringsjaar: number,
-  opties: SuggestieOpties,
-  budget: RekenBudget,
-): PakkettenResultaat {
-  const grenzen = opties.grenzen ?? { basisTvtJaren: 5, comfortTvtJaren: 10 };
-  const asIsWaardering = pandWaarderingVan(ctxBasis.eindtelling);
-
-  const nietHerindeling = soloResultaten.filter((r) => !r.definitie.wijzigtAantalKamers && r.waardering.extraJaarhuurEuro > 0);
-
-  const basisPool = nietHerindeling.filter((r) => r.definitie.vergunningKlasse === 'geen' && (r.waardering.terugverdientijdJaren?.verwacht ?? Infinity) < grenzen.basisTvtJaren);
-  const comfortPool = nietHerindeling.filter((r) => (r.waardering.terugverdientijdJaren?.verwacht ?? Infinity) < grenzen.comfortTvtJaren);
-  const maximaalPool = nietHerindeling;
-
-  const leegState = nieuweGroeiState(asIs, asIsWaardering);
-
-  const basisTier = bouwTier(leegState, basisPool, ctxBasis, tarievenset, peildatum, budget, opties);
-  const comfortNieuw = comfortPool.filter((r) => !basisPool.some((b) => b.waardering.kandidaat.sleutel === r.waardering.kandidaat.sleutel));
-  const comfortTier = bouwTier(basisTier.state, comfortNieuw, ctxBasis, tarievenset, peildatum, budget, opties);
-  const maximaalNieuw = maximaalPool.filter((r) => !comfortPool.some((c) => c.waardering.kandidaat.sleutel === r.waardering.kandidaat.sleutel));
-  const maximaalTier = bouwTier(comfortTier.state, maximaalNieuw, ctxBasis, tarievenset, peildatum, budget, opties);
-
-  // Elke pool bevat alleen de kandidaten die NIEUW zijn ten opzichte van de vorige tier
-  // (comfortNieuw/maximaalNieuw), dus een kandidaat die in een eerdere tier is afgewezen wordt
-  // in een latere tier nooit opnieuw geprobeerd — hij blijft afgewezen. Zonder deze optelling
-  // zou zo'n kandidaat na de eerste tier stil uit zowel `regels` als `verworpen` verdwijnen
-  // (bug gevonden bij het doorrekenen van K-04/K-06/K-07 op een aangepaste testfixture, zie
-  // `registry.test.ts`). Uitsluiten wat inmiddels wél is geaccepteerd is voor de robuustheid:
-  // met de huidige poolopbouw kan dat niet voorkomen, maar een kandidaat die ooit alsnog wordt
-  // geaccepteerd mag nooit als verworpen blijven staan.
-  const nietGeaccepteerdIn = (state: GroeiState) => (v: { kandidaatSleutel: string }) =>
-    !state.regels.some((r) => r.item.waardering.kandidaat.sleutel === v.kandidaatSleutel);
-  const basisVerworpen = basisTier.verworpen;
-  const comfortVerworpen = [...basisVerworpen, ...comfortTier.verworpen].filter(nietGeaccepteerdIn(comfortTier.state));
-  const maximaalVerworpen = [...comfortVerworpen, ...maximaalTier.verworpen].filter(nietGeaccepteerdIn(maximaalTier.state));
-
-  const basis = bouwPakketResultaat('Basis', basisTier.state, basisVerworpen, asIsWaardering, asIs, ctxBasis, tarievenset, peildatum, kostencatalogus, uitvoeringsjaar, opties.verwervingswaardeEuro, budget);
-  const comfort = bouwPakketResultaat('Comfort', comfortTier.state, comfortVerworpen, asIsWaardering, asIs, ctxBasis, tarievenset, peildatum, kostencatalogus, uitvoeringsjaar, opties.verwervingswaardeEuro, budget);
-  const maximaal = bouwPakketResultaat('Maximaal', maximaalTier.state, maximaalVerworpen, asIsWaardering, asIs, ctxBasis, tarievenset, peildatum, kostencatalogus, uitvoeringsjaar, opties.verwervingswaardeEuro, budget);
-
-  return { basis, comfort, maximaal, aantalEindtellingen: budget.teller.aantal };
-}
-
 /**
  * Bouwt een scenario van een door de gebruiker VRIJ samengestelde, geordende lijst kandidaten
- * (taak 14 — scenariovergelijking, "maatregelen aan- en uitzetten"). In tegenstelling tot
- * `stelPakkettenSamen` wordt hier GEEN marginale-winst-gate en GEEN alternatiefGroep-dedup
- * toegepast: de gebruiker koos deze maatregelen expliciet, dus ze worden altijd toegepast — ook
- * als een maatregel in déze combinatie geen (of negatieve) winst oplevert. Dat is precies
- * informatie die de gebruiker wil zien, geen reden om iets stilzwijgend te negeren (harde regel
- * 2: nooit stilzwijgend afwijken van wat de gebruiker heeft ingesteld).
+ * (taak 14 — scenariovergelijking, "maatregelen aan- en uitzetten"). Er wordt hier GEEN
+ * marginale-winst-gate en GEEN alternatiefGroep-dedup toegepast: de gebruiker koos deze
+ * maatregelen expliciet, dus ze worden altijd toegepast — ook als een maatregel in déze
+ * combinatie geen (of negatieve) winst oplevert. Dat is precies informatie die de gebruiker wil
+ * zien, geen reden om iets stilzwijgend te negeren (harde regel 2: nooit stilzwijgend afwijken
+ * van wat de gebruiker heeft ingesteld).
  *
  * Hergebruikt dezelfde incrementele-mutatie-opbouw (elke mutatie tegen de HUIDIGE staat, niet
  * de as-is — beschermt tegen de ondiepe-merge-valkuil, zie `patch-clobber.test.ts`) en dezelfde
  * `bouwPakketResultaat`-aggregatie (investering, terugverdientijd, vergunningplicht,
- * leave-one-out) als de algoritmische pakketopbouw, zodat beide paden aantoonbaar hetzelfde
- * correcte gedrag hebben.
+ * leave-one-out) als de andere scenariopaden hieronder, zodat ze aantoonbaar hetzelfde correcte
+ * gedrag hebben.
  */
 export function bouwVrijScenario(
   naam: string,
@@ -354,7 +171,6 @@ export function bouwVrijScenario(
       pand: nieuwPand,
       waardering: nieuweWaardering,
       regels: [...state.regels, { item, mutaties: nieuweMutaties }],
-      gebruikteAlternatieven: state.gebruikteAlternatieven,
     };
   }
 
@@ -406,6 +222,52 @@ export function bouwHandmatigScenario(
 }
 
 /**
+ * Bouwt een scenario dat het pand naar een zelf gekozen doellabel brengt (Tussenfase-taak C,
+ * 2026-09-04 — feedback Steven Kramer: energielabel-scenario's A+/A++/A+++ naast elkaar
+ * vergelijken). Dezelfde `pand-patch`-mutatie als de E-01 t/m E-09-catalogusmaatregelen
+ * (`registry/r4-energie.ts`) — de labelsprong zelf is pandfysica, geen catalogusprijs, dus geen
+ * kostencatalogus-koppeling hier.
+ *
+ * `investeringEuro` komt van de gebruiker (het kostenveld op het pandgegevens-scherm), niet van
+ * een vuistregel. `undefined` levert daarom expliciet `null` op voor Investering/Terugverdientijd/
+ * Rendement/ΔBAR — net als `bouwHandmatigScenario` hierboven, om nooit een gegokte €0 met een
+ * oneindig rendement te tonen.
+ */
+export function bouwEnergielabelScenario(
+  naam: string,
+  asIs: PandInvoer,
+  doelLabel: Energielabel,
+  investeringEuro: number | undefined,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  verwervingswaardeEuro: number | undefined,
+  budget: RekenBudget,
+): Pakket {
+  const mutaties: Mutatie[] = [{ soort: 'pand-patch', patch: { energielabel: doelLabel, energielabelIngangsdatum: peildatum } }];
+  const asIsWaardering = pandWaarderingVan(berekenEindtellingMetBudget(budget, asIs, tarievenset, peildatum));
+  const { waardering } = waardeerScenario(asIs, mutaties, tarievenset, peildatum, budget);
+  const extraJaarhuurEuro = extraJaarhuur(asIsWaardering, waardering);
+  const investering: Bandbreedte | null =
+    investeringEuro !== undefined ? { optimistisch: investeringEuro, verwacht: investeringEuro, pessimistisch: investeringEuro } : null;
+
+  return {
+    naam,
+    regels: [],
+    verworpen: [],
+    scenario: { naam, mutaties },
+    waardering,
+    investeringEuro: investering,
+    extraJaarhuurEuro,
+    restpostEuro: 0,
+    terugverdientijdJaren: investering ? berekenTerugverdientijd(investering, extraJaarhuurEuro) : null,
+    marginaalBrutoRendementPct: investering ? berekenMarginaalRendement(investering, extraJaarhuurEuro) : null,
+    deltaBarProcentpunt: investering ? berekenDeltaBar(asIsWaardering.brutoJaarhuurEuro, waardering.brutoJaarhuurEuro, investering, verwervingswaardeEuro) : null,
+    vergunningplichtig: [],
+    ontbrekendeKosten: [],
+  };
+}
+
+/**
  * Combineert een handmatig bewerkt TO-BE-pand (`bouwHandmatigScenario`) met standaard
  * catalogusmaatregelen daarbovenop — bijv. airco of een kitchenette in een net toegevoegde kamer
  * (backlog, 2026-08-22: "handmatig starten om een extra kamer te realiseren en dan verder
@@ -444,7 +306,6 @@ export function bouwHandmatigScenarioMetMaatregelen(
     pand: bewerktPand,
     waardering: bewerktWaardering,
     regels: [],
-    gebruikteAlternatieven: new Map(),
   };
 
   for (const item of regels) {
@@ -457,7 +318,6 @@ export function bouwHandmatigScenarioMetMaatregelen(
       pand: nieuwPand,
       waardering: nieuweWaardering,
       regels: [...state.regels, { item, mutaties: nieuweMutaties }],
-      gebruikteAlternatieven: state.gebruikteAlternatieven,
     };
   }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { KandidaatWaardering } from '@wwso/engine';
-import { nieuweSelectieNaToggle } from './scenario-bouw';
+import { testpand6Kamers, type KandidaatWaardering, type PandInvoer } from '@wwso/engine';
+import { beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle } from './scenario-bouw';
 
 /** Minimale nep-kandidaat — `nieuweSelectieNaToggle` kijkt alleen naar sleutel/maatregelId/doel. */
 function nepKandidaat(sleutel: string, maatregelId: string, doel: { soort: string; nr?: number }): KandidaatWaardering {
@@ -32,5 +32,32 @@ describe('nieuweSelectieNaToggle', () => {
   it('uitvinken van een reeds geselecteerde sleutel verwijdert die gewoon, zonder side-effects', () => {
     const resultaat = nieuweSelectieNaToggle(kandidaten, new Set(['K-01#kamer:3', 'K-04#keuken:7']), 'K-01#kamer:3');
     expect(resultaat).toEqual(new Set(['K-04#keuken:7']));
+  });
+});
+
+describe('beschikbareEnergielabelDoelen — Tussenfase-taak C (2026-09-04)', () => {
+  // testpand6Kamers heeft energielabel 'D' (zie fixture) en geen kostenvelden ingevuld.
+  function metKosten(overrides: Partial<PandInvoer['pand']>): PandInvoer {
+    return { ...testpand6Kamers, pand: { ...testpand6Kamers.pand, ...overrides } };
+  }
+
+  it('geeft niets terug zonder ingevulde kostenvelden', () => {
+    expect(beschikbareEnergielabelDoelen(testpand6Kamers)).toEqual([]);
+  });
+
+  it('geeft alleen de doelen terug met een ingevuld kostenveld', () => {
+    const pand = metKosten({ energielabelKostenSchattingAPlusEuro: 8000, energielabelKostenSchattingAPlusPlusPlusEuro: 20000 });
+    expect(beschikbareEnergielabelDoelen(pand)).toEqual(['A+', 'A+++']);
+  });
+
+  it('sluit het huidige as-is label uit, ook als er een kostenveld voor staat', () => {
+    const pand = metKosten({ energielabel: 'A+', energielabelKostenSchattingAPlusEuro: 8000, energielabelKostenSchattingAPlusPlusEuro: 12000 });
+    expect(beschikbareEnergielabelDoelen(pand)).toEqual(['A++']);
+  });
+
+  it('energielabelKostenschatting leest het veld dat bij het doellabel hoort', () => {
+    const pand = metKosten({ energielabelKostenSchattingAPlusPlusEuro: 15000 });
+    expect(energielabelKostenschatting(pand, 'A++')).toBe(15000);
+    expect(energielabelKostenschatting(pand, 'A+')).toBeUndefined();
   });
 });

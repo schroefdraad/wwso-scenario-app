@@ -46,6 +46,7 @@ export function MaatregelTabel({
                 <th key={i} className={styles.checkCel}>
                   {slot.naam}
                   {slot.soort === 'handmatig' && <span className={styles.vergunningBadge}>handmatig bewerkt</span>}
+                  {slot.soort === 'energielabel' && <span className={styles.vergunningBadge}>label {slot.doelLabel}</span>}
                 </th>
               ))}
             </tr>
@@ -77,7 +78,13 @@ export function MaatregelTabel({
                           checked={slot.soort === 'kandidaten' && slot.sleutels.has(k.kandidaat.sleutel)}
                           onChange={() => onToggle(i, k.kandidaat.sleutel)}
                           aria-label={`${k.kandidaat.omschrijving} in ${slot.naam}`}
-                          title={slot.soort === 'handmatig' ? 'Dit scenario is handmatig bewerkt — aanvinken zet het terug naar losse maatregelen.' : undefined}
+                          title={
+                            slot.soort === 'handmatig'
+                              ? 'Dit scenario is handmatig bewerkt — aanvinken zet het terug naar losse maatregelen.'
+                              : slot.soort === 'energielabel'
+                                ? 'Dit scenario is een energielabel-wisseling — aanvinken zet het terug naar losse maatregelen.'
+                                : undefined
+                          }
                         />
                       </td>
                     ))}

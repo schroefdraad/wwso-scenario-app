@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PandInvoer, type Versiestempel } from '@wwso/engine';
+import { Energielabel, PandInvoer, type Versiestempel } from '@wwso/engine';
 
 /** Eén scenario-slot uit taak 14: alleen de gekozen kandidaat-sleutels, nooit het afgeleide
  * Pakket-resultaat (dat wordt bij het laden altijd opnieuw doorgerekend). `soort` is optioneel en
@@ -22,10 +22,19 @@ const ScenarioSelectieHandmatig = z.object({
   handmatigeInvesteringEuro: z.number(),
 });
 
+/** Een energielabel-scenario (Tussenfase-taak C, 2026-09-04): geen losse maatregelen, alleen een
+ * doellabel — de kosten komen bij het laden opnieuw uit het pand-veld voor dát label, niet uit
+ * een opgeslagen bedrag (zo blijft één plek de bron van waarheid voor de kosteninschatting). */
+const ScenarioSelectieEnergielabel = z.object({
+  soort: z.literal('energielabel'),
+  naam: z.string().min(1),
+  doelLabel: Energielabel,
+});
+
 /** Plain union (niet discriminatedUnion): `soort` heeft een default op de kandidaten-tak, en
  * discriminatedUnion staat dat niet overal betrouwbaar toe. `pand` disambigueert de twee takken
  * al voldoende. */
-export const ScenarioSelectie = z.union([ScenarioSelectieHandmatig, ScenarioSelectieKandidaten]);
+export const ScenarioSelectie = z.union([ScenarioSelectieHandmatig, ScenarioSelectieEnergielabel, ScenarioSelectieKandidaten]);
 export type ScenarioSelectie = z.infer<typeof ScenarioSelectie>;
 
 /** Rauwe rij zoals die uit de `deals`-tabel komt (snake_case, zie

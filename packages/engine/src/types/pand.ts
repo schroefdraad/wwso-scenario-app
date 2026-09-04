@@ -64,6 +64,16 @@ export const Pand = z.object({
    * label: terugvallen op de bouwjaargrens, nooit een gegokte geldigheid.
    */
   energielabelIngangsdatum: z.string().date().optional(),
+  /**
+   * Eigen inschatting van de kosten om naar dit label te komen (Tussenfase-taak C, 2026-09-04 —
+   * feedback Steven Kramer: energielabel-scenario's A+/A++/A+++ naast elkaar vergelijken). De
+   * labelsprong zelf is pandfysica (§r4-energie.ts), geen catalogusprijs — dus vult de gebruiker
+   * dit zelf in. Leeg = niet haalbaar of niet relevant voor dit pand; de scenariovergelijking
+   * biedt dan geen wisselknop naar dat label aan.
+   */
+  energielabelKostenSchattingAPlusEuro: z.number().nonnegative().optional(),
+  energielabelKostenSchattingAPlusPlusEuro: z.number().nonnegative().optional(),
+  energielabelKostenSchattingAPlusPlusPlusEuro: z.number().nonnegative().optional(),
   bouwjaar: z.number().int().min(1000).max(3000),
   soortWoning: SoortWoning,
   aantalKamers: z.number().int().min(1).max(12),

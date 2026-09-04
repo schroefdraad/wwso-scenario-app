@@ -209,23 +209,4 @@ describe('registry — dekkingsgat: K-04/K-06/K-07 op een keuken die ze nog mist
     const jaarhuurVoor = Object.values(asIsEindtelling.perKamer).reduce((s, k) => s + k.maxHuurEuro * 12, 0);
     expect(jaarhuurNa).toBeGreaterThan(jaarhuurVoor);
   });
-
-  it('in de volledige Maximaal-pakketopbouw is een eventuele afwijzing van K-04/K-06/K-07 herleidbaar (geen stille no-op)', () => {
-    // De grote Maximaal-pakketopbouw (alle 49 maatregelen) kan K-04/K-06/K-07 terecht afwijzen
-    // als een eerder geaccepteerde maatregel dezelfde afrondingssprong al heeft gepakt — dat is
-    // het gedocumenteerde additiviteitsgedrag, geen bug. Deze test bewaakt alleen dat een
-    // eventuele afwijzing dan ook expliciet in `verworpen` terechtkomt, nooit spoorloos. Dit is
-    // precies hoe de tier-overkoepelende verworpen-bug (zie pakketten.test.ts) aan het licht
-    // kwam: K-04 en K-07 werden hier al in de Basis-tier afgewezen (na K-06/K-03/K-08), maar
-    // verdwenen zonder de fix spoorloos uit `comfort.verworpen`/`maximaal.verworpen`.
-    const resultaat = stelSuggestiesOp(keukenZonderExtras, { tarievenset, peildatum, kostencatalogus });
-    const geaccepteerd = resultaat.pakketten.maximaal.regels.map((r) => r.maatregelId);
-    const verworpenSleutels = new Set(resultaat.pakketten.maximaal.verworpen.map((v) => v.kandidaatSleutel));
-    for (const id of ['K-04', 'K-06', 'K-07']) {
-      if (geaccepteerd.includes(id)) continue;
-      const sleutel = resultaat.kandidaten.find((k) => k.maatregel.id === id)?.kandidaat.sleutel;
-      expect(sleutel).toBeDefined();
-      expect(verworpenSleutels.has(sleutel!)).toBe(true);
-    }
-  });
 });

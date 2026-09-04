@@ -1,4 +1,4 @@
-import { PandInvoer } from '@wwso/engine';
+import { Energielabel, PandInvoer } from '@wwso/engine';
 import { z } from 'zod';
 
 /**
@@ -80,6 +80,7 @@ const VergelijkingSlotSnapshot = z.discriminatedUnion('soort', [
     sleutels: z.array(z.string()),
     handmatigeInvesteringEuro: z.number(),
   }),
+  z.object({ naam: z.string(), soort: z.literal('energielabel'), doelLabel: Energielabel }),
 ]);
 
 const VergelijkingSnapshot = z.object({

@@ -4,7 +4,6 @@ import { berekenEindtelling } from '../eindtelling/index';
 import { analyseerMarge } from './marge-analyse';
 import { genereerKandidaten } from './kandidaten';
 import { berekenEindtellingMetBudget, nieuwBudget, pandWaarderingVan, waardeerKandidaatSolo, waardeerScenario, type RekenBudget } from './waardering';
-import { stelPakkettenSamen } from './pakketten';
 import { standaardRegistry, valideerRegistryOfGooiFout } from './registry/index';
 import type { KandidaatWaardering, MaatregelContext, MaatregelRegistry, MargeSignaal, SuggestieOpties, SuggestieResultaat } from './types';
 import { huidigeVersiestempel } from '../versiestempel';
@@ -53,8 +52,6 @@ export function stelSuggestiesOp(asIs: PandInvoer, opties: SuggestieOpties): Sug
   const gatSignalen = detecteerGatenInCatalogus(asIs, ctxBasis, soloResultaten, tarievenset, peildatum, budget, kostencatalogus.versie);
   margeAnalyse.signalen.push(...gatSignalen);
 
-  const pakkettenResultaat = stelPakkettenSamen(asIs, soloResultaten, ctxBasis, tarievenset, peildatum, kostencatalogus, uitvoeringsjaar, opties, budget);
-
   const waarschuwingen: string[] = [
     "BTW: investeringen zijn doorgerekend met een conservatieve 21%-aanname op het vermoedelijk exclusieve bedrag (woonruimteverhuur is BTW-vrijgesteld, voorbelasting dus niet aftrekbaar). Het verlaagde tarief op een eventueel arbeidsdeel is nog niet toepasbaar — de kostencatalogus legt nog niet vast of bedragen incl./excl. BTW zijn.",
   ];
@@ -73,7 +70,6 @@ export function stelSuggestiesOp(asIs: PandInvoer, opties: SuggestieOpties): Sug
     margeAnalyse,
     kandidaten: kandidatenSorted,
     nietBeoordeeld,
-    pakketten: { basis: pakkettenResultaat.basis, comfort: pakkettenResultaat.comfort, maximaal: pakkettenResultaat.maximaal },
     herindeling,
     waarschuwingen,
     aantalEindtellingen: budget.teller.aantal,
@@ -88,12 +84,11 @@ export interface KandidatenTegenPandResultaat {
 
 /**
  * Genereert en waardeert (solo) alle kandidaten tegen een WILLEKEURIG pand — niet per se de
- * as-is. `stelSuggestiesOp` doet dit intern voor de as-is (inclusief de duurdere
- * Basis/Comfort/Maximaal-pakketopbouw); dit is de kale variant daarvan, gebruikt door de
- * scenariovergelijking om standaardmaatregelen te vinden die specifiek van toepassing zijn op
- * een handmatig bewerkt TO-BE-pand (bijv. airco of een kitchenette in een net toegevoegde kamer)
- * — dezelfde laag-A-garantie (nooit geschat, altijd doorgerekend via `berekenEindtelling`), maar
- * zonder pakketopbouw die hier niet relevant is.
+ * as-is. `stelSuggestiesOp` doet dit intern voor de as-is; dit is de kale variant daarvan,
+ * gebruikt door de scenariovergelijking om standaardmaatregelen te vinden die specifiek van
+ * toepassing zijn op een handmatig bewerkt TO-BE-pand (bijv. airco of een kitchenette in een net
+ * toegevoegde kamer) — dezelfde laag-A-garantie (nooit geschat, altijd doorgerekend via
+ * `berekenEindtelling`).
  */
 export function genereerEnWaardeerKandidaten(
   pand: PandInvoer,

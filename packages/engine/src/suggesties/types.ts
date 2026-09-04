@@ -65,7 +65,7 @@ export interface MaatregelDefinitie<P = unknown> {
   vereist?: readonly string[];
   /** Economische alternatieven voor hetzelfde doel; een pakket kiest hoogstens één per (groep, doel). */
   alternatiefGroep?: string;
-  /** Verandert pand.aantalKamers → herindeling-spoor, niet in Basis/Comfort/Maximaal. */
+  /** Verandert pand.aantalKamers → herindeling-spoor, apart gehouden van de gewone kandidatenlijst. */
   wijzigtAantalKamers?: boolean;
   parameterSchema?: z.ZodType<P>;
   /**
@@ -165,8 +165,6 @@ export interface SuggestieOpties {
   huurderving?: { maandenPerKamer: number; kamers: 'geraakt' | 'alle' };
   maatregelParameters?: Record<string, unknown>;
   uitgeslotenMaatregelen?: readonly string[];
-  gekozenAlternatieven?: Record<string, string>;
-  grenzen?: { basisTvtJaren: number; comfortTvtJaren: number };
   maxEindtellingen?: number;
 }
 
@@ -198,7 +196,7 @@ export interface PakketRegel {
 }
 
 export interface Pakket {
-  /** 'Basis' | 'Comfort' | 'Maximaal' voor de algoritmische pakketopbouw (taak 11); een vrij gekozen naam voor een handmatig samengesteld scenario (taak 14, `bouwVrijScenario`). */
+  /** Vrij gekozen naam voor een samengesteld scenario (taak 14, `bouwVrijScenario`/`bouwHandmatigScenario`/`bouwHandmatigScenarioMetMaatregelen`). */
   naam: string;
   regels: PakketRegel[];
   verworpen: { kandidaatSleutel: string; reden: string }[];
@@ -227,7 +225,6 @@ export interface SuggestieResultaat {
   margeAnalyse: MargeAnalyse;
   kandidaten: KandidaatWaardering[];
   nietBeoordeeld: { maatregelId: string; reden: string }[];
-  pakketten: { basis: Pakket; comfort: Pakket; maximaal: Pakket };
   herindeling: KandidaatWaardering[];
   waarschuwingen: string[];
   aantalEindtellingen: number;

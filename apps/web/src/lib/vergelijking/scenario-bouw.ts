@@ -1,12 +1,14 @@
 import {
   analyseerMarge,
   berekenEindtelling,
+  bouwEnergielabelScenario,
   bouwHandmatigScenarioMetMaatregelen,
   bouwVrijScenario,
   doelSleutel,
   genereerEnWaardeerKandidaten,
   nieuwBudget,
   standaardRegistry,
+  type Energielabel,
   type KandidaatWaardering,
   type MaatregelContext,
   type Pakket,
@@ -14,6 +16,48 @@ import {
   type PoolItem,
 } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
+
+/** De drie doellabels van de energielabel-scenariovergelijking (Tussenfase-taak C) — een vaste
+ * subset van `Energielabel`, want alleen hiervoor heeft het pandgegevens-scherm een kostenveld. */
+export const ENERGIELABEL_SCENARIO_DOELEN = ['A+', 'A++', 'A+++'] as const;
+export type EnergielabelScenarioDoel = (typeof ENERGIELABEL_SCENARIO_DOELEN)[number];
+
+/** Leest de eigen kosteninschatting voor één doellabel van het pand — `undefined` als het veld
+ * leeg is (niet haalbaar/relevant, zie `PandFormulier.tsx`). Eén plek die de drie velden aan hun
+ * doellabel koppelt, gedeeld door de wisselknop-opties en de scenariobouw zelf. */
+export function energielabelKostenschatting(pand: PandInvoer, doelLabel: EnergielabelScenarioDoel): number | undefined {
+  switch (doelLabel) {
+    case 'A+':
+      return pand.pand.energielabelKostenSchattingAPlusEuro;
+    case 'A++':
+      return pand.pand.energielabelKostenSchattingAPlusPlusEuro;
+    case 'A+++':
+      return pand.pand.energielabelKostenSchattingAPlusPlusPlusEuro;
+  }
+}
+
+/** Doellabels met een ingevulde kosteninschatting, exclusief het huidige as-is label zelf (een
+ * "upgrade" naar het label dat het pand al heeft, is geen scenario om te tonen). */
+export function beschikbareEnergielabelDoelen(pand: PandInvoer): EnergielabelScenarioDoel[] {
+  return ENERGIELABEL_SCENARIO_DOELEN.filter((doel) => doel !== pand.pand.energielabel && energielabelKostenschatting(pand, doel) !== undefined);
+}
+
+/**
+ * Bouwt het scenario voor een energielabel-wisselknop (Tussenfase-taak C): de investering komt
+ * altijd uit het pand-eigen kostenveld voor dát label, nooit los ingevuld op scenarioniveau —
+ * daarmee blijft één plek (het pandgegevens-scherm) de bron van waarheid.
+ */
+export function bouwEnergielabelScenarioMetKosten(
+  naam: string,
+  asIs: PandInvoer,
+  doelLabel: Energielabel,
+  tarievenset: Tarievenset,
+  peildatum: string,
+  verwervingswaardeEuro: number | undefined,
+): Pakket {
+  const investeringEuro = energielabelKostenschatting(asIs, doelLabel as EnergielabelScenarioDoel);
+  return bouwEnergielabelScenario(naam, asIs, doelLabel, investeringEuro, tarievenset, peildatum, verwervingswaardeEuro, nieuwBudget(2000));
+}
 
 /**
  * Toggle-logica voor de handmatige maatregeltabellen (`MaatregelTabel`/`HandmatigMaatregelen`).
@@ -50,8 +94,8 @@ export function nieuweSelectieNaToggle(kandidaten: readonly KandidaatWaardering[
 /**
  * Bouwt een scenario uit een set gekozen kandidaat-sleutels (taak 14 — "maatregelen aan- en
  * uitzetten"). Roept `bouwVrijScenario` uit `@wwso/engine` aan, die ELKE gekozen maatregel
- * toepast — ook als hij in déze combinatie geen marginale winst oplevert (dat is precies het
- * verschil met de algoritmische Basis/Comfort/Maximaal-pakketopbouw uit taak 11).
+ * toepast — ook als hij in déze combinatie geen marginale winst oplevert, want de gebruiker koos
+ * 'm expliciet.
  *
  * Bewust géén memoïsatie hier: `bouwVrijScenario` rekent op deze paneelgrootte (enkele
  * kandidaten) in enkele milliseconden — ruim binnen de 100ms-eis uit de taakomschrijving — dus

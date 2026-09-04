@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import type { Pakket, PandWaardering } from '@wwso/engine';
+import type { Energielabel, Pakket, PandWaardering } from '@wwso/engine';
+import type { EnergielabelScenarioDoel } from '../../lib/vergelijking/scenario-bouw';
 import { formateerEuro, formateerEuroBand, formateerJarenBand, formateerPctBand } from '../../lib/vergelijking/formatteren';
 import styles from './styles.module.css';
 
 export interface ScenarioKolom {
   naam: string;
   pakket: Pakket | null;
+  /** `null` als deze kolom geen energielabel-scenario is (Tussenfase-taak C). */
+  energielabelDoel: Energielabel | null;
 }
 
 /**
@@ -19,8 +22,10 @@ export function SamenvattingRij({
   asIsWaardering,
   asIsDealId,
   kolommen,
+  energielabelOpties,
   onNaamWijzig,
-  onSnelVullen,
+  onLeegmaken,
+  onWisselEnergielabel,
   onBekijkResultaat,
   onBekijkAsIsResultaat,
   onBewerkHandmatig,
@@ -32,8 +37,12 @@ export function SamenvattingRij({
    * bewerken"-linkje uit de paginakop (nu hier, naast de scenario-links, voor consistentie). */
   asIsDealId: string | undefined;
   kolommen: ScenarioKolom[];
+  /** Doellabels met een ingevulde kosteninschatting op dit pand (Tussenfase-taak C) — leeg ⇒ geen
+   * wisselknop tonen, er is niets om naar te wisselen. */
+  energielabelOpties: EnergielabelScenarioDoel[];
   onNaamWijzig: (index: number, naam: string) => void;
-  onSnelVullen: (index: number, soort: 'basis' | 'comfort' | 'maximaal' | 'leeg') => void;
+  onLeegmaken: (index: number) => void;
+  onWisselEnergielabel: (index: number, doelLabel: Energielabel | null) => void;
   onBekijkResultaat: (index: number) => void;
   onBekijkAsIsResultaat: () => void;
   onBewerkHandmatig: (index: number) => void;
@@ -48,17 +57,21 @@ export function SamenvattingRij({
           <div className={styles.samenvattingKopNaam}>
             <input value={kolom.naam} onChange={(e) => onNaamWijzig(i, e.target.value)} aria-label={`Naam scenario ${i + 1}`} />
           </div>
-          <div className={styles.snelStart}>
-            <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'basis')}>
-              Basis
-            </button>
-            <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'comfort')}>
-              Comfort
-            </button>
-            <button type="button" className={styles.btn} onClick={() => onSnelVullen(i, 'maximaal')}>
-              Maximaal
-            </button>
-          </div>
+          {energielabelOpties.length > 0 && (
+            <select
+              value={kolom.energielabelDoel ?? ''}
+              onChange={(e) => onWisselEnergielabel(i, e.target.value ? (e.target.value as Energielabel) : null)}
+              aria-label={`Energielabel-scenario ${i + 1}`}
+              className={styles.energielabelWissel}
+            >
+              <option value="">Geen energielabel-scenario</option>
+              {energielabelOpties.map((doel) => (
+                <option key={doel} value={doel}>
+                  Label {doel}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       ))}
 
@@ -152,7 +165,7 @@ export function SamenvattingRij({
               Bewerk handmatig →
             </button>
             {kolom.pakket && (
-              <button type="button" className={styles.btnLink} onClick={() => onSnelVullen(i, 'leeg')}>
+              <button type="button" className={styles.btnLink} onClick={() => onLeegmaken(i)}>
                 Leegmaken
               </button>
             )}
