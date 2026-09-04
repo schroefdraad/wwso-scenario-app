@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.5.5';
+export const APP_VERSIE = '0.5.6';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.5.6',
+    datum: '2026-09-04',
+    wijzigingen: [
+      'Het resultaatscherm (/pand/resultaat) is nu ook bereikbaar via een link met ?deal=<id> — bookmarken, in een nieuwe tab openen of delen werkte voorheen niet voor een AS-IS-resultaat',
+      'Als een resultaat- of vergelijkingspagina geen invoer kan vinden, staat er nu ook een link naar "Mijn deals", niet alleen naar een leeg invoerscherm',
+    ],
+  },
   {
     versie: '0.5.5',
     datum: '2026-09-04',

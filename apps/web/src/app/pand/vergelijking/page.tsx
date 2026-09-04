@@ -81,7 +81,12 @@ function VergelijkingContent() {
     return (
       <div style={{ padding: '2rem', fontFamily: 'ui-sans-serif, sans-serif' }}>
         <p>{dealParam ? 'Deze deal kon niet gevonden of geladen worden.' : "Geen (geldige) invoer gevonden om scenario's voor te vergelijken."}</p>
-        <Link href="/pand/nieuw">← Terug naar het invoerscherm</Link>
+        <p>
+          <Link href="/pand/nieuw">← Terug naar het invoerscherm</Link>
+        </p>
+        <p>
+          <Link href="/deals">Mijn deals →</Link>
+        </p>
       </div>
     );
   }

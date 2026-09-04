@@ -330,7 +330,10 @@ export function Vergelijking({
       dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
-    router.push('/pand/resultaat');
+    // Met een opgeslagen deal is /pand/resultaat?deal=<id> bruikbaar (bookmark, nieuwe tab,
+    // gedeelde link) — navigatie-audit 2026-09-04. Zonder dealId (nog niet opgeslagen pand)
+    // bestaat er niets om naar te verwijzen; dan blijft de sessionStorage-brug de enige route.
+    router.push(dealId ? `/pand/resultaat?deal=${dealId}` : '/pand/resultaat');
   }
 
   async function dealOpslaan() {
