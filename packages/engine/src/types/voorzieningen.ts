@@ -55,6 +55,16 @@ export const Keuken = z.object({
   aanrechtlengteM: z.number().min(0),
   basiseisen: KeukenBasiseisen,
   extra: KeukenExtraVoorzieningen,
+  /**
+   * Alleen relevant als deze keuken een open keuken is (`ruimte.type !== 'Keuken'`, bijv. een
+   * kitchenette in een slaapkamer): §2.3.2 waardeert zo'n open keuken voor rubriek 3 apart van
+   * het vertrek waarin ze staat — "Een privé verwarmde woonkamer met open keuken wordt dus
+   * gewaardeerd met 4 punten" (2 voor het vertrek + 2 voor de open keuken, elk mits verwarmd).
+   * Bewust een eigen veld, niet automatisch gelijk aan `ruimte.verwarmd`: dat zou zonder
+   * onderbouwing aannemen dat een kitchenette altijd hetzelfde verwarmingscircuit deelt als de
+   * rest van het vertrek (harde regel 4 — nooit stilzwijgend gokken).
+   */
+  verwarmd: z.boolean(),
 });
 export type Keuken = z.infer<typeof Keuken>;
 

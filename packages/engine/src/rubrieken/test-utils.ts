@@ -100,6 +100,7 @@ export function maakKeuken(opts: Partial<Keuken> & { ruimteNr: number }): Keuken
     aanrechtlengteM: 2.5,
     basiseisen: BASISEISEN_GEHAALD,
     extra: GEEN_KEUKEN_EXTRA,
+    verwarmd: true,
     ...opts,
   };
 }

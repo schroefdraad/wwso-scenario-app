@@ -97,6 +97,7 @@ export const kleiweg179bKamer2: PandInvoer = {
         thermostatischeMengkraan: false,
         kokendWaterfunctie: false,
       },
+      verwarmd: true,
     },
     {
       ruimteNr: 3,
@@ -124,6 +125,7 @@ export const kleiweg179bKamer2: PandInvoer = {
         thermostatischeMengkraan: false,
         kokendWaterfunctie: false,
       },
+      verwarmd: true,
     },
   ],
   sanitair: [

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { berekenR3 } from './r3-verwarming';
-import { maakPandInvoer } from './test-utils';
+import { maakKeuken, maakPandInvoer } from './test-utils';
 
 const vertrek = (nr: number, opts: { verwarmd: boolean; verkoeld: boolean }) => ({
   nr,
@@ -187,5 +187,64 @@ describe('R3 — Verwarming en verkoeling (§2.3)', () => {
     for (const kamer of [1, 2, 3]) {
       expect(resultaat.perKamer[kamer]).toBe(0.75);
     }
+  });
+
+  describe('open keuken (§2.3.2)', () => {
+    it('telt een verwarmd privévertrek met een verwarmde kitchenette als 4 punten (2 + 2)', () => {
+      const input = maakPandInvoer({
+        aantalKamers: 1,
+        ruimtes: [vertrek(1, { verwarmd: true, verkoeld: false })],
+        toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+        keukens: [maakKeuken({ ruimteNr: 1, verwarmd: true })],
+      });
+      expect(berekenR3(input).perKamer[1]).toBe(4);
+    });
+
+    it('telt géén extra punten voor een kitchenette die zelf niet verwarmd is', () => {
+      const input = maakPandInvoer({
+        aantalKamers: 1,
+        ruimtes: [vertrek(1, { verwarmd: true, verkoeld: false })],
+        toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+        keukens: [maakKeuken({ ruimteNr: 1, verwarmd: false })],
+      });
+      // alleen het vertrek zelf: de kitchenette-status volgt niet automatisch die van het vertrek
+      expect(berekenR3(input).perKamer[1]).toBe(2);
+    });
+
+    it('deelt de open-keukenpunten door het aantal kamers met toegang tot díe ruimte', () => {
+      const input = maakPandInvoer({
+        aantalKamers: 2,
+        ruimtes: [
+          {
+            nr: 1,
+            naam: 'Gemeenschappelijke woonkamer',
+            type: 'Gemeenschappelijk vertrek',
+            oppervlakteM2: 15,
+            verdieping: 0,
+            verwarmd: true,
+            verkoeld: false,
+            aantalAdressenMetToegang: 1,
+          },
+        ],
+        toewijzing: [{ ruimteNr: 1, kamers: [1, 2] }],
+        keukens: [maakKeuken({ ruimteNr: 1, verwarmd: true })],
+      });
+      // (2 + 2) / 2 kamers = 2 pt per kamer
+      expect(berekenR3(input).perKamer[1]).toBe(2);
+      expect(berekenR3(input).perKamer[2]).toBe(2);
+    });
+
+    it('past de uitzondering niet toe op een standalone Keuken-ruimte (geen dubbeltelling)', () => {
+      const input = maakPandInvoer({
+        aantalKamers: 1,
+        ruimtes: [
+          { nr: 1, naam: 'Gedeelde keuken', type: 'Keuken', oppervlakteM2: 8, verdieping: 0, verwarmd: true, verkoeld: false },
+        ],
+        toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+        keukens: [maakKeuken({ ruimteNr: 1, verwarmd: true })],
+      });
+      // één fysieke ruimte, geen "vertrek + open keuken" — gewoon 2 pt zoals elk ander vertrek
+      expect(berekenR3(input).perKamer[1]).toBe(2);
+    });
   });
 });

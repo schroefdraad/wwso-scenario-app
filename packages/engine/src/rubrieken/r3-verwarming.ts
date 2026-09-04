@@ -45,9 +45,19 @@ export const VERWARMING_OVERIGE_TYPES: readonly RuimteType[] = [
  * ruimten én verkeersruimten samen, conform de formulering "de laatste twee soorten
  * binnenruimten" in §2.3. §2.3.1 herhaalt het maximum apart bij de privé- en de
  * gemeenschappelijke variant, wat ook als twee losse maxima te lezen valt.
+ *
+ * OPEN KEUKEN (§2.3.2, cross-validatie tegen de Huurcommissie Huurprijscheck, 2026-09-04): een
+ * ruimte met een eigen aanrecht (een `Keuken`-voorziening waarvan `ruimte.type !== 'Keuken'`,
+ * bijv. een kitchenette in een slaapkamer) wordt voor déze rubriek als twee losse binnenruimten
+ * gewaardeerd — het vertrek zelf, én de open keuken erin — mits allebei verwarmd. "Een privé
+ * verwarmde woonkamer met open keuken wordt dus gewaardeerd met 4 punten." Een standalone
+ * `Keuken`-type ruimte valt hier NIET onder: die is al volledig gedekt door haar eigen
+ * vertrek-waardering (`Keuken` zit al in `VERWARMING_VERTREK_TYPES`), er is dan maar één
+ * binnenruimte, geen twee verbonden ruimtes.
  */
 export function berekenR3(input: PandInvoer): RubriekResultaat {
   const perKamerRuimtes = ruimtesPerKamer(input);
+  const keukenPerRuimteNr = new Map(input.keukens.map((k) => [k.ruimteNr, k] as const));
   const perKamer: Record<number, number> = {};
   const perKamerRuw: Record<number, number> = {};
   const toelichting: string[] = [];
@@ -62,8 +72,17 @@ export function berekenR3(input: PandInvoer): RubriekResultaat {
     const vertrekkenVerwarmdEnVerkoeld = ruimtes.filter(
       (r) => VERWARMING_VERTREK_TYPES.includes(r.ruimte.type) && r.ruimte.verwarmd && r.ruimte.verkoeld,
     );
+    const openKeukensVerwarmd = ruimtes.filter((r) => {
+      if (r.ruimte.type === 'Keuken') return false;
+      const keuken = keukenPerRuimteNr.get(r.ruimte.nr);
+      return keuken?.verwarmd === true;
+    });
 
     const vertrekPunten = vertrekkenVerwarmd.reduce(
+      (som, r) => som + PUNTEN_PER_VERWARMD_VERTREK / r.nKamersMetToegang,
+      0,
+    );
+    const openKeukenPunten = openKeukensVerwarmd.reduce(
       (som, r) => som + PUNTEN_PER_VERWARMD_VERTREK / r.nKamersMetToegang,
       0,
     );
@@ -78,14 +97,14 @@ export function berekenR3(input: PandInvoer): RubriekResultaat {
     );
     const verkoeldPunten = Math.min(verkoeldRuw, MAX_VERKOELD_PUNTEN);
 
-    const ruwPunten = vertrekPunten + overigePunten + verkoeldPunten;
+    const ruwPunten = vertrekPunten + openKeukenPunten + overigePunten + verkoeldPunten;
     const punten = rondAfOpKwartpunten(ruwPunten);
 
     perKamer[kamer] = punten;
     perKamerRuw[kamer] = ruwPunten;
 
     toelichting.push(
-      `R3 kamer ${kamer}: verwarmde vertrekken ${vertrekPunten.toFixed(2)} pt + verwarmde overige/verkeersruimten ${overigePunten.toFixed(2)} pt (max ${MAX_OVERIGE_VERWARMD_PUNTEN}, ruw ${overigeRuw.toFixed(2)}) + verwarmd én verkoelde vertrekken ${verkoeldPunten.toFixed(2)} pt (max ${MAX_VERKOELD_PUNTEN}, ruw ${verkoeldRuw.toFixed(2)}) → ${punten} pt`,
+      `R3 kamer ${kamer}: verwarmde vertrekken ${vertrekPunten.toFixed(2)} pt + verwarmde open keukens ${openKeukenPunten.toFixed(2)} pt (§2.3.2) + verwarmde overige/verkeersruimten ${overigePunten.toFixed(2)} pt (max ${MAX_OVERIGE_VERWARMD_PUNTEN}, ruw ${overigeRuw.toFixed(2)}) + verwarmd én verkoelde vertrekken ${verkoeldPunten.toFixed(2)} pt (max ${MAX_VERKOELD_PUNTEN}, ruw ${verkoeldRuw.toFixed(2)}) → ${punten} pt`,
     );
   }
 

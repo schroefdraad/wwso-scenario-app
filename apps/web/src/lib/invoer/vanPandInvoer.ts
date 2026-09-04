@@ -43,7 +43,9 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
       aantalAdressenOvergenomen: false,
       kamers: kamersBijRuimte.get(r.nr) ?? [],
       zolder: r.zolder,
-      keuken: keuken ? { aanrechtlengteM: keuken.aanrechtlengteM, basiseisen: keuken.basiseisen, extra: keuken.extra } : undefined,
+      keuken: keuken
+        ? { aanrechtlengteM: keuken.aanrechtlengteM, basiseisen: keuken.basiseisen, extra: keuken.extra, verwarmd: keuken.verwarmd }
+        : undefined,
       sanitair: sanitair
         ? {
             toiletType: sanitair.toiletType,
@@ -91,5 +93,6 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
     aftrekSituaties: p.handmatigePosten.aftrekSituaties,
     woonvoorzieningenHandicap: p.handmatigePosten.woonvoorzieningenHandicap,
     volgendeRuimteId: ruimtes.length + 1,
+    notitieOntwerp: '',
   };
 }

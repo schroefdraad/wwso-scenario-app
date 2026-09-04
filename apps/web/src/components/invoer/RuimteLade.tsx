@@ -1,6 +1,6 @@
 'use client';
 
-import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, ToiletType, type Keuken, type SanitairVoorziening } from '@wwso/engine';
+import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, type Keuken, type SanitairVoorziening } from '@wwso/engine';
 import { alleTarievensets, type Tarievenset } from '@wwso/data';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
@@ -197,6 +197,21 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
         />
       </div>
 
+      {rij.type !== 'Keuken' && (
+        <div className={styles.veldrij}>
+          <label>Kitchenette apart verwarmd?</label>
+          <Toggle
+            checked={keuken.verwarmd}
+            label="Kitchenette apart verwarmd"
+            onChange={(v) => zetKeuken({ verwarmd: v })}
+          />
+          <span className={styles.hint}>
+            Telt bij &quot;ja&quot; voor de verwarmingspunten (R3) als een tweede verwarmd vertrek naast {rij.naam || 'deze ruimte'} zelf (§2.3.2) — niet
+            automatisch overgenomen van de verwarming-toggle van de ruimte.
+          </span>
+        </div>
+      )}
+
       <div className={styles.poortBlok}>
         <div className={styles.poortMaster}>
           <input
@@ -309,6 +324,21 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   // douche/bad-punten, die hier altijd 0 zijn), dus die secties tonen we niet: minder verwarrende
   // velden voor een ruimte die ze toch nooit gebruikt (feedback Emma Morrison, 2026-08-21).
   const isToiletruimte = rij.type === 'Toiletruimte';
+  const isBadruimte = rij.type === 'Badruimte';
+  // §2.6.1: een toilet wordt alleen gewaardeerd als het in een toiletruimte óf een badkamer
+  // staat ("Toilet buiten toiletruimte of badkamer: n.v.t."), en de staand/hangend-punten
+  // verschillen per ruimtetype. Filteren voorkomt de inconsistente combinatie die bij de
+  // Huurcommissie-crossvalidatie (2026-09-04) in de testdata bleek te zitten — een badkamer met
+  // een toiletruimte-tarief. Een al opgeslagen, niet (meer) passende waarde blijft zichtbaar in
+  // de lijst (data nooit stilzwijgend wijzigen), maar is verder niet opnieuw te kiezen.
+  const toegestaneToiletTypes: SanitairVoorziening['toiletType'][] = isToiletruimte
+    ? ['Geen', 'Staand in toiletruimte', 'Hangend in toiletruimte']
+    : isBadruimte
+      ? ['Geen', 'Staand in badkamer', 'Hangend in badkamer']
+      : ['Geen'];
+  const toiletTypeOpties = toegestaneToiletTypes.includes(sanitair.toiletType)
+    ? toegestaneToiletTypes
+    : [sanitair.toiletType, ...toegestaneToiletTypes];
 
   return (
     <div>
@@ -319,7 +349,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
       <div className={styles.veldrij}>
         <label htmlFor="s-toilet">Toilettype</label>
         <select id="s-toilet" value={sanitair.toiletType} onChange={(e) => zetSanitair({ toiletType: e.target.value as SanitairVoorziening['toiletType'] })}>
-          {ToiletType.options.map((t) => (
+          {toiletTypeOpties.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>

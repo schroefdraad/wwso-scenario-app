@@ -73,6 +73,9 @@ export const KITCHENETTE_122_PRESET: KitchenettePreset = {
   aanrechtlengteM: 1.22,
   basiseisen: KITCHENETTE_BASISEISEN,
   extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true },
+  // §2.3.2: deelt de bestaande privéruimte (geen eigen wand/deur), dus hetzelfde
+  // verwarmingscircuit als het vertrek — geen apart geïnstalleerde radiator in de offerte.
+  verwarmd: true,
 };
 
 /**
@@ -84,6 +87,9 @@ export const KITCHENETTE_240_PRESET: KitchenettePreset = {
   aanrechtlengteM: 2.4,
   basiseisen: KITCHENETTE_BASISEISEN,
   extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true, ovenElektrisch: true, vaatwasmachine: true, koelkast: true },
+  // §2.3.2: deelt de bestaande privéruimte (geen eigen wand/deur), dus hetzelfde
+  // verwarmingscircuit als het vertrek — geen apart geïnstalleerde radiator in de offerte.
+  verwarmd: true,
 };
 
 /**

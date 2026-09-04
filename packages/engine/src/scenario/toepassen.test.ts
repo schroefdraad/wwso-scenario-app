@@ -26,6 +26,7 @@ function maakAsIs() {
         aanrechtlengteM: 2.5,
         basiseisen: BASISEISEN_GEHAALD,
         extra: GEEN_KEUKEN_EXTRA,
+        verwarmd: true,
       },
     ],
     pand: { energielabel: 'D' },

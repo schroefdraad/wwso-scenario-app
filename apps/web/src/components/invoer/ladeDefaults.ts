@@ -26,6 +26,9 @@ export function nieuweKeuken(): Omit<Keuken, 'ruimteNr'> {
       thermostatischeMengkraan: false,
       kokendWaterfunctie: false,
     },
+    /** §2.3.2: alleen relevant als open keuken (kitchenette in een ander type ruimte) — niet
+     * automatisch overnemen van de kamer zelf, de gebruiker moet dit bevestigen. */
+    verwarmd: false,
   };
 }
 

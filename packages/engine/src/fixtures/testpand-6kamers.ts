@@ -96,6 +96,7 @@ export const testpand6Kamers: PandInvoer = {
         thermostatischeMengkraan: false,
         kokendWaterfunctie: false,
       },
+      verwarmd: true,
     },
   ],
   sanitair: [
