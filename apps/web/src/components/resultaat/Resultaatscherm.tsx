@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { berekenEindtelling, pandWaarderingVan, voerControlesUit, type PandInvoer } from '@wwso/engine';
 import type { Tarievenset } from '@wwso/data';
 import { KamerRij } from './KamerRij';
-import { ControlesPaneel } from './ControlesPaneel';
 import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
+import { formateerDatum } from '../../lib/datum';
 import styles from './styles.module.css';
 
 function formateerEuro(bedrag: number): string {
@@ -72,7 +72,7 @@ export function Resultaatscherm({
       <header className={styles.kop}>
         <h1>{titel ?? pand.pand.adres}</h1>
         <span className={styles.kopSub}>
-          {pand.pand.stad} · {pand.pand.aantalKamers} kamers · peildatum {peildatum}
+          {pand.pand.stad} · {pand.pand.aantalKamers} kamers · peildatum {formateerDatum(peildatum)}
         </span>
         <button type="button" className={styles.pdfKnop} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
           {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
@@ -109,8 +109,6 @@ export function Resultaatscherm({
             ))}
           </div>
         </section>
-
-        <ControlesPaneel controles={controles} />
       </main>
     </div>
   );

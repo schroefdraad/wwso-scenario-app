@@ -76,10 +76,10 @@ export function PandFormulier() {
             </select>
             {gemeenteKandidaten.length > 1 ? (
               <span className={styles.hint}>
-                "{pand.stad}" komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
+                &quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
               </span>
             ) : (
-              <span className={styles.hint}>Automatisch gesuggereerd op basis van "Stad" — bepaalt de huurtabel (§2.11).</span>
+              <span className={styles.hint}>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</span>
             )}
           </div>
           <div className={styles.veld}>

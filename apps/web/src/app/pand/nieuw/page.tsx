@@ -10,6 +10,7 @@ import { Topbar } from '../../../components/invoer/Topbar';
 import { PandFormulier } from '../../../components/invoer/PandFormulier';
 import { RuimteRaster } from '../../../components/invoer/RuimteRaster';
 import { OverigePosten } from '../../../components/invoer/OverigePosten';
+import { NotitieVeld } from '../../../components/invoer/NotitieVeld';
 import { RuimteLade } from '../../../components/invoer/RuimteLade';
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { haalScenarioBewerkStartOp } from '../../../lib/vergelijking/scenarioBewerkBrug';
@@ -81,6 +82,7 @@ function NieuwPandContent() {
               <PandFormulier />
               <RuimteRaster />
               <OverigePosten />
+              <NotitieVeld />
             </main>
             <RuimteLade />
           </div>

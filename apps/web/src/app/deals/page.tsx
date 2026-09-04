@@ -4,11 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { haalDealenOp } from '../../lib/deals/opslag';
 import type { Deal } from '../../lib/deals/types';
+import { formateerDatumTijd } from '../../lib/datum';
 import styles from './styles.module.css';
-
-function formateerDatum(iso: string): string {
-  return new Date(iso).toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' });
-}
 
 /** Zonder map ('') hoort een deal bij "Geen map" — een aparte, altijd aanwezige filteroptie i.p.v.
  * gewoon te verdwijnen uit elk map-specifiek filter (backlog 2026-09-04: persoonlijke ordening). */
@@ -71,13 +68,12 @@ export default function DealsOverzicht() {
                 <thead>
                   <tr>
                     <th>Deal</th>
-                    <th>Map</th>
                     <th>Adres</th>
                     <th>Kamers</th>
                     <th>Scenario&apos;s</th>
                     <th>Notitie</th>
-                    <th>Tarieven-peildatum</th>
                     <th>Laatst bijgewerkt</th>
+                    <th>Map</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,7 +84,6 @@ export default function DealsOverzicht() {
                           {deal.naam}
                         </Link>
                       </td>
-                      <td className={styles.dim}>{deal.map ? `📁 ${deal.map}` : '—'}</td>
                       <td>
                         {deal.pandInvoer.pand.adres} · {deal.pandInvoer.pand.stad}
                       </td>
@@ -97,8 +92,8 @@ export default function DealsOverzicht() {
                       <td className={styles.notitieCel} title={deal.notitie || undefined}>
                         {deal.notitie || '—'}
                       </td>
-                      <td className={styles.dim}>{deal.versiestempel.tarievensetPeildatum}</td>
-                      <td className={styles.dim}>{formateerDatum(deal.bijgewerkt)}</td>
+                      <td className={styles.dim}>{formateerDatumTijd(deal.bijgewerkt)}</td>
+                      <td className={styles.dim}>{deal.map ? `📁 ${deal.map}` : '—'}</td>
                     </tr>
                   ))}
                 </tbody>

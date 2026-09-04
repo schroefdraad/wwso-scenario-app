@@ -54,6 +54,14 @@ export async function haalDealenOp(): Promise<Deal[]> {
   return data.map(parseDealRij);
 }
 
+/** Alle bestaande mapnamen (voor de mapkeuze-dropdown op de scenariovergelijking — leeg/duplicaat-vrij, gesorteerd). */
+export async function haalMappen(): Promise<string[]> {
+  const { data, error } = await supabase.from('deals').select('map');
+  if (error) throw new Error(`Mappen ophalen mislukt: ${error.message}`);
+  const gevonden = new Set(data.map((r) => r.map as string).filter((m) => m !== ''));
+  return [...gevonden].sort((a, b) => a.localeCompare(b));
+}
+
 export async function haalDealOp(id: string): Promise<Deal | null> {
   const { data, error } = await supabase.from('deals').select().eq('id', id).maybeSingle();
   if (error) throw new Error(`Deal ophalen mislukt: ${error.message}`);

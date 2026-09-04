@@ -76,6 +76,11 @@ export interface InvoerState {
   volgendeRuimteId: number;
   /** Laatst ingevoerde waarde voor `aantalAdressenMetToegang`, overgenomen bij de volgende gedeelde ruimte (§4.4 van het UX-ontwerp). */
   laatsteAantalAdressen?: string;
+  /** Vrije notitie bij de deal, al in te vullen vóórdat er een deal bestaat (feedback Emma,
+   * 2026-09-04: notitieveld op de pand-invoerpagina zelf, niet pas op de vergelijkingspagina).
+   * Bron van waarheid tijdens het invoeren — `bewerktDeal.notitie` wordt hier alleen ván
+   * overgenomen bij het laden van een bestaande deal, nooit andersom. */
+  notitieOntwerp: string;
   /**
    * Gezet zodra deze as-is via `/pand/nieuw?deal=<id>` geladen is vanuit een opgeslagen deal
    * (backlog: as-is achteraf aanpasbaar maken). "Doorrekenen" draagt dit door naar het
@@ -131,4 +136,5 @@ export const NIEUWE_INVOERSTATE: InvoerState = {
   aftrekSituaties: { verhuurderCriterium: [], ruitoppervlakteOnvoldoende: [], raamkozijnTeHoog: [] },
   woonvoorzieningenHandicap: [],
   volgendeRuimteId: 1,
+  notitieOntwerp: '',
 };

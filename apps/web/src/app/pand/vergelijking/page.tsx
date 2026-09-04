@@ -95,7 +95,6 @@ function VergelijkingContent() {
       verwervingswaardeEuro={undefined}
       kandidaten={resultaat.kandidaten}
       asIsWaardering={resultaat.asIs}
-      nietBeoordeeldAantal={resultaat.nietBeoordeeld.length}
       geladenDeal={geladen.deal}
     />
   );

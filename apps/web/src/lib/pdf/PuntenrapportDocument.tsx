@@ -2,6 +2,7 @@ import { Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer';
 import { pandWaarderingVan, type ControleResultaat, type EindtellingResultaat, type PandInvoer } from '@wwso/engine';
 import { RUBRIEK_LABELS, RUBRIEK_VOLGORDE } from '../resultaat/rubriek-labels';
 import { filterToelichtingVoorKamer, toegankelijkeRuimteNrsVoorKamer } from '../resultaat/toelichting-filter';
+import { formateerDatum } from '../datum';
 
 /**
  * Statisch PDF-equivalent van `Resultaatscherm` (taak 13/14): dezelfde `EindtellingResultaat` en
@@ -166,7 +167,7 @@ export function PuntenrapportDocument({
 
         <Text style={stijl.titel}>{pand.pand.adres}</Text>
         <Text style={stijl.subtitel}>
-          {pand.pand.stad} · {pand.pand.aantalKamers} kamer{pand.pand.aantalKamers === 1 ? '' : 's'} · tarieven peildatum {tarievensetPeildatum}
+          {pand.pand.stad} · {pand.pand.aantalKamers} kamer{pand.pand.aantalKamers === 1 ? '' : 's'} · tarieven peildatum {formateerDatum(tarievensetPeildatum)}
         </Text>
         <View style={stijl.headerLijn} />
 

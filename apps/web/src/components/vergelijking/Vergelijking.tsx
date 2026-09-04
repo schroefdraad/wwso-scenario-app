@@ -8,7 +8,7 @@ import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
 import { beschikbareEnergielabelDoelen, nieuweSelectieNaToggle } from '../../lib/vergelijking/scenario-bouw';
 import { slaPandOp } from '../../lib/resultaat/opslag';
-import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
+import { maakDealAan, werkDealBij, haalMappen } from '../../lib/deals/opslag';
 import {
   haalEnWisScenarioBewerkResultaatOp,
   haalEnWisVergelijkingSnapshotOp,
@@ -23,6 +23,7 @@ import { HandmatigMaatregelen } from './HandmatigMaatregelen';
 import styles from './styles.module.css';
 
 const STANDAARD_NAMEN = ['Scenario 1', 'Scenario 2', 'Scenario 3'];
+const NIEUWE_MAP_OPTIE = '__nieuwe_map__';
 
 function standaardSlots(): ScenarioSlot[] {
   return STANDAARD_NAMEN.map((naam) => ({ naam, soort: 'kandidaten' as const, sleutels: new Set<string>() }));
@@ -90,7 +91,6 @@ export function Vergelijking({
   verwervingswaardeEuro,
   kandidaten,
   asIsWaardering,
-  nietBeoordeeldAantal,
   geladenDeal,
 }: {
   pand: PandInvoer;
@@ -100,7 +100,6 @@ export function Vergelijking({
   verwervingswaardeEuro: number | undefined;
   kandidaten: readonly KandidaatWaardering[];
   asIsWaardering: PandWaardering;
-  nietBeoordeeldAantal: number;
   geladenDeal?: GeladenDeal;
 }) {
   const router = useRouter();
@@ -109,8 +108,16 @@ export function Vergelijking({
   const [dealNaam, setDealNaam] = useState(geladenDeal?.naam ?? pand.pand.adres);
   const [dealNotitie, setDealNotitie] = useState(geladenDeal?.notitie ?? '');
   const [dealMap, setDealMap] = useState(geladenDeal?.map ?? '');
+  const [mappen, setMappen] = useState<string[]>([]);
+  const [nieuweMapModus, setNieuweMapModus] = useState(false);
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    haalMappen()
+      .then(setMappen)
+      .catch(() => setMappen([]));
+  }, []);
 
   // Herstelt lokale (mogelijk nog niet opgeslagen) slots-state na een volledige navigatie weg van
   // deze pagina en terug — sessionStorage bestaat niet tijdens SSR, dus dit kan pas ná hydratie.
@@ -358,15 +365,48 @@ export function Vergelijking({
         </span>
         <div className={styles.dealOpslaan}>
           <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de deal" className={styles.dealNaamVeld} />
-          <input
-            value={dealMap}
-            onChange={(e) => setDealMap(e.target.value)}
-            aria-label="Map (persoonlijke ordening)"
-            placeholder="📁 (geen map)"
-            className={styles.dealMapVeld}
-          />
+          {nieuweMapModus ? (
+            <input
+              autoFocus
+              value={dealMap}
+              onChange={(e) => setDealMap(e.target.value)}
+              onBlur={() => {
+                if (!dealMap) setNieuweMapModus(false);
+              }}
+              aria-label="Naam van de nieuwe map"
+              placeholder="Naam nieuwe map"
+              className={styles.dealMapVeld}
+            />
+          ) : (
+            <select
+              value={dealMap}
+              onChange={(e) => {
+                if (e.target.value === NIEUWE_MAP_OPTIE) {
+                  setDealMap('');
+                  setNieuweMapModus(true);
+                } else {
+                  setDealMap(e.target.value);
+                }
+              }}
+              aria-label="Map (persoonlijke ordening)"
+              className={styles.dealMapVeld}
+            >
+              <option value="">📁 (geen map)</option>
+              {mappen.map((m) => (
+                <option key={m} value={m}>
+                  📁 {m}
+                </option>
+              ))}
+              {dealMap && !mappen.includes(dealMap) && (
+                <option key={dealMap} value={dealMap}>
+                  📁 {dealMap}
+                </option>
+              )}
+              <option value={NIEUWE_MAP_OPTIE}>+ Nieuwe map…</option>
+            </select>
+          )}
           <button type="button" className={`${styles.btn} ${styles.btnPrimair}`} onClick={dealOpslaan} disabled={opslaanStatus === 'bezig'}>
-            {dealId ? 'Deal bijwerken' : 'Deal opslaan'}
+            {dealId ? 'Opslaan' : 'Deal opslaan'}
           </button>
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
@@ -384,12 +424,6 @@ export function Vergelijking({
         />
       </header>
       <main className={styles.main}>
-        {nietBeoordeeldAantal > 0 && (
-          <p className={styles.hint}>
-            {nietBeoordeeldAantal} maatregel{nietBeoordeeldAantal === 1 ? '' : 'en'} vere{nietBeoordeeldAantal === 1 ? 'ist' : 'isen'} extra invoer en{' '}
-            {nietBeoordeeldAantal === 1 ? 'wordt' : 'worden'} hier niet getoond.
-          </p>
-        )}
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
           asIsDealId={dealId}

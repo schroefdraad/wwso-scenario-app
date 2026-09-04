@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase/client';
 import { APP_VERSIE, WIJZIGINGSLOG } from '../lib/wijzigingslog';
+import { formateerDatum } from '../lib/datum';
 import styles from './Footer.module.css';
 
 /** App-brede footer met versienummer + wijzigingslog — zichtbaar op elke pagina via layout.tsx.
@@ -49,7 +50,7 @@ export function Footer() {
             <div key={entry.versie} className={styles.logEntry}>
               <div className={styles.logKop}>
                 <strong>v{entry.versie}</strong>
-                <span>{entry.datum}</span>
+                <span>{formateerDatum(entry.datum)}</span>
               </div>
               <ul>
                 {entry.wijzigingen.map((regel, i) => (

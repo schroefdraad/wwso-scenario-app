@@ -68,6 +68,7 @@ export function InvoerProvider({
         soort: 'CONCEPT_GELADEN',
         state: {
           ...pandInvoerNaarState(initieelDeal.pandInvoer),
+          notitieOntwerp: initieelDeal.notitie,
           bewerktDeal: { id: initieelDeal.id, naam: initieelDeal.naam, notitie: initieelDeal.notitie, map: initieelDeal.map, scenarios: initieelDeal.scenarios },
         },
       });

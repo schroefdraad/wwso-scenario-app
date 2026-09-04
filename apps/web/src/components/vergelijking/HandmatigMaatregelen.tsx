@@ -53,7 +53,7 @@ export function HandmatigMaatregelen({
   return (
     <section className={styles.blok}>
       <div className={styles.blokKop}>
-        <h2>{slotNaam} — maatregelen op de handmatig bewerkte situatie</h2>
+        <h2>{slotNaam} — optimalisaties op de handmatig bewerkte situatie</h2>
         <p className={styles.hint}>
           De kamer/herindeling zelf heeft geen catalogusprijs — vul die investering hieronder zelf in. Maatregelen die je hier aanvinkt (bijv. airco of een
           kitchenette in de nieuwe kamer) tellen met hun échte kosten mee bovenop dat bedrag.

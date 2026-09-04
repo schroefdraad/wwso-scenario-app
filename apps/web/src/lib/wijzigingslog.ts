@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.5.2';
+export const APP_VERSIE = '0.5.4';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,28 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.5.4',
+    datum: '2026-09-04',
+    wijzigingen: [
+      'Bugfix (R3 Verwarming): een kamer met een eigen kitchenette telde de verwarmingspunten van die open keuken niet apart mee — het beleidsboek (§2.3.2) schrijft juist voor dat zo\'n open keuken als een tweede verwarmd vertrek gewaardeerd wordt. Nieuwe toggle "Kitchenette apart verwarmd?" in het Keuken-paneel, standaard uit',
+      'Toiletype-veld in de Sanitair-lade toont nu alleen nog de opties die bij het gekozen ruimtetype horen (badkamer- of toiletruimte-varianten) — voorkomt een inconsistente combinatie',
+      'Ontdekt tijdens een handmatige cross-validatie tegen de officiële Huurcommissie Huurprijscheck, zie outputs/RAPPORT_huurcommissie-crossvalidatie_2026-09-04.md',
+    ],
+  },
+  {
+    versie: '0.5.3',
+    datum: '2026-09-04',
+    wijzigingen: [
+      'Deals-overzicht: kolom "Map" staat nu achter "Laatst bijgewerkt", kolom "Tarieven-peildatum" verwijderd',
+      'Notitie bij een deal is nu al in te vullen op de pand-invoerpagina zelf (onderaan), niet pas op de scenariovergelijkingspagina',
+      '"Deal bijwerken"-knop heet nu "Opslaan"; rubriekstitel "Maatregelen" heet nu "Optimalisaties"',
+      'Datumnotatie overal consistent als DD-MM-JJJJ (resultaatscherm, PDF, footer-wijzigingslog, deals-overzicht)',
+      'De controle-uitkomsten zijn van het resultaatscherm gehaald (bleven wel op de PDF staan) — niet relevant voor de eindgebruiker',
+      'Scenariovergelijking: "Map" is nu een dropdown van bestaande mappen plus een "Nieuwe map…"-optie, in plaats van een vrij tekstveld',
+      'Nieuw pictogram (favicon) in de browsertab',
+    ],
+  },
   {
     versie: '0.5.2',
     datum: '2026-09-04',

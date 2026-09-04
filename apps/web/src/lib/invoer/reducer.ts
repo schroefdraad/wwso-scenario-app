@@ -34,6 +34,7 @@ export type InvoerActie =
   | { soort: 'ALLES_GEWIST' }
   | { soort: 'CONCEPT_GELADEN'; state: InvoerState }
   | { soort: 'DEAL_GEKOPPELD'; deal: NonNullable<InvoerState['bewerktDeal']> }
+  | { soort: 'NOTITIE_GEWIJZIGD'; notitie: string }
   | { soort: 'AANBEL_GEWIJZIGD'; aan: boolean }
   | { soort: 'AANBEL_KAMER_GETOGGELD'; kamer: 'alle' | number }
   | { soort: 'LAADPAAL_GEWIJZIGD'; aan: boolean }
@@ -204,6 +205,9 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
 
     case 'DEAL_GEKOPPELD':
       return { ...state, bewerktDeal: actie.deal };
+
+    case 'NOTITIE_GEWIJZIGD':
+      return { ...state, notitieOntwerp: actie.notitie };
 
     case 'AANBEL_GEWIJZIGD':
       return { ...state, aanbelfunctieAan: actie.aan, aanbelfunctieKamers: actie.aan ? Array.from({ length: aantalKamers(state) }, (_, i) => i + 1) : [] };

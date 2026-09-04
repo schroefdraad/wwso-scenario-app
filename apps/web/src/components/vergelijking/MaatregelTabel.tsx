@@ -32,7 +32,7 @@ export function MaatregelTabel({
   return (
     <section className={styles.blok}>
       <div className={styles.blokKop}>
-        <h2>Maatregelen</h2>
+        <h2>Optimalisaties</h2>
       </div>
       <div className={styles.tabelScroll}>
         <table className={styles.tabel}>

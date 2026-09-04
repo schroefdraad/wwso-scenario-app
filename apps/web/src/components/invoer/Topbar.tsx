@@ -29,7 +29,7 @@ export function Topbar() {
       const kostencatalogus = nieuwsteKostencatalogus();
       const invoer = {
         naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloos pand'),
-        notitie: state.bewerktDeal?.notitie ?? '',
+        notitie: state.notitieOntwerp,
         map: state.bewerktDeal?.map ?? '',
         pandInvoer: pand,
         scenarios: state.bewerktDeal?.scenarios ?? [],
@@ -83,7 +83,7 @@ export function Topbar() {
             title={!pand ? (stap ?? undefined) : undefined}
             onClick={dealVroegOpslaan}
           >
-            {state.bewerktDeal ? 'Deal bijwerken' : 'Deal opslaan'}
+            {state.bewerktDeal ? 'Opslaan' : 'Deal opslaan'}
           </button>
           {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
           {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
@@ -106,7 +106,7 @@ export function Topbar() {
             pand,
             dealId: state.bewerktDeal?.id,
             dealNaam: state.bewerktDeal?.naam,
-            dealNotitie: state.bewerktDeal?.notitie,
+            dealNotitie: state.notitieOntwerp,
             dealMap: state.bewerktDeal?.map,
             dealScenarios: state.bewerktDeal?.scenarios,
           });
