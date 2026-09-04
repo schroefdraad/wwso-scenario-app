@@ -63,8 +63,13 @@ export const Keuken = z.object({
    * Bewust een eigen veld, niet automatisch gelijk aan `ruimte.verwarmd`: dat zou zonder
    * onderbouwing aannemen dat een kitchenette altijd hetzelfde verwarmingscircuit deelt als de
    * rest van het vertrek (harde regel 4 — nooit stilzwijgend gokken).
+   *
+   * `.default(false)` i.p.v. verplicht: deals die vóór 2026-09-04 (v0.5.4) zijn opgeslagen
+   * hebben dit veld niet in hun bewaarde JSON staan. Zonder default breekt het inladen van elke
+   * bestaande deal met een keuken (ontdekt in productie direct na de deploy). `false` is de
+   * veilige kant — géén stilzwijgende aanname van dubbele verwarmingspunten voor oude data.
    */
-  verwarmd: z.boolean(),
+  verwarmd: z.boolean().default(false),
 });
 export type Keuken = z.infer<typeof Keuken>;
 
