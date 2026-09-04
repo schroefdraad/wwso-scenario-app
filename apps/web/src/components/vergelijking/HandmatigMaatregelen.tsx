@@ -21,21 +21,32 @@ const VERGUNNING_LABEL: Record<string, string> = {
  * De handmatige investering (het kosten-veld voor de herindeling zelf, waar geen catalogusprijs
  * voor bestaat) staat hier los van de maatregelkosten — samen tellen ze op tot de Investering die
  * in `SamenvattingRij` verschijnt zodra dit slot geen "onbekend" meer is.
+ *
+ * De "Prijs (€)"-kolom (Tussenfase-taak D, 2026-09-04) is een overschrijfbaar prijsveld per
+ * maatregel, voorgevuld met de catalogusprijs — bij het vergelijken van twee scenario's met deels
+ * overlappende maatregelen maakt dit zichtbaar WELKE maatregel een investeringsverschil
+ * veroorzaakt, niet alleen dát de totale investering verschilt.
  */
 export function HandmatigMaatregelen({
   slotNaam,
   kandidaten,
   geselecteerd,
   handmatigeInvesteringEuro,
+  maatregelPrijzenEuro,
   onToggle,
   onInvesteringWijzig,
+  onPrijsWijzig,
 }: {
   slotNaam: string;
   kandidaten: readonly KandidaatWaardering[];
   geselecteerd: ReadonlySet<string>;
   handmatigeInvesteringEuro: number;
+  /** Per-maatregel prijsoverschrijving (Tussenfase-taak D) — sleutels zonder eigen entry tonen de
+   * catalogusprijs als startpunt. */
+  maatregelPrijzenEuro: Readonly<Record<string, number>>;
   onToggle: (sleutel: string) => void;
   onInvesteringWijzig: (euro: number) => void;
+  onPrijsWijzig: (sleutel: string, euro: number) => void;
 }) {
   const groepen = groepeerPerRubriek(kandidaten);
 
@@ -71,7 +82,7 @@ export function HandmatigMaatregelen({
               <tr>
                 <th>Maatregel</th>
                 <th>Solo +€/jr</th>
-                <th>Solo investering</th>
+                <th>Prijs (€)</th>
                 <th>TVT</th>
                 <th className={styles.checkCel}>Toepassen</th>
               </tr>
@@ -90,7 +101,17 @@ export function HandmatigMaatregelen({
                         {VERGUNNING_LABEL[k.vergunningKlasse] && <span className={styles.vergunningBadge}>{VERGUNNING_LABEL[k.vergunningKlasse]}</span>}
                       </td>
                       <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
-                      <td className={styles.tvtCel}>{formateerEuro(k.investeringEuro.verwacht)}</td>
+                      <td className={styles.tvtCel}>
+                        <input
+                          type="number"
+                          min={0}
+                          step={50}
+                          value={maatregelPrijzenEuro[k.kandidaat.sleutel] ?? k.investeringEuro.verwacht}
+                          onChange={(e) => onPrijsWijzig(k.kandidaat.sleutel, e.target.value === '' ? 0 : Number(e.target.value))}
+                          aria-label={`Prijs voor ${k.kandidaat.omschrijving} in ${slotNaam}`}
+                          className={styles.maatregelPrijsVeld}
+                        />
+                      </td>
                       <td className={styles.tvtCel}>
                         {k.terugverdientijdJaren ? `${k.terugverdientijdJaren.verwacht.toLocaleString('nl-NL', { maximumFractionDigits: 1 })} jr` : '—'}
                       </td>

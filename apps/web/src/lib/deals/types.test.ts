@@ -60,8 +60,36 @@ describe('parseDealRij', () => {
       ],
     });
     const deal = parseDealRij(rij);
+    // `maatregelPrijzenEuro` ontbreekt in de rauwe rij (legacy, vóór 2026-09-04) — valt terug op
+    // {}, wat toen "geen overschrijvingen" betekende, geen gok.
     expect(deal.scenarios).toEqual([
-      { soort: 'handmatig', naam: 'Kamer 7', pand: testpand6Kamers, sleutels: ['K-01#kamer:7'], handmatigeInvesteringEuro: 15000 },
+      { soort: 'handmatig', naam: 'Kamer 7', pand: testpand6Kamers, sleutels: ['K-01#kamer:7'], handmatigeInvesteringEuro: 15000, maatregelPrijzenEuro: {} },
+    ]);
+  });
+
+  it('parseert een handmatig scenario met per-maatregel prijsoverschrijvingen (Tussenfase-taak D, 2026-09-04)', () => {
+    const rij = geldigeRij({
+      scenarios: [
+        {
+          soort: 'handmatig',
+          naam: 'Kamer 7',
+          pand: testpand6Kamers,
+          sleutels: ['K-01#kamer:7'],
+          handmatigeInvesteringEuro: 15000,
+          maatregelPrijzenEuro: { 'K-01#kamer:7': 4200 },
+        },
+      ],
+    });
+    const deal = parseDealRij(rij);
+    expect(deal.scenarios).toEqual([
+      {
+        soort: 'handmatig',
+        naam: 'Kamer 7',
+        pand: testpand6Kamers,
+        sleutels: ['K-01#kamer:7'],
+        handmatigeInvesteringEuro: 15000,
+        maatregelPrijzenEuro: { 'K-01#kamer:7': 4200 },
+      },
     ]);
   });
 

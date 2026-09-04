@@ -253,6 +253,38 @@ describe('bouwHandmatigScenarioMetMaatregelen — handmatige kamer + standaardma
     expect(scenario.scenario.mutaties.length).toBeGreaterThan(1);
   });
 
+  it('een per-maatregel prijsoverschrijving (Tussenfase-taak D) telt mee i.p.v. de catalogusprijs', () => {
+    // Zonder override telt de catalogusprijs van V-01 mee (zie de vorige test); met een override
+    // moet de TOTALE investering het overschreven bedrag gebruiken, niet de catalogusprijs — en
+    // de per-regel investeringEuro in het pakket moet 'm ook laten zien (zichtbaar maken WELKE
+    // maatregel het verschil veroorzaakt).
+    const bewerktResultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+    const v01 = bewerktResultaat.kandidaten.find((k) => k.maatregel.id === 'V-01' && k.kandidaat.doel.nr === 21)!;
+    const definitie = standaardRegistry.get('V-01')!;
+    const regels: PoolItem[] = [{ waardering: v01, definitie }];
+
+    const HANDMATIGE_INVESTERING = 15000;
+    const OVERSCHREVEN_PRIJS = 999;
+    const scenario = bouwHandmatigScenarioMetMaatregelen(
+      'Kamer 7 + radiator (eigen prijs)',
+      testpand6Kamers,
+      bewerktPand,
+      regels,
+      HANDMATIGE_INVESTERING,
+      bewerktResultaat.ctxBasis,
+      tarievenset,
+      peildatum,
+      kostencatalogus,
+      kostencatalogus.aannames.prijspeilJaar,
+      undefined,
+      nieuwBudget(2000),
+      { [v01.kandidaat.sleutel]: OVERSCHREVEN_PRIJS },
+    );
+
+    expect(scenario.investeringEuro!.verwacht).toBeCloseTo(HANDMATIGE_INVESTERING + OVERSCHREVEN_PRIJS, 2);
+    expect(scenario.regels[0].investeringEuro).toEqual({ optimistisch: OVERSCHREVEN_PRIJS, verwacht: OVERSCHREVEN_PRIJS, pessimistisch: OVERSCHREVEN_PRIJS });
+  });
+
   it('zonder gekozen maatregelen (alleen de handmatige investering) is de jaarhuurwinst gelijk aan bouwHandmatigScenario', () => {
     const kaal = bouwHandmatigScenario('Alleen kamer 7', testpand6Kamers, bewerktPand, tarievenset, peildatum, nieuwBudget(2000));
     const bewerktResultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));

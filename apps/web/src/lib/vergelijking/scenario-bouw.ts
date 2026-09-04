@@ -163,6 +163,9 @@ export function berekenKandidatenVoorHandmatigPand(
  * gebruiker zelf invult voor de herindeling) plus de catalogusmaatregelkosten tellen op tot één
  * Investering/Terugverdientijd/Rendement — zie `bouwHandmatigScenarioMetMaatregelen` in
  * `@wwso/engine` voor de precieze berekening.
+ *
+ * `maatregelPrijzenEuro` (Tussenfase-taak D) overschrijft de catalogusprijs per aangevinkte
+ * maatregel — sleutels die er niet in staan vallen terug op de catalogusprijs.
  */
 export function bouwHandmatigScenarioMetMaatregelenUitSleutels(
   naam: string,
@@ -175,6 +178,7 @@ export function bouwHandmatigScenarioMetMaatregelenUitSleutels(
   peildatum: string,
   kostencatalogus: Kostencatalogus,
   verwervingswaardeEuro: number | undefined,
+  maatregelPrijzenEuro: Readonly<Record<string, number>> = {},
 ): Pakket {
   const regels: PoolItem[] = kandidatenTegenBewerkt.kandidaten
     .filter((k) => geselecteerdeSleutels.has(k.kandidaat.sleutel))
@@ -197,5 +201,6 @@ export function bouwHandmatigScenarioMetMaatregelenUitSleutels(
     kostencatalogus.aannames.prijspeilJaar,
     verwervingswaardeEuro,
     nieuwBudget(2000),
+    maatregelPrijzenEuro,
   );
 }

@@ -97,6 +97,17 @@
   width: 8rem;
 }
 
+.maatregelPrijsVeld {
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  width: 6rem;
+}
+
 .handmatigBlok + .handmatigBlok {
   margin-top: 1rem;
 }

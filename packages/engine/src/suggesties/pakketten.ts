@@ -72,6 +72,19 @@ function leaveOneOutBijdragen(
   return bijdragen;
 }
 
+/**
+ * De investering voor één regel: de catalogusbandbreedte, tenzij de gebruiker 'm expliciet heeft
+ * overschreven (Tussenfase-taak D, 2026-09-04 — per-maatregel prijsveld naast het bestaande
+ * `handmatigeInvesteringEuro`-totaalveld). Een override vervangt de hele bandbreedte door één
+ * vast bedrag (optimistisch = verwacht = pessimistisch) — de gebruiker geeft hier het ECHTE,
+ * volledige bedrag voor deze maatregel op, riders inbegrepen, geen losse onzekerheidsmarge meer.
+ */
+function investeringVoorRegel(item: PoolItem, overrides: Readonly<Record<string, number>>): Bandbreedte {
+  const override = overrides[item.waardering.kandidaat.sleutel];
+  if (override === undefined) return item.waardering.investeringEuro;
+  return { optimistisch: override, verwacht: override, pessimistisch: override };
+}
+
 function bouwPakketResultaat(
   naam: Pakket['naam'],
   state: GroeiState,
@@ -87,11 +100,12 @@ function bouwPakketResultaat(
   budget: RekenBudget,
   vastePrefix: readonly Mutatie[] = [],
   handmatigeInvesteringEuro = 0,
+  investeringOverrides: Readonly<Record<string, number>> = {},
 ): Pakket {
   const bijdragen = leaveOneOutBijdragen(state, asIs, ctxBasis, tarievenset, peildatum, budget, vastePrefix);
   const extraJaarhuurEuro = extraJaarhuur(asIsWaardering, state.waardering);
   const investeringEuro = telBandbreedtesOp([
-    ...state.regels.map((r) => r.item.waardering.investeringEuro),
+    ...state.regels.map((r) => investeringVoorRegel(r.item, investeringOverrides)),
     { optimistisch: handmatigeInvesteringEuro, verwacht: handmatigeInvesteringEuro, pessimistisch: handmatigeInvesteringEuro },
   ]);
   const restpostEuro = Math.round((extraJaarhuurEuro - [...bijdragen.values()].reduce((s, v) => s + v, 0)) * 100) / 100;
@@ -115,7 +129,7 @@ function bouwPakketResultaat(
       kandidaat: r.item.waardering.kandidaat,
       maatregelId: r.item.waardering.maatregel.id,
       marginaleBijdrageJaarhuurEuro: bijdragen.get(r.item.waardering.kandidaat.sleutel) ?? 0,
-      investeringEuro: r.item.waardering.investeringEuro,
+      investeringEuro: investeringVoorRegel(r.item, investeringOverrides),
     })),
     verworpen,
     scenario: { naam: `Pakket ${naam}`, mutaties: state.mutaties },
@@ -282,6 +296,12 @@ export function bouwEnergielabelScenario(
  * `ctxTegenBewerkt` moet tegen `bewerktPand` opgebouwd zijn (bijv. via
  * `genereerEnWaardeerKandidaten(bewerktPand, ...)`), niet tegen de as-is — anders bestaan de
  * ruimtenummers van een net toegevoegde kamer niet in de kandidaat-generatie.
+ *
+ * `maatregelPrijzenEuro` (Tussenfase-taak D, 2026-09-04) is een optionele, per-kandidaat-sleutel
+ * prijsoverschrijving — voorgevuld in de UI met de catalogusprijs, maar de gebruiker mag 'm
+ * aanpassen. Maakt zichtbaar WELKE maatregel een investeringsverschil tussen scenario's
+ * veroorzaakt, i.p.v. alleen dát de totale investering verschilt. Ontbreekt een sleutel in deze
+ * map, dan geldt gewoon de catalogusprijs — zie `investeringVoorRegel`.
  */
 export function bouwHandmatigScenarioMetMaatregelen(
   naam: string,
@@ -296,6 +316,7 @@ export function bouwHandmatigScenarioMetMaatregelen(
   uitvoeringsjaar: number,
   verwervingswaardeEuro: number | undefined,
   budget: RekenBudget,
+  maatregelPrijzenEuro: Readonly<Record<string, number>> = {},
 ): Pakket {
   const asIsWaardering = pandWaarderingVan(berekenEindtellingMetBudget(budget, asIs, tarievenset, peildatum));
   const vervangMutatie: Mutatie = { soort: 'vervang-pand', pand: bewerktPand };
@@ -336,5 +357,6 @@ export function bouwHandmatigScenarioMetMaatregelen(
     budget,
     [vervangMutatie],
     handmatigeInvesteringEuro,
+    maatregelPrijzenEuro,
   );
 }

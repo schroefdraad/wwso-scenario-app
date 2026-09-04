@@ -13,13 +13,17 @@ const ScenarioSelectieKandidaten = z.object({
 
 /** Een handmatig bewerkt TO-BE-scenario (backlog 2026-08-22: handmatig een kamer realiseren en
  * dan verder standaardmaatregelen toevoegen) — `pand` is de volledige, al gevalideerde bewerkte
- * PandInvoer; `sleutels` verwijst naar de kandidatenlijst tegen DAT pand, niet de as-is-lijst. */
+ * PandInvoer; `sleutels` verwijst naar de kandidatenlijst tegen DAT pand, niet de as-is-lijst.
+ * `maatregelPrijzenEuro` (Tussenfase-taak D, 2026-09-04): per-maatregel prijsoverschrijving,
+ * sleutel = kandidaat-sleutel. `.default({})` — deals van vóór deze taak kennen het veld nog
+ * niet, en "geen overschrijvingen" is exact wat dat toen betekende. */
 const ScenarioSelectieHandmatig = z.object({
   soort: z.literal('handmatig'),
   naam: z.string().min(1),
   pand: PandInvoer,
   sleutels: z.array(z.string().min(1)),
   handmatigeInvesteringEuro: z.number(),
+  maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
 });
 
 /** Een energielabel-scenario (Tussenfase-taak C, 2026-09-04): geen losse maatregelen, alleen een

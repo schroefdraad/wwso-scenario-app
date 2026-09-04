@@ -15,7 +15,16 @@ import { bouwEnergielabelScenarioMetKosten, bouwHandmatigScenarioMetMaatregelenU
  */
 export type ScenarioSlot =
   | { naam: string; soort: 'kandidaten'; sleutels: ReadonlySet<string> }
-  | { naam: string; soort: 'handmatig'; pand: PandInvoer; sleutels: ReadonlySet<string>; handmatigeInvesteringEuro: number }
+  | {
+      naam: string;
+      soort: 'handmatig';
+      pand: PandInvoer;
+      sleutels: ReadonlySet<string>;
+      handmatigeInvesteringEuro: number;
+      /** Per-maatregel prijsoverschrijving (Tussenfase-taak D), voorgevuld met de catalogusprijs
+       * in de UI — sleutels die hier niet in staan vallen terug op die catalogusprijs. */
+      maatregelPrijzenEuro: Readonly<Record<string, number>>;
+    }
   | { naam: string; soort: 'energielabel'; doelLabel: Energielabel };
 
 export interface HandmatigeKandidatenResultaat {
@@ -87,6 +96,7 @@ export function useScenarioPakket(
         peildatum,
         kostencatalogus,
         verwervingswaardeEuro,
+        slot.maatregelPrijzenEuro,
       );
     }
     if (slot.sleutels.size === 0) return null;

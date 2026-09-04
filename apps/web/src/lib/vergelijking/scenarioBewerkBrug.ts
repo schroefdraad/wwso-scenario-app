@@ -79,6 +79,7 @@ const VergelijkingSlotSnapshot = z.discriminatedUnion('soort', [
      * scenario + standaardmaatregelen) — niet de gedeelde as-is-lijst. */
     sleutels: z.array(z.string()),
     handmatigeInvesteringEuro: z.number(),
+    maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
   }),
   z.object({ naam: z.string(), soort: z.literal('energielabel'), doelLabel: Energielabel }),
 ]);

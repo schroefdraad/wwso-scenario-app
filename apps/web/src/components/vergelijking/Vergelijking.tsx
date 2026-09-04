@@ -41,6 +41,7 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[]): ScenarioSlot[] {
         pand: opgeslagen.pand,
         sleutels: new Set(opgeslagen.sleutels),
         handmatigeInvesteringEuro: opgeslagen.handmatigeInvesteringEuro,
+        maatregelPrijzenEuro: opgeslagen.maatregelPrijzenEuro,
       };
     }
     if (opgeslagen.soort === 'energielabel') {
@@ -56,7 +57,14 @@ function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] 
   return slots.map((s) => {
     if (s.soort === 'kandidaten') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: new Set(s.sleutels) };
     if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
-    return { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: new Set(s.sleutels), handmatigeInvesteringEuro: s.handmatigeInvesteringEuro };
+    return {
+      naam: s.naam,
+      soort: 'handmatig' as const,
+      pand: s.pand,
+      sleutels: new Set(s.sleutels),
+      handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
+      maatregelPrijzenEuro: s.maatregelPrijzenEuro,
+    };
   });
 }
 
@@ -123,9 +131,11 @@ export function Vergelijking({
         ? basisSlots.map((s, i) => {
             if (i !== resultaat.slotIndex) return s;
             // Was dit slot al handmatig bewerkt (bijv. de kamer nog wat verder aangepast), dan
-            // blijven eerder gekozen maatregelen/investering behouden — alleen het pand zelf
-            // wordt vervangen.
-            const behoud = s.soort === 'handmatig' ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro } : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0 };
+            // blijven eerder gekozen maatregelen/investering/prijzen behouden — alleen het pand
+            // zelf wordt vervangen.
+            const behoud = s.soort === 'handmatig'
+              ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro, maatregelPrijzenEuro: s.maatregelPrijzenEuro }
+              : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0, maatregelPrijzenEuro: {} };
             return { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand, ...behoud };
           })
         : basisSlots,
@@ -183,6 +193,14 @@ export function Vergelijking({
     setSlots((prev) => prev.map((s, i) => (i === slotIndex && s.soort === 'handmatig' ? { ...s, handmatigeInvesteringEuro: euro } : s)));
   }
 
+  /** Per-maatregel prijsoverschrijving (Tussenfase-taak D) — voorgevuld in de UI met de
+   * catalogusprijs, hier alleen de expliciete overschrijving zelf opgeslagen. */
+  function zetMaatregelPrijs(slotIndex: number, sleutel: string, euro: number) {
+    setSlots((prev) =>
+      prev.map((s, i) => (i === slotIndex && s.soort === 'handmatig' ? { ...s, maatregelPrijzenEuro: { ...s.maatregelPrijzenEuro, [sleutel]: euro } } : s)),
+    );
+  }
+
   function naamWijzig(index: number, naam: string) {
     setSlots((prev) => prev.map((s, i) => (i === index ? { ...s, naam } : s)));
   }
@@ -213,7 +231,14 @@ export function Vergelijking({
       slots: slots.map((s) => {
         if (s.soort === 'kandidaten') return { naam: s.naam, soort: 'kandidaten' as const, sleutels: [...s.sleutels] };
         if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
-        return { naam: s.naam, soort: 'handmatig' as const, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro };
+        return {
+          naam: s.naam,
+          soort: 'handmatig' as const,
+          pand: s.pand,
+          sleutels: [...s.sleutels],
+          handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
+          maatregelPrijzenEuro: s.maatregelPrijzenEuro,
+        };
       }),
     });
   }
@@ -238,7 +263,16 @@ export function Vergelijking({
   function opslaanbareScenarios(): ScenarioSelectie[] {
     return slots.flatMap((s): ScenarioSelectie[] => {
       if (s.soort === 'handmatig') {
-        return [{ soort: 'handmatig', naam: s.naam, pand: s.pand, sleutels: [...s.sleutels], handmatigeInvesteringEuro: s.handmatigeInvesteringEuro }];
+        return [
+          {
+            soort: 'handmatig',
+            naam: s.naam,
+            pand: s.pand,
+            sleutels: [...s.sleutels],
+            handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
+            maatregelPrijzenEuro: s.maatregelPrijzenEuro,
+          },
+        ];
       }
       if (s.soort === 'energielabel') {
         return [{ soort: 'energielabel', naam: s.naam, doelLabel: s.doelLabel }];
@@ -350,8 +384,10 @@ export function Vergelijking({
                 kandidaten={resultaat?.kandidaten ?? []}
                 geselecteerd={slot.sleutels}
                 handmatigeInvesteringEuro={slot.handmatigeInvesteringEuro}
+                maatregelPrijzenEuro={slot.maatregelPrijzenEuro}
                 onToggle={(sleutel) => toggleHandmatigeMaatregel(i, sleutel)}
                 onInvesteringWijzig={(euro) => zetHandmatigeInvestering(i, euro)}
+                onPrijsWijzig={(sleutel, euro) => zetMaatregelPrijs(i, sleutel, euro)}
               />
             </div>
           );

@@ -7,10 +7,10 @@ Laatst bijgewerkt: 2026-09-04
 (`web-skael.vercel.app`, project `skael/web`) met Supabase als backend.
 
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine` (pure rekenmotor), `packages/data` (tarieven + kostencatalogus)
-- Vitest, ESLint, Prettier op root- en packageniveau — 250/250 tests groen
+- Vitest, ESLint, Prettier op root- en packageniveau — 252/252 tests groen
 - Rekenmotor: alle rubrieken R1 t/m R13 geïmplementeerd en **golden-master gevalideerd** tegen 3 officiële Huurprijscheck-exports (Kleiweg 179-B) — exacte match op elke rubriek, eindtotaal en huurprijs. Zie `outputs/RAPPORT_taak8_2026-08-19.md` / `RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`
 - Scenariomodel (`packages/engine/src/scenario`): mutaties bovenop de as-is `PandInvoer`, puur en immutable, inclusief een `vervang-pand`-mutatie voor volledig handmatig bewerkte TO-BE-panden (kamer toevoegen/verwijderen, etc.)
-- Suggestie-engine (taak 11): marginale analyse per rubriek, pakketten Basis/Comfort/Maximaal, ranking op terugverdientijd, plus een los pad voor handmatig bewerkte scenario's met eigen maatregelenlijst
+- Suggestie-engine (taak 11): marginale analyse per rubriek, ranking op terugverdientijd, plus een los pad voor handmatig bewerkte scenario's met eigen maatregelenlijst. De algoritmische Basis/Comfort/Maximaal-pakketopbouw is verwijderd (Tussenfase-taak A, 2026-09-04, zie hieronder)
 - Kostencatalogus in `packages/data/src/kostencatalogus`, 49 maatregelen, versie 0.1, **alle bedragen nog op status `schatting`** — wachten op echte offertes/facturen
 - Volledige applicatie: invoerscherm met kamertoewijzing, resultaatscherm met de vier controles, scenariovergelijking met directe hertelling, opslaan/laden van deals, PDF-export, auth via magic link + org-scoped RLS (taak 17)
 - Het beleidsboek WWSO januari 2026 (`resources/beleidsboek/`) blijft de bron van waarheid, niet `wwso.xlsx`. Bij twijfel: beleidsboek → officiële huurprijscheck-site → xlsx
@@ -71,9 +71,12 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Plan/status bijgewerkt op basis van alle briefings (de "Tussenfase"-sectie die `BRIEFING_sessie_20260901_deel2.md` claimde te hebben toegevoegd, stond er in werkelijkheid nog niet in — nu alsnog verwerkt).
 - Op verzoek van de gebruiker de auth-toggle-fix naar achteren geschoven: de tussenfase-taken moeten door Steven getest worden, dus blijft de toggle open tot dat testen klaar is.
 - Tussenfase-taak A afgerond: automatische Basis/Comfort/Maximaal-pakketten verwijderd uit de suggestie-engine en de scenariovergelijkingspagina.
-- Tussenfase-taak C afgerond: energielabel-kostenvelden op het pandgegevens-scherm + een wisselknop per scenariokolom (A+/A++/A+++) op de vergelijkingspagina, nieuwe `ScenarioSlot`-variant `'energielabel'`. Zie `plan/plan.md` voor het volledige technische verslag van beide taken.
+- Tussenfase-taak C afgerond: energielabel-kostenvelden op het pandgegevens-scherm + een wisselknop per scenariokolom (A+/A++/A+++) op de vergelijkingspagina, nieuwe `ScenarioSlot`-variant `'energielabel'`.
+- Tussenfase-taak D afgerond: overschrijfbaar prijsveld per maatregel in `HandmatigMaatregelen.tsx`, naast het bestaande totaalbedrag-veld — maakt zichtbaar welke maatregel een investeringsverschil tussen scenario's veroorzaakt. Zie `plan/plan.md` voor het volledige technische verslag van alle drie taken.
+- Tijdens het browsertesten van taak D per ongeluk een testdeal opgeslagen in de gedeelde Supabase-instantie (zie "Bekende restdata" bij taak D in `plan/plan.md`) — de app heeft nog geen "deal verwijderen"-knop, dus bewust laten staan.
+- Nieuw idee (2026-09-04, tijdens dit werk): het COROP-gebied-veld op het pandgegevens-scherm is nu een vrije dropdown die de gebruiker zelf moet invullen — kan mogelijk automatisch afgeleid worden uit postcode/gemeente (plaatsnaam alleen is niet betrouwbaar genoeg, NL kent dubbele plaatsnamen in verschillende gemeentes). Nog te onderzoeken welke brondata (CBS-postcode/gemeente-tabel + gemeente/COROP-indeling) daarvoor nodig is — geen van beide staat nu in `packages/data`. Gepland: oppakken na de eerstvolgende deploy.
 
 ## Volgende concrete actie
-Taak 18 en de rest van Fase 4 staan on hold tot het tussenfase-exit-criterium gehaald is (zie hierboven). Tussenfase-taken A en C zijn af — zie `plan/plan.md`. Eerstvolgende werk: taak B (kitchenette-varianten, wacht nog op Stevens prijzensheet) of D (per-maatregel prijsveld), plus blokkerende meldingen van Steven direct oppakken zodra ze binnenkomen. Standaard Sonnet — geen van de vier Opus-triggers is hier van toepassing.
+Eerstvolgende stap: deployen naar productie (gevraagd door de gebruiker, 2026-09-04), daarna het COROP-automatiseringsidee hierboven oppakken. Taak 18 en de rest van Fase 4 blijven on hold tot het tussenfase-exit-criterium gehaald is (zie hierboven). Van de vier tussenfase-taken resteert alleen nog B (kitchenette-varianten, wacht op Stevens prijzensheet). Standaard Sonnet — geen van de vier Opus-triggers is hier van toepassing.
 
 **Auth-toggle terugzetten is bewust naar áchteren geschoven (2026-09-04)**: de tussenfase-taken moeten door Steven getest worden, en de toggle staat open juist om dat testen niet te hinderen. Pas terugzetten als er geen actief testen meer gepland is — zie "Openstaande beslissingen".
