@@ -1,6 +1,6 @@
 'use client';
 
-import { alleTarievensets } from '@wwso/data';
+import { alleGemeentes, coropVoorGemeente, gemeentesVoorWoonplaats } from '@wwso/data';
 import { Energielabel, MonumentStatus } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
 import { Toggle } from './Toggle';
@@ -10,6 +10,7 @@ import type { PandVeldenState } from '../../lib/invoer/types';
 const SOORT_WONING: PandVeldenState['soortWoning'][] = ['Meergezins', 'Eengezins'];
 const ENERGIELABELS = Energielabel.options;
 const MONUMENTSTATUSSEN = MonumentStatus.options;
+const ALLE_GEMEENTES = alleGemeentes();
 
 /**
  * De WOZ-peildatum is per wet altijd 1 januari van het waarderingsjaar (Wet WOZ) — nooit een
@@ -26,10 +27,27 @@ function labelTekst(label: PandVeldenState['energielabel']): string {
 export function PandFormulier() {
   const { state, dispatch } = useInvoer();
   const { pand } = state;
-  const coropGebieden = alleTarievensets()[alleTarievensets().length - 1]?.coropGebieden ?? [];
 
   const zet = <K extends keyof PandVeldenState>(veld: K, waarde: PandVeldenState[K]) =>
     dispatch({ soort: 'PAND_VELD_GEWIJZIGD', veld, waarde });
+
+  /** Zet gemeente + COROP-gebied in één keer, zodat ze nooit los van elkaar raken (COROP-
+   * automatisering, 2026-09-04). */
+  const zetGemeente = (gemeente: string) => {
+    zet('gemeente', gemeente);
+    zet('coropGebied', coropVoorGemeente(gemeente) ?? '');
+  };
+
+  /** Suggereert een gemeente op basis van de getypte stad — alleen bij een EENDUIDIGE match
+   * (harde regel 4: nooit gokken). Bij nul of meerdere kandidaten (bijv. "Aalst" ligt in drie
+   * gemeentes) blijft de gemeente ongewijzigd en kiest de gebruiker zelf hieronder. */
+  const zetStad = (stad: string) => {
+    zet('stad', stad);
+    const kandidaten = gemeentesVoorWoonplaats(stad);
+    if (kandidaten.length === 1) zetGemeente(kandidaten[0]);
+  };
+
+  const gemeenteKandidaten = pand.stad ? gemeentesVoorWoonplaats(pand.stad) : [];
 
   return (
     <section className={styles.blok} id="sectie-pand">
@@ -44,7 +62,7 @@ export function PandFormulier() {
           </div>
           <div className={styles.veld}>
             <label htmlFor="p-stad">Stad</label>
-            <input id="p-stad" value={pand.stad} onChange={(e) => zet('stad', e.target.value)} />
+            <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
           </div>
           <div className={styles.veld}>
             <label htmlFor="p-soort">Soort woning</label>
@@ -123,15 +141,27 @@ export function PandFormulier() {
             />
           </div>
           <div className={styles.veld}>
-            <label htmlFor="p-corop">COROP-gebied</label>
-            <select id="p-corop" value={pand.coropGebied} onChange={(e) => zet('coropGebied', e.target.value)}>
+            <label htmlFor="p-gemeente">Gemeente</label>
+            <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
               <option value="">— kies —</option>
-              {coropGebieden.map((c) => (
-                <option key={c.gebied} value={c.gebied}>
-                  {c.gebied}
+              {ALLE_GEMEENTES.map((g) => (
+                <option key={g} value={g}>
+                  {g}
                 </option>
               ))}
             </select>
+            {gemeenteKandidaten.length > 1 ? (
+              <span className={styles.hint}>
+                "{pand.stad}" komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
+              </span>
+            ) : (
+              <span className={styles.hint}>Automatisch gesuggereerd op basis van "Stad" — wijzig hier indien nodig.</span>
+            )}
+          </div>
+          <div className={styles.veld}>
+            <label htmlFor="p-corop">COROP-gebied</label>
+            <input id="p-corop" value={pand.coropGebied} readOnly />
+            <span className={styles.hint}>Volgt automatisch uit de gemeente hierboven — bepaalt de huurtabel (§2.11).</span>
           </div>
 
           <div className={styles.veld}>

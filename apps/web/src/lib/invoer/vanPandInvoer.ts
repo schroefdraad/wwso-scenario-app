@@ -1,5 +1,19 @@
+import { coropVoorGemeente, gemeentesVoorWoonplaats } from '@wwso/data';
 import type { PandInvoer } from '@wwso/engine';
 import type { InvoerState, RuimteRij } from './types';
+
+/**
+ * Reconstrueert de gemeente-suggestie bij het laden van een bestaand pand (COROP-automatisering,
+ * 2026-09-04) — `PandInvoer` bewaart alleen `coropGebied`, niet welke gemeente 'm suggereerde.
+ * Alleen invullen als de gok op basis van "Stad" ÉÉNDUIDIG is ÉN naar exact hetzelfde
+ * COROP-gebied wijst als al is opgeslagen — anders leeg laten (harde regel 4: nooit een gemeente
+ * tonen die niet aantoonbaar bij de opgeslagen `coropGebied` hoort).
+ */
+function gokGemeente(stad: string, opgeslagenCoropGebied: string): string {
+  const kandidaten = gemeentesVoorWoonplaats(stad);
+  if (kandidaten.length !== 1) return '';
+  return coropVoorGemeente(kandidaten[0]) === opgeslagenCoropGebied ? kandidaten[0] : '';
+}
 
 /**
  * Inverse van `projecteerNaarPandInvoer`: zet een reeds gevalideerde `PandInvoer` (het
@@ -57,6 +71,7 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
       wozPeildatum: p.pand.wozPeildatum,
       taxatiewaardeEuro: p.pand.taxatiewaardeEuro !== undefined ? String(p.pand.taxatiewaardeEuro) : '',
       wozOppervlak: String(p.pand.wozOppervlak),
+      gemeente: gokGemeente(p.pand.stad, p.pand.coropGebied),
       coropGebied: p.pand.coropGebied,
       energielabel: p.pand.energielabel,
       energielabelIngangsdatum: p.pand.energielabelIngangsdatum ?? '',

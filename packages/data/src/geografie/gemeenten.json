@@ -1,0 +1,1370 @@
+[
+  {
+    "gemeente": "'s-Gravenhage",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "'s-Hertogenbosch",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Aa en Hunze",
+    "coropGebied": "Drenthe (Noord)"
+  },
+  {
+    "gemeente": "Aalsmeer",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Aalten",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Achtkarspelen",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Alblasserdam",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Albrandswaard",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Alkmaar",
+    "coropGebied": "Alkmaar en omgeving"
+  },
+  {
+    "gemeente": "Almelo",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Almere",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Alphen aan den Rijn",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Alphen-Chaam",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Altena",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Ameland",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Amersfoort",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Amstelveen",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Amsterdam",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Apeldoorn",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Arnhem",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Assen",
+    "coropGebied": "Drenthe (Noord)"
+  },
+  {
+    "gemeente": "Asten",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Baarle-Nassau",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Baarn",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Barendrecht",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Barneveld",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Beek",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Beekdaelen",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Beesel",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Berg en Dal",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Bergeijk",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Bergen (L.)",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Bergen (NH.)",
+    "coropGebied": "Alkmaar en omgeving"
+  },
+  {
+    "gemeente": "Bergen op Zoom",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Berkelland",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Bernheze",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Best",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Beuningen",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Beverwijk",
+    "coropGebied": "IJmond"
+  },
+  {
+    "gemeente": "Bladel",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Blaricum",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Bloemendaal",
+    "coropGebied": "Agglomeratie Haarlem"
+  },
+  {
+    "gemeente": "Bodegraven-Reeuwijk",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Boekel",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Borger-Odoorn",
+    "coropGebied": "Drenthe (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Borne",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Borsele",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Boxtel",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Breda",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Bronckhorst",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Brummen",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Brunssum",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Bunnik",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Bunschoten",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Buren",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Capelle aan den IJssel",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Castricum",
+    "coropGebied": "IJmond"
+  },
+  {
+    "gemeente": "Coevorden",
+    "coropGebied": "Drenthe (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Cranendonck",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Culemborg",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Dalfsen",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Dantumadiel",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "De Bilt",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "De Fryske Marren",
+    "coropGebied": "Friesland (Zuid-West)"
+  },
+  {
+    "gemeente": "De Ronde Venen",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "De Wolden",
+    "coropGebied": "Drenthe (Zuid-West)"
+  },
+  {
+    "gemeente": "Delft",
+    "coropGebied": "Delft en Westland"
+  },
+  {
+    "gemeente": "Den Helder",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Deurne",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Deventer",
+    "coropGebied": "Overijssel (Zuid-West)"
+  },
+  {
+    "gemeente": "Diemen",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Dijk en Waard",
+    "coropGebied": "Alkmaar en omgeving"
+  },
+  {
+    "gemeente": "Dinkelland",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Doesburg",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Doetinchem",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Dongen",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Dordrecht",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Drechterland",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Drimmelen",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Dronten",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Druten",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Duiven",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Echt-Susteren",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Edam-Volendam",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Ede",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Eemnes",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Eemsdelta",
+    "coropGebied": "Delfzijl en omgeving"
+  },
+  {
+    "gemeente": "Eersel",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Eijsden-Margraten",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Eindhoven",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Elburg",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Emmen",
+    "coropGebied": "Drenthe (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Enkhuizen",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Enschede",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Epe",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Ermelo",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Etten-Leur",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Geertruidenberg",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Geldrop-Mierlo",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Gemert-Bakel",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Gennep",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Gilze en Rijen",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Goeree-Overflakkee",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Goes",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Goirle",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Gooise Meren",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Gorinchem",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Gouda",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Groningen",
+    "coropGebied": "Overig Groningen"
+  },
+  {
+    "gemeente": "Gulpen-Wittem",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Haaksbergen",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Haarlem",
+    "coropGebied": "Agglomeratie Haarlem"
+  },
+  {
+    "gemeente": "Haarlemmermeer",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Halderberge",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Hardenberg",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Harderwijk",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Hardinxveld-Giessendam",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Harlingen",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Hattem",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Heemskerk",
+    "coropGebied": "IJmond"
+  },
+  {
+    "gemeente": "Heemstede",
+    "coropGebied": "Agglomeratie Haarlem"
+  },
+  {
+    "gemeente": "Heerde",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Heerenveen",
+    "coropGebied": "Friesland (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Heerlen",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Heeze-Leende",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Heiloo",
+    "coropGebied": "Alkmaar en omgeving"
+  },
+  {
+    "gemeente": "Hellendoorn",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Helmond",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Hendrik-Ido-Ambacht",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Hengelo",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Het Hogeland",
+    "coropGebied": "Overig Groningen"
+  },
+  {
+    "gemeente": "Heumen",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Heusden",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Hillegom",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Hilvarenbeek",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Hilversum",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Hoeksche Waard",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Hof van Twente",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Hollands Kroon",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Hoogeveen",
+    "coropGebied": "Drenthe (Zuid-West)"
+  },
+  {
+    "gemeente": "Hoorn",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Horst aan de Maas",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Houten",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Huizen",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Hulst",
+    "coropGebied": "Zeeuwsch-Vlaanderen"
+  },
+  {
+    "gemeente": "IJsselstein",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Kaag en Braassem",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Kampen",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Kapelle",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Katwijk",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Kerkrade",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Koggenland",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Krimpen aan den IJssel",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Krimpenerwaard",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Laarbeek",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Land van Cuijk",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Landgraaf",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Landsmeer",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Lansingerland",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Laren",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Leeuwarden",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Leiden",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Leiderdorp",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Leidschendam-Voorburg",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "Lelystad",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Leudal",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Leusden",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Lingewaard",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Lisse",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Lochem",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Loon op Zand",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Lopik",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Losser",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Maasdriel",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Maasgouw",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Maashorst",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Maassluis",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Maastricht",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Medemblik",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Meerssen",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Meierijstad",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Meppel",
+    "coropGebied": "Drenthe (Zuid-West)"
+  },
+  {
+    "gemeente": "Middelburg",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Midden-Delfland",
+    "coropGebied": "Delft en Westland"
+  },
+  {
+    "gemeente": "Midden-Drenthe",
+    "coropGebied": "Drenthe (Noord)"
+  },
+  {
+    "gemeente": "Midden-Groningen",
+    "coropGebied": "Overig Groningen"
+  },
+  {
+    "gemeente": "Moerdijk",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Molenlanden",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Montferland",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Montfoort",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Mook en Middelaar",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Neder-Betuwe",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Nederweert",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Nieuwegein",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Nieuwkoop",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Nijkerk",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Nijmegen",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Nissewaard",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Noardeast-Fryslân",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Noord-Beveland",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Noordenveld",
+    "coropGebied": "Drenthe (Noord)"
+  },
+  {
+    "gemeente": "Noordoostpolder",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Noordwijk",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Nuenen, Gerwen en Nederwetten",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Nunspeet",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Oegstgeest",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Oirschot",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Oisterwijk",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Oldambt",
+    "coropGebied": "Oost-Groningen"
+  },
+  {
+    "gemeente": "Oldebroek",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Oldenzaal",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Olst-Wijhe",
+    "coropGebied": "Overijssel (Zuid-West)"
+  },
+  {
+    "gemeente": "Ommen",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Oost Gelre",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Oosterhout",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Ooststellingwerf",
+    "coropGebied": "Friesland (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Oostzaan",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Opmeer",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Opsterland",
+    "coropGebied": "Friesland (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Oss",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Oude IJsselstreek",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Ouder-Amstel",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Oudewater",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Overbetuwe",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Papendrecht",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Peel en Maas",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Pekela",
+    "coropGebied": "Oost-Groningen"
+  },
+  {
+    "gemeente": "Pijnacker-Nootdorp",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "Purmerend",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Putten",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Raalte",
+    "coropGebied": "Overijssel (Zuid-West)"
+  },
+  {
+    "gemeente": "Reimerswaal",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Renkum",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Renswoude",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Reusel-De Mierden",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Rheden",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Rhenen",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Ridderkerk",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Rijssen-Holten",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Rijswijk",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "Roerdalen",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Roermond",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "Roosendaal",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Rotterdam",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Rozendaal",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Rucphen",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Schagen",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Scherpenzeel",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Schiedam",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Schiermonnikoog",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Schouwen-Duiveland",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Simpelveld",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Sint-Michielsgestel",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Sittard-Geleen",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Sliedrecht",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Sluis",
+    "coropGebied": "Zeeuwsch-Vlaanderen"
+  },
+  {
+    "gemeente": "Smallingerland",
+    "coropGebied": "Friesland (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Soest",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Someren",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Son en Breugel",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Stadskanaal",
+    "coropGebied": "Oost-Groningen"
+  },
+  {
+    "gemeente": "Staphorst",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Stede Broec",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Steenbergen",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Steenwijkerland",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Stein",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Stichtse Vecht",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Súdwest-Fryslân",
+    "coropGebied": "Friesland (Zuid-West)"
+  },
+  {
+    "gemeente": "Terneuzen",
+    "coropGebied": "Zeeuwsch-Vlaanderen"
+  },
+  {
+    "gemeente": "Terschelling",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Texel",
+    "coropGebied": "Kop van Noord-Holland"
+  },
+  {
+    "gemeente": "Teylingen",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Tholen",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Tiel",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Tilburg",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Tubbergen",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Twenterand",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Tynaarlo",
+    "coropGebied": "Drenthe (Noord)"
+  },
+  {
+    "gemeente": "Tytsjerksteradiel",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Uitgeest",
+    "coropGebied": "IJmond"
+  },
+  {
+    "gemeente": "Uithoorn",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Urk",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Utrecht",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Utrechtse Heuvelrug",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Vaals",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Valkenburg aan de Geul",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Valkenswaard",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Veendam",
+    "coropGebied": "Oost-Groningen"
+  },
+  {
+    "gemeente": "Veenendaal",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Veere",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Veldhoven",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Velsen",
+    "coropGebied": "IJmond"
+  },
+  {
+    "gemeente": "Venlo",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Venray",
+    "coropGebied": "Limburg (Noord)"
+  },
+  {
+    "gemeente": "Vijfheerenlanden",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Vlaardingen",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Vlieland",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Vlissingen",
+    "coropGebied": "Overig Zeeland"
+  },
+  {
+    "gemeente": "Voerendaal",
+    "coropGebied": "Limburg (Zuid)"
+  },
+  {
+    "gemeente": "Voorne aan Zee",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Voorschoten",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Voorst",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Vught",
+    "coropGebied": "Brabant (Noordoost-Noord)"
+  },
+  {
+    "gemeente": "Waadhoeke",
+    "coropGebied": "Friesland (Noord)"
+  },
+  {
+    "gemeente": "Waalre",
+    "coropGebied": "Brabant (Zuidoost-Noord)"
+  },
+  {
+    "gemeente": "Waalwijk",
+    "coropGebied": "Brabant (Midden-Noord)"
+  },
+  {
+    "gemeente": "Waddinxveen",
+    "coropGebied": "Zuid-Holland (Oost)"
+  },
+  {
+    "gemeente": "Wageningen",
+    "coropGebied": "Veluwe"
+  },
+  {
+    "gemeente": "Wassenaar",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "Waterland",
+    "coropGebied": "Groot Amsterdam"
+  },
+  {
+    "gemeente": "Weert",
+    "coropGebied": "Limburg (Midden)"
+  },
+  {
+    "gemeente": "West Betuwe",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "West Maas en Waal",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Westerkwartier",
+    "coropGebied": "Overig Groningen"
+  },
+  {
+    "gemeente": "Westerveld",
+    "coropGebied": "Drenthe (Zuid-West)"
+  },
+  {
+    "gemeente": "Westervoort",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Westerwolde",
+    "coropGebied": "Oost-Groningen"
+  },
+  {
+    "gemeente": "Westland",
+    "coropGebied": "Delft en Westland"
+  },
+  {
+    "gemeente": "Weststellingwerf",
+    "coropGebied": "Friesland (Zuid-Oost)"
+  },
+  {
+    "gemeente": "Wierden",
+    "coropGebied": "Twente"
+  },
+  {
+    "gemeente": "Wijchen",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Wijdemeren",
+    "coropGebied": "Het Gooi- en Vechtstreek"
+  },
+  {
+    "gemeente": "Wijk bij Duurstede",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Winterswijk",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Woensdrecht",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Woerden",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Wormerland",
+    "coropGebied": "Zaanstreek"
+  },
+  {
+    "gemeente": "Woudenberg",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Zaanstad",
+    "coropGebied": "Zaanstreek"
+  },
+  {
+    "gemeente": "Zaltbommel",
+    "coropGebied": "Gelderland (Zuid-West)"
+  },
+  {
+    "gemeente": "Zandvoort",
+    "coropGebied": "Agglomeratie Haarlem"
+  },
+  {
+    "gemeente": "Zeewolde",
+    "coropGebied": "Flevoland"
+  },
+  {
+    "gemeente": "Zeist",
+    "coropGebied": "Utrecht"
+  },
+  {
+    "gemeente": "Zevenaar",
+    "coropGebied": "Arnhem/Nijmegen"
+  },
+  {
+    "gemeente": "Zoetermeer",
+    "coropGebied": "Agglomeratie 's-Gravenhage"
+  },
+  {
+    "gemeente": "Zoeterwoude",
+    "coropGebied": "Agglomeratie Leiden en Bollenstreek"
+  },
+  {
+    "gemeente": "Zuidplas",
+    "coropGebied": "Groot-Rijnmond"
+  },
+  {
+    "gemeente": "Zundert",
+    "coropGebied": "Brabant (West-Noord)"
+  },
+  {
+    "gemeente": "Zutphen",
+    "coropGebied": "Achterhoek"
+  },
+  {
+    "gemeente": "Zwartewaterland",
+    "coropGebied": "Overijssel (Noord)"
+  },
+  {
+    "gemeente": "Zwijndrecht",
+    "coropGebied": "Zuid-Holland (Zuidoost-Zuid)"
+  },
+  {
+    "gemeente": "Zwolle",
+    "coropGebied": "Overijssel (Noord)"
+  }
+]

@@ -44,6 +44,12 @@ export interface PandVeldenState {
   wozPeildatum: string;
   taxatiewaardeEuro: string;
   wozOppervlak: string;
+  /** UI-only — niet onderdeel van `PandInvoer`. Aandrijft de `coropGebied`-suggestie
+   * (COROP-automatisering, 2026-09-04); leeg zolang "Stad" geen eenduidige match oplevert of nog
+   * niet is ingetypt. Gaat NIET mee terug uit een opgeslagen deal (`pandInvoerNaarState`) — alleen
+   * `coropGebied` zelf is daar bewaard, `gemeente` staat dan weer leeg tot de gebruiker "Stad"
+   * opnieuw aanraakt of zelf een gemeente kiest. */
+  gemeente: string;
   coropGebied: string;
   energielabel: Energielabel;
   energielabelIngangsdatum: string;
@@ -102,6 +108,7 @@ export const NIEUW_PAND_VELDEN: PandVeldenState = {
   wozPeildatum: '2025-01-01',
   taxatiewaardeEuro: '',
   wozOppervlak: '',
+  gemeente: '',
   coropGebied: '',
   energielabel: 'D',
   energielabelIngangsdatum: '',
