@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.5.0';
+export const APP_VERSIE = '0.5.1';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.5.1',
+    datum: '2026-09-04',
+    wijzigingen: [
+      'COROP-gebied wordt niet meer handmatig gekozen — typ de stad, en de gemeente (en daarmee het COROP-gebied) wordt automatisch gesuggereerd. Komt de plaatsnaam in meerdere gemeentes voor, dan blijft de keuze aan jou',
+    ],
+  },
   {
     versie: '0.5.0',
     datum: '2026-09-04',
