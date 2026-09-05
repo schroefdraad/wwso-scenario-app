@@ -21,7 +21,7 @@ import { PandInvoer } from '../types/pand-invoer';
 
 const PandPatch = z.object({
   soort: z.literal('pand-patch'),
-  /** Willekeurige subset van Pand-velden — bijv. { energielabel: 'A', energielabelIngangsdatum: '2026-06-01' }. */
+  /** Willekeurige subset van Pand-velden — bijv. { energielabel: 'A', energielabelOnbekendOfVervallen: false }. */
   patch: Pand.partial(),
 });
 

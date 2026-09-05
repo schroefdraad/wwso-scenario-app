@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import type { KandidaatWaardering } from '@wwso/engine';
 import { groepeerPerRubriek } from '../../lib/vergelijking/rubriek-groepering';
 import { formateerEuro } from '../../lib/vergelijking/formatteren';
+import { alternatiefGroepSleutel } from '../../lib/vergelijking/scenario-bouw';
 import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 
@@ -94,38 +95,56 @@ export function HandmatigMaatregelen({
                   <tr className={styles.rubriekRij}>
                     <td colSpan={5}>{groep.label}</td>
                   </tr>
-                  {groep.kandidaten.map((k) => (
-                    <tr key={k.kandidaat.sleutel} className={styles.maatregelRij}>
-                      <td className={styles.maatregelOmschrijving}>
-                        <span className={styles.maatregelId}>{k.maatregel.id}</span>
-                        {k.kandidaat.omschrijving}
-                        {VERGUNNING_LABEL[k.vergunningKlasse] && <span className={styles.vergunningBadge}>{VERGUNNING_LABEL[k.vergunningKlasse]}</span>}
-                      </td>
-                      <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
-                      <td className={styles.tvtCel}>
-                        <input
-                          type="number"
-                          min={0}
-                          step={50}
-                          value={maatregelPrijzenEuro[k.kandidaat.sleutel] ?? k.investeringEuro.verwacht}
-                          onChange={(e) => onPrijsWijzig(k.kandidaat.sleutel, e.target.value === '' ? 0 : Number(e.target.value))}
-                          aria-label={`Prijs voor ${k.kandidaat.omschrijving} in ${slotNaam}`}
-                          className={styles.maatregelPrijsVeld}
-                        />
-                      </td>
-                      <td className={styles.tvtCel}>
-                        {k.terugverdientijdJaren ? `${k.terugverdientijdJaren.verwacht.toLocaleString('nl-NL', { maximumFractionDigits: 1 })} jr` : '—'}
-                      </td>
-                      <td className={styles.checkCel}>
-                        <input
-                          type="checkbox"
-                          checked={geselecteerd.has(k.kandidaat.sleutel)}
-                          onChange={() => onToggle(k.kandidaat.sleutel)}
-                          aria-label={`${k.kandidaat.omschrijving} toepassen in ${slotNaam}`}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                  {groep.kandidaten.map((k) => {
+                    const groepSleutel = alternatiefGroepSleutel(k);
+                    const alternatieven = groepSleutel
+                      ? groep.kandidaten.filter((ander) => ander !== k && alternatiefGroepSleutel(ander) === groepSleutel)
+                      : [];
+                    const gekozenAlternatief = alternatieven.find((ander) => geselecteerd.has(ander.kandidaat.sleutel));
+                    return (
+                      <tr
+                        key={k.kandidaat.sleutel}
+                        className={alternatieven.length > 0 ? `${styles.maatregelRij} ${styles.alternatiefRij}` : styles.maatregelRij}
+                      >
+                        <td className={styles.maatregelOmschrijving}>
+                          <span className={styles.maatregelId}>{k.maatregel.id}</span>
+                          {k.kandidaat.omschrijving}
+                          {VERGUNNING_LABEL[k.vergunningKlasse] && <span className={styles.vergunningBadge}>{VERGUNNING_LABEL[k.vergunningKlasse]}</span>}
+                        </td>
+                        <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
+                        <td className={styles.tvtCel}>
+                          <input
+                            type="number"
+                            min={0}
+                            step={50}
+                            value={maatregelPrijzenEuro[k.kandidaat.sleutel] ?? k.investeringEuro.verwacht}
+                            onChange={(e) => onPrijsWijzig(k.kandidaat.sleutel, e.target.value === '' ? 0 : Number(e.target.value))}
+                            aria-label={`Prijs voor ${k.kandidaat.omschrijving} in ${slotNaam}`}
+                            className={styles.maatregelPrijsVeld}
+                          />
+                        </td>
+                        <td className={styles.tvtCel}>
+                          {k.terugverdientijdJaren ? `${k.terugverdientijdJaren.verwacht.toLocaleString('nl-NL', { maximumFractionDigits: 1 })} jr` : '—'}
+                        </td>
+                        <td className={styles.checkCel}>
+                          <input
+                            type="checkbox"
+                            checked={geselecteerd.has(k.kandidaat.sleutel)}
+                            disabled={gekozenAlternatief !== undefined}
+                            onChange={() => onToggle(k.kandidaat.sleutel)}
+                            aria-label={`${k.kandidaat.omschrijving} toepassen in ${slotNaam}`}
+                            title={
+                              gekozenAlternatief
+                                ? `Kies eerst "${gekozenAlternatief.maatregel.id}" uit — dit zijn alternatieven voor dezelfde plek.`
+                                : alternatieven.length > 0
+                                  ? 'Alternatieven voor dezelfde plek — kies er hoogstens één.'
+                                  : undefined
+                            }
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </Fragment>
               ))}
             </tbody>

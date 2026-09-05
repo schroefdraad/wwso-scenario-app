@@ -55,7 +55,7 @@ function bouwPandKandidaat(state: InvoerState): PandInvoer | undefined {
       wozOppervlak,
       coropGebied: state.pand.coropGebied,
       energielabel: state.pand.energielabel,
-      energielabelIngangsdatum: state.pand.energielabelIngangsdatum || undefined,
+      energielabelOnbekendOfVervallen: state.pand.energielabelOnbekendOfVervallen,
       energielabelKostenSchattingAPlusEuro: naarGetal(state.pand.energielabelKostenAPlus),
       energielabelKostenSchattingAPlusPlusEuro: naarGetal(state.pand.energielabelKostenAPlusPlus),
       energielabelKostenSchattingAPlusPlusPlusEuro: naarGetal(state.pand.energielabelKostenAPlusPlusPlus),

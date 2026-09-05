@@ -257,7 +257,7 @@ export function bouwEnergielabelScenario(
   verwervingswaardeEuro: number | undefined,
   budget: RekenBudget,
 ): Pakket {
-  const mutaties: Mutatie[] = [{ soort: 'pand-patch', patch: { energielabel: doelLabel, energielabelIngangsdatum: peildatum } }];
+  const mutaties: Mutatie[] = [{ soort: 'pand-patch', patch: { energielabel: doelLabel, energielabelOnbekendOfVervallen: false } }];
   const asIsWaardering = pandWaarderingVan(berekenEindtellingMetBudget(budget, asIs, tarievenset, peildatum));
   const { waardering } = waardeerScenario(asIs, mutaties, tarievenset, peildatum, budget);
   const extraJaarhuurEuro = extraJaarhuur(asIsWaardering, waardering);

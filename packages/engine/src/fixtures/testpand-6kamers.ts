@@ -18,7 +18,7 @@ export const testpand6Kamers: PandInvoer = {
     wozOppervlak: 145,
     coropGebied: 'Groot-Rijnmond',
     energielabel: 'D',
-    energielabelIngangsdatum: '2023-06-15',
+    energielabelOnbekendOfVervallen: false,
     bouwjaar: 1932,
     aantalKamers: 6,
     monument: 'Geen',

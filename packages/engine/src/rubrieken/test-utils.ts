@@ -21,7 +21,7 @@ const BASIS_PAND: Pand = {
   wozOppervlak: 100,
   coropGebied: 'Groot-Rijnmond',
   energielabel: 'D',
-  energielabelIngangsdatum: '2023-01-01',
+  energielabelOnbekendOfVervallen: false,
   bouwjaar: 1990,
   aantalKamers: 1,
   monument: 'Geen',

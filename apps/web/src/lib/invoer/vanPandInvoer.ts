@@ -74,7 +74,7 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
       gemeente: gokGemeente(p.pand.stad, p.pand.coropGebied),
       coropGebied: p.pand.coropGebied,
       energielabel: p.pand.energielabel,
-      energielabelIngangsdatum: p.pand.energielabelIngangsdatum ?? '',
+      energielabelOnbekendOfVervallen: p.pand.energielabelOnbekendOfVervallen,
       energielabelKostenAPlus: p.pand.energielabelKostenSchattingAPlusEuro !== undefined ? String(p.pand.energielabelKostenSchattingAPlusEuro) : '',
       energielabelKostenAPlusPlus: p.pand.energielabelKostenSchattingAPlusPlusEuro !== undefined ? String(p.pand.energielabelKostenSchattingAPlusPlusEuro) : '',
       energielabelKostenAPlusPlusPlus: p.pand.energielabelKostenSchattingAPlusPlusPlusEuro !== undefined ? String(p.pand.energielabelKostenSchattingAPlusPlusPlusEuro) : '',

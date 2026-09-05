@@ -11,64 +11,31 @@ import type { RubriekResultaat } from './types';
 /** Monumentsoorten die de uitzondering van §2.4.6.1 krijgen. Beschermd dorpsgezicht hoort er niet bij. */
 const MONUMENT_ZONDER_MINPUNTEN: readonly MonumentStatus[] = ['Rijks', 'Gemeente', 'Provinciaal'];
 
-/** Periode waarin alleen 'vereenvoudigde' labels zijn afgegeven; die tellen niet mee (§2.4.3 lid 4). */
-const VEREENVOUDIGD_LABEL_VANAF = '2015-01-01';
-const VEREENVOUDIGD_LABEL_TOT = '2021-01-01';
-
-/** Een energielabel is maximaal 10 jaar geldig (§2.4.3 lid 3). */
-const GELDIGHEIDSDUUR_JAREN = 10;
-
-function telJarenOp(isoDatum: string, jaren: number): string {
-  const [jaar, rest] = [isoDatum.slice(0, 4), isoDatum.slice(4)];
-  return `${String(Number(jaar) + jaren).padStart(4, '0')}${rest}`;
-}
-
-export type LabelOngeldigReden = 'na-peildatum' | 'vervallen' | 'vereenvoudigd-label';
-
-/**
- * Toetst of een energielabel op de peildatum meetelt voor de woningwaardering (§2.4.2/§2.4.3).
- * Geeft `null` als het label geldig is, anders de reden waarom niet.
- */
-export function toetsLabelGeldigheid(
-  ingangsdatum: string,
-  peildatum: string,
-): LabelOngeldigReden | null {
-  if (ingangsdatum > peildatum) return 'na-peildatum';
-  if (telJarenOp(ingangsdatum, GELDIGHEIDSDUUR_JAREN) <= peildatum) return 'vervallen';
-  if (ingangsdatum >= VEREENVOUDIGD_LABEL_VANAF && ingangsdatum < VEREENVOUDIGD_LABEL_TOT) {
-    return 'vereenvoudigd-label';
-  }
-  return null;
-}
-
 interface FactorUitkomst {
   factor: number;
   grondslag: string;
 }
 
 /**
- * Bepaalt de punten per m². Volgorde: geldig energielabel → anders het bouwjaar (§2.4.5).
+ * Bepaalt de punten per m². Volgorde: energielabel → anders het bouwjaar (§2.4.5). Een gekozen
+ * label wordt altijd gebruikt, TENZIJ de gebruiker `energielabelOnbekendOfVervallen` heeft
+ * aangevinkt — dan valt R4 terug op de bouwjaargrens, net als bij "geen label bekend".
+ *
+ * Bewust géén exacte datum-/geldigheidstoets meer (§2.4.3, tot 2026-09-05 hier geïmplementeerd
+ * als `toetsLabelGeldigheid`): in de praktijk staat op bijv. Funda vaak alleen de labelletter,
+ * niet de ingangsdatum, en de motor viel dan onterecht terug op het bouwjaar (feedback Emma
+ * Morrison, 2026-09-05). Eén expliciet vinkje vervangt de exacte datum; de aparte uitzondering
+ * voor "vereenvoudigde labels" uit 2015-2021 (§2.4.3 lid 4) is daarbij bewust losgelaten — die
+ * vereiste toch al exacte datumkennis die in de praktijk niemand paraat heeft.
  * De monumentuitzondering van §2.4.6.1 zet een negatieve uitkomst op 0.
  */
-function bepaalFactor(
-  pand: PandInvoer['pand'],
-  tarievenset: Tarievenset,
-  peildatum: string,
-): FactorUitkomst {
+function bepaalFactor(pand: PandInvoer['pand'], tarievenset: Tarievenset): FactorUitkomst {
   let factor: number;
   let grondslag: string;
 
-  // energielabelIngangsdatum is altijd optioneel (ook bij een echt label) — ontbreekt hij, dan
-  // is de geldigheid van het label onbekend en valt R4 terug op de bouwjaargrens, exact zoals
-  // bij een vervallen of vereenvoudigd label.
-  const ongeldigReden =
-    pand.energielabel === 'Bouwjaar'
-      ? 'geen-label'
-      : pand.energielabelIngangsdatum === undefined
-        ? 'ingangsdatum-onbekend'
-        : toetsLabelGeldigheid(pand.energielabelIngangsdatum, peildatum);
+  const gebruikLabel = pand.energielabel !== 'Bouwjaar' && !pand.energielabelOnbekendOfVervallen;
 
-  if (ongeldigReden === null) {
+  if (gebruikLabel) {
     const regel = tarievenset.energielabelfactoren.find((f) => f.label === pand.energielabel);
     if (!regel) {
       throw new Error(`Geen energielabelfactor gevonden voor label '${pand.energielabel}'.`);
@@ -87,11 +54,9 @@ function bepaalFactor(
     }
     factor = passend.factorPerM2;
     grondslag =
-      ongeldigReden === 'geen-label'
+      pand.energielabel === 'Bouwjaar'
         ? `bouwjaar ${pand.bouwjaar} (geen label)`
-        : ongeldigReden === 'ingangsdatum-onbekend'
-          ? `bouwjaar ${pand.bouwjaar} (label ${pand.energielabel}, ingangsdatum onbekend)`
-          : `bouwjaar ${pand.bouwjaar} (label ${ongeldigReden})`;
+        : `bouwjaar ${pand.bouwjaar} (label ${pand.energielabel}, ingangsdatum onbekend of vervallen)`;
   }
 
   if (factor < 0 && MONUMENT_ZONDER_MINPUNTEN.includes(pand.monument)) {
@@ -114,20 +79,13 @@ function bepaalFactor(
  * ook voordoet voor een gedeelde buitenruimte (30 m² / 4 → punten → kwartpuntsafronding).
  * Drie officiële Huurprijscheck-uitkomsten bevestigen dit exact; zie
  * `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`.
- *
- * `peildatum` bepaalt of het energielabel nog meetelt en welke tarievenset geldt; de engine
- * leidt die nooit zelf af uit de systeemklok (harde regel 2).
  */
-export function berekenR4(
-  input: PandInvoer,
-  tarievenset: Tarievenset,
-  peildatum: string,
-): RubriekResultaat {
+export function berekenR4(input: PandInvoer, tarievenset: Tarievenset): RubriekResultaat {
   const perKamerRuimtes = ruimtesPerKamer(input);
   const perKamer: Record<number, number> = {};
   const perKamerRuw: Record<number, number> = {};
   const toelichting: string[] = [];
-  const { factor, grondslag } = bepaalFactor(input.pand, tarievenset, peildatum);
+  const { factor, grondslag } = bepaalFactor(input.pand, tarievenset);
 
   for (const [kamer, ruimtes] of perKamerRuimtes) {
     const oppervlakteM2 = ongerondeVertrekOppervlakteM2(ruimtes);

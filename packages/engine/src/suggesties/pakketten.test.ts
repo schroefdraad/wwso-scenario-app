@@ -165,7 +165,7 @@ describe('bouwEnergielabelScenario — doellabel-vergelijking (Tussenfase-taak C
     const scenario = bouwEnergielabelScenario('A+++', testpand6Kamers, 'A+++', 5000, tarievenset, peildatum, undefined, nieuwBudget(2000));
 
     expect(scenario.naam).toBe('A+++');
-    expect(scenario.scenario.mutaties).toEqual([{ soort: 'pand-patch', patch: { energielabel: 'A+++', energielabelIngangsdatum: peildatum } }]);
+    expect(scenario.scenario.mutaties).toEqual([{ soort: 'pand-patch', patch: { energielabel: 'A+++', energielabelOnbekendOfVervallen: false } }]);
     expect(scenario.regels).toHaveLength(0);
 
     const asIsEindtelling = berekenEindtelling(testpand6Kamers, tarievenset, peildatum);

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { Energielabel } from '../../types/index';
-import { toetsLabelGeldigheid } from '../../rubrieken/r4-energieprestatie';
 import type { MaatregelContext, MaatregelDefinitie } from '../types';
 import { vereistParameter } from './hulp';
 
@@ -13,7 +12,7 @@ interface EnergieParams {
  * catalogus-eigenschap (`puntenIndicatie` is in taak 10 al als onbetrouwbaar gedocumenteerd) —
  * daarom altijd een verplichte parameter, nooit een geraden sprong. `vereist: ['E-09']`: zonder
  * een opnieuw geregistreerd label door een EP-adviseur is een nieuw label niet verdedigbaar,
- * ook al zet de mutatie hieronder de ingangsdatum al goed.
+ * ook al zet de mutatie hieronder `energielabelOnbekendOfVervallen` al op `false`.
  *
  * ALTERNATIEVENGROEP 'energielabel': R4 kent alleen het EINDLABEL, niet de onderliggende
  * bouwfysica — elke E-maatregel die hetzelfde doellabel krijgt, levert dus per definitie
@@ -61,7 +60,7 @@ function energieDefinitie(id: string, vergunningKlasse: MaatregelDefinitie['verg
       ];
     },
     mutaties(ctx, kandidaat) {
-      return [{ soort: 'pand-patch', patch: { energielabel: kandidaat.parameters!.doelLabel, energielabelIngangsdatum: ctx.peildatum } }];
+      return [{ soort: 'pand-patch', patch: { energielabel: kandidaat.parameters!.doelLabel, energielabelOnbekendOfVervallen: false } }];
     },
   };
 }
@@ -79,20 +78,15 @@ const E08 = energieDefinitie('E-08', 'mogelijk-melding', 'Soms melding');
 
 /**
  * E-09 — nieuw energielabel laten registreren. Uitzondering op de rest van R4: parametervrij
- * zodra het HUIDIGE label vervallen of vereenvoudigd is (§2.4.3) en er al een echt label was
- * (niet 'Bouwjaar') — simpelweg opnieuw registreren zonder iets aan het pand te wijzigen haalt
- * R4 dan al van de bouwjaarfactor terug naar de labelfactor. Is er geen bruikbaar label om te
- * herregistreren, dan wordt alsnog een doellabel gevraagd.
+ * zodra de gebruiker `energielabelOnbekendOfVervallen` heeft aangevinkt op een pand met al een
+ * echt label (niet 'Bouwjaar') — simpelweg opnieuw registreren zonder iets aan het pand te
+ * wijzigen haalt R4 dan al van de bouwjaarfactor terug naar de labelfactor. Is er geen bruikbaar
+ * label om te herregistreren, dan wordt alsnog een doellabel gevraagd.
  */
 function e09AutoKandidaat(ctx: MaatregelContext) {
   if (ctx.pand.pand.energielabel === 'Bouwjaar') return null;
-  // energielabelIngangsdatum is altijd optioneel — ontbreekt hij, dan is de geldigheid van het
-  // huidige label onbekend (niet aantoonbaar vervallen óf aantoonbaar geldig), dus geen
-  // automatische herregistratie-suggestie: dat zou een geldigheid gokken die niemand kent.
-  if (ctx.pand.pand.energielabelIngangsdatum === undefined) return null;
-  const reden = toetsLabelGeldigheid(ctx.pand.pand.energielabelIngangsdatum, ctx.peildatum);
-  if (reden === 'vervallen' || reden === 'vereenvoudigd-label') return ctx.pand.pand.energielabel;
-  return null;
+  if (!ctx.pand.pand.energielabelOnbekendOfVervallen) return null;
+  return ctx.pand.pand.energielabel;
 }
 
 const E09: MaatregelDefinitie<EnergieParams> = {
@@ -105,7 +99,7 @@ const E09: MaatregelDefinitie<EnergieParams> = {
   nietBeoordeeldReden(ctx, parameters) {
     if (e09AutoKandidaat(ctx) !== null) return undefined;
     return parameters === undefined
-      ? 'huidig label is geldig of ontbreekt — vereist een doellabel om opnieuw te laten registreren'
+      ? 'huidig label is niet als onbekend/vervallen gemarkeerd, of ontbreekt — vereist een doellabel om opnieuw te laten registreren'
       : undefined;
   },
   kandidaten(ctx, parameters) {
@@ -121,13 +115,13 @@ const E09: MaatregelDefinitie<EnergieParams> = {
         parameters: { doelLabel },
         omschrijving:
           autoLabel !== null
-            ? `Energielabel ${doelLabel} opnieuw laten registreren (huidige registratie is vervallen/vereenvoudigd)`
+            ? `Energielabel ${doelLabel} opnieuw laten registreren (ingangsdatum onbekend/vervallen)`
             : `Nieuw energielabel ${doelLabel} laten registreren`,
       },
     ];
   },
   mutaties(ctx, kandidaat) {
-    return [{ soort: 'pand-patch', patch: { energielabel: kandidaat.parameters!.doelLabel, energielabelIngangsdatum: ctx.peildatum } }];
+    return [{ soort: 'pand-patch', patch: { energielabel: kandidaat.parameters!.doelLabel, energielabelOnbekendOfVervallen: false } }];
   },
 };
 

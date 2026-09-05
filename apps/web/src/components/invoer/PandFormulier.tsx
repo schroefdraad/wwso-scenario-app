@@ -186,16 +186,15 @@ export function PandFormulier() {
           </div>
           {pand.energielabel !== 'Bouwjaar' && (
             <div className={styles.veld}>
-              <span className={styles.labelRij}>
-                <label htmlFor="p-labeldatum">Ingangsdatum label (optioneel)</label>
-                <InfoBadge>Onbekend? Laat leeg — de motor valt dan terug op de bouwjaargrenzen (R4), net als bij een vervallen label.</InfoBadge>
+              <span className={styles.wozTaxatieRij}>
+                <Toggle
+                  checked={pand.energielabelOnbekendOfVervallen}
+                  onChange={(v) => zet('energielabelOnbekendOfVervallen', v)}
+                  label="Ingangsdatum onbekend of ouder dan 10 jaar"
+                />
+                Ingangsdatum onbekend of ouder dan 10 jaar
+                <InfoBadge>Onaangevinkt wordt het gekozen label gewoon gebruikt. Aangevinkt valt de motor terug op de bouwjaargrenzen (R4) — net als bij &quot;geen label bekend&quot;.</InfoBadge>
               </span>
-              <input
-                id="p-labeldatum"
-                type="date"
-                value={pand.energielabelIngangsdatum}
-                onChange={(e) => zet('energielabelIngangsdatum', e.target.value)}
-              />
             </div>
           )}
           <div className={styles.veld}>

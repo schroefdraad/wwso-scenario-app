@@ -18,14 +18,12 @@ import type { PandInvoer } from '../../types/index';
  * om kamer 1's totaal na te rekenen — kamer 1's punten hangen alleen af van kamer 1's eigen
  * ruimte en de gedeelde ruimtes, niet van wat de andere kamers zelf hebben.
  *
- * Twee velden staan niet op het brondocument en zijn aangenomen (niet uit de bron
- * herleidbaar, dus expliciet hier vastgelegd in plaats van stil ingevuld):
- * - `energielabelIngangsdatum`: alleen het label ("A++") is bekend, niet de ingangsdatum.
- *   2023-01-01 gekozen — ruim binnen de 10-jaars geldigheid en buiten het vereenvoudigde-
- *   labelvenster (2015-2021), dus zonder invloed op de uitkomst zolang het label geldig
- *   blijft.
+ * Eén veld staat niet op het brondocument en is aangenomen (niet uit de bron herleidbaar, dus
+ * expliciet hier vastgelegd in plaats van stil ingevuld):
  * - `bouwjaar`: niet vermeld (niet nodig, want het energielabel is bekend en heeft
  *   voorrang). 1970 als neutrale placeholder.
+ * Alleen het label ("A++") is bekend, niet de ingangsdatum — `energielabelOnbekendOfVervallen`
+ * staat op de default `false`, dus het label wordt gewoon gebruikt (feedback Emma, 2026-09-05).
  *
  * Toiletruimten hebben geen eigen m² op de site (ze horen niet bij "Vertrekken" of
  * "Overige ruimten" — 0 punten in R1/R2). Gemodelleerd als 'Verkeersruimte' (niet-verwarmd)
@@ -41,7 +39,7 @@ export const kleiweg179bKamer2: PandInvoer = {
     wozOppervlak: 157,
     coropGebied: 'Groot-Rijnmond',
     energielabel: 'A++',
-    energielabelIngangsdatum: '2023-01-01',
+    energielabelOnbekendOfVervallen: false,
     bouwjaar: 1970,
     aantalKamers: 6,
     monument: 'Geen',

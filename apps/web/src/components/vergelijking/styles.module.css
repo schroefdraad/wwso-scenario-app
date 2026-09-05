@@ -333,6 +333,17 @@
   vertical-align: middle;
 }
 
+/** Rijen die samen een alternatiefGroep vormen (bijv. K-01/K-09 kitchenette, Tussenfase-taak B) —
+ * een linkerrand-accent bindt ze visueel, los van het min/max plaatje van de andere rijen. */
+.alternatiefRij td:first-child {
+  border-left: 2px solid var(--accent);
+}
+
+.checkCel input:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .maatregelOmschrijving {
   max-width: 26rem;
 }

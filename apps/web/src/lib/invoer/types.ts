@@ -49,7 +49,7 @@ export interface PandVeldenState {
   gemeente: string;
   coropGebied: string;
   energielabel: Energielabel;
-  energielabelIngangsdatum: string;
+  energielabelOnbekendOfVervallen: boolean;
   /** Eigen inschatting van de kosten om naar dit label te komen (Tussenfase-taak C). Leeg = niet
    * haalbaar of niet relevant — de scenariovergelijking biedt dan geen wisselknop naar dat label. */
   energielabelKostenAPlus: string;
@@ -111,7 +111,7 @@ export const NIEUW_PAND_VELDEN: PandVeldenState = {
   gemeente: '',
   coropGebied: '',
   energielabel: 'D',
-  energielabelIngangsdatum: '',
+  energielabelOnbekendOfVervallen: false,
   energielabelKostenAPlus: '',
   energielabelKostenAPlusPlus: '',
   energielabelKostenAPlusPlusPlus: '',

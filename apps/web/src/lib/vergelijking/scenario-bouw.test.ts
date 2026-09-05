@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers, type KandidaatWaardering, type PandInvoer } from '@wwso/engine';
-import { beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle } from './scenario-bouw';
+import { alternatiefGroepSleutel, beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle } from './scenario-bouw';
 
 /** Minimale nep-kandidaat — `nieuweSelectieNaToggle` kijkt alleen naar sleutel/maatregelId/doel. */
 function nepKandidaat(sleutel: string, maatregelId: string, doel: { soort: string; nr?: number }): KandidaatWaardering {
@@ -32,6 +32,26 @@ describe('nieuweSelectieNaToggle', () => {
   it('uitvinken van een reeds geselecteerde sleutel verwijdert die gewoon, zonder side-effects', () => {
     const resultaat = nieuweSelectieNaToggle(kandidaten, new Set(['K-01#kamer:3', 'K-04#keuken:7']), 'K-01#kamer:3');
     expect(resultaat).toEqual(new Set(['K-04#keuken:7']));
+  });
+});
+
+describe('alternatiefGroepSleutel — Tussenfase-taak B (2026-09-05, visuele keuzegroep in MaatregelTabel/HandmatigMaatregelen)', () => {
+  const k01Kamer3 = nepKandidaat('K-01#kamer:3', 'K-01', { soort: 'kamer', nr: 3 });
+  const k09Kamer3 = nepKandidaat('K-09#kamer:3', 'K-09', { soort: 'kamer', nr: 3 });
+  const k09Kamer5 = nepKandidaat('K-09#kamer:5', 'K-09', { soort: 'kamer', nr: 5 });
+  const k04Keuken7 = nepKandidaat('K-04#keuken:7', 'K-04', { soort: 'keuken', nr: 7 });
+
+  it('geeft dezelfde groepssleutel voor K-01 en K-09 op dezelfde kamer', () => {
+    expect(alternatiefGroepSleutel(k01Kamer3)).toBeDefined();
+    expect(alternatiefGroepSleutel(k01Kamer3)).toEqual(alternatiefGroepSleutel(k09Kamer3));
+  });
+
+  it('geeft een ANDERE groepssleutel voor K-09 op een andere kamer', () => {
+    expect(alternatiefGroepSleutel(k09Kamer3)).not.toEqual(alternatiefGroepSleutel(k09Kamer5));
+  });
+
+  it('geeft undefined voor een maatregel zonder alternatiefGroep (K-04)', () => {
+    expect(alternatiefGroepSleutel(k04Keuken7)).toBeUndefined();
   });
 });
 

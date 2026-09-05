@@ -54,12 +54,15 @@ export const Pand = z.object({
   coropGebied: CoropGebied,
   energielabel: Energielabel,
   /**
-   * Altijd optioneel, ook bij een echt label — gebruikers hebben deze datum vaak niet
-   * paraat, en zonder ingangsdatum is de geldigheid van het label (§2.4.3) simpelweg
-   * onbekend. `berekenR4` behandelt "geen ingangsdatum" dan hetzelfde als een vervallen
-   * label: terugvallen op de bouwjaargrens, nooit een gegokte geldigheid.
+   * Vervangt sinds 2026-09-05 een exacte ingangsdatum (feedback Emma Morrison): vaak staat op
+   * bijv. Funda alleen de labelletter, niet de ingangsdatum. Default `false` — een gekozen label
+   * wordt dan gewoon gebruikt. Alleen als de gebruiker expliciet aangeeft dat de ingangsdatum
+   * onbekend is of het label ouder dan 10 jaar is (§2.4.3 lid 3), valt `berekenR4` terug op de
+   * bouwjaargrens, net als bij "geen label bekend". `.default(false)` i.p.v. verplicht: een
+   * nieuw verplicht veld op een al opgeslagen, Zod-gevalideerd type breekt anders het laden van
+   * bestaande deals (zelfde les als `Keuken.verwarmd`, 2026-09-04).
    */
-  energielabelIngangsdatum: z.string().date().optional(),
+  energielabelOnbekendOfVervallen: z.boolean().default(false),
   /**
    * Eigen inschatting van de kosten om naar dit label te komen (Tussenfase-taak C, 2026-09-04 —
    * feedback Steven Kramer: energielabel-scenario's A+/A++/A+++ naast elkaar vergelijken). De

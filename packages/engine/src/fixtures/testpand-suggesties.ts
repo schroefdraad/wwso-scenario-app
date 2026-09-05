@@ -8,8 +8,8 @@ import { testpand6Kamers } from './testpand-6kamers';
  * kandidaat zijn, en de drie pakketten zouden mager blijven. Deze variant raakt minstens één
  * maatregel uit elke tier:
  *
- * - `energielabelIngangsdatum` ruim voorbij de 10-jaars geldigheid (§2.4.3) → E-09 wordt
- *   parametervrij kandidaat (goedkoop, geen vergunning → Basis).
+ * - `energielabelOnbekendOfVervallen: true` (ingangsdatum onbekend/label vervallen, §2.4.3) →
+ *   E-09 wordt parametervrij kandidaat (goedkoop, geen vergunning → Basis).
  * - Kamer 4 in `ruitoppervlakteOnvoldoende` → A-01 wordt kandidaat (vergunning → Comfort/Maximaal).
  * - Geen aanbelfunctie → X-01 wordt kandidaat.
  * - De parkeerplek heeft geen laadpaal → P-01 wordt kandidaat.
@@ -20,7 +20,7 @@ export const testpandSuggesties: PandInvoer = {
   ...testpand6Kamers,
   pand: {
     ...testpand6Kamers.pand,
-    energielabelIngangsdatum: '2014-03-01',
+    energielabelOnbekendOfVervallen: true,
   },
   parkeerplekken: testpand6Kamers.parkeerplekken.map((p) => ({ ...p, laadpaal: false })),
   handmatigePosten: {

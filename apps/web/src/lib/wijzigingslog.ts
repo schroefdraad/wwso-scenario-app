@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.6.0';
+export const APP_VERSIE = '0.6.1';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.6.1',
+    datum: '2026-09-05',
+    wijzigingen: [
+      '"Ingangsdatum label" vervangen door één vinkje "Ingangsdatum onbekend of ouder dan 10 jaar" — een gekozen energielabel wordt voortaan gewoon gebruikt, ook zonder exacte datum (feedback Emma)',
+      'Kitchenette-varianten (122cm/240cm) tonen zich nu als duidelijke keuzegroep op de scenariopagina — de andere variant grijst automatisch uit zodra je er één kiest voor dezelfde kamer',
+    ],
+  },
   {
     versie: '0.6.0',
     datum: '2026-09-05',

@@ -42,10 +42,15 @@ export function berekenEindtelling(
   tarievenset: Tarievenset,
   peildatum: string,
 ): EindtellingResultaat {
+  // Sinds de R4-vereenvoudiging (2026-09-05, `energielabelOnbekendOfVervallen` i.p.v. een exacte
+  // ingangsdatum) leest geen enkele rubriek deze parameter meer — bewust in de publieke
+  // signatuur gehouden (alle aanroepers geven 'm toch al door, en een toekomstige rubriek kan
+  // 'm weer nodig hebben), dus hier expliciet als gebruikt gemarkeerd i.p.v. verwijderd.
+  void peildatum;
   const r1 = berekenR1(input);
   const r2 = berekenR2(input);
   const r3 = berekenR3(input);
-  const r4 = berekenR4(input, tarievenset, peildatum);
+  const r4 = berekenR4(input, tarievenset);
   const r5 = berekenR5(input, tarievenset);
   const r6 = berekenR6(input, tarievenset);
   const r7 = berekenR7(input, tarievenset);

@@ -92,6 +92,18 @@ export function nieuweSelectieNaToggle(kandidaten: readonly KandidaatWaardering[
 }
 
 /**
+ * Groepeersleutel voor de visuele keuzegroep in `MaatregelTabel.tsx` (Tussenfase-taak B) — twee
+ * kandidaten met dezelfde sleutel zijn economische alternatieven voor dezelfde fysieke plek
+ * (bijv. K-01/K-09 kitchenette in kamer 3). `undefined` betekent: geen alternatieven, gewoon een
+ * losse checkbox. Bewust gescheiden van `nieuweSelectieNaToggle` (die blijft de bron van waarheid
+ * voor de daadwerkelijke uit-toggel-logica) — dit is puur voor het UI-groeperen/grijs-zetten.
+ */
+export function alternatiefGroepSleutel(kandidaat: KandidaatWaardering): string | undefined {
+  const alternatiefGroep = standaardRegistry.get(kandidaat.maatregel.id)?.alternatiefGroep;
+  return alternatiefGroep ? `${alternatiefGroep}|${doelSleutel(kandidaat.kandidaat)}` : undefined;
+}
+
+/**
  * Bouwt een scenario uit een set gekozen kandidaat-sleutels (taak 14 — "maatregelen aan- en
  * uitzetten"). Roept `bouwVrijScenario` uit `@wwso/engine` aan, die ELKE gekozen maatregel
  * toepast — ook als hij in déze combinatie geen marginale winst oplevert, want de gebruiker koos

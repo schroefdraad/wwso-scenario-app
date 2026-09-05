@@ -34,7 +34,7 @@ describe.each([
     expect(berekenR1(input).perKamer[1]).toBe(r1);
   });
   it(`R4 (energieprestatie) = ${r4}`, () => {
-    expect(berekenR4(input, tarievenset, peildatum).perKamer[1]).toBe(r4);
+    expect(berekenR4(input, tarievenset).perKamer[1]).toBe(r4);
   });
   it(`eindtotaal = ${totaal} punten`, () => {
     expect(berekenEindtelling(input, tarievenset, peildatum).perKamer[1].totaalPunten).toBe(totaal);
@@ -65,19 +65,19 @@ describe.each([
  */
 describe('R4-grondslag — ongerond, niet de afgeronde R1-uitkomst (§2.4.4)', () => {
   it('kamer 2: 0,85 × (16 + 30,7/6) = 17,949 → 18 (afgerond zou 0,85 × 21 = 17,75 geven)', () => {
-    expect(berekenR4(kleiweg179bKamer2, tarievenset, peildatum).perKamerRuw[1]).toBeCloseTo(
+    expect(berekenR4(kleiweg179bKamer2, tarievenset).perKamerRuw[1]).toBeCloseTo(
       0.85 * (16 + 30.7 / 6),
       10,
     );
   });
   it('kamer 3: 0,85 × (21,6 + 30,7/6) = 22,709 → 22,75 (afgerond zou 0,85 × 27 = 23 geven)', () => {
-    expect(berekenR4(kleiweg179bKamer3, tarievenset, peildatum).perKamerRuw[1]).toBeCloseTo(
+    expect(berekenR4(kleiweg179bKamer3, tarievenset).perKamerRuw[1]).toBeCloseTo(
       0.85 * (21.6 + 30.7 / 6),
       10,
     );
   });
   it('kamer 6: 0,95 × (11,3 + 30,7/6) = 15,596 → 15,50 (afgerond zou 0,95 × 16 = 15,25 geven)', () => {
-    expect(berekenR4(kleiweg179bKamer6, tarievenset, peildatum).perKamerRuw[1]).toBeCloseTo(
+    expect(berekenR4(kleiweg179bKamer6, tarievenset).perKamerRuw[1]).toBeCloseTo(
       0.95 * (11.3 + 30.7 / 6),
       10,
     );

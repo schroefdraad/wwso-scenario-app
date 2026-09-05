@@ -88,22 +88,20 @@ describe('PandInvoer — testpand van 6 kamers', () => {
     expect(result.success).toBe(false);
   });
 
-  describe('energielabelIngangsdatum — altijd optioneel', () => {
-    it('accepteert energielabel "Bouwjaar" zonder ingangsdatum', () => {
-      const zonderDatum = {
-        ...testpand6Kamers,
-        pand: { ...testpand6Kamers.pand, energielabel: 'Bouwjaar' as const, energielabelIngangsdatum: undefined },
-      };
-      const result = PandInvoer.safeParse(zonderDatum);
+  describe('energielabelOnbekendOfVervallen — backward-compatible default (2026-09-05)', () => {
+    it('accepteert een pand-object zonder dit veld en vult de default false in', () => {
+      const pandZonderVeld: Record<string, unknown> = { ...testpand6Kamers.pand };
+      delete pandZonderVeld.energielabelOnbekendOfVervallen;
+      const result = PandInvoer.safeParse({ ...testpand6Kamers, pand: pandZonderVeld });
       expect(result.success).toBe(true);
+      expect(result.success && result.data.pand.energielabelOnbekendOfVervallen).toBe(false);
     });
 
-    it('accepteert ook een echt energielabel zonder ingangsdatum — geldigheid is dan onbekend, geen verplicht veld', () => {
-      const zonderDatum = {
+    it('accepteert energielabel "Bouwjaar" ongeacht de waarde van dit veld', () => {
+      const result = PandInvoer.safeParse({
         ...testpand6Kamers,
-        pand: { ...testpand6Kamers.pand, energielabel: 'D' as const, energielabelIngangsdatum: undefined },
-      };
-      const result = PandInvoer.safeParse(zonderDatum);
+        pand: { ...testpand6Kamers.pand, energielabel: 'Bouwjaar' as const, energielabelOnbekendOfVervallen: true },
+      });
       expect(result.success).toBe(true);
     });
   });
