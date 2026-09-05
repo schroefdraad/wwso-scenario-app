@@ -7,7 +7,7 @@ Laatst bijgewerkt: 2026-09-04
 (`web-skael.vercel.app`, project `skael/web`) met Supabase als backend.
 
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine` (pure rekenmotor), `packages/data` (tarieven + kostencatalogus)
-- Vitest, ESLint, Prettier op root- en packageniveau — 260/260 tests groen
+- Vitest, ESLint, Prettier op root- en packageniveau — 265/265 tests groen (38 testbestanden)
 - Rekenmotor: alle rubrieken R1 t/m R13 geïmplementeerd en **golden-master gevalideerd** tegen 3 officiële Huurprijscheck-exports (Kleiweg 179-B) — exacte match op elke rubriek, eindtotaal en huurprijs. Zie `outputs/RAPPORT_taak8_2026-08-19.md` / `RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`
 - Scenariomodel (`packages/engine/src/scenario`): mutaties bovenop de as-is `PandInvoer`, puur en immutable, inclusief een `vervang-pand`-mutatie voor volledig handmatig bewerkte TO-BE-panden (kamer toevoegen/verwijderen, etc.)
 - Suggestie-engine (taak 11): marginale analyse per rubriek, ranking op terugverdientijd, plus een los pad voor handmatig bewerkte scenario's met eigen maatregelenlijst. De algoritmische Basis/Comfort/Maximaal-pakketopbouw is verwijderd (Tussenfase-taak A, 2026-09-04, zie hieronder)
@@ -85,6 +85,69 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-Gedeployed naar productie (2026-09-04, laatste versie 0.5.1 — nog te bumpen voor notities/mappen, zie hieronder). Stap 1 van de bèta-lancering (notities + mappen) is klaar. Eerstvolgende stap: stap 2, multi-tenant/org_id's scheiden voor drie testers — nog te ontwerpen samen met de gebruiker. Daarna, of ondertussen: taak B (kitchenette-varianten, wacht nog op Stevens prijzensheet) — de enige resterende tussenfase-taak. Taak 18 en de rest van Fase 4 blijven on hold tot het tussenfase-exit-criterium gehaald is (zie hierboven). Standaard Sonnet — geen van de vier Opus-triggers is hier van toepassing.
+Gedeployed naar productie (2026-09-04, versie 0.5.6). Stap 1 van de bèta-lancering (notities +
+mappen) is klaar, plus een hele ronde UX-polish en bugfixes bovenop (zie "Sessie 2026-09-04 deel 3"
+hieronder). Eerstvolgende stap: stap 2, multi-tenant/org_id's scheiden voor drie testers — nog te
+ontwerpen samen met de gebruiker, dit blijft de grootste blokkade voor de bèta zelf. Daarna, of
+ondertussen: taak B (kitchenette-varianten — de UI-kant bleek al gebouwd, ontdekt tijdens de R3-fix;
+wacht nog op Stevens prijzensheet voor de kostencatalogus-kant). Kleine, losse aanbeveling nog
+open: dynamische browsertab-titel per route (zie `docs/nav-proposal.md`, sectie 3) — lage kosten,
+nog niet uitgevoerd, wacht op akkoord van de gebruiker. Taak 18 en de rest van Fase 4 blijven on
+hold tot het tussenfase-exit-criterium gehaald is (zie hierboven). Standaard Sonnet — geen van de
+vier Opus-triggers is hier van toepassing.
 
 **Auth-toggle terugzetten is bewust naar áchteren geschoven (2026-09-04)**: de tussenfase-taken moeten door Steven getest worden, en de toggle staat open juist om dat testen niet te hinderen. Pas terugzetten als er geen actief testen meer gepland is — zie "Openstaande beslissingen".
+
+## Sessie 2026-09-04 deel 3 — samenvatting (Emma's UX-feedback, R3-bugfix, navigatie-audit)
+Vervolg op deel 1/2 van dezelfde dag. Vier releases (v0.5.3 t/m v0.5.6), allemaal gecommit,
+gepusht en gedeployed naar productie, met tussentijdse tests/typecheck/lint elke keer groen.
+
+- **v0.5.3 — UI-polish op Emma's feedback:** de "18 maatregelen vereisen extra invoer"-hint weg,
+  notitieveld naar de pand-invoerpagina zelf (nieuw `NotitieVeld.tsx` + `notitieOntwerp`-state in
+  de invoer-reducer, zelfde threading-discipline als eerder bij `dealNaam`), "Deal bijwerken" →
+  "Opslaan", "Maatregelen" → "Optimalisaties", datumformaat overal naar DD-MM-JJJJ (nieuwe
+  `lib/datum.ts`), de vier controles van het resultaatscherm gehaald (blijven wel in de PDF),
+  mappen-veld op de vergelijkingspagina van vrij tekstveld naar dropdown-met-"Nieuwe map…"-optie,
+  en een eigen favicon (`resources/images/pictogram.jpeg` → `app/icon.jpg`) i.p.v. de Next.js-
+  placeholder. Hamburgermenu-advies gegeven (conclusie: niet doen — te weinig routes) zonder dat
+  er om gevraagd was, bleek later relevant voor de navigatie-audit in deel 4 hieronder.
+- **Huurcommissie-crossvalidatie (geen releaseversie, wel de aanleiding voor v0.5.4):** op verzoek
+  van de gebruiker éénmalig handmatig (niet met een test-harness/agent, dat idee is expliciet
+  afgewezen) onze puntentelling naast de officiële Huurcommissie Huurprijscheck gelegd voor Kamer 1
+  van de Basrastraat 12-deal. Resultaat: **een bevestigde bug in R3 Verwarming** (§2.3.2: een open
+  keuken/kitchenette telt niet dubbel mee voor verwarmingspunten, terwijl het beleidsboek dat wél
+  voorschrijft) — de overige verschillen (R5 keuken-verdeling, R6 sanitair, R11 WOZ-waarde) bleken
+  stuk voor stuk testfouten of vereenvoudigingen aan de Huurcommissie-kant, geen bugs bij ons. Vier
+  losse rondes gebruikt (parallel waar mogelijk), volledig verslag in
+  `outputs/RAPPORT_huurcommissie-crossvalidatie_2026-09-04.md`.
+- **v0.5.4 — R3-bugfix + toiletype-UX-fix:** nieuw `Keuken.verwarmd`-veld (eigen toggle in de
+  Sanitair/Keuken-lade, standaard uit — expliciet geen aanname dat een kitchenette hetzelfde
+  verwarmingscircuit deelt als de kamer), 4 regressietests, en het Toiletype-dropdownveld filtert
+  nu op ruimtetype (voorkomt de testfixture-inconsistentie die tijdens de crossvalidatie aan het
+  licht kwam).
+- **Productie-incident, binnen het uur gefixt:** `verwarmd` als verplicht Zod-veld brak het laden
+  van élke bestaande deal met een keuken ("Deals ophalen mislukt") — deals van vóór v0.5.4 hebben
+  dat veld niet in hun bewaarde JSON. Gefixt met `.default(false)` (de veilige kant: geen aanname
+  van dubbele verwarmingspunten voor oude data) + een permanente regressietest
+  (`keuken-backcompat.test.ts`). Les: een nieuw verplicht Zod-veld op een al gebruikt, in Supabase
+  opgeslagen type is een breaking change, ook als de tests lokaal allemaal slagen — bestaande data
+  wordt niet door de testsuite gedekt.
+- **v0.5.5 — Gemeente-dropdown filtert op kandidaten:** bij een meerduidige stad (bijv. "Aalst",
+  drie gemeentes) toont de dropdown nu alleen die kandidaten in plaats van alle 342 gemeentes —
+  idee van de gebruiker tijdens het beleidsboek-natrekken van de R3-bug.
+- **v0.5.6 — Navigatie-audit:** eerst een lean versie (geen aparte inventory-/labelling-documenten,
+  wel de runtime-wayfinding-checks echt in de browser getest), later op verzoek alsnog de volledige
+  opzet nagebouwd in `docs/nav-inventory.md` (routetabel + mermaid-graaf + berekende metrieken) en
+  `docs/nav-proposal.md` (bevindingen gerangschikt op impact, kosten per wijziging, expliciet
+  conventie-vs-bewijs-onderscheid). Grootste vondst: `/pand/resultaat` had geen `?deal=`-
+  ondersteuning (in tegenstelling tot `/pand/vergelijking`) — een verse tab op een gedeelde link
+  toonde alleen een kale foutmelding. Gefixt voor de AS-IS-kolom; scenariokolommen blijven bewust
+  sessionStorage-only (kosten wegen niet op tegen het smalle gebruikspad). Beide foutschermen linken
+  nu ook naar "Mijn deals". Eén aanbeveling nog open, niet uitgevoerd: dynamische browsertab-titel
+  per route (nu overal "WWSO Scenario App", geen tab-onderscheid bij meerdere open deals).
+- **Terugkerend patroon deze sessie:** de gebruiker plakte twee keer een uitgebreide, aan een
+  AI-agent gerichte opdracht (eerst een Huurcommissie-test-harness-opzet, later deze navigatie-
+  audit) — beide keren bleek "spar er eerst over" de juiste eerste stap: de harness is nooit
+  gebouwd (bewust, "we hebben geen agent nodig, gewoon de test zelf draaien"), de navigatie-audit
+  is eerst lean uitgevoerd en pas op expliciet verzoek alsnog volledig uitgewerkt volgens de
+  oorspronkelijke opzet.
