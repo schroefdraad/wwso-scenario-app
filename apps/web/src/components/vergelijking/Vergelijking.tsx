@@ -124,15 +124,15 @@ export function Vergelijking({
 
   // Herstelt lokale (mogelijk nog niet opgeslagen) slots-state na een volledige navigatie weg van
   // deze pagina en terug — sessionStorage bestaat niet tijdens SSR, dus dit kan pas ná hydratie.
-  // Twee routes zetten deze snapshot vóór vertrek: "Bewerk handmatig →" (naar /pand/nieuw) en
-  // "Bekijk volledig resultaat →" (naar /pand/resultaat). Beide unmounten dit component; zonder
+  // Twee routes zetten deze snapshot vóór vertrek: "Bewerk handmatig →" (naar /woning/nieuw) en
+  // "Bekijk volledig resultaat →" (naar /woning/resultaat). Beide unmounten dit component; zonder
   // snapshot zou elke niet-opgeslagen wijziging (een net toegevoegde kamer, een andere slotnaam,
   // een nog niet opgeslagen deal-koppeling) verloren gaan zodra je terugkeert — dat was de bug
   // ("kamer toevoegen bij een scenario en dan het resultaat bekijken liet 'm weer verdwijnen").
   //
   // Een snapshot zónder `resultaat` is dus GEEN verweesde state meer om te negeren (dat was hij
-  // vóór 2026-09-01 wél, toen alleen de /pand/nieuw-route deze snapshot zette): hij betekent nu
-  // "kom terug van /pand/resultaat, of een afgebroken /pand/nieuw-bewerking" — in beide gevallen
+  // vóór 2026-09-01 wél, toen alleen de /woning/nieuw-route deze snapshot zette): hij betekent nu
+  // "kom terug van /woning/resultaat, of een afgebroken /woning/nieuw-bewerking" — in beide gevallen
   // is de snapshot precies de staat van vóór vertrek en dus veilig om toe te passen.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -262,7 +262,7 @@ export function Vergelijking({
   }
 
   function bewerkHandmatig(index: number) {
-    const terugUrl = dealId ? `/pand/vergelijking?deal=${dealId}` : '/pand/vergelijking';
+    const terugUrl = dealId ? `/woning/vergelijking?deal=${dealId}` : '/woning/vergelijking';
     slaSnapshotOp();
     slaScenarioBewerkStartOp({
       asIsPand: pand,
@@ -272,7 +272,7 @@ export function Vergelijking({
       tarievensetPeildatum: tarievenset.peildatum,
       kostencatalogusVersie: kostencatalogus.versie,
     });
-    router.push(`/pand/nieuw?scenario=${index}`);
+    router.push(`/woning/nieuw?scenario=${index}`);
   }
 
   /** Een leeg kandidaten-slot (geen enkele maatregel aangevinkt) draagt geen informatie en wordt
@@ -316,7 +316,7 @@ export function Vergelijking({
       dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
-    router.push('/pand/resultaat');
+    router.push('/woning/resultaat');
   }
 
   /** Zelfde reis als `bekijkResultaat`, maar dan voor de as-is kolom zelf — voorheen alleen
@@ -333,10 +333,10 @@ export function Vergelijking({
       dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
-    // Met een opgeslagen deal is /pand/resultaat?deal=<id> bruikbaar (bookmark, nieuwe tab,
+    // Met een opgeslagen deal is /woning/resultaat?deal=<id> bruikbaar (bookmark, nieuwe tab,
     // gedeelde link) — navigatie-audit 2026-09-04. Zonder dealId (nog niet opgeslagen pand)
     // bestaat er niets om naar te verwijzen; dan blijft de sessionStorage-brug de enige route.
-    router.push(dealId ? `/pand/resultaat?deal=${dealId}` : '/pand/resultaat');
+    router.push(dealId ? `/woning/resultaat?deal=${dealId}` : '/woning/resultaat');
   }
 
   async function dealOpslaan() {
@@ -362,7 +362,7 @@ export function Vergelijking({
         setNieuweMapModus(false);
         setMappen((huidig) => (dealMap && !huidig.includes(dealMap) ? [...huidig, dealMap].sort((a, b) => a.localeCompare(b)) : huidig));
       }
-      router.replace(`/pand/vergelijking?deal=${deal.id}`);
+      router.replace(`/woning/vergelijking?deal=${deal.id}`);
     } catch (err) {
       setOpslaanFoutmelding(err instanceof Error ? err.message : String(err));
       setOpslaanStatus('fout');
@@ -378,7 +378,7 @@ export function Vergelijking({
           {pand.pand.adres} · {pand.pand.stad}
         </span>
         <div className={styles.dealOpslaan}>
-          <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de deal" className={styles.dealNaamVeld} />
+          <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de woning" className={styles.dealNaamVeld} />
           {nieuweMapModus ? (
             <span className={styles.dealMapNieuw}>
               <input
@@ -434,19 +434,19 @@ export function Vergelijking({
             </select>
           )}
           <button type="button" className={`${styles.btn} ${styles.btnPrimair}`} onClick={dealOpslaan} disabled={opslaanStatus === 'bezig'}>
-            {dealId ? 'Opslaan' : 'Deal opslaan'}
+            {dealId ? 'Opslaan' : 'Woning opslaan'}
           </button>
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
-        <Link href="/deals" className={styles.dealenLink}>
-          Mijn deals →
+        <Link href="/woningen" className={styles.dealenLink}>
+          Mijn woningen →
         </Link>
         <textarea
           value={dealNotitie}
           onChange={(e) => setDealNotitie(e.target.value)}
-          aria-label="Notitie bij deze deal"
-          placeholder="Notitie bij deze deal (optioneel, zichtbaar in het deals-overzicht)…"
+          aria-label="Notitie bij deze woning"
+          placeholder="Notitie bij deze woning (optioneel, zichtbaar in het woningen-overzicht)…"
           className={styles.dealNotitieVeld}
           rows={2}
         />

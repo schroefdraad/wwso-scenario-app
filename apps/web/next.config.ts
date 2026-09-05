@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   // Zonder transpilePackages behandelt Next.js ze als externe, al-gecompileerde node_modules
   // en faalt de resolutie van hun (geneste) `export *`-barrels in de client-/SSR-bundel.
   transpilePackages: ['@wwso/engine', '@wwso/data'],
+  // Woning/Woningen-hernoeming (2026-09-04): oude gedeelde/bewaarde links naar /deals en
+  // /pand/... moeten blijven werken, inclusief hun querystring (bijv. ?deal=<id>).
+  async redirects() {
+    return [
+      { source: '/deals', destination: '/woningen', permanent: true },
+      { source: '/pand/:pad*', destination: '/woning/:pad*', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

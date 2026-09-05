@@ -25,14 +25,14 @@ export function Resultaatscherm({
   tarievenset,
   peildatum,
   titel,
-  terugUrl = '/pand/vergelijking',
+  terugUrl = '/woning/vergelijking',
 }: {
   pand: PandInvoer;
   tarievenset: Tarievenset;
   peildatum: string;
   titel?: string;
   /**
-   * URL voor "Vergelijk scenario's →". Zonder `?deal=<id>` (de default) valt /pand/vergelijking
+   * URL voor "Vergelijk scenario's →". Zonder `?deal=<id>` (de default) valt /woning/vergelijking
    * terug op een sessionStorage-restje i.p.v. de deal opnieuw uit Supabase te halen — dat restje
    * kan het zojuist bekeken SCENARIO-pand bevatten, wat dan abusievelijk als AS-IS verschijnt en
    * een niet-opgeslagen scenario-wijziging (bijv. een handmatig toegevoegde kamer) laat verdwijnen

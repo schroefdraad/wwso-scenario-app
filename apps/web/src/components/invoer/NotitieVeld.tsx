@@ -18,8 +18,8 @@ export function NotitieVeld() {
         <textarea
           value={state.notitieOntwerp}
           onChange={(e) => dispatch({ soort: 'NOTITIE_GEWIJZIGD', notitie: e.target.value })}
-          aria-label="Notitie bij deze deal"
-          placeholder="Vrije notitie bij deze deal (optioneel, zichtbaar in het deals-overzicht)…"
+          aria-label="Notitie bij deze woning"
+          placeholder="Vrije notitie bij deze woning (optioneel, zichtbaar in het woningen-overzicht)…"
           rows={3}
           style={{ width: '100%', resize: 'vertical' }}
         />

@@ -59,9 +59,9 @@ export function PandFormulier() {
       : ALLE_GEMEENTES;
 
   return (
-    <section className={styles.blok} id="sectie-pand">
+    <section className={styles.blok} id="sectie-woning">
       <div className={styles.blokKop}>
-        <h2>① Pand</h2>
+        <h2>① Woning</h2>
       </div>
       <div className={styles.blokInhoud}>
         <div className={styles.pandGrid}>
@@ -230,7 +230,7 @@ export function PandFormulier() {
 
         <div className={styles.subKop}>
           <h3>Energielabel-kosteninschattingen</h3>
-          <span className={styles.hint}>Eigen inschatting per doellabel, voor de energielabel-scenariovergelijking. Leeg = niet haalbaar of niet relevant voor dit pand.</span>
+          <span className={styles.hint}>Eigen inschatting per doellabel, voor de energielabel-scenariovergelijking. Leeg = niet haalbaar of niet relevant voor deze woning.</span>
         </div>
         <div className={styles.pandGrid}>
           <div className={styles.veld}>

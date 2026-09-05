@@ -6,7 +6,7 @@ import { bouwEnergielabelScenarioMetKosten, bouwHandmatigScenarioMetMaatregelenU
 /**
  * Een scenario-slot komt uit precies één van drie bronnen: een set kandidaat-sleutels uit de
  * suggestie-engine (taak 14, het bestaande pad), een volledig zelf bewerkt TO-BE-pand (backlog
- * 2026-08-21: AS-IS kopiëren naar een handmatig scenario, `/pand/nieuw?scenario=<slot>`), of een
+ * 2026-08-21: AS-IS kopiëren naar een handmatig scenario, `/woning/nieuw?scenario=<slot>`), of een
  * doellabel-wisselknop (Tussenfase-taak C, 2026-09-04). Een handmatig-slot kan zelf óók
  * kandidaat-sleutels dragen (backlog 2026-08-22: "handmatig een kamer realiseren en dan verder
  * maatregelen toevoegen") — dat zijn dan sleutels uit de kandidatenlijst tegen HET BEWERKTE PAND

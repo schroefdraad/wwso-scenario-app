@@ -33,7 +33,7 @@ export async function maakDealAan(invoer: DealInvoer): Promise<Deal> {
     .insert(naarRij(invoer))
     .select()
     .single();
-  if (error) throw new Error(`Deal opslaan mislukt: ${error.message}`);
+  if (error) throw new Error(`Woning opslaan mislukt: ${error.message}`);
   return parseDealRij(data);
 }
 
@@ -44,13 +44,13 @@ export async function werkDealBij(id: string, invoer: DealInvoer): Promise<Deal>
     .eq('id', id)
     .select()
     .single();
-  if (error) throw new Error(`Deal bijwerken mislukt: ${error.message}`);
+  if (error) throw new Error(`Woning bijwerken mislukt: ${error.message}`);
   return parseDealRij(data);
 }
 
 export async function haalDealenOp(): Promise<Deal[]> {
   const { data, error } = await supabase.from('deals').select().order('bijgewerkt', { ascending: false });
-  if (error) throw new Error(`Deals ophalen mislukt: ${error.message}`);
+  if (error) throw new Error(`Woningen ophalen mislukt: ${error.message}`);
   return data.map(parseDealRij);
 }
 
@@ -64,6 +64,6 @@ export async function haalMappen(): Promise<string[]> {
 
 export async function haalDealOp(id: string): Promise<Deal | null> {
   const { data, error } = await supabase.from('deals').select().eq('id', id).maybeSingle();
-  if (error) throw new Error(`Deal ophalen mislukt: ${error.message}`);
+  if (error) throw new Error(`Woning ophalen mislukt: ${error.message}`);
   return data ? parseDealRij(data) : null;
 }

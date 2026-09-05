@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 function LoginContent() {
   useDocumentTitle('Inloggen · WWSO Scenario App');
   const searchParams = useSearchParams();
-  const volgende = searchParams.get('volgende') ?? '/deals';
+  const volgende = searchParams.get('volgende') ?? '/woningen';
   const fout = searchParams.get('fout');
 
   const [email, setEmail] = useState('');

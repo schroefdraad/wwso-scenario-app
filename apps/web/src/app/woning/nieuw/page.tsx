@@ -26,7 +26,7 @@ function NieuwPandContent() {
 
   // Een deal komt uit Supabase (async, ná hydratie); een scenario komt synchroon uit
   // sessionStorage, maar leest ook pas ná hydratie — effect + setState is hier het juiste
-  // primitief, niet een te vermijden anti-patroon (zelfde patroon als /pand/vergelijking).
+  // primitief, niet een te vermijden anti-patroon (zelfde patroon als /woning/vergelijking).
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (scenarioParam !== null) {
@@ -66,8 +66,8 @@ function NieuwPandContent() {
   if (status === 'niet-gevonden') {
     return (
       <div style={{ padding: '2rem', fontFamily: 'ui-sans-serif, sans-serif' }}>
-        <p>{scenarioParam !== null ? 'Dit scenario kon niet geladen worden — begin opnieuw vanaf de vergelijkingspagina.' : 'Deze deal kon niet gevonden of geladen worden.'}</p>
-        <Link href={scenarioParam !== null ? '/pand/vergelijking' : '/deals'}>← {scenarioParam !== null ? 'Terug naar de vergelijking' : 'Terug naar mijn deals'}</Link>
+        <p>{scenarioParam !== null ? 'Dit scenario kon niet geladen worden — begin opnieuw vanaf de vergelijkingspagina.' : 'Deze woning kon niet gevonden of geladen worden.'}</p>
+        <Link href={scenarioParam !== null ? '/woning/vergelijking' : '/woningen'}>← {scenarioParam !== null ? 'Terug naar de vergelijking' : 'Terug naar mijn woningen'}</Link>
       </div>
     );
   }

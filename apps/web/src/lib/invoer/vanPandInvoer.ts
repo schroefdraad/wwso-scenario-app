@@ -18,7 +18,7 @@ function gokGemeente(stad: string, opgeslagenCoropGebied: string): string {
 /**
  * Inverse van `projecteerNaarPandInvoer`: zet een reeds gevalideerde `PandInvoer` (het
  * voorbeeldpand, of de as-is van een opgeslagen deal) terug om naar de gedenormaliseerde,
- * bewerkbare `InvoerState` van /pand/nieuw.
+ * bewerkbare `InvoerState` van /woning/nieuw.
  */
 export function pandInvoerNaarState(p: PandInvoer): InvoerState {
   const kamersBijRuimte = new Map(p.toewijzing.map((t) => [t.ruimteNr, t.kamers] as const));

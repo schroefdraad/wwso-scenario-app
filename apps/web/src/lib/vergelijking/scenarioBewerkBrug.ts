@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 /**
  * SessionStorage-brug voor "AS-IS kopiëren naar een handmatig TO-BE-scenario" (backlog, feedback
- * Emma Morrison, 2026-08-21): /pand/vergelijking stuurt de as-is + welk scenario-slot bewerkt
- * wordt hierheen, /pand/nieuw stuurt het bewerkte pand + slotnummer terug. Twee aparte sleutels
+ * Emma Morrison, 2026-08-21): /woning/vergelijking stuurt de as-is + welk scenario-slot bewerkt
+ * wordt hierheen, /woning/nieuw stuurt het bewerkte pand + slotnummer terug. Twee aparte sleutels
  * (heen/terug) i.p.v. één, zodat een terugkeer zonder wijziging (Esc/browser-terug) niet per
  * ongeluk de oorspronkelijke as-is overschrijft met een leeg resultaat.
  *
- * `/pand/nieuw` is een VOLLEDIGE navigatie, geen in-page state — /pand/vergelijking unmount en
+ * `/woning/nieuw` is een VOLLEDIGE navigatie, geen in-page state — /woning/vergelijking unmount en
  * remount dus bij de heen- én de terugreis. Zonder een snapshot van de rest van het scherm
  * (`VergelijkingSnapshot`) zou elke wijziging aan de andere twee scenario-slots, de deal-naam en
  * de deal-koppeling die niet al opgeslagen was, verloren gaan zodra je één slot handmatig
@@ -22,7 +22,7 @@ const ScenarioBewerkStart = z.object({
   asIsPand: PandInvoer,
   slotIndex: z.number().int().min(0).max(2),
   naam: z.string(),
-  /** Waar /pand/nieuw naar terugkeert — inclusief `?deal=<id>` als dat er was, anders de
+  /** Waar /woning/nieuw naar terugkeert — inclusief `?deal=<id>` als dat er was, anders de
    * as-is/deal-koppeling van de vergelijkingspagina zelf verliest bij terugkomst. */
   terugUrl: z.string(),
   tarievensetPeildatum: z.string().optional(),
@@ -102,11 +102,11 @@ export function slaVergelijkingSnapshotOp(snapshot: VergelijkingSnapshot): void 
 /**
  * `null` als er niets (geldigs) staat opgeslagen. Verwijdert de sleutel na het lezen.
  *
- * Sinds 2026-09-01 zet /pand/vergelijking deze snapshot vóór ELKE volledige navigatie weg
- * (zowel "Bewerk handmatig →" naar /pand/nieuw als "Bekijk volledig resultaat →" naar
- * /pand/resultaat), dus een snapshot zonder bijbehorend `ScenarioBewerkResultaat` is geen
- * verweesde state meer om te negeren — hij betekent nu "kom terug van /pand/resultaat, of een
- * afgebroken /pand/nieuw-bewerking (Esc/browser-terug)". In beide gevallen is de snapshot precies
+ * Sinds 2026-09-01 zet /woning/vergelijking deze snapshot vóór ELKE volledige navigatie weg
+ * (zowel "Bewerk handmatig →" naar /woning/nieuw als "Bekijk volledig resultaat →" naar
+ * /woning/resultaat), dus een snapshot zonder bijbehorend `ScenarioBewerkResultaat` is geen
+ * verweesde state meer om te negeren — hij betekent nu "kom terug van /woning/resultaat, of een
+ * afgebroken /woning/nieuw-bewerking (Esc/browser-terug)". In beide gevallen is de snapshot precies
  * de staat van vóór vertrek en dus veilig om altijd toe te passen (zie `Vergelijking.tsx`).
  */
 export function haalEnWisVergelijkingSnapshotOp(): VergelijkingSnapshot | null {

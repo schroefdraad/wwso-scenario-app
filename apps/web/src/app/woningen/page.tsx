@@ -14,7 +14,7 @@ import styles from './styles.module.css';
 const GEEN_MAP = '(geen map)';
 
 export default function DealsOverzicht() {
-  useDocumentTitle('Mijn deals · WWSO Scenario App');
+  useDocumentTitle('Mijn woningen · WWSO Scenario App');
   const [deals, setDeals] = useState<Deal[] | null>(null);
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
@@ -41,7 +41,7 @@ export default function DealsOverzicht() {
     <div className={styles.wrap}>
       <header className={styles.kop}>
         <HomeLogo />
-        <h1>Mijn deals</h1>
+        <h1>Mijn woningen</h1>
         {mappen.length > 0 && (
           <select value={mapFilter} onChange={(e) => setMapFilter(e.target.value)} className={styles.mapFilter} aria-label="Filter op map">
             <option value="">Alle mappen</option>
@@ -53,16 +53,16 @@ export default function DealsOverzicht() {
             <option value={GEEN_MAP}>Geen map</option>
           </select>
         )}
-        <Link href="/pand/nieuw" className={styles.nieuwLink}>
-          + Nieuw pand
+        <Link href="/woning/nieuw" className={styles.nieuwLink}>
+          + Nieuwe woning
         </Link>
       </header>
       <main className={styles.main}>
-        {foutmelding && <p className={`${styles.melding} ${styles.foutmelding}`}>Deals ophalen mislukt: {foutmelding}</p>}
+        {foutmelding && <p className={`${styles.melding} ${styles.foutmelding}`}>Woningen ophalen mislukt: {foutmelding}</p>}
         {!foutmelding && deals === null && <p className={styles.melding}>Bezig met laden…</p>}
         {!foutmelding && deals !== null && deals.length === 0 && (
           <p className={styles.melding}>
-            Nog geen deals opgeslagen. Ga naar <Link href="/pand/nieuw">een nieuw pand</Link>, reken door en sla het op vanaf het vergelijkingsscherm.
+            Nog geen woningen opgeslagen. Ga naar <Link href="/woning/nieuw">een nieuwe woning</Link>, reken door en sla het op vanaf het vergelijkingsscherm.
           </p>
         )}
         {!foutmelding && deals !== null && deals.length > 0 && (
@@ -71,7 +71,7 @@ export default function DealsOverzicht() {
               <table className={styles.tabel}>
                 <thead>
                   <tr>
-                    <th>Deal</th>
+                    <th>Woning</th>
                     <th>Adres</th>
                     <th>Kamers</th>
                     <th>Scenario&apos;s</th>
@@ -84,7 +84,7 @@ export default function DealsOverzicht() {
                   {zichtbareDeals.map((deal) => (
                     <tr key={deal.id} className={styles.rij}>
                       <td className={styles.naamCel}>
-                        <Link href={`/pand/vergelijking?deal=${deal.id}`} className={styles.dealLink}>
+                        <Link href={`/woning/vergelijking?deal=${deal.id}`} className={styles.dealLink}>
                           {deal.naam}
                         </Link>
                       </td>

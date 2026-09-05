@@ -1,7 +1,7 @@
 import type { InvoerState } from './types';
 
 /**
- * Concept-autosave voor /pand/nieuw. Losstaand van `lib/resultaat/opslag.ts` (dat draagt de
+ * Concept-autosave voor /woning/nieuw. Losstaand van `lib/resultaat/opslag.ts` (dat draagt de
  * AFGERONDE, Zod-gevalideerde `PandInvoer` over naar het resultaatscherm) — dit hier is de ruwe,
  * mogelijk onvolledige werkstate zelf, weggeschreven tijdens het typen zodat een refresh/terug-
  * navigatie/tabblad-sluiten vóór "Doorrekenen" het werk niet verliest.

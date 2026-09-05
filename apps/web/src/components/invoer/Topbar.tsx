@@ -20,7 +20,7 @@ export function Topbar() {
   const stap = useMemo(() => ontbrekendeStap(state), [state]);
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
   const n = parseInt(state.pand.aantalKamers, 10) || 0;
-  useDocumentTitle(`${state.pand.adres || 'Nieuw pand'} · WWSO Scenario App`);
+  useDocumentTitle(`${state.pand.adres || 'Nieuwe woning'} · WWSO Scenario App`);
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
 
   async function dealVroegOpslaan() {
@@ -30,7 +30,7 @@ export function Topbar() {
       const tarievenset = alleTarievensets().at(-1)!;
       const kostencatalogus = nieuwsteKostencatalogus();
       const invoer = {
-        naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloos pand'),
+        naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloze woning'),
         notitie: state.notitieOntwerp,
         map: state.bewerktDeal?.map ?? '',
         pandInvoer: pand,
@@ -56,15 +56,15 @@ export function Topbar() {
   return (
     <header className={styles.topbar}>
       <HomeLogo />
-      <span className={styles.titel}>{state.pand.adres || 'Nieuw pand'}</span>
+      <span className={styles.titel}>{state.pand.adres || 'Nieuwe woning'}</span>
       <span className={styles.sub}>
         {n} kamer{n === 1 ? '' : 's'}
       </span>
-      {state.bewerktDeal && <span className={styles.sub}>· bewerkt deal &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
+      {state.bewerktDeal && <span className={styles.sub}>· bewerkt woning &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
       {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
       <nav className={styles.sections}>
-        <a className={styles.sectionLink} href="#sectie-pand">
-          ① Pand <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
+        <a className={styles.sectionLink} href="#sectie-woning">
+          ① Woning <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
         </a>
         <a className={styles.sectionLink} href="#sectie-ruimten">
           ② Ruimten <span className={`${styles.badge} ${state.ruimtes.length > 0 ? styles.badgeOk : ''}`}>{state.ruimtes.length}</span>
@@ -74,8 +74,8 @@ export function Topbar() {
         </a>
       </nav>
       <div className={styles.spacer} />
-      <Link href="/deals" className={styles.sectionLink}>
-        Mijn deals
+      <Link href="/woningen" className={styles.sectionLink}>
+        Mijn woningen
       </Link>
       {!state.handmatigScenario && (
         <>
@@ -86,7 +86,7 @@ export function Topbar() {
             title={!pand ? (stap ?? undefined) : undefined}
             onClick={dealVroegOpslaan}
           >
-            {state.bewerktDeal ? 'Opslaan' : 'Deal opslaan'}
+            {state.bewerktDeal ? 'Opslaan' : 'Woning opslaan'}
           </button>
           {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
           {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
@@ -112,7 +112,7 @@ export function Topbar() {
             dealMap: state.bewerktDeal?.map,
             dealScenarios: state.bewerktDeal?.scenarios,
           });
-          router.push('/pand/resultaat');
+          router.push('/woning/resultaat');
         }}
       >
         {state.handmatigScenario ? 'Gebruik als scenario →' : 'Doorrekenen →'}

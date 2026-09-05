@@ -147,7 +147,7 @@ export function SamenvattingRij({
             Bekijk volledig resultaat →
           </button>
           {asIsDealId && (
-            <Link href={`/pand/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
+            <Link href={`/woning/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
               Bewerk handmatig →
             </Link>
           )}

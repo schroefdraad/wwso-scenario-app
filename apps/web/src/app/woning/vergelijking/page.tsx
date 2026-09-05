@@ -49,8 +49,8 @@ function VergelijkingContent() {
             pand: context.pand,
             tarievensetPeildatum: context.tarievensetPeildatum,
             kostencatalogusVersie: context.kostencatalogusVersie,
-            // Draagt de deal-identiteit door vanuit /pand/nieuw?deal=<id> (backlog: as-is
-            // bewerken) — zonder dit zou "Deal opslaan" hier een DUPLICAAT aanmaken in plaats
+            // Draagt de deal-identiteit door vanuit /woning/nieuw?deal=<id> (backlog: as-is
+            // bewerken) — zonder dit zou "Woning opslaan" hier een DUPLICAAT aanmaken in plaats
             // van de bestaande deal bij te werken.
             deal: context.dealId
               ? {
@@ -80,12 +80,12 @@ function VergelijkingContent() {
   if (geladen === null || !resultaat) {
     return (
       <div style={{ padding: '2rem', fontFamily: 'ui-sans-serif, sans-serif' }}>
-        <p>{dealParam ? 'Deze deal kon niet gevonden of geladen worden.' : "Geen (geldige) invoer gevonden om scenario's voor te vergelijken."}</p>
+        <p>{dealParam ? 'Deze woning kon niet gevonden of geladen worden.' : "Geen (geldige) invoer gevonden om scenario's voor te vergelijken."}</p>
         <p>
-          <Link href="/pand/nieuw">← Terug naar het invoerscherm</Link>
+          <Link href="/woning/nieuw">← Terug naar het invoerscherm</Link>
         </p>
         <p>
-          <Link href="/deals">Mijn deals →</Link>
+          <Link href="/woningen">Mijn woningen →</Link>
         </p>
       </div>
     );

@@ -50,19 +50,19 @@ function ResultaatContent() {
   if (context === null) {
     return (
       <div style={{ padding: '2rem', fontFamily: 'ui-sans-serif, sans-serif' }}>
-        <p>{dealParam ? 'Deze deal kon niet gevonden of geladen worden.' : 'Geen (geldige) invoer gevonden om door te rekenen.'}</p>
+        <p>{dealParam ? 'Deze woning kon niet gevonden of geladen worden.' : 'Geen (geldige) invoer gevonden om door te rekenen.'}</p>
         <p>
-          <Link href="/pand/nieuw">← Terug naar het invoerscherm</Link>
+          <Link href="/woning/nieuw">← Terug naar het invoerscherm</Link>
         </p>
         <p>
-          <Link href="/deals">Mijn deals →</Link>
+          <Link href="/woningen">Mijn woningen →</Link>
         </p>
       </div>
     );
   }
 
   const tarievenset = bepaalTarievenset(context.tarievensetPeildatum);
-  const terugUrl = context.dealId ? `/pand/vergelijking?deal=${context.dealId}` : '/pand/vergelijking';
+  const terugUrl = context.dealId ? `/woning/vergelijking?deal=${context.dealId}` : '/woning/vergelijking';
 
   return <Resultaatscherm pand={context.pand} tarievenset={tarievenset} peildatum={tarievenset.peildatum} terugUrl={terugUrl} />;
 }

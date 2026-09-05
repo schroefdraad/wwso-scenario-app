@@ -14,8 +14,8 @@ import { ScenarioSelectie } from '../deals/types';
  * nog niet opgeslagen invoer → gebruik de nieuwste versies.
  *
  * Draagt sinds de "as-is bewerken"-backlogfix ook optioneel de deal-identiteit mee (id, naam,
- * scenario-keuzes): zonder dit zou een bewerkte as-is die via /pand/nieuw?deal=<id> geladen was,
- * op het vergelijkingsscherm als een NIEUWE deal verschijnen — "Deal opslaan" zou dan dupliceren
+ * scenario-keuzes): zonder dit zou een bewerkte as-is die via /woning/nieuw?deal=<id> geladen was,
+ * op het vergelijkingsscherm als een NIEUWE deal verschijnen — "Woning opslaan" zou dan dupliceren
  * in plaats van de bestaande deal bij te werken.
  */
 export const HUIDIG_PAND_SESSIONSTORAGE_KEY = 'wwso:huidig-pand';
@@ -28,7 +28,7 @@ const OpgeslagenPandContext = z.object({
   dealNaam: z.string().optional(),
   /** Backlog 2026-09-04 — zelfde reden als dealNaam: zonder dit zou een notitie/map die nog niet
    * opgeslagen is (alleen op de vergelijkingspagina getypt) verloren kunnen gaan als je via
-   * /pand/nieuw?deal=<id> de as-is bewerkt en weer teruggaat zonder tussentijds op te slaan. */
+   * /woning/nieuw?deal=<id> de as-is bewerkt en weer teruggaat zonder tussentijds op te slaan. */
   dealNotitie: z.string().optional(),
   dealMap: z.string().optional(),
   dealScenarios: z.array(ScenarioSelectie).optional(),

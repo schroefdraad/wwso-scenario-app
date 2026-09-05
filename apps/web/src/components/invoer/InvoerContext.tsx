@@ -15,7 +15,7 @@ interface InvoerContextWaarde {
 
 const InvoerContext = createContext<InvoerContextWaarde | null>(null);
 
-/** De as-is van een reeds opgeslagen deal, klaar om als bewerkbare `InvoerState` geladen te worden (backlog: as-is achteraf aanpasbaar maken via /pand/nieuw?deal=<id>). */
+/** De as-is van een reeds opgeslagen deal, klaar om als bewerkbare `InvoerState` geladen te worden (backlog: as-is achteraf aanpasbaar maken via /woning/nieuw?deal=<id>). */
 export interface InitieelDeal {
   id: string;
   naam: string;
@@ -25,7 +25,7 @@ export interface InitieelDeal {
   pandInvoer: PandInvoer;
 }
 
-/** Een AS-IS-kopie die als handmatig TO-BE-scenario bewerkt wordt (backlog: AS-IS kopiëren naar een handmatig scenario, feedback Emma Morrison, 2026-08-21 — via /pand/nieuw?scenario=<slot>). */
+/** Een AS-IS-kopie die als handmatig TO-BE-scenario bewerkt wordt (backlog: AS-IS kopiëren naar een handmatig scenario, feedback Emma Morrison, 2026-08-21 — via /woning/nieuw?scenario=<slot>). */
 export interface InitieelScenario {
   asIsPand: PandInvoer;
   slotIndex: number;
