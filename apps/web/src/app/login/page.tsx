@@ -3,9 +3,11 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../lib/supabase/client';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import styles from './styles.module.css';
 
 function LoginContent() {
+  useDocumentTitle('Inloggen · WWSO Scenario App');
   const searchParams = useSearchParams();
   const volgende = searchParams.get('volgende') ?? '/deals';
   const fout = searchParams.get('fout');

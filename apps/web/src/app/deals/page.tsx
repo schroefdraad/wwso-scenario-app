@@ -6,6 +6,7 @@ import { haalDealenOp } from '../../lib/deals/opslag';
 import type { Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { HomeLogo } from '../../components/HomeLogo';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import styles from './styles.module.css';
 
 /** Zonder map ('') hoort een deal bij "Geen map" — een aparte, altijd aanwezige filteroptie i.p.v.
@@ -13,6 +14,7 @@ import styles from './styles.module.css';
 const GEEN_MAP = '(geen map)';
 
 export default function DealsOverzicht() {
+  useDocumentTitle('Mijn deals · WWSO Scenario App');
   const [deals, setDeals] = useState<Deal[] | null>(null);
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');

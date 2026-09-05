@@ -11,6 +11,7 @@ import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/proj
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import styles from './styles.module.css';
 
 export function Topbar() {
@@ -19,6 +20,7 @@ export function Topbar() {
   const stap = useMemo(() => ontbrekendeStap(state), [state]);
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
   const n = parseInt(state.pand.aantalKamers, 10) || 0;
+  useDocumentTitle(`${state.pand.adres || 'Nieuw pand'} · WWSO Scenario App`);
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
 
   async function dealVroegOpslaan() {

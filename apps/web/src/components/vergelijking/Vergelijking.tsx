@@ -18,6 +18,7 @@ import {
 } from '../../lib/vergelijking/scenarioBewerkBrug';
 import type { ScenarioSelectie } from '../../lib/deals/types';
 import { HomeLogo } from '../HomeLogo';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { SamenvattingRij } from './SamenvattingRij';
 import { MaatregelTabel } from './MaatregelTabel';
 import { HandmatigMaatregelen } from './HandmatigMaatregelen';
@@ -112,6 +113,7 @@ export function Vergelijking({
   const [mappen, setMappen] = useState<string[]>([]);
   const [nieuweMapModus, setNieuweMapModus] = useState(false);
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
+  useDocumentTitle(`${dealNaam} · Vergelijking · WWSO Scenario App`);
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
 
   useEffect(() => {

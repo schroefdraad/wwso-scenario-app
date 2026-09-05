@@ -6,6 +6,7 @@ import { berekenEindtelling, pandWaarderingVan, voerControlesUit, type PandInvoe
 import type { Tarievenset } from '@wwso/data';
 import { HomeLogo } from '../HomeLogo';
 import { KamerRij } from './KamerRij';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
 import { formateerDatum } from '../../lib/datum';
 import styles from './styles.module.css';
@@ -44,6 +45,7 @@ export function Resultaatscherm({
   const waardering = useMemo(() => pandWaarderingVan(eindtelling), [eindtelling]);
   const controles = useMemo(() => voerControlesUit(pand), [pand]);
   const [pdfStatus, setPdfStatus] = useState<'idle' | 'bezig' | 'fout'>('idle');
+  useDocumentTitle(`${titel ?? pand.pand.adres} · Resultaat · WWSO Scenario App`);
 
   const kamers = Object.keys(eindtelling.perKamer)
     .map(Number)
