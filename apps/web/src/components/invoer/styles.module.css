@@ -189,9 +189,21 @@
 }
 
 .pandGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/** Eén bewuste rij velden (2026-09-05: de vorige auto-fit-grid liet rijen willekeurig breken op
+ * viewportbreedte — welke velden samen op één rij staan is nu een expliciete keuze i.p.v. toeval). */
+.veldRij {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.8rem 1rem;
+}
+
+.veldRij > * {
+  flex: 1 1 190px;
 }
 
 .subKop {

@@ -77,161 +77,166 @@ export function PandFormulier() {
       </div>
       <div className={styles.blokInhoud}>
         <div className={styles.pandGrid}>
-          <div className={styles.veld}>
-            <label htmlFor="p-adres">Adres</label>
-            <input id="p-adres" value={pand.adres} onChange={(e) => zet('adres', e.target.value)} />
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-stad">Stad</label>
-            <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
-          </div>
-          <div className={styles.veld}>
-            <span className={styles.labelRij}>
-              <label htmlFor="p-gemeente">Gemeente</label>
-              <InfoBadge>
-                {gemeenteKandidaten.length > 1 ? (
-                  <>&quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.</>
-                ) : (
-                  <>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</>
-                )}
-              </InfoBadge>
-            </span>
-            <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
-              <option value="">— kies —</option>
-              {gemeenteOpties.map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={`${styles.veld} ${styles.veldGate}`}>
-            <span className={styles.labelRij}>
-              <label htmlFor="p-kamers">Aantal kamers</label>
-              <InfoBadge>Bepaalt de kolommen in de toewijzing hieronder — de poort van dit scherm.</InfoBadge>
-            </span>
-            <input
-              id="p-kamers"
-              type="number"
-              min={1}
-              max={12}
-              value={pand.aantalKamers}
-              onChange={(e) => zet('aantalKamers', e.target.value)}
-            />
-          </div>
-          <div className={styles.veld}>
-            {gebruikTaxatie ? (
-              <>
-                <label htmlFor="p-taxatie">Taxatiewaarde (€)</label>
-                <input
-                  id="p-taxatie"
-                  type="number"
-                  min={0}
-                  value={pand.taxatiewaardeEuro}
-                  onChange={(e) => zet('taxatiewaardeEuro', e.target.value)}
-                />
-              </>
-            ) : (
-              <>
-                <label htmlFor="p-woz">WOZ-waarde (€)</label>
-                <input id="p-woz" type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
-              </>
-            )}
-            <span className={styles.wozTaxatieRij}>
-              <Toggle checked={gebruikTaxatie} onChange={wisselWaardeModus} label="Geen WOZ-waarde bekend, alleen taxatiewaarde" />
-              Geen WOZ-waarde bekend, alleen taxatiewaarde
-              <InfoBadge>Zonder WOZ-waarde rekent de motor met 85% van de taxatiewaarde (§2.11.1).</InfoBadge>
-            </span>
-          </div>
-          <div className={styles.veld}>
-            <span className={styles.labelRij}>
-              <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
-              <InfoBadge>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</InfoBadge>
-            </span>
-            <select
-              id="p-wozpeildatum"
-              value={pand.wozPeildatum.slice(0, 4)}
-              onChange={(e) => zet('wozPeildatum', e.target.value ? `${e.target.value}-01-01` : '')}
-            >
-              <option value="">— kies —</option>
-              {WOZ_PEILDATUM_JAREN.map((jaar) => (
-                <option key={jaar} value={jaar}>
-                  1 januari {jaar}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-wozopp">WOZ-oppervlak (m²)</label>
-            <input
-              id="p-wozopp"
-              type="number"
-              min={0}
-              value={pand.wozOppervlak}
-              onChange={(e) => zet('wozOppervlak', e.target.value)}
-            />
-          </div>
-          <div className={styles.veld}>
-            <span className={styles.labelRij}>
-              <label htmlFor="p-label">Energielabel</label>
-              {pand.energielabel === 'Bouwjaar' && <InfoBadge>De motor valt terug op de bouwjaargrenzen (R4).</InfoBadge>}
-            </span>
-            <select id="p-label" value={pand.energielabel} onChange={(e) => zet('energielabel', e.target.value as PandVeldenState['energielabel'])}>
-              {ENERGIELABELS.map((l) => (
-                <option key={l} value={l}>
-                  {labelTekst(l)}
-                </option>
-              ))}
-            </select>
-          </div>
-          {pand.energielabel !== 'Bouwjaar' && (
+          <div className={styles.veldRij}>
             <div className={styles.veld}>
-              <span className={styles.wozTaxatieRij}>
-                <Toggle
-                  checked={pand.energielabelOnbekendOfVervallen}
-                  onChange={(v) => zet('energielabelOnbekendOfVervallen', v)}
-                  label="Ingangsdatum onbekend of ouder dan 10 jaar"
-                />
-                Ingangsdatum onbekend of ouder dan 10 jaar
-                <InfoBadge>Onaangevinkt wordt het gekozen label gewoon gebruikt. Aangevinkt valt de motor terug op de bouwjaargrenzen (R4) — net als bij &quot;geen label bekend&quot;.</InfoBadge>
-              </span>
+              <label htmlFor="p-adres">Adres</label>
+              <input id="p-adres" value={pand.adres} onChange={(e) => zet('adres', e.target.value)} />
             </div>
-          )}
-          <div className={styles.veld}>
-            <label htmlFor="p-bouwjaar">Bouwjaar</label>
-            <input id="p-bouwjaar" type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
-          </div>
-
-          <div className={styles.veld}>
-            <label htmlFor="p-monument">Monument</label>
-            <select id="p-monument" value={pand.monument} onChange={(e) => zet('monument', e.target.value as PandVeldenState['monument'])}>
-              {MONUMENTSTATUSSEN.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-          {pand.monument === 'Rijks' && (
+            <div className={styles.veld}>
+              <label htmlFor="p-stad">Stad</label>
+              <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
+            </div>
             <div className={styles.veld}>
               <span className={styles.labelRij}>
-                <label htmlFor="p-huurdatum">Datum huurovereenkomst</label>
-                <InfoBadge>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (§2.14.3).</InfoBadge>
+                <label htmlFor="p-gemeente">Gemeente</label>
+                <InfoBadge>
+                  {gemeenteKandidaten.length > 1 ? (
+                    <>&quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.</>
+                  ) : (
+                    <>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</>
+                  )}
+                </InfoBadge>
+              </span>
+              <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
+                <option value="">— kies —</option>
+                {gemeenteOpties.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={`${styles.veld} ${styles.veldGate}`}>
+              <span className={styles.labelRij}>
+                <label htmlFor="p-kamers">Aantal kamers</label>
+                <InfoBadge>Bepaalt de kolommen in de toewijzing hieronder — de poort van dit scherm.</InfoBadge>
               </span>
               <input
-                id="p-huurdatum"
-                type="date"
-                value={pand.huurovereenkomstDatum}
-                onChange={(e) => zet('huurovereenkomstDatum', e.target.value)}
+                id="p-kamers"
+                type="number"
+                min={1}
+                max={12}
+                value={pand.aantalKamers}
+                onChange={(e) => zet('aantalKamers', e.target.value)}
               />
             </div>
-          )}
-          <div className={styles.veld}>
-            <span className={styles.labelRij}>
-              <label>Zorgwoning</label>
-              <InfoBadge>+35% op R1 t/m R11 (§2.12.1)</InfoBadge>
-            </span>
-            <Toggle checked={pand.zorgwoning} onChange={(v) => zet('zorgwoning', v)} label="Zorgwoning" />
+          </div>
+          <div className={styles.veldRij}>
+            <div className={styles.veld}>
+              {gebruikTaxatie ? (
+                <>
+                  <label htmlFor="p-taxatie">Taxatiewaarde (€)</label>
+                  <input
+                    id="p-taxatie"
+                    type="number"
+                    min={0}
+                    value={pand.taxatiewaardeEuro}
+                    onChange={(e) => zet('taxatiewaardeEuro', e.target.value)}
+                  />
+                </>
+              ) : (
+                <>
+                  <label htmlFor="p-woz">WOZ-waarde (€)</label>
+                  <input id="p-woz" type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
+                </>
+              )}
+              <span className={styles.wozTaxatieRij}>
+                <Toggle checked={gebruikTaxatie} onChange={wisselWaardeModus} label="Geen WOZ-waarde bekend, alleen taxatiewaarde" />
+                Geen WOZ-waarde bekend, alleen taxatiewaarde
+                <InfoBadge>Zonder WOZ-waarde rekent de motor met 85% van de taxatiewaarde (§2.11.1).</InfoBadge>
+              </span>
+            </div>
+            <div className={styles.veld}>
+              <span className={styles.labelRij}>
+                <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
+                <InfoBadge>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</InfoBadge>
+              </span>
+              <select
+                id="p-wozpeildatum"
+                value={pand.wozPeildatum.slice(0, 4)}
+                onChange={(e) => zet('wozPeildatum', e.target.value ? `${e.target.value}-01-01` : '')}
+              >
+                <option value="">— kies —</option>
+                {WOZ_PEILDATUM_JAREN.map((jaar) => (
+                  <option key={jaar} value={jaar}>
+                    1 januari {jaar}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.veld}>
+              <label htmlFor="p-wozopp">WOZ-oppervlak (m²)</label>
+              <input
+                id="p-wozopp"
+                type="number"
+                min={0}
+                value={pand.wozOppervlak}
+                onChange={(e) => zet('wozOppervlak', e.target.value)}
+              />
+            </div>
+          </div>
+          <div className={styles.veldRij}>
+            <div className={styles.veld}>
+              <span className={styles.labelRij}>
+                <label htmlFor="p-label">Energielabel</label>
+                {pand.energielabel === 'Bouwjaar' && <InfoBadge>De motor valt terug op de bouwjaargrenzen (R4).</InfoBadge>}
+              </span>
+              <select id="p-label" value={pand.energielabel} onChange={(e) => zet('energielabel', e.target.value as PandVeldenState['energielabel'])}>
+                {ENERGIELABELS.map((l) => (
+                  <option key={l} value={l}>
+                    {labelTekst(l)}
+                  </option>
+                ))}
+              </select>
+              {pand.energielabel !== 'Bouwjaar' && (
+                <span className={styles.wozTaxatieRij}>
+                  <Toggle
+                    checked={pand.energielabelOnbekendOfVervallen}
+                    onChange={(v) => zet('energielabelOnbekendOfVervallen', v)}
+                    label="Ingangsdatum onbekend of ouder dan 10 jaar"
+                  />
+                  Ingangsdatum onbekend of ouder dan 10 jaar
+                  <InfoBadge>Onaangevinkt wordt het gekozen label gewoon gebruikt. Aangevinkt valt de motor terug op de bouwjaargrenzen (R4) — net als bij &quot;geen label bekend&quot;.</InfoBadge>
+                </span>
+              )}
+            </div>
+            <div className={styles.veld}>
+              <label htmlFor="p-bouwjaar">Bouwjaar</label>
+              <input id="p-bouwjaar" type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
+            </div>
+          </div>
+          <div className={styles.veldRij}>
+            <div className={styles.veld}>
+              <label htmlFor="p-monument">Monument</label>
+              <select id="p-monument" value={pand.monument} onChange={(e) => zet('monument', e.target.value as PandVeldenState['monument'])}>
+                {MONUMENTSTATUSSEN.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {pand.monument === 'Rijks' && (
+              <div className={styles.veld}>
+                <span className={styles.labelRij}>
+                  <label htmlFor="p-huurdatum">Datum huurovereenkomst</label>
+                  <InfoBadge>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (§2.14.3).</InfoBadge>
+                </span>
+                <input
+                  id="p-huurdatum"
+                  type="date"
+                  value={pand.huurovereenkomstDatum}
+                  onChange={(e) => zet('huurovereenkomstDatum', e.target.value)}
+                />
+              </div>
+            )}
+            <div className={styles.veld}>
+              <span className={styles.labelRij}>
+                <label>Zorgwoning</label>
+                <InfoBadge>+35% op R1 t/m R11 (§2.12.1)</InfoBadge>
+              </span>
+              <Toggle checked={pand.zorgwoning} onChange={(v) => zet('zorgwoning', v)} label="Zorgwoning" />
+            </div>
           </div>
         </div>
 
@@ -240,35 +245,37 @@ export function PandFormulier() {
           <span className={styles.hint}>Eigen inschatting per doellabel, voor de energielabel-scenariovergelijking. Leeg = niet haalbaar of niet relevant voor deze woning.</span>
         </div>
         <div className={styles.pandGrid}>
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplus">Kosten label A+ (€)</label>
-            <input
-              id="p-label-kosten-aplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlus}
-              onChange={(e) => zet('energielabelKostenAPlus', e.target.value)}
-            />
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplusplus">Kosten label A++ (€)</label>
-            <input
-              id="p-label-kosten-aplusplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlusPlus}
-              onChange={(e) => zet('energielabelKostenAPlusPlus', e.target.value)}
-            />
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-label-kosten-aplusplusplus">Kosten label A+++ (€)</label>
-            <input
-              id="p-label-kosten-aplusplusplus"
-              type="number"
-              min={0}
-              value={pand.energielabelKostenAPlusPlusPlus}
-              onChange={(e) => zet('energielabelKostenAPlusPlusPlus', e.target.value)}
-            />
+          <div className={styles.veldRij}>
+            <div className={styles.veld}>
+              <label htmlFor="p-label-kosten-aplus">Kosten label A+ (€)</label>
+              <input
+                id="p-label-kosten-aplus"
+                type="number"
+                min={0}
+                value={pand.energielabelKostenAPlus}
+                onChange={(e) => zet('energielabelKostenAPlus', e.target.value)}
+              />
+            </div>
+            <div className={styles.veld}>
+              <label htmlFor="p-label-kosten-aplusplus">Kosten label A++ (€)</label>
+              <input
+                id="p-label-kosten-aplusplus"
+                type="number"
+                min={0}
+                value={pand.energielabelKostenAPlusPlus}
+                onChange={(e) => zet('energielabelKostenAPlusPlus', e.target.value)}
+              />
+            </div>
+            <div className={styles.veld}>
+              <label htmlFor="p-label-kosten-aplusplusplus">Kosten label A+++ (€)</label>
+              <input
+                id="p-label-kosten-aplusplusplus"
+                type="number"
+                min={0}
+                value={pand.energielabelKostenAPlusPlusPlus}
+                onChange={(e) => zet('energielabelKostenAPlusPlusPlus', e.target.value)}
+              />
+            </div>
           </div>
         </div>
       </div>
