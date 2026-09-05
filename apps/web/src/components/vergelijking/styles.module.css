@@ -215,6 +215,7 @@
   background: var(--paper-raised);
   padding: 0.6rem 0.8rem;
   font-size: 0.85rem;
+  text-align: center;
 }
 
 .samenvattingLabel {
@@ -223,6 +224,7 @@
   font-size: 0.76rem;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .samenvattingKop {
@@ -311,6 +313,19 @@
   flex-direction: column;
   gap: 0.35rem;
   align-items: flex-start;
+}
+
+/** "Kamers bewerken" is een ander soort actie dan "Bekijk volledig resultaat"/"Leegmaken" (gaat
+ * naar de kamer-editor i.p.v. een lokale actie) — een dun streepje erboven maakt dat visueel
+ * duidelijk i.p.v. dat hij in hetzelfde rijtje wegvalt. */
+.kamersBewerkenRij {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--line);
+  width: 100%;
 }
 
 /* Maatregeltabel */

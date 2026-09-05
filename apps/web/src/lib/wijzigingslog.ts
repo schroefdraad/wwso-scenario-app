@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.1';
+export const APP_VERSIE = '0.7.2';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.2',
+    datum: '2026-09-05',
+    wijzigingen: [
+      'Samenvattingstabel scenariovergelijking: tekst gecentreerd, de "Vergunningplichtig"-rij verwijderd (staat al per maatregel bij de melding/vergunning-badge)',
+      '"Bewerk handmatig" heet nu "Kamers bewerken", met een toelichting bij hover en een streepje om het te onderscheiden van "Bekijk volledig resultaat"/"Leegmaken"',
+    ],
+  },
   {
     versie: '0.7.1',
     datum: '2026-09-05',

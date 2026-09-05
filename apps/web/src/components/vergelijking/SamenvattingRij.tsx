@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { Energielabel, Pakket, PandWaardering } from '@wwso/engine';
 import type { EnergielabelScenarioDoel } from '../../lib/vergelijking/scenario-bouw';
 import { formateerEuro, formateerEuroBand, formateerJarenBand, formateerPctBand } from '../../lib/vergelijking/formatteren';
+import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 
 export interface ScenarioKolom {
@@ -132,14 +133,6 @@ export function SamenvattingRij({
         </>
       )}
 
-      <div className={styles.samenvattingLabel}>Vergunningplichtig</div>
-      <div className={styles.samenvattingCel}>—</div>
-      {kolommen.map((kolom, i) => (
-        <div key={i} className={styles.samenvattingCel}>
-          {kolom.pakket && kolom.pakket.vergunningplichtig.length > 0 ? `${kolom.pakket.vergunningplichtig.length} maatregel(en)` : kolom.pakket ? 'geen' : '—'}
-        </div>
-      ))}
-
       <div className={styles.samenvattingLabel} />
       <div className={styles.samenvattingCel}>
         <div className={styles.linkStapel}>
@@ -147,9 +140,12 @@ export function SamenvattingRij({
             Bekijk volledig resultaat →
           </button>
           {asIsDealId && (
-            <Link href={`/woning/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
-              Bewerk handmatig →
-            </Link>
+            <span className={styles.kamersBewerkenRij}>
+              <Link href={`/woning/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
+                Kamers bewerken →
+              </Link>
+              <InfoBadge>Hiermee pas je de kamers van deze woning aan (toevoegen/verwijderen/type wijzigen).</InfoBadge>
+            </span>
           )}
         </div>
       </div>
@@ -161,9 +157,15 @@ export function SamenvattingRij({
                 Bekijk volledig resultaat →
               </button>
             )}
-            <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
-              Bewerk handmatig →
-            </button>
+            <span className={styles.kamersBewerkenRij}>
+              <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
+                Kamers bewerken →
+              </button>
+              <InfoBadge>
+                Hiermee pas je de kamers van dit scenario aan (toevoegen/verwijderen/type wijzigen) — voor losse maatregelen gebruik je het tabblad
+                hieronder.
+              </InfoBadge>
+            </span>
             {kolom.pakket && (
               <button type="button" className={styles.btnLink} onClick={() => onLeegmaken(i)}>
                 Leegmaken
