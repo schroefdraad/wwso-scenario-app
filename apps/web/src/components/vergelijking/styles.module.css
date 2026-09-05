@@ -395,7 +395,9 @@
 }
 
 .vergunningBadge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-size: 0.68rem;
   padding: 0.05rem 0.4rem;
   border-radius: 999px;

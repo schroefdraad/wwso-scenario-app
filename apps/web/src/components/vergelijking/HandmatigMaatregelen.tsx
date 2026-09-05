@@ -110,7 +110,12 @@ export function HandmatigMaatregelen({
                         <td className={styles.maatregelOmschrijving}>
                           <span className={styles.maatregelId}>{k.maatregel.id}</span>
                           {k.kandidaat.omschrijving}
-                          {VERGUNNING_LABEL[k.vergunningKlasse] && <span className={styles.vergunningBadge}>{VERGUNNING_LABEL[k.vergunningKlasse]}</span>}
+                          {VERGUNNING_LABEL[k.vergunningKlasse] && (
+                            <span className={styles.vergunningBadge}>
+                              {VERGUNNING_LABEL[k.vergunningKlasse]}
+                              <InfoBadge>{k.maatregel.vergunningOfMelding}</InfoBadge>
+                            </span>
+                          )}
                         </td>
                         <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
                         <td className={styles.tvtCel}>

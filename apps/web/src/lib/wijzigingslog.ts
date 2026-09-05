@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.0';
+export const APP_VERSIE = '0.7.1';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.1',
+    datum: '2026-09-05',
+    wijzigingen: [
+      'Het "melding"/"vergunning"-label bij een maatregel toont nu bij hover de exacte toelichting uit de catalogus, i.p.v. alleen een kort label zonder uitleg',
+    ],
+  },
   {
     versie: '0.7.0',
     datum: '2026-09-05',
