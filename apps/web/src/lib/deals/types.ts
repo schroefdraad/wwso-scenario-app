@@ -16,11 +16,16 @@ const ScenarioSelectieKandidaten = z.object({
  * PandInvoer; `sleutels` verwijst naar de kandidatenlijst tegen DAT pand, niet de as-is-lijst.
  * `maatregelPrijzenEuro` (Tussenfase-taak D, 2026-09-04): per-maatregel prijsoverschrijving,
  * sleutel = kandidaat-sleutel. `.default({})` — deals van vóór deze taak kennen het veld nog
- * niet, en "geen overschrijvingen" is exact wat dat toen betekende. */
+ * niet, en "geen overschrijvingen" is exact wat dat toen betekende.
+ *
+ * `kamerBewerkt` (2026-09-05, uniforme scenario-vorm): `.default(true)`, niet `false` — vóór deze
+ * datum was 'handmatig' het ENIGE pad met een `pand`-veld, en betekende dus per definitie altijd
+ * een echte kamerbewerking; een ontbrekend veld op oudere data moet dus als "wél bewerkt" gelden. */
 const ScenarioSelectieHandmatig = z.object({
   soort: z.literal('handmatig'),
   naam: z.string().min(1),
   pand: PandInvoer,
+  kamerBewerkt: z.boolean().default(true),
   sleutels: z.array(z.string().min(1)),
   handmatigeInvesteringEuro: z.number(),
   maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),

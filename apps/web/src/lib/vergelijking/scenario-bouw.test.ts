@@ -35,7 +35,7 @@ describe('nieuweSelectieNaToggle', () => {
   });
 });
 
-describe('alternatiefGroepSleutel — Tussenfase-taak B (2026-09-05, visuele keuzegroep in MaatregelTabel/HandmatigMaatregelen)', () => {
+describe('alternatiefGroepSleutel — Tussenfase-taak B (2026-09-05, visuele keuzegroep in HandmatigMaatregelen)', () => {
   const k01Kamer3 = nepKandidaat('K-01#kamer:3', 'K-01', { soort: 'kamer', nr: 3 });
   const k09Kamer3 = nepKandidaat('K-09#kamer:3', 'K-09', { soort: 'kamer', nr: 3 });
   const k09Kamer5 = nepKandidaat('K-09#kamer:5', 'K-09', { soort: 'kamer', nr: 5 });

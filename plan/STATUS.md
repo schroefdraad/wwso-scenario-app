@@ -198,3 +198,44 @@ gepusht en gedeployed naar productie, met tussentijdse tests/typecheck/lint elke
   teruggezet + `.next`-cache gewist na een Turbopack-panic op de oude `/pand/nieuw`-route):
   WOZ/Taxatie-toggle wisselt het veld correct, info-badges tonen/verbergen correct op hover én
   klik, beide verwijderde velden komen nergens meer voor.
+- **Veldindeling woninggegevens strakgetrokken:** de auto-fit-grid (velden braken willekeurig van
+  rij op schermbreedte) vervangen door expliciete rijgroepen, op aanwijzing van de gebruiker:
+  adres/stad/gemeente/kamers — WOZ-waarde/peildatum/oppervlak — energielabel(+ingangsdatum-
+  vinkje)/bouwjaar — monument(+huurdatum)/zorgwoning. Nieuwe `.veldRij`-CSS-klasse (flex-wrap
+  i.p.v. grid) voor toekomstige rijen.
+- **v0.7.0 — Scenariovergelijking: tabblad per scenario + optimalisaties en handmatig bewerken
+  praten nu met elkaar.** Op verzoek van de gebruiker: de gedeelde "Optimalisaties"-checkboxtabel
+  (voor gewone scenario's) en de aparte "Handmatig bewerken"-modus (voor kamer-herindelingen)
+  waren twee losse systemen die elkaar bij aanraking WISTEN (een vinkje in de gedeelde tabel zette
+  een handmatig-bewerkt scenario stil terug naar kandidaten-modus) en nooit samenwerkten. Elk
+  scenario is nu altijd het "handmatig"-pad (`ScenarioSlot` in `useScenarioPakket.ts` heeft geen
+  aparte `'kandidaten'`-tak meer): een onaangeraakt scenario heeft gewoon `pand` = as-is. Elk
+  scenario heeft nu een eigen tabblad (nieuwe `.tabBalk`/`.tab`-CSS in `Vergelijking.tsx`) met zijn
+  eigen `HandmatigMaatregelen`-tabel — geen scroll meer voorbij scenario 1 om scenario 2/3 in te
+  vullen, en een aangevinkte maatregel + een kamerbewerking op hetzelfde scenario tellen nu gewoon
+  bij elkaar op (in plaats van dat de één de ander wist).
+
+  **Backward compat**: de persisted `ScenarioSelectieKandidaten`-vorm (het vóór-2026-09-05
+  gedeelde checkboxpad) blijft leesbaar in `deals/types.ts` — bij het laden migreert
+  `slotsUitScenarios` zo'n oud scenario naar het uniforme pad (`pand` = as-is, sleutels behouden).
+  `bouwScenarioUitSleutels` en `MaatregelTabel.tsx` zijn volledig verwijderd (dood na de migratie).
+
+  **Bug gevonden én gefixt tijdens het testen (referentiegelijkheid is fragiel):** een eerste
+  versie herkende "nog niets ingevuld" aan `slot.pand === asIs` (dezelfde object-referentie). Dat
+  brak zodra de as-is opnieuw geparsed werd — bijv. na "Woning opslaan" (`router.replace` ↦
+  `page.tsx` haalt de deal opnieuw op, een inhoudelijk identiek maar ANDER object) — waarna alle
+  drie scenario's ineens een (leeg) pakket toonden i.p.v. "—". Vervangen door een expliciete
+  `kamerBewerkt: boolean`-vlag op het scenario-slot (ook toegevoegd aan de persisted schema en de
+  sessionStorage-snapshotschema, met `.default(true)` voor oude 'handmatig'-data — vóór deze datum
+  was 'handmatig' het enige pad met een `pand`-veld, dus betekende altijd een echte
+  kamerbewerking). Les: reken bij "is dit aangeraakt" nooit op object-identiteit die een
+  JSON-rondreis (sessionStorage, Supabase, of gewoon een her-render) moet overleven — een
+  expliciete boolean is immuun voor zulke toevalligheden.
+
+  263/263 tests groen (2 bestaande tests in `deals/types.test.ts` bijgewerkt voor het nieuwe
+  `kamerBewerkt`-veld), tsc/eslint schoon. Uitgebreid getest in de browser (Playwright via
+  claude-in-chrome, lokale dev-server tijdelijk met `AUTH_VEREIST=false`): kitchenette-catalogus
+  (K-01/K-09 met Stevens offerteprijzen) blijft gewoon beschikbaar per tabblad; maatregel
+  aanvinken → "Bewerk handmatig" → kamer toevoegen → terug: beide effecten tellen correct samen op
+  in de samenvattingsrij, de twee ONaangeraakte scenario's blijven correct leeg; "Woning opslaan" →
+  volledige paginareload vanuit Supabase: zelfde correcte resultaat.

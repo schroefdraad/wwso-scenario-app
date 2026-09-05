@@ -98,7 +98,6 @@ function VergelijkingContent() {
       peildatum={tarievenset.peildatum}
       kostencatalogus={kostencatalogus}
       verwervingswaardeEuro={undefined}
-      kandidaten={resultaat.kandidaten}
       asIsWaardering={resultaat.asIs}
       geladenDeal={geladen.deal}
     />

@@ -1,24 +1,33 @@
 import { useMemo } from 'react';
 import { bouwHandmatigScenario, nieuwBudget, type Energielabel, type KandidaatWaardering, type MaatregelContext, type PandInvoer, type Pakket } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
-import { bouwEnergielabelScenarioMetKosten, bouwHandmatigScenarioMetMaatregelenUitSleutels, bouwScenarioUitSleutels, berekenKandidatenVoorHandmatigPand } from './scenario-bouw';
+import { bouwEnergielabelScenarioMetKosten, bouwHandmatigScenarioMetMaatregelenUitSleutels, berekenKandidatenVoorHandmatigPand } from './scenario-bouw';
 
 /**
- * Een scenario-slot komt uit precies één van drie bronnen: een set kandidaat-sleutels uit de
- * suggestie-engine (taak 14, het bestaande pad), een volledig zelf bewerkt TO-BE-pand (backlog
- * 2026-08-21: AS-IS kopiëren naar een handmatig scenario, `/woning/nieuw?scenario=<slot>`), of een
- * doellabel-wisselknop (Tussenfase-taak C, 2026-09-04). Een handmatig-slot kan zelf óók
- * kandidaat-sleutels dragen (backlog 2026-08-22: "handmatig een kamer realiseren en dan verder
- * maatregelen toevoegen") — dat zijn dan sleutels uit de kandidatenlijst tegen HET BEWERKTE PAND
- * (`useHandmatigeKandidaten`), niet uit de gedeelde as-is-lijst, plus een handmatig ingevuld
- * investeringsbedrag voor de herindeling zelf.
+ * Een scenario-slot komt uit één van twee bronnen: een volledig bewerkbaar TO-BE-pand (het
+ * uniforme pad sinds 2026-09-05 — voorheen bestond hiernaast nog een gedeelde "kandidaten"-modus
+ * met een eigen checkboxtabel, die niet samenwerkte met een handmatige kamerbewerking en dus twee
+ * eilandjes vormde; zie `outputs`/`plan/STATUS.md`), of een doellabel-wisselknop (Tussenfase-taak
+ * C, 2026-09-04). `sleutels` verwijst altijd naar de kandidatenlijst tegen DIT pand
+ * (`useHandmatigeKandidaten`), nooit een gedeelde as-is-lijst, plus een handmatig ingevuld
+ * investeringsbedrag voor een eventuele herindeling zelf.
+ *
+ * `kamerBewerkt` (i.p.v. `pand`-referentiegelijkheid met de as-is, 2026-09-05): een eerdere versie
+ * herkende "nog niets ingevuld" aan `slot.pand === asIs` (dezelfde object-referentie) — dat bleek
+ * niet robuust: elke keer dat de as-is opnieuw geparsed wordt (na "Woning opslaan" →
+ * `router.replace`, of gewoon een her-render die een nieuwe props-referentie meegeeft), levert
+ * een inhoudelijk identiek maar ANDER object op, waardoor alle onaangeraakte scenario's ineens als
+ * "bewerkt" golden. Een expliciete vlag is immuun voor zulke referentie-toevalligheden.
  */
 export type ScenarioSlot =
-  | { naam: string; soort: 'kandidaten'; sleutels: ReadonlySet<string> }
   | {
       naam: string;
       soort: 'handmatig';
       pand: PandInvoer;
+      /** `true` zodra dit scenario écht door "Bewerk handmatig →" is gegaan — bepaalt of dit
+       * scenario "iets voorstelt" (zie `useScenarioPakket`/`opslaanbareScenarios`), losstaand van
+       * `pand`'s object-identiteit. */
+      kamerBewerkt: boolean;
       sleutels: ReadonlySet<string>;
       handmatigeInvesteringEuro: number;
       /** Per-maatregel prijsoverschrijving (Tussenfase-taak D), voorgevuld met de catalogusprijs
@@ -65,7 +74,6 @@ export function useHandmatigeKandidaten(
 export function useScenarioPakket(
   pand: PandInvoer,
   slot: ScenarioSlot,
-  alleKandidaten: readonly KandidaatWaardering[],
   handmatigeKandidaten: HandmatigeKandidatenResultaat | null,
   tarievenset: Tarievenset,
   peildatum: string,
@@ -76,30 +84,30 @@ export function useScenarioPakket(
     if (slot.soort === 'energielabel') {
       return bouwEnergielabelScenarioMetKosten(slot.naam, pand, slot.doelLabel, tarievenset, peildatum, verwervingswaardeEuro);
     }
-    if (slot.soort === 'handmatig') {
-      // Zonder gekozen maatregelen én zonder ingevulde handmatige investering is er nog
-      // helemaal geen kostinformatie — dan blijft Investering/Terugverdientijd expliciet
-      // "onbekend" (bouwHandmatigScenario), i.p.v. te delen door €0 en een ∞-rendement te tonen.
-      // Precies het gegokte-nulinvestering-scenario dat deze functies altijd al vermeden.
-      const heeftKosteninformatie = slot.sleutels.size > 0 || slot.handmatigeInvesteringEuro > 0;
-      if (!handmatigeKandidaten || !heeftKosteninformatie) {
-        return bouwHandmatigScenario(slot.naam, pand, slot.pand, tarievenset, peildatum, nieuwBudget(2000));
-      }
-      return bouwHandmatigScenarioMetMaatregelenUitSleutels(
-        slot.naam,
-        pand,
-        slot.pand,
-        slot.sleutels,
-        slot.handmatigeInvesteringEuro,
-        handmatigeKandidaten,
-        tarievenset,
-        peildatum,
-        kostencatalogus,
-        verwervingswaardeEuro,
-        slot.maatregelPrijzenEuro,
-      );
+    // Onaangeraakt (geen kamers bewerkt, geen maatregelen, geen investering) draagt geen
+    // informatie (zelfde gedrag als de vroegere lege "kandidaten"-modus): `null` i.p.v. een
+    // nietszeggend pakket met 0 overal.
+    const heeftKosteninformatie = slot.sleutels.size > 0 || slot.handmatigeInvesteringEuro > 0;
+    if (!slot.kamerBewerkt && !heeftKosteninformatie) return null;
+    // Zonder gekozen maatregelen én zonder ingevulde handmatige investering is er nog helemaal
+    // geen kostinformatie — dan blijft Investering/Terugverdientijd expliciet "onbekend"
+    // (bouwHandmatigScenario), i.p.v. te delen door €0 en een ∞-rendement te tonen. Precies het
+    // gegokte-nulinvestering-scenario dat deze functies altijd al vermeden.
+    if (!handmatigeKandidaten || !heeftKosteninformatie) {
+      return bouwHandmatigScenario(slot.naam, pand, slot.pand, tarievenset, peildatum, nieuwBudget(2000));
     }
-    if (slot.sleutels.size === 0) return null;
-    return bouwScenarioUitSleutels(slot.naam, pand, slot.sleutels, alleKandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
-  }, [pand, slot, alleKandidaten, handmatigeKandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro]);
+    return bouwHandmatigScenarioMetMaatregelenUitSleutels(
+      slot.naam,
+      pand,
+      slot.pand,
+      slot.sleutels,
+      slot.handmatigeInvesteringEuro,
+      handmatigeKandidaten,
+      tarievenset,
+      peildatum,
+      kostencatalogus,
+      verwervingswaardeEuro,
+      slot.maatregelPrijzenEuro,
+    );
+  }, [pand, slot, handmatigeKandidaten, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro]);
 }

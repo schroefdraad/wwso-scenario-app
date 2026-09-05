@@ -14,15 +14,16 @@ const VERGUNNING_LABEL: Record<string, string> = {
 };
 
 /**
- * Standaardmaatregelen die specifiek van toepassing zijn op ÉÉN handmatig bewerkt TO-BE-pand
- * (backlog 2026-08-22: "handmatig een extra kamer realiseren en dan verder maatregelen
- * toevoegen, met kosten/terugverdientijd zichtbaar"). Losstaand van `MaatregelTabel` — die toont
- * de gedeelde as-is-kandidatenlijst voor de kandidaten-slots, waar een net toegevoegde kamer nog
- * niet in voorkomt; deze kandidatenlijst is opnieuw berekend tegen het bewerkte pand zelf.
+ * Optimalisaties voor ÉÉN scenario-tabblad (sinds 2026-09-05 het uniforme pad voor elk scenario,
+ * niet meer alleen voor een handmatig bewerkte kamer — zie `useScenarioPakket.ts`'s doc-comment
+ * voor de aanleiding). De kandidatenlijst is altijd berekend tegen HET PAND VAN DIT SCENARIO
+ * (`slot.pand`, gelijk aan de as-is zolang er geen kamers bewerkt zijn), dus een net toegevoegde
+ * kamer levert hier meteen z'n eigen kandidaten op (bijv. een kitchenette in die kamer) — iets
+ * wat een gedeelde, alleen-tegen-de-as-is-berekende lijst nooit had kunnen tonen.
  *
- * De handmatige investering (het kosten-veld voor de herindeling zelf, waar geen catalogusprijs
- * voor bestaat) staat hier los van de maatregelkosten — samen tellen ze op tot de Investering die
- * in `SamenvattingRij` verschijnt zodra dit slot geen "onbekend" meer is.
+ * De handmatige investering (het kosten-veld voor een eventuele herindeling zelf, waar geen
+ * catalogusprijs voor bestaat) staat hier los van de maatregelkosten — samen tellen ze op tot de
+ * Investering die in `SamenvattingRij` verschijnt zodra dit scenario geen "onbekend" meer is.
  *
  * De "Prijs (€)"-kolom (Tussenfase-taak D, 2026-09-04) is een overschrijfbaar prijsveld per
  * maatregel, voorgevuld met de catalogusprijs — bij het vergelijken van twee scenario's met deels
@@ -53,9 +54,9 @@ export function HandmatigMaatregelen({
   const groepen = groepeerPerRubriek(kandidaten);
 
   return (
-    <section className={styles.blok}>
+    <section>
       <div className={styles.blokKop}>
-        <h2>{slotNaam} — optimalisaties op de handmatig bewerkte situatie</h2>
+        <h2>Optimalisaties</h2>
         <label className={styles.handmatigInvesteringVeld}>
           Investering herindeling (€)
           <InfoBadge>

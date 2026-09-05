@@ -155,8 +155,47 @@
   width: 6rem;
 }
 
-.handmatigBlok + .handmatigBlok {
-  margin-top: 1rem;
+/** Eén tabblad per scenario (2026-09-05) i.p.v. een gedeelde checkboxtabel + losse blokken
+ * eronder — voorkomt dat je bij het bewerken van scenario 2 eerst langs scenario 1's tabel moet
+ * scrollen. */
+.scenarioTabsBlok {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tabBalk {
+  display: flex;
+  gap: 0.2rem;
+  padding: 0.6rem 0.8rem 0;
+  background: var(--paper-sunken);
+  border-bottom: 1px solid var(--line);
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--paper-sunken);
+  color: var(--ink-dim);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  top: 1px;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tabActief {
+  background: var(--paper-raised);
+  color: var(--ink);
+  border-color: var(--line);
+  border-bottom: 1px solid var(--paper-raised);
 }
 
 /* Samenvatting */

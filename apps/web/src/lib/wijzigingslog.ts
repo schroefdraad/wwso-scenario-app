@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.6.2';
+export const APP_VERSIE = '0.7.0';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.0',
+    datum: '2026-09-05',
+    wijzigingen: [
+      'Scenariovergelijking: de gedeelde "Optimalisaties"-tabel is vervangen door een tabblad per scenario — geen scroll meer voorbij scenario 1 om scenario 2 of 3 in te vullen',
+      'Handmatig bewerkte kamers en aangevinkte maatregelen werken nu op hetzelfde scenario samen, in plaats van dat een vinkje een handmatige kamerbewerking ongemerkt verving',
+    ],
+  },
   {
     versie: '0.6.2',
     datum: '2026-09-05',

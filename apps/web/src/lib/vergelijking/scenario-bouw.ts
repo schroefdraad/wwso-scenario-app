@@ -1,9 +1,6 @@
 import {
-  analyseerMarge,
-  berekenEindtelling,
   bouwEnergielabelScenario,
   bouwHandmatigScenarioMetMaatregelen,
-  bouwVrijScenario,
   doelSleutel,
   genereerEnWaardeerKandidaten,
   nieuwBudget,
@@ -60,8 +57,8 @@ export function bouwEnergielabelScenarioMetKosten(
 }
 
 /**
- * Toggle-logica voor de handmatige maatregeltabellen (`MaatregelTabel`/`HandmatigMaatregelen`).
- * Checkboxes zijn bewust onafhankelijk (de gebruiker kiest expliciet, zie `MaatregelTabel.tsx`),
+ * Toggle-logica voor de maatregeltabel per scenario-tabblad (`HandmatigMaatregelen`). Checkboxes
+ * zijn bewust onafhankelijk (de gebruiker kiest expliciet, zie dat bestand),
  * BEHALVE binnen dezelfde `alternatiefGroep` + doel: twee varianten van dezelfde fysieke
  * plek (bijv. K-01/K-09 kitchenette in dezelfde kamer) leveren allebei een `keuken-toevoegen`-
  * mutatie op hetzelfde ruimteNr, wat `pasMutatieToe` een harde `mutatieFout` laat gooien —
@@ -92,7 +89,7 @@ export function nieuweSelectieNaToggle(kandidaten: readonly KandidaatWaardering[
 }
 
 /**
- * Groepeersleutel voor de visuele keuzegroep in `MaatregelTabel.tsx` (Tussenfase-taak B) — twee
+ * Groepeersleutel voor de visuele keuzegroep in `HandmatigMaatregelen.tsx` (Tussenfase-taak B) — twee
  * kandidaten met dezelfde sleutel zijn economische alternatieven voor dezelfde fysieke plek
  * (bijv. K-01/K-09 kitchenette in kamer 3). `undefined` betekent: geen alternatieven, gewoon een
  * losse checkbox. Bewust gescheiden van `nieuweSelectieNaToggle` (die blijft de bron van waarheid
@@ -104,51 +101,17 @@ export function alternatiefGroepSleutel(kandidaat: KandidaatWaardering): string 
 }
 
 /**
- * Bouwt een scenario uit een set gekozen kandidaat-sleutels (taak 14 — "maatregelen aan- en
- * uitzetten"). Roept `bouwVrijScenario` uit `@wwso/engine` aan, die ELKE gekozen maatregel
- * toepast — ook als hij in déze combinatie geen marginale winst oplevert, want de gebruiker koos
- * 'm expliciet.
- *
- * Bewust géén memoïsatie hier: `bouwVrijScenario` rekent op deze paneelgrootte (enkele
- * kandidaten) in enkele milliseconden — ruim binnen de 100ms-eis uit de taakomschrijving — dus
- * de aanroeper (React-component) kan dit gewoon in een `useMemo` op de geselecteerde sleutels
- * hangen zonder aparte caching-laag.
+ * Cachet op `bewerktPand`-referentie (niet -inhoud): sinds elk scenario-slot altijd een `pand`
+ * draagt (2026-09-05, ook onaangeraakte slots — daar is dat letterlijk dezelfde referentie als de
+ * as-is), zouden drie onaangeraakte scenario's anders alledrie deze dure berekening apart
+ * uitvoeren op exact hetzelfde pand. Een `WeakMap` dedupliceert dat zonder een aparte cache-
+ * ongeldig-makingsstap: verdwijnt de pand-referentie (nieuw scenario bewerkt, oude losgelaten),
+ * dan ruimt de garbage collector de cache-regel vanzelf op.
  */
-export function bouwScenarioUitSleutels(
-  naam: string,
-  asIs: PandInvoer,
-  geselecteerdeSleutels: ReadonlySet<string>,
-  alleKandidaten: readonly KandidaatWaardering[],
-  tarievenset: Tarievenset,
-  peildatum: string,
-  kostencatalogus: Kostencatalogus,
-  verwervingswaardeEuro: number | undefined,
-): Pakket {
-  const eindtelling = berekenEindtelling(asIs, tarievenset, peildatum);
-  const marge = analyseerMarge(asIs, tarievenset, eindtelling);
-  const ctxBasis: MaatregelContext = { pand: asIs, tarievenset, peildatum, eindtelling, marge };
-
-  const regels: PoolItem[] = alleKandidaten
-    .filter((k) => geselecteerdeSleutels.has(k.kandidaat.sleutel))
-    .map((waardering) => {
-      const definitie = standaardRegistry.get(waardering.maatregel.id);
-      if (!definitie) throw new Error(`Geen registry-definitie gevonden voor maatregel ${waardering.maatregel.id}.`);
-      return { waardering, definitie };
-    });
-
-  return bouwVrijScenario(
-    naam,
-    asIs,
-    regels,
-    ctxBasis,
-    tarievenset,
-    peildatum,
-    kostencatalogus,
-    kostencatalogus.aannames.prijspeilJaar,
-    verwervingswaardeEuro,
-    nieuwBudget(2000),
-  );
-}
+const handmatigeKandidatenCache = new WeakMap<
+  PandInvoer,
+  { tarievenset: Tarievenset; peildatum: string; kostencatalogus: Kostencatalogus; resultaat: { ctxBasis: MaatregelContext; kandidaten: KandidaatWaardering[] } }
+>();
 
 /**
  * Genereert en waardeert de maatregelen die specifiek van toepassing zijn op een handmatig
@@ -166,7 +129,13 @@ export function berekenKandidatenVoorHandmatigPand(
   peildatum: string,
   kostencatalogus: Kostencatalogus,
 ): { ctxBasis: MaatregelContext; kandidaten: KandidaatWaardering[] } {
-  return genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+  const cache = handmatigeKandidatenCache.get(bewerktPand);
+  if (cache && cache.tarievenset === tarievenset && cache.peildatum === peildatum && cache.kostencatalogus === kostencatalogus) {
+    return cache.resultaat;
+  }
+  const resultaat = genereerEnWaardeerKandidaten(bewerktPand, tarievenset, peildatum, kostencatalogus, nieuwBudget(2000));
+  handmatigeKandidatenCache.set(bewerktPand, { tarievenset, peildatum, kostencatalogus, resultaat });
+  return resultaat;
 }
 
 /**

@@ -65,9 +65,19 @@ describe('parseDealRij', () => {
     });
     const deal = parseDealRij(rij);
     // `maatregelPrijzenEuro` ontbreekt in de rauwe rij (legacy, vóór 2026-09-04) — valt terug op
-    // {}, wat toen "geen overschrijvingen" betekende, geen gok.
+    // {}, wat toen "geen overschrijvingen" betekende, geen gok. `kamerBewerkt` ontbreekt ook
+    // (legacy, vóór 2026-09-05) — valt terug op `true`, want vóór die datum was 'handmatig' het
+    // enige pad met een `pand`-veld en betekende dus altijd een echte kamerbewerking.
     expect(deal.scenarios).toEqual([
-      { soort: 'handmatig', naam: 'Kamer 7', pand: testpand6Kamers, sleutels: ['K-01#kamer:7'], handmatigeInvesteringEuro: 15000, maatregelPrijzenEuro: {} },
+      {
+        soort: 'handmatig',
+        naam: 'Kamer 7',
+        pand: testpand6Kamers,
+        kamerBewerkt: true,
+        sleutels: ['K-01#kamer:7'],
+        handmatigeInvesteringEuro: 15000,
+        maatregelPrijzenEuro: {},
+      },
     ]);
   });
 
@@ -90,6 +100,7 @@ describe('parseDealRij', () => {
         soort: 'handmatig',
         naam: 'Kamer 7',
         pand: testpand6Kamers,
+        kamerBewerkt: true,
         sleutels: ['K-01#kamer:7'],
         handmatigeInvesteringEuro: 15000,
         maatregelPrijzenEuro: { 'K-01#kamer:7': 4200 },
