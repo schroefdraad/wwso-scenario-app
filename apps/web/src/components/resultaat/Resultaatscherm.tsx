@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { berekenEindtelling, pandWaarderingVan, voerControlesUit, type PandInvoer } from '@wwso/engine';
 import type { Tarievenset } from '@wwso/data';
+import { HomeLogo } from '../HomeLogo';
 import { KamerRij } from './KamerRij';
 import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
 import { formateerDatum } from '../../lib/datum';
@@ -70,6 +71,7 @@ export function Resultaatscherm({
   return (
     <div className={styles.wrap}>
       <header className={styles.kop}>
+        <HomeLogo />
         <h1>{titel ?? pand.pand.adres}</h1>
         <span className={styles.kopSub}>
           {pand.pand.stad} · {pand.pand.aantalKamers} kamers · peildatum {formateerDatum(peildatum)}

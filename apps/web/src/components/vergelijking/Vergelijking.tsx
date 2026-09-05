@@ -17,6 +17,7 @@ import {
   type VergelijkingSnapshot,
 } from '../../lib/vergelijking/scenarioBewerkBrug';
 import type { ScenarioSelectie } from '../../lib/deals/types';
+import { HomeLogo } from '../HomeLogo';
 import { SamenvattingRij } from './SamenvattingRij';
 import { MaatregelTabel } from './MaatregelTabel';
 import { HandmatigMaatregelen } from './HandmatigMaatregelen';
@@ -352,6 +353,13 @@ export function Vergelijking({
       const deal = dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
       setDealId(deal.id);
       setOpslaanStatus('gelukt');
+      // Een net getypte nieuwe mapnaam is nu echt opgeslagen — terug naar de dropdown en die
+      // meteen als keuzeoptie tonen, anders lijkt het net alsof er niets is gebeurd (feedback
+      // Emma, 2026-09-04: "kun je niet meer terug naar dropdown").
+      if (nieuweMapModus) {
+        setNieuweMapModus(false);
+        setMappen((huidig) => (dealMap && !huidig.includes(dealMap) ? [...huidig, dealMap].sort((a, b) => a.localeCompare(b)) : huidig));
+      }
       router.replace(`/pand/vergelijking?deal=${deal.id}`);
     } catch (err) {
       setOpslaanFoutmelding(err instanceof Error ? err.message : String(err));
@@ -362,6 +370,7 @@ export function Vergelijking({
   return (
     <div className={styles.wrap}>
       <header className={styles.kop}>
+        <HomeLogo />
         <h1>Scenariovergelijking</h1>
         <span className={styles.kopSub}>
           {pand.pand.adres} · {pand.pand.stad}
@@ -369,17 +378,31 @@ export function Vergelijking({
         <div className={styles.dealOpslaan}>
           <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de deal" className={styles.dealNaamVeld} />
           {nieuweMapModus ? (
-            <input
-              autoFocus
-              value={dealMap}
-              onChange={(e) => setDealMap(e.target.value)}
-              onBlur={() => {
-                if (!dealMap) setNieuweMapModus(false);
-              }}
-              aria-label="Naam van de nieuwe map"
-              placeholder="Naam nieuwe map"
-              className={styles.dealMapVeld}
-            />
+            <span className={styles.dealMapNieuw}>
+              <input
+                autoFocus
+                value={dealMap}
+                onChange={(e) => setDealMap(e.target.value)}
+                onBlur={() => {
+                  if (!dealMap) setNieuweMapModus(false);
+                }}
+                aria-label="Naam van de nieuwe map"
+                placeholder="Naam nieuwe map"
+                className={styles.dealMapVeld}
+              />
+              <button
+                type="button"
+                className={styles.dealMapAnnuleren}
+                title="Annuleren, terug naar bestaande mappen"
+                aria-label="Annuleren, terug naar bestaande mappen"
+                onClick={() => {
+                  setDealMap('');
+                  setNieuweMapModus(false);
+                }}
+              >
+                ×
+              </button>
+            </span>
           ) : (
             <select
               value={dealMap}

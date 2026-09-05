@@ -80,17 +80,6 @@
   flex: 1;
 }
 
-.puntenstrip {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
-  font-size: 0.82rem;
-  background: var(--paper-sunken);
-  padding: 0.35rem 0.7rem;
-  border-radius: 6px;
-}
-
 .btn {
   border: 1px solid var(--line-strong);
   background: var(--paper-raised);

@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { alleTarievensets, nieuwsteKostencatalogus } from '@wwso/data';
 import { huidigeVersiestempel } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
+import { HomeLogo } from '../HomeLogo';
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
-import { PuntenStrip } from './PuntenStrip';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
@@ -53,7 +53,8 @@ export function Topbar() {
 
   return (
     <header className={styles.topbar}>
-      <span className={styles.titel}>🏠 {state.pand.adres || 'Nieuw pand'}</span>
+      <HomeLogo />
+      <span className={styles.titel}>{state.pand.adres || 'Nieuw pand'}</span>
       <span className={styles.sub}>
         {n} kamer{n === 1 ? '' : 's'}
       </span>
@@ -89,7 +90,6 @@ export function Topbar() {
           {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
         </>
       )}
-      <PuntenStrip />
       <button
         type="button"
         className={`${styles.btn} ${styles.btnPrimair}`}

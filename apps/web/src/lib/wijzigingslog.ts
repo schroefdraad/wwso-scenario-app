@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.5.6';
+export const APP_VERSIE = '0.5.7';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.5.7',
+    datum: '2026-09-05',
+    wijzigingen: [
+      'Nieuw: een vaste "home"-link (het pictogram) linksboven op elke pagina, terug naar Mijn deals',
+      'Bugfix: een net getypte nieuwe map kon je niet meer terugzetten naar de dropdown, en leek na opslaan niet aan te komen — de dropdown toont hem nu meteen als optie en springt vanzelf terug',
+      'Het puntenbalkje per kamer (K1/K2/...) bovenin de pand-invoerpagina is verwijderd',
+    ],
+  },
   {
     versie: '0.5.6',
     datum: '2026-09-04',

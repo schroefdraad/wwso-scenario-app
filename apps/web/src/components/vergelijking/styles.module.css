@@ -55,6 +55,29 @@
   width: 9rem;
 }
 
+.dealMapNieuw {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dealMapAnnuleren {
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--paper-raised);
+  color: var(--ink-dim);
+  width: 1.6rem;
+  height: 1.6rem;
+  line-height: 1;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.dealMapAnnuleren:hover {
+  color: var(--ink);
+  background: var(--paper-sunken);
+}
+
 .dealNotitieVeld {
   flex: 1 1 100%;
   order: 10;

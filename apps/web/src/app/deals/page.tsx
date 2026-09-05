@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { haalDealenOp } from '../../lib/deals/opslag';
 import type { Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
+import { HomeLogo } from '../../components/HomeLogo';
 import styles from './styles.module.css';
 
 /** Zonder map ('') hoort een deal bij "Geen map" — een aparte, altijd aanwezige filteroptie i.p.v.
@@ -37,6 +38,7 @@ export default function DealsOverzicht() {
   return (
     <div className={styles.wrap}>
       <header className={styles.kop}>
+        <HomeLogo />
         <h1>Mijn deals</h1>
         {mappen.length > 0 && (
           <select value={mapFilter} onChange={(e) => setMapFilter(e.target.value)} className={styles.mapFilter} aria-label="Filter op map">
