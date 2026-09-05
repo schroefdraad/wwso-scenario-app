@@ -239,3 +239,43 @@ gepusht en gedeployed naar productie, met tussentijdse tests/typecheck/lint elke
   aanvinken → "Bewerk handmatig" → kamer toevoegen → terug: beide effecten tellen correct samen op
   in de samenvattingsrij, de twee ONaangeraakte scenario's blijven correct leeg; "Woning opslaan" →
   volledige paginareload vanuit Supabase: zelfde correcte resultaat.
+
+- **v0.7.1 — vergunning/melding-badge krijgt een hover-toelichting.** Vervolgvraag van de
+  gebruiker na de tabblad-refactor hierboven: waarom staat er nog "melding" achter sommige
+  maatregelen? Antwoord: dat is inhoudelijk juist (uit `maatregel.vergunningKlasse`/
+  `vergunningOfMelding` in de catalogus) maar zonder toelichting onduidelijk. In plaats van de
+  badge te verwijderen: de bestaande `InfoBadge` (hover/klik-popover, eerder al gebruikt op
+  `PandFormulier`) toegevoegd áchter het label in `HandmatigMaatregelen.tsx`, met de exacte
+  catalogustekst (`maatregel.vergunningOfMelding`) als inhoud.
+
+- **v0.7.2 — Samenvattingsrij (scenariovergelijking) opgeschoond.** Op verzoek van de gebruiker:
+  (1) "Bewerk handmatig →" hernoemd naar "Kamers bewerken →" met een `InfoBadge`-toelichting
+  (as-is en scenario-varianten in `SamenvattingRij.tsx` hebben elk een net iets andere tekst,
+  omdat de as-is-link naar een echte opgeslagen deal navigeert en de scenario-link naar de
+  sessionStorage-brug) en een dun streepje (`.kamersBewerkenRij`, dashed top border) dat 'm
+  visueel scheidt van "Bekijk volledig resultaat"/"Leegmaken" — dit is een andere soort actie
+  (kamer-editor openen i.p.v. een lokale toggle). De link zelf blijft nodig: de tabbladen
+  hierboven kiezen alleen maatregelen, ze bewerken geen kamers. (2) Cel- en labeltekst van de
+  Jaarhuur/Extra jaarhuur/Investering/Terugverdientijd/Marginaal-rendement-rij gecentreerd
+  (`text-align:center`/`justify-content:center`). (3) De losse "Vergunningplichtig"-rij uit de
+  samenvatting verwijderd — overbodig sinds elke maatregel zijn eigen vergunning/melding-badge
+  al toont (v0.7.1 hierboven), een pandbrede rij voegde daar niets aan toe.
+
+- **Doorrekengids-artifact bijgewerkt (2026-09-05) om aan te sluiten op de huidige app** —
+  gebruiker gaf aan Steven hierna nog een testronde te laten doen vóór de laatste
+  voorbereidingen voor de beta. Inhoudelijk bijgewerkt: Woning/Woningen-terminologie
+  (`/deals`→`/woningen`, "Nieuw pand"→"Nieuwe woning", "Deal opslaan"→"Woning opslaan"), de
+  WOZ/Taxatie-toggle, het energielabel-ingangsdatumvinkje, de vier-rijen-indeling van het
+  invoerscherm, de kitchenette 122/240cm-keuzegroep, en — de grootste inhoudelijke wijziging —
+  stap 10 t/m 16 volledig herschreven: geen "Basis/Comfort/Maximaal"-standaardpakketknoppen en
+  gedeelde kandidatentabel meer, maar een tabblad per scenario met een eigen "Optimalisaties"-
+  tabel, "Kamers bewerken" (i.p.v. "Bewerk handmatig") voor de kameredit-casus, en de nieuwe
+  hover-toelichting op vergunning/melding-badges. Alle schermafbeeldingen in die stappen zijn
+  verse screenshots uit de lokale dev-server (zelfde `AUTH_VEREIST=false`-workflow als eerder in
+  deze sessie, erna teruggezet), niet hergebruikte oude afbeeldingen — het voorbeeldpand
+  "Crooswijkseweg 95-A03" (6 kamers + een 7e handmatig toegevoegde kamer met kitchenette)
+  doorloopt zichtbaar dezelfde stappen als de tekst beschrijft.
+
+  **Vervolg**: dit is nu het wachtpunt op het Tussenfase-exitcriterium hierboven — Steven test
+  zelfstandig met de bijgewerkte gids, en pas ná een ronde zonder nieuwe blokkerende melding gaat
+  het project door naar Fase 4 (multi-tenant/org_id-scheiding, zie taak 18 e.v.).
