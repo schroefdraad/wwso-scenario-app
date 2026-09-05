@@ -20,9 +20,7 @@ export const testpand6Kamers: PandInvoer = {
     energielabel: 'D',
     energielabelIngangsdatum: '2023-06-15',
     bouwjaar: 1932,
-    soortWoning: 'Meergezins',
     aantalKamers: 6,
-    aantalWoningenInComplex: 4,
     monument: 'Geen',
   },
   ruimtes: [

@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.5.9';
+export const APP_VERSIE = '0.6.0';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.6.0',
+    datum: '2026-09-05',
+    wijzigingen: [
+      'Rustiger invoerscherm: een expliciete keuze tussen WOZ-waarde en taxatiewaarde (i.p.v. een veld dat vanzelf verscheen/verdween), en veldtoelichting verstopt achter een klein infopictogram i.p.v. altijd zichtbaar onder elk veld',
+      '"Soort woning" (Eengezins/Meergezins) en "Aantal woningen in complex" verwijderd — bleken na een volledige controle nergens in de puntenberekening te worden gebruikt',
+    ],
+  },
   {
     versie: '0.5.9',
     datum: '2026-09-05',

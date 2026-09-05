@@ -221,6 +221,21 @@
   color: var(--ink-dim);
 }
 
+.labelRij {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.wozTaxatieRij {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+}
+
 .veldGate label {
   font-weight: 700;
   color: var(--ink);

@@ -1,0 +1,60 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-sunken);
+  color: var(--ink-dim);
+  font-size: 0.65rem;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.badge:hover,
+.badge:focus-visible {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.popover {
+  position: absolute;
+  z-index: 20;
+  top: 130%;
+  left: 0;
+  min-width: 12rem;
+  max-width: 18rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px var(--shadow);
+  padding: 0.5rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink-dim);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+
+.wrap:hover .popover,
+.wrap:focus-within .popover,
+.popoverOpen {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}

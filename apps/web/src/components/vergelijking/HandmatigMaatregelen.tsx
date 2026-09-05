@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import type { KandidaatWaardering } from '@wwso/engine';
 import { groepeerPerRubriek } from '../../lib/vergelijking/rubriek-groepering';
 import { formateerEuro } from '../../lib/vergelijking/formatteren';
+import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 
 const VERGUNNING_LABEL: Record<string, string> = {
@@ -54,12 +55,12 @@ export function HandmatigMaatregelen({
     <section className={styles.blok}>
       <div className={styles.blokKop}>
         <h2>{slotNaam} — optimalisaties op de handmatig bewerkte situatie</h2>
-        <p className={styles.hint}>
-          De kamer/herindeling zelf heeft geen catalogusprijs — vul die investering hieronder zelf in. Maatregelen die je hier aanvinkt (bijv. airco of een
-          kitchenette in de nieuwe kamer) tellen met hun échte kosten mee bovenop dat bedrag.
-        </p>
         <label className={styles.handmatigInvesteringVeld}>
           Investering herindeling (€)
+          <InfoBadge>
+            De kamer/herindeling zelf heeft geen catalogusprijs — vul die investering hieronder zelf in. Maatregelen die je hier aanvinkt (bijv. airco of een
+            kitchenette in de nieuwe kamer) tellen met hun échte kosten mee bovenop dat bedrag.
+          </InfoBadge>
           <input
             type="number"
             min={0}

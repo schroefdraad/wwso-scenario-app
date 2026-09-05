@@ -21,10 +21,6 @@ export const Energielabel = z.enum([
 ]);
 export type Energielabel = z.infer<typeof Energielabel>;
 
-/** Waarden 1:1 uit Invoer!B13. */
-export const SoortWoning = z.enum(['Meergezins', 'Eengezins']);
-export type SoortWoning = z.infer<typeof SoortWoning>;
-
 /** Waarden 1:1 uit Invoer!B16. Bepaalt de monumentopslag in taak 7 (Rijks 35%, Gemeente/Provinciaal 15%, Beschermd dorpsgezicht 5%). */
 export const MonumentStatus = z.enum([
   'Geen',
@@ -75,9 +71,7 @@ export const Pand = z.object({
   energielabelKostenSchattingAPlusPlusEuro: z.number().nonnegative().optional(),
   energielabelKostenSchattingAPlusPlusPlusEuro: z.number().nonnegative().optional(),
   bouwjaar: z.number().int().min(1000).max(3000),
-  soortWoning: SoortWoning,
   aantalKamers: z.number().int().min(1).max(12),
-  aantalWoningenInComplex: z.number().int().min(1),
   monument: MonumentStatus,
   /**
    * Datum van de huurovereenkomst. Alleen verplicht bij `monument: 'Rijks'` (gevalideerd in

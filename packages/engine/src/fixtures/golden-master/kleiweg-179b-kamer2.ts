@@ -43,9 +43,7 @@ export const kleiweg179bKamer2: PandInvoer = {
     energielabel: 'A++',
     energielabelIngangsdatum: '2023-01-01',
     bouwjaar: 1970,
-    soortWoning: 'Meergezins',
     aantalKamers: 6,
-    aantalWoningenInComplex: 1,
     monument: 'Geen',
   },
   ruimtes: [

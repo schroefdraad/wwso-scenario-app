@@ -12,9 +12,7 @@ const BASIS_PAND: Pand = {
   energielabel: 'D',
   energielabelIngangsdatum: '2023-01-01',
   bouwjaar: 1990,
-  soortWoning: 'Meergezins',
   aantalKamers: 1,
-  aantalWoningenInComplex: 1,
   monument: 'Geen',
 };
 

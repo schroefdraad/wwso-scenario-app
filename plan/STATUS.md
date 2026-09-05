@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-04
+Laatst bijgewerkt: 2026-09-05
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -48,7 +48,7 @@ Fase 3 is technisch af, maar Fase 4 (taak 18 e.v.) start pas na een meetbaar exi
 - Hoe de kostencatalogus onderhouden wordt zodra er meerdere gebruikers zijn — nu nog een xlsx die handmatig wordt ingelezen; alle 49 maatregelen staan nog op `schatting`. Kitchenette-prijzen komen uit een sheet van Steven, nog te ontvangen.
 - **✅ R3 Verwarming-bug gefixt (2026-09-04, versie 0.5.4).** Cross-validatie tegen de officiële Huurcommissie Huurprijscheck (zie `outputs/RAPPORT_huurcommissie-crossvalidatie_2026-09-04.md`) legde bloot dat een kamer met een private kitchenette de verwarmingspunten van die open keuken niet apart meetelde — het beleidsboek §2.3.2 schrijft juist voor dat zo'n open keuken als een tweede verwarmd vertrek gewaardeerd wordt ("Een privé verwarmde woonkamer met open keuken wordt dus gewaardeerd met 4 punten"). Gefixt in `r3-verwarming.ts` + een nieuw `Keuken.verwarmd`-veld (eigen toggle, niet automatisch overgenomen van de kamer) + 4 regressietests + een UX-fix voor het Toiletype-dropdownveld (filtert nu op ruimtetype). R5 keuken-verdeling was een testfout (geen bug). **R11 WOZ-waarde is definitief afgesloten, geen bug bij ons**: zowel de WOZ-invoer als een apart adres-breed "aantal onzelfstandige woonruimtes"-veld (stond al goed op 6) zijn gecontroleerd en correct — de Huurcommissie-tool geeft desondanks structureel 0 punten voor WOZ bij onzelfstandige woonruimte, zonder beleidsmatige grond (§2.11 vereist expliciet 10-14 punten, adres-breed gelijk voor elke kamer op hetzelfde adres). Discrepantie tussen de Huurcommissie-tool en het beleidsboek zelf, niet bij ons — onze 12 punten zijn correct, ook voor de andere 5 kamers. Verder onderzoek vereist contact met de Huurcommissie zelf, buiten scope.
 - **Toekomstige uitbreiding: zelfstandige woonruimte (WWS, niet WWSO)** — idee van de gebruiker (2026-09-04): de app zou op termijn ook zelfstandige woningen moeten kunnen doorrekenen, niet alleen onzelfstandige verhuur. Vereist het andere, aparte beleidsboek (WWS-puntensysteem voor zelfstandige woonruimte verschilt inhoudelijk van het huidige WWSO-beleidsboek waar deze hele engine op gebouwd is) — nog niet in huis. Bewust laag geprioriteerd: waarschijnlijk pas na de eerste bèta-release oppakken, niet nu. Puur een aantekening voor later, geen actie vereist.
-- **Roadmap-items op verzoek van de gebruiker toegevoegd (2026-09-05): code audit, security, persoonsgegevens/AVG, PSP (betaaldienstverlener).** Fasering (aanbeveling, nog niet expliciet bevestigd door de gebruiker):
+- **Roadmap-items op verzoek van de gebruiker toegevoegd (2026-09-05): code audit, security, persoonsgegevens/AVG, PSP (betaaldienstverlener).** Fasering bevestigd door de gebruiker (2026-09-05):
   - **Vóór de bèta**: alleen het essentiële beveiligingswerk dat al gepland stond — auth-toggle dicht + RLS aan (zie bovenaan deze lijst) — plus een lichte privacy-check van de vrije-tekstvelden (notitie/map kunnen per ongeluk persoonsgegevens bevatten, en er zijn nu drie bekende, ingelogde testers i.p.v. een anonieme MVP).
   - **Ná de bèta, vóór een publieke/Model-A-lancering**: een volledige code-audit, bredere security-hardening (rate limiting, dependency-scans), en een volledig AVG-traject.
   - **PSP**: pas relevant zodra er daadwerkelijk betaald gaat worden — hangt af van de nog niet gemaakte keuze tussen de twee vermarkt-modellen (zie hierboven). Kan niet eerder starten dan die keuze.
@@ -155,3 +155,45 @@ gepusht en gedeployed naar productie, met tussentijdse tests/typecheck/lint elke
   gebouwd (bewust, "we hebben geen agent nodig, gewoon de test zelf draaien"), de navigatie-audit
   is eerst lean uitgevoerd en pas op expliciet verzoek alsnog volledig uitgewerkt volgens de
   oorspronkelijke opzet.
+
+## Sessie 2026-09-05 — samenvatting (Woning-hernoeming, invoerscherm-rust, dode velden verwijderd)
+
+- **v0.5.9 — Woning/Woningen-hernoeming (Emma's laatste openstaande feedbackpunt):** "Pand"/
+  "Deal(s)" overal in UI-teksten én URL's hernoemd naar "Woning"/"Woningen"
+  (`/deals`→`/woningen`, `/pand/...`→`/woning/...`), inclusief route-mappen verplaatst met
+  `git mv` (deals→woningen lukte, pand→woning moest handmatig via mkdir/cp/rm vanwege een
+  "Permission denied" — vermoedelijk de lokale dev-server die de map vastheeft op Windows).
+  Interne code-identifiers (variabelen, types, bestandsnamen onder `lib/`, CSS-classes, de
+  Supabase-tabel `'deals'`) bewust ongewijzigd gelaten, op expliciet verzoek van de gebruiker.
+  Backward-compatible redirects toegevoegd in `next.config.ts` zodat oude gedeelde links
+  blijven werken. 265/265 tests groen, tsc/eslint schoon.
+- **Roadmap-fasering bevestigd:** code-audit/security/AVG pas ná de bèta (vóór een publieke/
+  Model-A-lancering); vóór de bèta alleen het al geplande auth-toggle-dichtzetten + een lichte
+  privacy-check van de vrije-tekstvelden. PSP wacht op de nog niet gemaakte keuze tussen de twee
+  vermarkt-modellen. Zie "Openstaande beslissingen" hierboven.
+- **v0.6.0 — Invoerscherm rustiger + twee dode velden verweerd:** op verzoek van de gebruiker
+  ("dit zal de bèta-ervaring aanzienlijk verbeteren"): (1) een expliciete `Toggle` tussen
+  WOZ-waarde en taxatiewaarde in `PandFormulier.tsx`, i.p.v. een taxatieveld dat reactief
+  verscheen/verdween zodra je in WOZ-waarde typte — bij het wisselen wordt het verborgen veld nu
+  ook leeggemaakt, zodat de motor nooit op een onzichtbare stale waarde rekent; (2) een nieuwe
+  gedeelde `InfoBadge`-component (`components/InfoBadge.tsx`) die per-veld toelichting achter een
+  klein "i"-pictogram verstopt (hover toont 'm via CSS `:hover`/`:focus-within`, klik/tap toggelt
+  een losstaande React-state — bewust apart gehouden, anders klapt een klik tijdens het hoveren
+  de popover meteen weer dicht) — toegepast in `PandFormulier`, `RuimteLade`, `OverigePosten` en
+  `HandmatigMaatregelen`; sectie-brede beschrijvingen (bijv. "Energielabel-kosteninschattingen")
+  bewust zichtbaar gelaten, alleen écht per-veld toelichting verplaatst.
+- **Twee dode Pand-velden verwijderd na een systematische audit:** op de vraag "welke velden
+  worden niet gebruikt voor het doorrekenen" is elk Pand-veld nagelopen tegen alle rubrieken
+  (R1-R13) en de eindtelling. `soortWoning` (Eengezins/Meergezins) en `aantalWoningenInComplex`
+  bleken volledig dood — ingevuld, opgeslagen, rondgepompt door de state, maar nooit gelezen door
+  een berekening of getoond in resultaat/PDF. Bevestigd met de gebruiker dat de "deling door
+  aantal wooneenheden" bij R8/R9/R10 (gedeelde ruimten/parkeerplekken) in werkelijkheid uit de
+  K1-K12-toewijzingsmatrix komt, niet uit een pand-breed complexveld. Beide velden volledig
+  verwijderd (Zod-schema, UI, fixtures) — geen `.strict()` op de Pand-schema, dus bestaande
+  opgeslagen deals met deze velden in hun JSON laden gewoon door (Zod negeert onbekende
+  properties stil, het omgekeerde risico van het `Keuken.verwarmd`-incident hierboven). 265/265
+  tests groen, tsc/eslint schoon. Handmatig geverifieerd in de browser (Playwright via
+  claude-in-chrome, lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer normaal
+  teruggezet + `.next`-cache gewist na een Turbopack-panic op de oude `/pand/nieuw`-route):
+  WOZ/Taxatie-toggle wisselt het veld correct, info-badges tonen/verbergen correct op hover én
+  klik, beide verwijderde velden komen nergens meer voor.

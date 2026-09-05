@@ -3,6 +3,7 @@
 import { useInvoer } from './InvoerContext';
 import { KamerChipStrip } from './KamerChipStrip';
 import { Toggle } from './Toggle';
+import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 import type { InvoerState } from '../../lib/invoer/types';
 
@@ -53,8 +54,8 @@ export function OverigePosten() {
           <div className={styles.postKop}>
             <Toggle checked={state.losseLaadpaalAan} label="Losse laadpaal" onChange={(v) => dispatch({ soort: 'LAADPAAL_GEWIJZIGD', aan: v })} />
             <strong>Losse laadpaal aanwezig (R12.3)</strong>
+            <InfoBadge>Een laadpaal bij een gemeenschappelijke parkeerplek hoort niet hier maar bij die parkeerplek (R10).</InfoBadge>
           </div>
-          <span className={styles.hint}>Een laadpaal bij een gemeenschappelijke parkeerplek hoort niet hier maar bij die parkeerplek (R10).</span>
           {state.losseLaadpaalAan && (
             <div className={styles.postDetail}>
               <span className={styles.hint}>Kamers met toegang</span>
@@ -71,7 +72,10 @@ export function OverigePosten() {
         </div>
 
         <div className={styles.postBlok}>
-          <strong>Aftrekpunten (§2.13)</strong>
+          <span className={styles.labelRij}>
+            <strong>Aftrekpunten (§2.13)</strong>
+            <InfoBadge>Elke situatie kost 4 punten per kamer; een kamer die in twee kolommen staat verliest 8 punten.</InfoBadge>
+          </span>
           <div style={{ overflowX: 'auto' }}>
             <table className={styles.aftrek}>
               <thead>
@@ -103,7 +107,6 @@ export function OverigePosten() {
               </tbody>
             </table>
           </div>
-          <span className={styles.hint}>Elke situatie kost 4 punten per kamer; een kamer die in twee kolommen staat verliest 8 punten.</span>
         </div>
       </div>
     </section>

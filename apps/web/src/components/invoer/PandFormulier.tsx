@@ -1,13 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { alleGemeentes, coropVoorGemeente, gemeentesVoorWoonplaats } from '@wwso/data';
 import { Energielabel, MonumentStatus } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
 import { Toggle } from './Toggle';
+import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 import type { PandVeldenState } from '../../lib/invoer/types';
 
-const SOORT_WONING: PandVeldenState['soortWoning'][] = ['Meergezins', 'Eengezins'];
 const ENERGIELABELS = Energielabel.options;
 const MONUMENTSTATUSSEN = MonumentStatus.options;
 const ALLE_GEMEENTES = alleGemeentes();
@@ -30,6 +31,17 @@ export function PandFormulier() {
 
   const zet = <K extends keyof PandVeldenState>(veld: K, waarde: PandVeldenState[K]) =>
     dispatch({ soort: 'PAND_VELD_GEWIJZIGD', veld, waarde });
+
+  /** Vervangt de vorige, reactief flikkerende weergave (Taxatiewaarde verscheen/verdween zodra je
+   * in WOZ-waarde typte) door een bewuste, sticky keuze — rustiger tijdens het invullen (feedback
+   * 2026-09-05). Bij het wisselen wordt het andere veld leeggemaakt, zodat de motor (§2.11.1:
+   * geen WOZ-waarde → 85% van de taxatiewaarde) nooit op een verborgen, stale waarde rekent. */
+  const [gebruikTaxatie, setGebruikTaxatie] = useState(() => !pand.wozWaarde && !!pand.taxatiewaardeEuro);
+  const wisselWaardeModus = (naarTaxatie: boolean) => {
+    setGebruikTaxatie(naarTaxatie);
+    if (naarTaxatie) zet('wozWaarde', '');
+    else zet('taxatiewaardeEuro', '');
+  };
 
   /** Zet gemeente + COROP-gebied in één keer, zodat ze nooit los van elkaar raken (COROP-
    * automatisering, 2026-09-04). */
@@ -74,7 +86,16 @@ export function PandFormulier() {
             <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
           </div>
           <div className={styles.veld}>
-            <label htmlFor="p-gemeente">Gemeente</label>
+            <span className={styles.labelRij}>
+              <label htmlFor="p-gemeente">Gemeente</label>
+              <InfoBadge>
+                {gemeenteKandidaten.length > 1 ? (
+                  <>&quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.</>
+                ) : (
+                  <>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</>
+                )}
+              </InfoBadge>
+            </span>
             <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
               <option value="">— kies —</option>
               {gemeenteOpties.map((g) => (
@@ -83,26 +104,12 @@ export function PandFormulier() {
                 </option>
               ))}
             </select>
-            {gemeenteKandidaten.length > 1 ? (
-              <span className={styles.hint}>
-                &quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
-              </span>
-            ) : (
-              <span className={styles.hint}>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</span>
-            )}
-          </div>
-          <div className={styles.veld}>
-            <label htmlFor="p-soort">Soort woning</label>
-            <select id="p-soort" value={pand.soortWoning} onChange={(e) => zet('soortWoning', e.target.value as PandVeldenState['soortWoning'])}>
-              {SOORT_WONING.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
           </div>
           <div className={`${styles.veld} ${styles.veldGate}`}>
-            <label htmlFor="p-kamers">Aantal kamers</label>
+            <span className={styles.labelRij}>
+              <label htmlFor="p-kamers">Aantal kamers</label>
+              <InfoBadge>Bepaalt de kolommen in de toewijzing hieronder — de poort van dit scherm.</InfoBadge>
+            </span>
             <input
               id="p-kamers"
               type="number"
@@ -111,38 +118,36 @@ export function PandFormulier() {
               value={pand.aantalKamers}
               onChange={(e) => zet('aantalKamers', e.target.value)}
             />
-            <span className={styles.hint}>Bepaalt de kolommen in de toewijzing hieronder — de poort van dit scherm.</span>
           </div>
           <div className={styles.veld}>
-            <label htmlFor="p-woningen">Aantal woningen in complex</label>
-            <input
-              id="p-woningen"
-              type="number"
-              min={1}
-              value={pand.aantalWoningenInComplex}
-              onChange={(e) => zet('aantalWoningenInComplex', e.target.value)}
-            />
+            {gebruikTaxatie ? (
+              <>
+                <label htmlFor="p-taxatie">Taxatiewaarde (€)</label>
+                <input
+                  id="p-taxatie"
+                  type="number"
+                  min={0}
+                  value={pand.taxatiewaardeEuro}
+                  onChange={(e) => zet('taxatiewaardeEuro', e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <label htmlFor="p-woz">WOZ-waarde (€)</label>
+                <input id="p-woz" type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
+              </>
+            )}
+            <span className={styles.wozTaxatieRij}>
+              <Toggle checked={gebruikTaxatie} onChange={wisselWaardeModus} label="Geen WOZ-waarde bekend, alleen taxatiewaarde" />
+              Geen WOZ-waarde bekend, alleen taxatiewaarde
+              <InfoBadge>Zonder WOZ-waarde rekent de motor met 85% van de taxatiewaarde (§2.11.1).</InfoBadge>
+            </span>
           </div>
-
           <div className={styles.veld}>
-            <label htmlFor="p-woz">WOZ-waarde (€)</label>
-            <input id="p-woz" type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
-          </div>
-          {!pand.wozWaarde && (
-            <div className={styles.veld}>
-              <label htmlFor="p-taxatie">Taxatiewaarde (€)</label>
-              <input
-                id="p-taxatie"
-                type="number"
-                min={0}
-                value={pand.taxatiewaardeEuro}
-                onChange={(e) => zet('taxatiewaardeEuro', e.target.value)}
-              />
-              <span className={styles.hint}>Geen WOZ-waarde bekend? De motor rekent dan met 85% van de taxatiewaarde (§2.11.1).</span>
-            </div>
-          )}
-          <div className={styles.veld}>
-            <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
+            <span className={styles.labelRij}>
+              <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
+              <InfoBadge>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</InfoBadge>
+            </span>
             <select
               id="p-wozpeildatum"
               value={pand.wozPeildatum.slice(0, 4)}
@@ -155,7 +160,6 @@ export function PandFormulier() {
                 </option>
               ))}
             </select>
-            <span className={styles.hint}>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</span>
           </div>
           <div className={styles.veld}>
             <label htmlFor="p-wozopp">WOZ-oppervlak (m²)</label>
@@ -168,7 +172,10 @@ export function PandFormulier() {
             />
           </div>
           <div className={styles.veld}>
-            <label htmlFor="p-label">Energielabel</label>
+            <span className={styles.labelRij}>
+              <label htmlFor="p-label">Energielabel</label>
+              {pand.energielabel === 'Bouwjaar' && <InfoBadge>De motor valt terug op de bouwjaargrenzen (R4).</InfoBadge>}
+            </span>
             <select id="p-label" value={pand.energielabel} onChange={(e) => zet('energielabel', e.target.value as PandVeldenState['energielabel'])}>
               {ENERGIELABELS.map((l) => (
                 <option key={l} value={l}>
@@ -176,22 +183,19 @@ export function PandFormulier() {
                 </option>
               ))}
             </select>
-            {pand.energielabel === 'Bouwjaar' && (
-              <span className={styles.hint}>De motor valt terug op de bouwjaargrenzen (R4).</span>
-            )}
           </div>
           {pand.energielabel !== 'Bouwjaar' && (
             <div className={styles.veld}>
-              <label htmlFor="p-labeldatum">Ingangsdatum label (optioneel)</label>
+              <span className={styles.labelRij}>
+                <label htmlFor="p-labeldatum">Ingangsdatum label (optioneel)</label>
+                <InfoBadge>Onbekend? Laat leeg — de motor valt dan terug op de bouwjaargrenzen (R4), net als bij een vervallen label.</InfoBadge>
+              </span>
               <input
                 id="p-labeldatum"
                 type="date"
                 value={pand.energielabelIngangsdatum}
                 onChange={(e) => zet('energielabelIngangsdatum', e.target.value)}
               />
-              <span className={styles.hint}>
-                Onbekend? Laat leeg — de motor valt dan terug op de bouwjaargrenzen (R4), net als bij een vervallen label.
-              </span>
             </div>
           )}
           <div className={styles.veld}>
@@ -211,20 +215,24 @@ export function PandFormulier() {
           </div>
           {pand.monument === 'Rijks' && (
             <div className={styles.veld}>
-              <label htmlFor="p-huurdatum">Datum huurovereenkomst</label>
+              <span className={styles.labelRij}>
+                <label htmlFor="p-huurdatum">Datum huurovereenkomst</label>
+                <InfoBadge>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (§2.14.3).</InfoBadge>
+              </span>
               <input
                 id="p-huurdatum"
                 type="date"
                 value={pand.huurovereenkomstDatum}
                 onChange={(e) => zet('huurovereenkomstDatum', e.target.value)}
               />
-              <span className={styles.hint}>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (§2.14.3).</span>
             </div>
           )}
           <div className={styles.veld}>
-            <label>Zorgwoning</label>
+            <span className={styles.labelRij}>
+              <label>Zorgwoning</label>
+              <InfoBadge>+35% op R1 t/m R11 (§2.12.1)</InfoBadge>
+            </span>
             <Toggle checked={pand.zorgwoning} onChange={(v) => zet('zorgwoning', v)} label="Zorgwoning" />
-            <span className={styles.hint}>+35% op R1 t/m R11 (§2.12.1)</span>
           </div>
         </div>
 

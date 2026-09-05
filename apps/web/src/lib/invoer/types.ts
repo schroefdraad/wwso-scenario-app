@@ -5,7 +5,6 @@ import type {
   MonumentStatus,
   RuimteType,
   SanitairVoorziening,
-  SoortWoning,
   ZolderKenmerken,
 } from '@wwso/engine';
 import type { ScenarioSelectie } from '../deals/types';
@@ -37,9 +36,7 @@ export interface RuimteRij {
 export interface PandVeldenState {
   adres: string;
   stad: string;
-  soortWoning: SoortWoning;
   aantalKamers: string;
-  aantalWoningenInComplex: string;
   wozWaarde: string;
   wozPeildatum: string;
   taxatiewaardeEuro: string;
@@ -106,9 +103,7 @@ export interface InvoerState {
 export const NIEUW_PAND_VELDEN: PandVeldenState = {
   adres: '',
   stad: '',
-  soortWoning: 'Meergezins',
   aantalKamers: '6',
-  aantalWoningenInComplex: '1',
   wozWaarde: '',
   wozPeildatum: '2025-01-01',
   taxatiewaardeEuro: '',

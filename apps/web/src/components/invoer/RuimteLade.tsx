@@ -6,6 +6,7 @@ import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
 import { useLade, type LadeSegment } from './LadeContext';
 import { Toggle } from './Toggle';
+import { InfoBadge } from '../InfoBadge';
 import { nieuweKeuken, nieuwSanitair } from './ladeDefaults';
 import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import {
@@ -205,10 +206,10 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
             label="Kitchenette apart verwarmd"
             onChange={(v) => zetKeuken({ verwarmd: v })}
           />
-          <span className={styles.hint}>
+          <InfoBadge>
             Telt bij &quot;ja&quot; voor de verwarmingspunten (R3) als een tweede verwarmd vertrek naast {rij.naam || 'deze ruimte'} zelf (§2.3.2) — niet
             automatisch overgenomen van de verwarming-toggle van de ruimte.
-          </span>
+          </InfoBadge>
         </div>
       )}
 
@@ -560,7 +561,7 @@ function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
           label="Laadpaal"
           onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, laadpaal: v } } })}
         />
-        <span className={styles.hint}>+2 pt, alleen gedeeld door adressen (§2.10.5)</span>
+        <InfoBadge>+2 pt, alleen gedeeld door adressen (§2.10.5)</InfoBadge>
       </div>
     </div>
   );

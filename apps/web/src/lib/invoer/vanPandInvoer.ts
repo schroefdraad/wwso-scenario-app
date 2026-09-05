@@ -66,9 +66,7 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
     pand: {
       adres: p.pand.adres,
       stad: p.pand.stad,
-      soortWoning: p.pand.soortWoning,
       aantalKamers: String(p.pand.aantalKamers),
-      aantalWoningenInComplex: String(p.pand.aantalWoningenInComplex),
       wozWaarde: p.pand.wozWaarde !== undefined ? String(p.pand.wozWaarde) : '',
       wozPeildatum: p.pand.wozPeildatum,
       taxatiewaardeEuro: p.pand.taxatiewaardeEuro !== undefined ? String(p.pand.taxatiewaardeEuro) : '',
