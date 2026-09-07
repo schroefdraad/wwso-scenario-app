@@ -122,25 +122,47 @@ rubrieken daadwerkelijk letterlijk overeenkomen. Eerste steekproef tijdens dit p
   en vrijesectorgrens (Bijlage 2) die bepaalt of huurprijsbescherming/-toetsing überhaupt geldt
   — dit bestaat niet in de WWSO-kant van de huidige app.
 
-- [ ] Taak 24: Rubriek-diff WWS- vs WWSO-beleidsboek, rubriek voor rubriek — vaststellen wat
-      letterlijk gedeeld kan worden als rekenregel (vermoedelijk R3 t/m R8, R11, R12) en wat
-      WWS-specifiek is (R1/R2 zonder kamertoewijzing, R9/R10 gemeenschappelijke ruimten/
-      parkeren zonder kameraandeel, de sectorindeling). Zelfde discipline als de oorspronkelijke
-      beleidsboek-vs-xlsx-vergelijking (taak 1-8): bij twijfel het beleidsboek zelf raadplegen,
-      niet aannemen dat "vrijwel hetzelfde" ook "identiek" betekent.
-- [ ] Taak 25: WWS-datamodel — één woning/huishouden, geen K1-K12-kamertoewijzing. Vermoedelijk
-      een apart schema (niet een variant-veld op `PandInvoer`, gezien het structurele verschil),
-      met hergebruik van gedeelde sub-schema's (Keuken, SanitairVoorziening, etc.) waar taak 24
-      dat rechtvaardigt.
-- [ ] Taak 26: WWS-tarieventabellen — sector-/liberalisatiegrenzen (Bijlage 2) en de
-      huurprijstabel (Bijlage 3) als nieuwe, versiedatabare dataset in `packages/data`, zelfde
-      peildatum-patroon als de bestaande WWSO-tarievenset. `bepaalMaxHuur()` hergebruiken als
-      taak 24 de extrapolatieformule bevestigt als identiek.
-- [ ] Taak 27: WWS-rubrieken-engine (R1 t/m R12) — nieuwe module in `packages/engine`, gedeelde
-      rekenregels uit taak 24 als losse, geïmporteerde functies (geen kopieer-plak van WWSO-code).
-- [ ] Taak 28: Sectorindeling + eindtelling — sociale/midden/vrije sector, liberalisatiegrens,
-      de eindsaldering en de >250-punten-extrapolatie (mogelijk letterlijk `bepaalMaxHuur()`
-      hergebruiken).
+- [x] **Taak 24 (afgerond 2026-09-07)**: Rubriek-diff WWS- vs WWSO-beleidsboek, rubriek voor
+      rubriek. Volledig verslag: `outputs/RAPPORT_taak24-rubriekdiff-wws-vs-wwso_2026-09-07.md`.
+      Kernbevinding: bijna alle rubriek-inhoud (toelatingseisen, puntentabellen,
+      meetinstructies) is woordelijk identiek — R1/R2, R3, R5, R6, R7, R8-privé, R9/R10 (patroon,
+      andere deler-eenheid), R12 zijn met hoge zekerheid herbruikbare, parametreerbare
+      rekenregels. Het enige systematische verschil is dat WWSO op precies één plek (§2.1.4/
+      §2.1.5) een generieke "deel de punten door het aantal bewoners met toegang en
+      gebruiksrecht"-regel toevoegt (gekoppeld aan de kamertoewijzing) — een gedeelde
+      `deelDoorN`-achtige helper kan dit voor beide stelsels afhandelen (N=kamertoewijzing bij
+      WWSO, N=1 of N=aantal adressen bij WWS). Concrete WWS-specifieke afwijkingen gevonden: R4
+      (energieprestatie) gebruikt een compleet andere mechaniek (vaste puntenrange per
+      Eengezins-/Meergezinswoning i.p.v. WWSO's per-m²-factor — de op 2026-09-05 als "dood"
+      verwijderde `soortWoning`/`aantalWoningenInComplex`-velden blijken precies te zijn wat WWS
+      hiervoor nodig heeft), R8 heeft een `-5 punten bij geen enkele buitenruimte`-regel die WWSO
+      niet kent, R11 (WOZ-waarde) heeft een derde waarderingsweg ("minimale WOZ-waarde") en
+      extra nieuwbouw-uitzonderingen die WWSO niet kent, R13 (aftrekpunten) bestaat niet in WWS
+      (alle vier gronden zijn WWSO's gedeeld-wonen-scenario), en de hele sectorindeling
+      (sociale/midden/vrije sector, liberalisatiegrens) is nieuw voor WWS. Bevestigd: de
+      bestaande `bepaalMaxHuur()`-extrapolatieformule is woordelijk identiek aan het WWS-
+      beleidsboek en dus 1-op-1 herbruikbaar met alleen andere tabeldata (Bijlage 3).
+- [ ] Taak 25: WWS-datamodel — één woning/huishouden, geen K1-K12-kamertoewijzing. Apart schema
+      (niet een variant-veld op `PandInvoer`, bevestigd door taak 24), met hergebruik van
+      gedeelde sub-schema's (Keuken, SanitairVoorziening, etc.). Nieuw t.o.v. het oorspronkelijke
+      idee: een `soortWoning`-veld (Eengezins/Meergezins) is nodig voor R4 — dit was het net
+      verwijderde "dode" WWSO-veld, hier dus wél relevant.
+- [ ] Taak 26: WWS-tarieventabellen — sector-/liberalisatiegrenzen (Bijlage 2), de huurprijstabel
+      (Bijlage 3, `bepaalMaxHuur()` hergebruiken — bevestigd identieke extrapolatieformule), een
+      R4-labelpuntentabel (Eengezins/Meergezins × energielabel) en een R11-"minimale WOZ-waarde"-
+      vloerwaarde, als nieuwe, versiedatabare datasets in `packages/data`, zelfde peildatum-
+      patroon als de bestaande WWSO-tarievenset.
+- [ ] Taak 27: WWS-rubrieken-engine (R1 t/m R12, geen R13) — nieuwe module in `packages/engine`.
+      R1/R2 (zonder deling), R3, R5, R6, R7, R8-privé, R9/R10 (patroon), R12 als gedeelde,
+      parametreerbare rekenregels (zie taak 24) — geen kopieer-plak van WWSO-code. R4 en R11
+      krijgen elk hun eigen WWS-specifieke implementatie (zie taak 24-bevindingen). Vóór de bouw
+      van R11 specifiek: een gerichte tweede leesronde op WWS §2.11 volledig + Bijlage 2/3 (de
+      "rubriek 11.1/11.2"-splitsing moet nog bevestigd worden, nu alleen afgeleid uit een
+      voetnoot).
+- [ ] Taak 28: Sectorindeling + eindtelling — sociale/midden/vrije sector, liberalisatiegrens
+      (volledig nieuw, geen WWSO-basis), de eindsaldering/afrondingslogica (§2.1.6/2.1.7,
+      woordelijk identiek aan WWSO, herbruikbaar) en de >250-punten-extrapolatie
+      (`bepaalMaxHuur()` hergebruiken, bevestigd in taak 24).
 - [ ] Taak 29: UI — typekeuze ("Onzelfstandige verhuur (WWSO)" / "Zelfstandige woning (WWS)") als
       startpunt op `/woningen` (nieuwe-woning-knop of een aparte lijst-filter) en eigen invoer-/
       resultaatscherm voor WWS zonder kamertoewijzingsstap. Scenariovergelijking/optimalisaties
