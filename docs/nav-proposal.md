@@ -95,12 +95,15 @@ heeft (scenario-acties, kamer-accordions).
 | 1.2 | "Mijn deals"-link op beide foutschermen | Dead end zonder bruikbare uitgang | Triviaal | ✅ Gedaan |
 | 1.1b | Scenariokolom-resultaten deep-linkbaar maken | Zelfde als 1.1, smaller pad | Middel (≈1 dag) | ⏸ Niet gedaan — kosten/batenafweging negatief op deze schaal |
 | 1.3 | "Bewerk handmatig →" element-consistentie | Toetsenbord-/screenreader-inconsistentie | Middel | ⏸ Niet gedaan — vergt herontwerp van state-overdracht |
-| 1.4 | Dynamische browsertab-titel per route | Geen tab-onderscheid bij multi-tab | Klein (`generateMetadata`/`document.title` per route) | 💡 Aanbevolen, niet uitgevoerd — zie hieronder |
+| 1.4 | Dynamische browsertab-titel per route | Geen tab-onderscheid bij multi-tab | Klein (`generateMetadata`/`document.title` per route) | ✅ Gedaan (2026-09-07, v0.7.3) |
 | 1.5 | Directe "Mijn deals" op resultaatscherm | 2 klikken i.p.v. 1 | Triviaal | ❌ Afgewezen op conventie, geen bewezen probleem |
 
-**Aanbevolen, niet uitgevoerd (1.4):** dit is de enige nog openstaande wijziging die ik zelf zou
-voorstellen om alsnog te doen — lage kosten, reëel (zij het klein) voordeel, en anders dan #1.3
-geen architectuurwijziging nodig. Wil je dat ik 'm oppak?
+**#1.4 uitgevoerd (2026-09-07, v0.7.3):** een `title`-template op de root-`layout.tsx`
+("Puntum WWS Scenario's" als default, "%s - Puntum" per route) plus een klein server-`layout.tsx`
+per routemap (nodig omdat de pagina's zelf client components zijn en dus geen `metadata` mogen
+exporteren) — geen `generateMetadata`/`document.title` nodig zoals hierboven verondersteld, de
+statische `export const metadata` per layout volstond. Zie `plan/plan.md`/`plan/STATUS.md` voor
+het volledige verslag.
 
 ## 4. Expliciet op conventie, niet op bewijs uit déze app
 

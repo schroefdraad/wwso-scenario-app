@@ -1,13 +1,13 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-05
+Laatst bijgewerkt: 2026-09-07
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
 (`web-skael.vercel.app`, project `skael/web`) met Supabase als backend.
 
 - Monorepo met pnpm workspaces: `apps/web` (Next.js 16, App Router, TS strict), `packages/engine` (pure rekenmotor), `packages/data` (tarieven + kostencatalogus)
-- Vitest, ESLint, Prettier op root- en packageniveau — 263/263 tests groen (38 testbestanden)
+- Vitest, ESLint, Prettier op root- en packageniveau — 266/266 tests groen (38 testbestanden)
 - Rekenmotor: alle rubrieken R1 t/m R13 geïmplementeerd en **golden-master gevalideerd** tegen 3 officiële Huurprijscheck-exports (Kleiweg 179-B) — exacte match op elke rubriek, eindtotaal en huurprijs. Zie `outputs/RAPPORT_taak8_2026-08-19.md` / `RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`
 - Scenariomodel (`packages/engine/src/scenario`): mutaties bovenop de as-is `PandInvoer`, puur en immutable, inclusief een `vervang-pand`-mutatie voor volledig handmatig bewerkte TO-BE-panden (kamer toevoegen/verwijderen, etc.)
 - Suggestie-engine (taak 11): marginale analyse per rubriek, ranking op terugverdientijd, plus een los pad voor handmatig bewerkte scenario's met eigen maatregelenlijst. De algoritmische Basis/Comfort/Maximaal-pakketopbouw is verwijderd (Tussenfase-taak A, 2026-09-04, zie hieronder)
@@ -90,16 +90,14 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-Gedeployed naar productie (2026-09-04, versie 0.5.6). Stap 1 van de bèta-lancering (notities +
-mappen) is klaar, plus een hele ronde UX-polish en bugfixes bovenop (zie "Sessie 2026-09-04 deel 3"
-hieronder). Eerstvolgende stap: stap 2, multi-tenant/org_id's scheiden voor drie testers — nog te
-ontwerpen samen met de gebruiker, dit blijft de grootste blokkade voor de bèta zelf. Daarna, of
-ondertussen: taak B (kitchenette-varianten — de UI-kant bleek al gebouwd, ontdekt tijdens de R3-fix;
-wacht nog op Stevens prijzensheet voor de kostencatalogus-kant). Kleine, losse aanbeveling nog
-open: dynamische browsertab-titel per route (zie `docs/nav-proposal.md`, sectie 3) — lage kosten,
-nog niet uitgevoerd, wacht op akkoord van de gebruiker. Taak 18 en de rest van Fase 4 blijven on
-hold tot het tussenfase-exit-criterium gehaald is (zie hierboven). Standaard Sonnet — geen van de
-vier Opus-triggers is hier van toepassing.
+Gedeployed naar productie (2026-09-07, versie 0.7.3 — zie "Sessie 2026-09-07" hieronder). Stap 1
+van de bèta-lancering (notities + mappen) is klaar. Eerstvolgende stap: stap 2, multi-tenant/
+org_id's scheiden voor drie testers — nog te ontwerpen samen met de gebruiker, dit blijft de
+grootste blokkade voor de bèta zelf. Daarna, of ondertussen: taak B (kitchenette-varianten — de
+UI-kant bleek al gebouwd, ontdekt tijdens de R3-fix; wacht nog op Stevens prijzensheet voor de
+kostencatalogus-kant). Taak 18 en de rest van Fase 4 blijven on hold tot het tussenfase-
+exit-criterium gehaald is (zie hierboven). Standaard Sonnet — geen van de vier Opus-triggers is
+hier van toepassing.
 
 **Auth-toggle terugzetten is bewust naar áchteren geschoven (2026-09-04)**: de tussenfase-taken moeten door Steven getest worden, en de toggle staat open juist om dat testen niet te hinderen. Pas terugzetten als er geen actief testen meer gepland is — zie "Openstaande beslissingen".
 
@@ -279,3 +277,34 @@ gepusht en gedeployed naar productie, met tussentijdse tests/typecheck/lint elke
   **Vervolg**: dit is nu het wachtpunt op het Tussenfase-exitcriterium hierboven — Steven test
   zelfstandig met de bijgewerkte gids, en pas ná een ronde zonder nieuwe blokkerende melding gaat
   het project door naar Fase 4 (multi-tenant/org_id-scheiding, zie taak 18 e.v.).
+
+## Sessie 2026-09-07 — samenvatting (v0.7.3: "Woning bewerken", paginatitels, energielabel-bugfix)
+
+Drie stuks feedback van Emma Morrison in één ronde afgehandeld, zie `plan/plan.md` voor het
+volledige technische verslag van elk punt:
+
+- **"Kamers bewerken" → "Woning bewerken"**, info-icoontje ernaast weg (voegde niks toe).
+- **Dynamische browsertab-titel per route** (de al langer openstaande aanbeveling uit
+  `docs/nav-proposal.md`, sectie 3, nu uitgevoerd): een `title`-template op de root-`layout.tsx`
+  ("Puntum WWS Scenario's" als default, "%s - Puntum" per route) plus een klein server-`layout.tsx`
+  per routemap, nodig omdat de pagina's zelf client components zijn.
+- **Bug, breder dan gemeld**: een energielabel-scenario sloot niet alleen standaardmaatregelen uit
+  (de oorspronkelijke melding), maar ook een handmatige kamerbewerking op hetzelfde scenario-slot —
+  kiezen van een doellabel overschreef stilzwijgend een net gerealiseerde kamer. `ScenarioSlot`
+  (`useScenarioPakket.ts`) geherstructureerd van twee elkaar uitsluitende soorten naar één vorm
+  waarin een energielabel-wisseling een optionele laag is bovenop het scenario-pand — kamer
+  realiseren + labelwisseling + maatregelen tellen nu allemaal samen op tot één Investering/
+  Terugverdientijd/Rendement. Achterwaarts compatibel met eerder opgeslagen deals.
+
+266/266 tests groen (4 nieuw), tsc/eslint schoon, uitgebreid browsergetest (Playwright via
+claude-in-chrome, lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer normaal
+teruggezet).
+
+**Operationele bevinding tijdens het deployen**: dit Vercel-project (`skael/web`) is NIET
+Git-gekoppeld — een `git push` naar GitHub triggert geen automatische deploy, ondanks de
+aanwezige GitHub-remote. Alle eerdere deploys (zichtbaar via `vercel ls`) zijn gedaan met de
+Vercel CLI (`vercel --prod`) vanaf deze machine, niet via een Git-integratie. Gecommit + gepusht
+naar GitHub (`0037d82`) leverde dus GEEN nieuwe productie-deployment op totdat `vercel --prod`
+er expliciet achteraan gedraaid is (`dpl_4ZpRWvK6rnSzUUzPsyUcvg2Qa3wj`, geverifieerd met `vercel
+ls`/`vercel inspect`). Vercel CLI 59.3.0 staat lokaal geïnstalleerd en ingelogd als
+`schroefdraad` — de eerdere sessiehint dat de CLI ontbreekt, klopt dus niet (meer).
