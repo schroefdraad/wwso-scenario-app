@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.2';
+export const APP_VERSIE = '0.7.3';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.3',
+    datum: '2026-09-07',
+    wijzigingen: [
+      '"Kamers bewerken" heet nu "Woning bewerken", zonder het info-icoontje ernaast (voegde niks toe)',
+      'Browsertabblad toont nu per pagina een eigen titel (bijv. "Nieuwe Woning - Puntum", "Resultaat - Puntum") i.p.v. overal dezelfde titel',
+      'Bug: een energielabel-scenario sloot standaardmaatregelen én een handmatige kamerbewerking volledig uit — kiezen van een doellabel overschreef stilzwijgend een net gerealiseerde kamer. Een energielabel-wisseling werkt nu als een laag bovenop het scenario, niet meer als exclusief alternatief: kamer realiseren + labelwisseling + maatregelen tellen nu allemaal samen op tot één Investering/Terugverdientijd/Rendement',
+    ],
+  },
   {
     versie: '0.7.2',
     datum: '2026-09-05',

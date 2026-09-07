@@ -14,7 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WWSO Scenario App",
+  title: {
+    default: "Puntum WWS Scenario's",
+    template: "%s - Puntum",
+  },
   description: "Puntentelling en rendementssimulatie voor onzelfstandige verhuur",
 };
 

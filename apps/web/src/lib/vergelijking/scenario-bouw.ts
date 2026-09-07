@@ -1,13 +1,14 @@
 import {
-  bouwEnergielabelScenario,
   bouwHandmatigScenarioMetMaatregelen,
   doelSleutel,
   genereerEnWaardeerKandidaten,
   nieuwBudget,
+  pasScenarioToe,
   standaardRegistry,
   type Energielabel,
   type KandidaatWaardering,
   type MaatregelContext,
+  type Mutatie,
   type Pakket,
   type PandInvoer,
   type PoolItem,
@@ -40,20 +41,18 @@ export function beschikbareEnergielabelDoelen(pand: PandInvoer): EnergielabelSce
 }
 
 /**
- * Bouwt het scenario voor een energielabel-wisselknop (Tussenfase-taak C): de investering komt
- * altijd uit het pand-eigen kostenveld voor dát label, nooit los ingevuld op scenarioniveau —
- * daarmee blijft één plek (het pandgegevens-scherm) de bron van waarheid.
+ * Het pand ná een energielabel-wisseling naar `doelLabel`, toegepast op WELK pand dan ook (de
+ * as-is, óf een al met de hand bewerkt scenario-pand) — dezelfde `pand-patch`-mutatie die de
+ * E-01 t/m E-09-catalogusmaatregelen ook gebruiken (`registry/r4-energie.ts`). Sinds 2026-09-07
+ * (feedback Emma Morrison: "ik kan helemaal niks meer als ik een scenario selecteer, hij
+ * overschrijft ook mijn extra huuropbrengsten van extra gerealiseerde kamers") is een
+ * energielabel-doel geen apart, exclusief scenariotype meer maar een laag bovenop het gewone
+ * scenario-pand (`ScenarioSlot.energielabelDoel` in `useScenarioPakket.ts`) — vandaar dat deze
+ * functie generiek een willekeurig pand aanneemt, niet specifiek de as-is.
  */
-export function bouwEnergielabelScenarioMetKosten(
-  naam: string,
-  asIs: PandInvoer,
-  doelLabel: Energielabel,
-  tarievenset: Tarievenset,
-  peildatum: string,
-  verwervingswaardeEuro: number | undefined,
-): Pakket {
-  const investeringEuro = energielabelKostenschatting(asIs, doelLabel as EnergielabelScenarioDoel);
-  return bouwEnergielabelScenario(naam, asIs, doelLabel, investeringEuro, tarievenset, peildatum, verwervingswaardeEuro, nieuwBudget(2000));
+export function pandMetEnergielabel(pand: PandInvoer, doelLabel: Energielabel): PandInvoer {
+  const mutaties: Mutatie[] = [{ soort: 'pand-patch', patch: { energielabel: doelLabel, energielabelOnbekendOfVervallen: false } }];
+  return pasScenarioToe(pand, mutaties);
 }
 
 /**

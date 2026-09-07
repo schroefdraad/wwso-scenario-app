@@ -115,10 +115,22 @@ describe('parseDealRij', () => {
     expect(() => parseDealRij(rij)).toThrow();
   });
 
-  it('parseert een energielabel-scenario (Tussenfase-taak C, 2026-09-04)', () => {
+  it('parseert een energielabel-scenario (Tussenfase-taak C, 2026-09-04), zonder sleutels/prijzen vallen die terug op leeg', () => {
     const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }] });
     const deal = parseDealRij(rij);
-    expect(deal.scenarios).toEqual([{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }]);
+    expect(deal.scenarios).toEqual([{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: [], maatregelPrijzenEuro: {} }]);
+  });
+
+  it('parseert een energielabel-scenario met standaardmaatregelen bovenop (feedback Emma Morrison, 2026-09-07)', () => {
+    const rij = geldigeRij({
+      scenarios: [
+        { soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: ['E-04|1'], maatregelPrijzenEuro: { 'E-04|1': 500 } },
+      ],
+    });
+    const deal = parseDealRij(rij);
+    expect(deal.scenarios).toEqual([
+      { soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: ['E-04|1'], maatregelPrijzenEuro: { 'E-04|1': 500 } },
+    ]);
   });
 
   it('gooit een fout bij een energielabel-scenario met een ongeldig label', () => {

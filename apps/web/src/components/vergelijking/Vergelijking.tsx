@@ -26,11 +26,12 @@ import styles from './styles.module.css';
 const STANDAARD_NAMEN = ['Scenario 1', 'Scenario 2', 'Scenario 3'];
 const NIEUWE_MAP_OPTIE = '__nieuwe_map__';
 
-/** Een leeg, onaangeraakt scenario — `kamerBewerkt: false` is wat `useScenarioPakket` herkent als
- * "nog niets ingevuld" (i.p.v. een nietszeggend pakket met 0 overal); `pand` krijgt de as-is mee
- * puur zodat er iets geldigs staat om kandidaten tegen te berekenen. */
+/** Een leeg, onaangeraakt scenario — `kamerBewerkt: false` en `energielabelDoel: null` is wat
+ * `useScenarioPakket` herkent als "nog niets ingevuld" (i.p.v. een nietszeggend pakket met 0
+ * overal); `pand` krijgt de as-is mee puur zodat er iets geldigs staat om kandidaten tegen te
+ * berekenen. */
 function leegSlot(naam: string, asIs: PandInvoer): ScenarioSlot {
-  return { naam, soort: 'handmatig', pand: asIs, kamerBewerkt: false, sleutels: new Set<string>(), handmatigeInvesteringEuro: 0, maatregelPrijzenEuro: {} };
+  return { naam, pand: asIs, kamerBewerkt: false, energielabelDoel: null, sleutels: new Set<string>(), handmatigeInvesteringEuro: 0, maatregelPrijzenEuro: {} };
 }
 
 function standaardSlots(asIs: PandInvoer): ScenarioSlot[] {
@@ -41,7 +42,11 @@ function standaardSlots(asIs: PandInvoer): ScenarioSlot[] {
  * 2026-08-22 met handmatige scenario's); ontbrekende slots blijven leeg met een standaardnaam.
  * Een vóór 2026-09-05 opgeslagen `'kandidaten'`-scenario (de toen nog gedeelde, niet-per-scenario
  * checkboxmodus) migreert hier naar het uniforme pad: `pand` = as-is, sleutels behouden — precies
- * wat dat scenario toen betekende (alleen catalogusmaatregelen, geen kamers bewerkt). */
+ * wat dat scenario toen betekende (alleen catalogusmaatregelen, geen kamers bewerkt). Een vóór
+ * 2026-09-07 opgeslagen `'energielabel'`-scenario (toen nog exclusief van een kamerbewerking,
+ * feedback Emma Morrison: "ik kan helemaal niks meer als ik een scenario selecteer") migreert naar
+ * dezelfde uniforme vorm: `pand` = as-is (dat scenario kende geen bewerkt pand), `energielabelDoel`
+ * = het opgeslagen doellabel. */
 function slotsUitScenarios(scenarios: ScenarioSelectie[], asIs: PandInvoer): ScenarioSlot[] {
   return STANDAARD_NAMEN.map((standaardNaam, i) => {
     const opgeslagen = scenarios[i];
@@ -49,22 +54,30 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[], asIs: PandInvoer): Sce
     if (opgeslagen.soort === 'handmatig') {
       return {
         naam: opgeslagen.naam,
-        soort: 'handmatig' as const,
         pand: opgeslagen.pand,
         kamerBewerkt: opgeslagen.kamerBewerkt,
+        energielabelDoel: opgeslagen.energielabelDoel ?? null,
         sleutels: new Set(opgeslagen.sleutels),
         handmatigeInvesteringEuro: opgeslagen.handmatigeInvesteringEuro,
         maatregelPrijzenEuro: opgeslagen.maatregelPrijzenEuro,
       };
     }
     if (opgeslagen.soort === 'energielabel') {
-      return { naam: opgeslagen.naam, soort: 'energielabel' as const, doelLabel: opgeslagen.doelLabel };
+      return {
+        naam: opgeslagen.naam,
+        pand: asIs,
+        kamerBewerkt: false,
+        energielabelDoel: opgeslagen.doelLabel,
+        sleutels: new Set(opgeslagen.sleutels),
+        handmatigeInvesteringEuro: 0,
+        maatregelPrijzenEuro: opgeslagen.maatregelPrijzenEuro,
+      };
     }
     return {
       naam: opgeslagen.naam,
-      soort: 'handmatig' as const,
       pand: asIs,
       kamerBewerkt: false,
+      energielabelDoel: null,
       sleutels: new Set(opgeslagen.sleutels),
       handmatigeInvesteringEuro: 0,
       maatregelPrijzenEuro: {},
@@ -78,18 +91,15 @@ function slotsUitScenarios(scenarios: ScenarioSelectie[], asIs: PandInvoer): Sce
  * snapshot in een verouderd formaat faalt gewoon de `safeParse` en wordt genegeerd (zie
  * `haalEnWisVergelijkingSnapshotOp`). */
 function slotsUitSnapshot(slots: VergelijkingSnapshot['slots']): ScenarioSlot[] {
-  return slots.map((s) => {
-    if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
-    return {
-      naam: s.naam,
-      soort: 'handmatig' as const,
-      pand: s.pand,
-      kamerBewerkt: s.kamerBewerkt,
-      sleutels: new Set(s.sleutels),
-      handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
-      maatregelPrijzenEuro: s.maatregelPrijzenEuro,
-    };
-  });
+  return slots.map((s) => ({
+    naam: s.naam,
+    pand: s.pand,
+    kamerBewerkt: s.kamerBewerkt,
+    energielabelDoel: s.energielabelDoel,
+    sleutels: new Set(s.sleutels),
+    handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
+    maatregelPrijzenEuro: s.maatregelPrijzenEuro,
+  }));
 }
 
 export interface GeladenDeal {
@@ -164,16 +174,13 @@ export function Vergelijking({
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
     setSlots(
       resultaat
-        ? basisSlots.map((s, i) => {
-            if (i !== resultaat.slotIndex) return s;
-            // Was dit slot al handmatig bewerkt (bijv. de kamer nog wat verder aangepast), dan
-            // blijven eerder gekozen maatregelen/investering/prijzen behouden — alleen het pand
-            // zelf wordt vervangen.
-            const behoud = s.soort === 'handmatig'
-              ? { sleutels: s.sleutels, handmatigeInvesteringEuro: s.handmatigeInvesteringEuro, maatregelPrijzenEuro: s.maatregelPrijzenEuro }
-              : { sleutels: new Set<string>(), handmatigeInvesteringEuro: 0, maatregelPrijzenEuro: {} };
-            return { naam: s.naam, soort: 'handmatig' as const, pand: resultaat.bewerktPand, kamerBewerkt: true, ...behoud };
-          })
+        ? basisSlots.map((s, i) =>
+            i === resultaat.slotIndex
+              ? // Eerder gekozen labelwisseling/maatregelen/investering/prijzen blijven behouden —
+                // alleen het pand zelf wordt vervangen door de kamer-bewerking.
+                { ...s, pand: resultaat.bewerktPand, kamerBewerkt: true }
+              : s,
+          )
         : basisSlots,
     );
     if (snapshot) {
@@ -200,12 +207,12 @@ export function Vergelijking({
   const pakket2 = useScenarioPakket(pand, slots[2], handmatigeKandidaten2, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
   const berekendePakketten = [pakket0, pakket1, pakket2];
 
-  /** Zet een maatregel aan/uit op een scenario-tabblad zonder het (eventueel al bewerkte) pand te
-   * verliezen. */
+  /** Zet een maatregel aan/uit op een scenario-tabblad zonder het (eventueel al bewerkte) pand of
+   * een eventuele energielabel-wisseling te verliezen. */
   function toggleHandmatigeMaatregel(slotIndex: number, sleutel: string) {
     setSlots((prev) =>
       prev.map((s, i) => {
-        if (i !== slotIndex || s.soort !== 'handmatig') return s;
+        if (i !== slotIndex) return s;
         const handmatigeKandidaten = handmatigeKandidatenPerSlot[i]?.kandidaten ?? [];
         const sleutels = nieuweSelectieNaToggle(handmatigeKandidaten, s.sleutels, sleutel);
         return { ...s, sleutels };
@@ -214,14 +221,15 @@ export function Vergelijking({
   }
 
   function zetHandmatigeInvestering(slotIndex: number, euro: number) {
-    setSlots((prev) => prev.map((s, i) => (i === slotIndex && s.soort === 'handmatig' ? { ...s, handmatigeInvesteringEuro: euro } : s)));
+    setSlots((prev) => prev.map((s, i) => (i === slotIndex ? { ...s, handmatigeInvesteringEuro: euro } : s)));
   }
 
   /** Per-maatregel prijsoverschrijving (Tussenfase-taak D) — voorgevuld in de UI met de
-   * catalogusprijs, hier alleen de expliciete overschrijving zelf opgeslagen. */
+   * catalogusprijs, hier alleen de expliciete overschrijving zelf opgeslagen. Werkt voor beide
+   * scenariosoorten, zelfde reden als `toggleHandmatigeMaatregel`. */
   function zetMaatregelPrijs(slotIndex: number, sleutel: string, euro: number) {
     setSlots((prev) =>
-      prev.map((s, i) => (i === slotIndex && s.soort === 'handmatig' ? { ...s, maatregelPrijzenEuro: { ...s.maatregelPrijzenEuro, [sleutel]: euro } } : s)),
+      prev.map((s, i) => (i === slotIndex ? { ...s, maatregelPrijzenEuro: { ...s.maatregelPrijzenEuro, [sleutel]: euro } } : s)),
     );
   }
 
@@ -233,17 +241,14 @@ export function Vergelijking({
     setSlots((prev) => prev.map((s, i) => (i === index ? leegSlot(s.naam, pand) : s)));
   }
 
-  /** Wisselknop (Tussenfase-taak C): `null` (de "Geen"-optie) maakt het slot weer leeg, net als
-   * `leegmaken` — kiezen van een label vervangt het scenario altijd volledig, nooit een stille
-   * samenvoeging met eerder gekozen maatregelen. */
+  /** Wisselknop (Tussenfase-taak C): zet alleen de energielabel-laag, boven op wat er verder al in
+   * dit slot zit (kamerbewerking, maatregelen) — sinds 2026-09-07 (feedback Emma Morrison: "ik kan
+   * helemaal niks meer als ik een scenario selecteer, hij overschrijft ook mijn extra
+   * huuropbrengsten van extra gerealiseerde kamers") geen exclusieve vervanging meer. `null` (de
+   * "Geen"-optie) haalt alleen de labelwisseling weer weg; voor een volledige reset is er de
+   * losstaande "Leegmaken"-knop. */
   function wisselEnergielabel(index: number, doelLabel: Energielabel | null) {
-    setSlots((prev) =>
-      prev.map((s, i) => {
-        if (i !== index) return s;
-        if (doelLabel === null) return leegSlot(s.naam, pand);
-        return { naam: s.naam, soort: 'energielabel' as const, doelLabel };
-      }),
-    );
+    setSlots((prev) => prev.map((s, i) => (i === index ? { ...s, energielabelDoel: doelLabel } : s)));
   }
 
   /** Slaat de huidige (mogelijk nog niet opgeslagen) slots-state op, te herstellen door de
@@ -254,18 +259,15 @@ export function Vergelijking({
       dealNaam,
       dealNotitie,
       dealMap,
-      slots: slots.map((s) => {
-        if (s.soort === 'energielabel') return { naam: s.naam, soort: 'energielabel' as const, doelLabel: s.doelLabel };
-        return {
-          naam: s.naam,
-          soort: 'handmatig' as const,
-          pand: s.pand,
-          kamerBewerkt: s.kamerBewerkt,
-          sleutels: [...s.sleutels],
-          handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
-          maatregelPrijzenEuro: s.maatregelPrijzenEuro,
-        };
-      }),
+      slots: slots.map((s) => ({
+        naam: s.naam,
+        pand: s.pand,
+        kamerBewerkt: s.kamerBewerkt,
+        energielabelDoel: s.energielabelDoel,
+        sleutels: [...s.sleutels],
+        handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
+        maatregelPrijzenEuro: s.maatregelPrijzenEuro,
+      })),
     });
   }
 
@@ -283,16 +285,15 @@ export function Vergelijking({
     router.push(`/woning/nieuw?scenario=${index}`);
   }
 
-  /** Een onaangeraakt scenario (geen kamers bewerkt, geen maatregelen, geen investering) draagt
-   * geen informatie en wordt overgeslagen — zelfde discipline als de vroegere lege
-   * "kandidaten"-modus. Zodra er wél iets is (een bewerkte kamer, een aangevinkte maatregel, een
-   * ingevuld investeringsbedrag) wordt het scenario altijd opgeslagen. */
+  /** Een onaangeraakt scenario (geen kamers bewerkt, geen energielabel-wisseling, geen
+   * maatregelen, geen investering) draagt geen informatie en wordt overgeslagen — zelfde
+   * discipline als de vroegere lege "kandidaten"-modus. Zodra er wél iets is (een bewerkte kamer,
+   * een gekozen doellabel, een aangevinkte maatregel, een ingevuld investeringsbedrag) wordt het
+   * scenario altijd opgeslagen, altijd als het uniforme `'handmatig'`-type (Tussenfase-taak C,
+   * uitgebreid 2026-09-07: `'energielabel'` is alleen nog een leesbaar legacy-formaat). */
   function opslaanbareScenarios(): ScenarioSelectie[] {
     return slots.flatMap((s): ScenarioSelectie[] => {
-      if (s.soort === 'energielabel') {
-        return [{ soort: 'energielabel', naam: s.naam, doelLabel: s.doelLabel }];
-      }
-      const onaangeraakt = !s.kamerBewerkt && s.sleutels.size === 0 && s.handmatigeInvesteringEuro === 0;
+      const onaangeraakt = !s.kamerBewerkt && !s.energielabelDoel && s.sleutels.size === 0 && s.handmatigeInvesteringEuro === 0;
       if (onaangeraakt) return [];
       return [
         {
@@ -300,6 +301,7 @@ export function Vergelijking({
           naam: s.naam,
           pand: s.pand,
           kamerBewerkt: s.kamerBewerkt,
+          energielabelDoel: s.energielabelDoel ?? undefined,
           sleutels: [...s.sleutels],
           handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
           maatregelPrijzenEuro: s.maatregelPrijzenEuro,
@@ -467,7 +469,7 @@ export function Vergelijking({
           kolommen={slots.map((slot, i) => ({
             naam: slot.naam,
             pakket: berekendePakketten[i],
-            energielabelDoel: slot.soort === 'energielabel' ? slot.doelLabel : null,
+            energielabelDoel: slot.energielabelDoel,
           }))}
           energielabelOpties={beschikbareEnergielabelDoelen(pand)}
           onNaamWijzig={naamWijzig}
@@ -495,27 +497,26 @@ export function Vergelijking({
           </div>
           {slots.map((slot, i) => {
             if (i !== actieveTab) return null;
-            if (slot.soort === 'energielabel') {
-              return (
-                <p key={i} className={styles.hint} style={{ padding: '0.9rem 1.2rem' }}>
-                  Dit scenario is een energielabel-wisseling naar label {slot.doelLabel} — geen losse maatregelen te kiezen. Kies &quot;Geen
-                  energielabel-scenario&quot; in de kolomkop hierboven om hier weer losse maatregelen te kunnen aanvinken.
-                </p>
-              );
-            }
             const resultaat = handmatigeKandidatenPerSlot[i];
             return (
-              <HandmatigMaatregelen
-                key={i}
-                slotNaam={slot.naam}
-                kandidaten={resultaat?.kandidaten ?? []}
-                geselecteerd={slot.sleutels}
-                handmatigeInvesteringEuro={slot.handmatigeInvesteringEuro}
-                maatregelPrijzenEuro={slot.maatregelPrijzenEuro}
-                onToggle={(sleutel) => toggleHandmatigeMaatregel(i, sleutel)}
-                onInvesteringWijzig={(euro) => zetHandmatigeInvestering(i, euro)}
-                onPrijsWijzig={(sleutel, euro) => zetMaatregelPrijs(i, sleutel, euro)}
-              />
+              <div key={i}>
+                {slot.energielabelDoel && (
+                  <p className={styles.hint} style={{ padding: '0.9rem 1.2rem 0' }}>
+                    Dit scenario wisselt eerst naar label {slot.energielabelDoel}; de standaardmaatregelen hieronder (en een eventuele kamerbewerking)
+                    tellen daar bovenop. Kies &quot;Geen energielabel-scenario&quot; in de kolomkop hierboven om de labelwisseling weer los te maken.
+                  </p>
+                )}
+                <HandmatigMaatregelen
+                  slotNaam={slot.naam}
+                  kandidaten={resultaat?.kandidaten ?? []}
+                  geselecteerd={slot.sleutels}
+                  handmatigeInvesteringEuro={slot.handmatigeInvesteringEuro}
+                  maatregelPrijzenEuro={slot.maatregelPrijzenEuro}
+                  onToggle={(sleutel) => toggleHandmatigeMaatregel(i, sleutel)}
+                  onInvesteringWijzig={(euro) => zetHandmatigeInvestering(i, euro)}
+                  onPrijsWijzig={(sleutel, euro) => zetMaatregelPrijs(i, sleutel, euro)}
+                />
+              </div>
             );
           })}
         </div>

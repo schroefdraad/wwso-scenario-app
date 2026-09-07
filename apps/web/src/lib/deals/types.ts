@@ -13,31 +13,45 @@ const ScenarioSelectieKandidaten = z.object({
 
 /** Een handmatig bewerkt TO-BE-scenario (backlog 2026-08-22: handmatig een kamer realiseren en
  * dan verder standaardmaatregelen toevoegen) — `pand` is de volledige, al gevalideerde bewerkte
- * PandInvoer; `sleutels` verwijst naar de kandidatenlijst tegen DAT pand, niet de as-is-lijst.
- * `maatregelPrijzenEuro` (Tussenfase-taak D, 2026-09-04): per-maatregel prijsoverschrijving,
- * sleutel = kandidaat-sleutel. `.default({})` — deals van vóór deze taak kennen het veld nog
- * niet, en "geen overschrijvingen" is exact wat dat toen betekende.
+ * PandInvoer; `sleutels` verwijst naar de kandidatenlijst tegen DAT pand (mét `energielabelDoel`
+ * toegepast indien gezet), niet de as-is-lijst. `maatregelPrijzenEuro` (Tussenfase-taak D,
+ * 2026-09-04): per-maatregel prijsoverschrijving, sleutel = kandidaat-sleutel. `.default({})` —
+ * deals van vóór deze taak kennen het veld nog niet, en "geen overschrijvingen" is exact wat dat
+ * toen betekende.
  *
  * `kamerBewerkt` (2026-09-05, uniforme scenario-vorm): `.default(true)`, niet `false` — vóór deze
  * datum was 'handmatig' het ENIGE pad met een `pand`-veld, en betekende dus per definitie altijd
- * een echte kamerbewerking; een ontbrekend veld op oudere data moet dus als "wél bewerkt" gelden. */
+ * een echte kamerbewerking; een ontbrekend veld op oudere data moet dus als "wél bewerkt" gelden.
+ *
+ * `energielabelDoel` (2026-09-07, feedback Emma Morrison: "ik kan helemaal niks meer als ik een
+ * scenario selecteer, hij overschrijft ook mijn extra huuropbrengsten van extra gerealiseerde
+ * kamers") — vóór deze datum sloot een energielabel-wisseling een handmatige kamerbewerking
+ * volledig uit (apart, exclusief scenariotype, zie `ScenarioSelectieEnergielabel` hieronder); nu
+ * een optioneel veld hier, dus vanaf nu bewaart elke nieuwe deal een eventuele labelwisseling
+ * gewoon SAMEN met een eventueel bewerkt pand in dit ene scenariotype. `.optional()`: ontbreekt op
+ * elke deal van vóór deze datum, wat toen altijd "geen labelwisseling" betekende. */
 const ScenarioSelectieHandmatig = z.object({
   soort: z.literal('handmatig'),
   naam: z.string().min(1),
   pand: PandInvoer,
   kamerBewerkt: z.boolean().default(true),
+  energielabelDoel: Energielabel.optional(),
   sleutels: z.array(z.string().min(1)),
   handmatigeInvesteringEuro: z.number(),
   maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
 });
 
-/** Een energielabel-scenario (Tussenfase-taak C, 2026-09-04): geen losse maatregelen, alleen een
- * doellabel — de kosten komen bij het laden opnieuw uit het pand-veld voor dát label, niet uit
- * een opgeslagen bedrag (zo blijft één plek de bron van waarheid voor de kosteninschatting). */
+/** Legacy: een energielabel-scenario zoals opgeslagen vóór 2026-09-07 — geen `pand`, alleen een
+ * doellabel, exclusief van een handmatige kamerbewerking. Vanaf 2026-09-07 wordt dit type niet
+ * meer NIEUW opgeslagen (zie `energielabelDoel` op `ScenarioSelectieHandmatig` hierboven); dit
+ * blijft alleen bestaan om deals van vóór die datum nog te kunnen laden, gemigreerd naar de
+ * uniforme vorm door `slotsUitScenarios` in `Vergelijking.tsx`. */
 const ScenarioSelectieEnergielabel = z.object({
   soort: z.literal('energielabel'),
   naam: z.string().min(1),
   doelLabel: Energielabel,
+  sleutels: z.array(z.string().min(1)).default([]),
+  maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
 });
 
 /** Plain union (niet discriminatedUnion): `soort` heeft een default op de kandidaten-tak, en

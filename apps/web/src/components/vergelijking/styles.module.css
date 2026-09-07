@@ -315,7 +315,7 @@
   align-items: flex-start;
 }
 
-/** "Kamers bewerken" is een ander soort actie dan "Bekijk volledig resultaat"/"Leegmaken" (gaat
+/** "Woning bewerken" is een ander soort actie dan "Bekijk volledig resultaat"/"Leegmaken" (gaat
  * naar de kamer-editor i.p.v. een lokale actie) — een dun streepje erboven maakt dat visueel
  * duidelijk i.p.v. dat hij in hetzelfde rijtje wegvalt. */
 .kamersBewerkenRij {

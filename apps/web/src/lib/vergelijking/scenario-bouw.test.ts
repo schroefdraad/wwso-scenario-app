@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers, type KandidaatWaardering, type PandInvoer } from '@wwso/engine';
-import { alternatiefGroepSleutel, beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle } from './scenario-bouw';
+import { alternatiefGroepSleutel, beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle, pandMetEnergielabel } from './scenario-bouw';
 
 /** Minimale nep-kandidaat — `nieuweSelectieNaToggle` kijkt alleen naar sleutel/maatregelId/doel. */
 function nepKandidaat(sleutel: string, maatregelId: string, doel: { soort: string; nr?: number }): KandidaatWaardering {
@@ -79,5 +79,22 @@ describe('beschikbareEnergielabelDoelen — Tussenfase-taak C (2026-09-04)', () 
     const pand = metKosten({ energielabelKostenSchattingAPlusPlusEuro: 15000 });
     expect(energielabelKostenschatting(pand, 'A++')).toBe(15000);
     expect(energielabelKostenschatting(pand, 'A+')).toBeUndefined();
+  });
+});
+
+describe('pandMetEnergielabel — feedback Emma Morrison 2026-09-07 (een labelwisseling mag een handmatige kamerbewerking niet meer overschrijven)', () => {
+  it('past het label toe op een willekeurig pand, niet specifiek de as-is', () => {
+    const handmatigBewerkt: PandInvoer = { ...testpand6Kamers, pand: { ...testpand6Kamers.pand, aantalKamers: testpand6Kamers.pand.aantalKamers + 1 } };
+    const resultaat = pandMetEnergielabel(handmatigBewerkt, 'A+++');
+    expect(resultaat.pand.energielabel).toBe('A+++');
+    // De kamer-uitbreiding uit de handmatige bewerking blijft behouden — de labelwisseling
+    // vervangt het pand niet, hij patcht het.
+    expect(resultaat.pand.aantalKamers).toBe(testpand6Kamers.pand.aantalKamers + 1);
+  });
+
+  it('werkt ook rechtstreeks op de as-is (geen kamerbewerking)', () => {
+    const resultaat = pandMetEnergielabel(testpand6Kamers, 'A++');
+    expect(resultaat.pand.energielabel).toBe('A++');
+    expect(resultaat.pand.aantalKamers).toBe(testpand6Kamers.pand.aantalKamers);
   });
 });

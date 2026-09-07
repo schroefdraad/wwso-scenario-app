@@ -4,7 +4,6 @@ import Link from 'next/link';
 import type { Energielabel, Pakket, PandWaardering } from '@wwso/engine';
 import type { EnergielabelScenarioDoel } from '../../lib/vergelijking/scenario-bouw';
 import { formateerEuro, formateerEuroBand, formateerJarenBand, formateerPctBand } from '../../lib/vergelijking/formatteren';
-import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 
 export interface ScenarioKolom {
@@ -33,7 +32,7 @@ export function SamenvattingRij({
   heeftVerwervingswaarde,
 }: {
   asIsWaardering: PandWaardering;
-  /** Alleen gezet als de as-is al als deal is opgeslagen — "Bewerk handmatig" voor as-is
+  /** Alleen gezet als de as-is al als deal is opgeslagen — "Woning bewerken" voor as-is
    * navigeert naar de bewerkbare kopie van díe deal, net als het vroegere "Pandgegevens
    * bewerken"-linkje uit de paginakop (nu hier, naast de scenario-links, voor consistentie). */
   asIsDealId: string | undefined;
@@ -142,9 +141,8 @@ export function SamenvattingRij({
           {asIsDealId && (
             <span className={styles.kamersBewerkenRij}>
               <Link href={`/woning/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
-                Kamers bewerken →
+                Woning bewerken →
               </Link>
-              <InfoBadge>Hiermee pas je de kamers van deze woning aan (toevoegen/verwijderen/type wijzigen).</InfoBadge>
             </span>
           )}
         </div>
@@ -159,12 +157,8 @@ export function SamenvattingRij({
             )}
             <span className={styles.kamersBewerkenRij}>
               <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
-                Kamers bewerken →
+                Woning bewerken →
               </button>
-              <InfoBadge>
-                Hiermee pas je de kamers van dit scenario aan (toevoegen/verwijderen/type wijzigen) — voor losse maatregelen gebruik je het tabblad
-                hieronder.
-              </InfoBadge>
             </span>
             {kolom.pakket && (
               <button type="button" className={styles.btnLink} onClick={() => onLeegmaken(i)}>

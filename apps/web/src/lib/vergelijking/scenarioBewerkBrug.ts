@@ -69,23 +69,26 @@ export function haalEnWisScenarioBewerkResultaatOp(): ScenarioBewerkResultaat | 
   }
 }
 
-const VergelijkingSlotSnapshot = z.discriminatedUnion('soort', [
-  z.object({
-    naam: z.string(),
-    soort: z.literal('handmatig'),
-    pand: PandInvoer,
-    /** Zie de gelijknamige uitleg in `deals/types.ts` — bepaalt of dit scenario "iets voorstelt",
-     * losstaand van `pand`'s object-identiteit (die overleeft een JSON-rondreis door
-     * sessionStorage toch niet). */
-    kamerBewerkt: z.boolean(),
-    /** Sleutels uit de kandidatenlijst tegen DIT bewerkte pand (backlog 2026-08-22: handmatig
-     * scenario + standaardmaatregelen) — niet de gedeelde as-is-lijst. */
-    sleutels: z.array(z.string()),
-    handmatigeInvesteringEuro: z.number(),
-    maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
-  }),
-  z.object({ naam: z.string(), soort: z.literal('energielabel'), doelLabel: Energielabel }),
-]);
+/** Eén uniforme slotvorm sinds 2026-09-07 (feedback Emma Morrison: een energielabel-wisseling mag
+ * een handmatige kamerbewerking niet meer uitsluiten) — zie de gelijknamige uitleg bij
+ * `ScenarioSlot` in `useScenarioPakket.ts`. Geen aparte legacy-tak nodig zoals bij
+ * `deals/types.ts`: dit is ephemere sessionStorage (zie `haalEnWisVergelijkingSnapshotOp`
+ * hieronder), dus een snapshot in het oude, exclusieve formaat faalt gewoon de `safeParse` en
+ * wordt genegeerd — geen langdurig opgeslagen data om achterwaarts compatibel mee te blijven. */
+const VergelijkingSlotSnapshot = z.object({
+  naam: z.string(),
+  pand: PandInvoer,
+  /** Zie de gelijknamige uitleg in `deals/types.ts` — bepaalt of dit scenario "iets voorstelt",
+   * losstaand van `pand`'s object-identiteit (die overleeft een JSON-rondreis door sessionStorage
+   * toch niet). */
+  kamerBewerkt: z.boolean(),
+  energielabelDoel: Energielabel.nullable(),
+  /** Sleutels uit de kandidatenlijst tegen DIT bewerkte pand (mét `energielabelDoel` toegepast
+   * indien gezet) — niet de gedeelde as-is-lijst. */
+  sleutels: z.array(z.string()),
+  handmatigeInvesteringEuro: z.number(),
+  maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
+});
 
 const VergelijkingSnapshot = z.object({
   dealId: z.string().optional(),
