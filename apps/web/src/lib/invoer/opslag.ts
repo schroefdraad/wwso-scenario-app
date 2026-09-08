@@ -24,3 +24,17 @@ export function haalConceptOp(): InvoerState | null {
     return null;
   }
 }
+
+/**
+ * Wist het concept expliciet (backlog 2026-09-08, gemeld via Steven Kramer: "ik moet Puntum eerst
+ * sluiten voordat ik een nieuwe woning kan bekijken"/"nieuwe woning aan mijn map toevoegen lukt
+ * niet"). Root cause: deze sleutel wist zichzelf nooit, dus een verse "+ Nieuwe woning" viel terug
+ * op het achtergebleven concept van de LAATST bewerkte woning — inclusief een eventuele koppeling
+ * aan die bestaande deal (`bewerktDeal`), waardoor "opslaan" op de nieuwe invoer in werkelijkheid
+ * de oude woning overschreef i.p.v. een nieuwe aan te maken. Gebruikt door `InvoerContext` zodra
+ * een teruggehaald concept een `bewerktDeal`-koppeling blijkt te dragen op een plek waar dat niet
+ * hoort (een verse, dealloze `/woning/nieuw`-sessie).
+ */
+export function wisConceptOp(): void {
+  sessionStorage.removeItem(INVOER_CONCEPT_SESSIONSTORAGE_KEY);
+}

@@ -5,7 +5,7 @@ import type { PandInvoer } from '@wwso/engine';
 import { invoerReducer, type InvoerActie } from '../../lib/invoer/reducer';
 import { NIEUWE_INVOERSTATE, type InvoerState } from '../../lib/invoer/types';
 import { pandInvoerNaarState } from '../../lib/invoer/vanPandInvoer';
-import { haalConceptOp, slaConceptOp } from '../../lib/invoer/opslag';
+import { haalConceptOp, slaConceptOp, wisConceptOp } from '../../lib/invoer/opslag';
 import type { ScenarioSelectie } from '../../lib/deals/types';
 
 interface InvoerContextWaarde {
@@ -74,8 +74,22 @@ export function InvoerProvider({
       });
       return;
     }
+    // Een concept met een `bewerktDeal`-koppeling is het achtergebleven restant van een EERDERE
+    // bewerksessie van een al bestaande woning (bijv. via /woning/nieuw?deal=<id>), niet een
+    // onafgemaakte, nooit opgeslagen nieuwe invoer — dat onderscheid maakt de state zelf niet meer
+    // zodra hij eenmaal in sessionStorage staat. Zo'n concept hier terugladen zou een verse
+    // "+ Nieuwe woning"-sessie stilzwijgend aan die oude deal binden: "opslaan" zou dan de oude
+    // woning bijwerken i.p.v. een nieuwe aanmaken, en het formulier oogt gevuld i.p.v. leeg (feedback
+    // Steven Kramer, 2026-09-08: "moet Puntum eerst sluiten voordat ik een nieuwe woning kan
+    // bekijken", "nieuwe woning aan mijn map toevoegen lukt niet" — sluiten wiste sessionStorage,
+    // wat toevallig de enige uitweg was). Zo'n concept is hier dus nooit bruikbaar — expliciet
+    // wissen i.p.v. laten staan, anders blijft dezelfde valkuil bij de volgende "Nieuwe woning" terug.
     const concept = haalConceptOp();
-    if (concept) dispatch({ soort: 'CONCEPT_GELADEN', state: concept });
+    if (concept?.bewerktDeal) {
+      wisConceptOp();
+    } else if (concept) {
+      dispatch({ soort: 'CONCEPT_GELADEN', state: concept });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initieelDeal?.id, initieelScenario?.slotIndex]);
 
