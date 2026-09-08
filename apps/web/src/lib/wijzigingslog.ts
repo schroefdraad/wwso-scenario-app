@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.3';
+export const APP_VERSIE = '0.7.4';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.4',
+    datum: '2026-09-08',
+    wijzigingen: [
+      'Bug: "Doorrekenen →" sloeg de woning nergens op — alleen de aparte "Woning opslaan"-knop deed dat. Een verse woning die je doorrekende en waarvan je de PDF downloadde zonder apart op te slaan, was daarna nergens meer terug te vinden. "Doorrekenen" slaat de woning nu altijd eerst op voordat je naar het resultaatscherm gaat.',
+    ],
+  },
   {
     versie: '0.7.3',
     datum: '2026-09-07',

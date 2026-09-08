@@ -23,8 +23,17 @@ export function Topbar() {
   useDocumentTitle(`${state.pand.adres || 'Nieuwe woning'} · WWSO Scenario App`);
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
 
-  async function dealVroegOpslaan() {
-    if (!pand) return;
+  /**
+   * Gedeelde opslaan-logica achter zowel de "Woning opslaan"-knop als "Doorrekenen →"
+   * (backlog 2026-09-08, gemeld via Steven Kramer: "'s-Gravesandestraat 78" was na doorrekenen +
+   * PDF downloaden nergens meer te vinden — hij had nooit apart op "Woning opslaan" geklikt, en
+   * "Doorrekenen" sloeg tot dan toe alleen naar sessionStorage op, nooit naar Supabase). Geeft de
+   * opgeslagen `Deal` terug, of `null` als opslaan mislukte — de aanroeper beslist dan zelf of
+   * hij wel/niet verder navigeert (bij een mislukte save NIET wegnavigeren, anders is de invoer
+   * alsnog kwijt).
+   */
+  async function slaWoningOp() {
+    if (!pand) return null;
     setDealOpslaanStatus('bezig');
     try {
       const tarievenset = alleTarievensets().at(-1)!;
@@ -40,9 +49,43 @@ export function Topbar() {
       const deal = state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
       dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios } });
       setDealOpslaanStatus('gelukt');
+      return deal;
     } catch {
       setDealOpslaanStatus('fout');
+      return null;
     }
+  }
+
+  async function dealVroegOpslaan() {
+    await slaWoningOp();
+  }
+
+  /**
+   * "Doorrekenen →" slaat de as-is nu altijd eerst op (zie `slaWoningOp` hierboven) vóórdat er
+   * naar het resultaatscherm genavigeerd wordt — bij een mislukte save blijft de gebruiker op het
+   * invoerscherm staan (met de bestaande "Opslaan mislukt"-melding) i.p.v. door te lopen naar een
+   * scherm waarvandaan de invoer alsnog nergens hersteld kan worden. Geldt niet voor "Gebruik als
+   * scenario →" (`state.handmatigScenario`): dat pad hoort al bij een bestaande deal via de
+   * scenario-bewerk-brug, en slaat daar op zijn eigen moment op (`Vergelijking.tsx`).
+   */
+  async function doorrekenen() {
+    if (!pand) return;
+    if (state.handmatigScenario) {
+      slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, bewerktPand: pand });
+      router.push(state.handmatigScenario.terugUrl);
+      return;
+    }
+    const deal = await slaWoningOp();
+    if (!deal) return;
+    slaPandOp({
+      pand,
+      dealId: deal.id,
+      dealNaam: deal.naam,
+      dealNotitie: deal.notitie,
+      dealMap: deal.map,
+      dealScenarios: deal.scenarios,
+    });
+    router.push('/woning/resultaat');
   }
 
   const pandCompleet = !!(
@@ -95,27 +138,11 @@ export function Topbar() {
       <button
         type="button"
         className={`${styles.btn} ${styles.btnPrimair}`}
-        disabled={!pand}
+        disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig')}
         title={stap ?? undefined}
-        onClick={() => {
-          if (!pand) return;
-          if (state.handmatigScenario) {
-            slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, bewerktPand: pand });
-            router.push(state.handmatigScenario.terugUrl);
-            return;
-          }
-          slaPandOp({
-            pand,
-            dealId: state.bewerktDeal?.id,
-            dealNaam: state.bewerktDeal?.naam,
-            dealNotitie: state.notitieOntwerp,
-            dealMap: state.bewerktDeal?.map,
-            dealScenarios: state.bewerktDeal?.scenarios,
-          });
-          router.push('/woning/resultaat');
-        }}
+        onClick={doorrekenen}
       >
-        {state.handmatigScenario ? 'Gebruik als scenario →' : 'Doorrekenen →'}
+        {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}
       </button>
       {state.ruimtes.length > 0 && (
         <button
