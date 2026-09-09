@@ -76,12 +76,19 @@ export function SamenvattingRij({
       ))}
 
       <div className={styles.samenvattingLabel}>Jaarhuur</div>
-      <div className={`${styles.samenvattingCel} ${styles.samenvattingWaarde}`}>{formateerEuro(asIsWaardering.brutoJaarhuurEuro)}</div>
-      {kolommen.map((kolom, i) => (
-        <div key={i} className={`${styles.samenvattingCel} ${styles.samenvattingWaarde}`}>
-          {kolom.pakket ? formateerEuro(asIsWaardering.brutoJaarhuurEuro + kolom.pakket.extraJaarhuurEuro) : formateerEuro(asIsWaardering.brutoJaarhuurEuro)}
-        </div>
-      ))}
+      <div className={`${styles.samenvattingCel} ${styles.samenvattingWaarde}`}>
+        {formateerEuro(asIsWaardering.brutoJaarhuurEuro)}
+        <span className={styles.samenvattingSub}>{formateerEuro(asIsWaardering.brutoJaarhuurEuro / 12)} / mnd</span>
+      </div>
+      {kolommen.map((kolom, i) => {
+        const jaarhuur = kolom.pakket ? asIsWaardering.brutoJaarhuurEuro + kolom.pakket.extraJaarhuurEuro : asIsWaardering.brutoJaarhuurEuro;
+        return (
+          <div key={i} className={`${styles.samenvattingCel} ${styles.samenvattingWaarde}`}>
+            {formateerEuro(jaarhuur)}
+            <span className={styles.samenvattingSub}>{formateerEuro(jaarhuur / 12)} / mnd</span>
+          </div>
+        );
+      })}
 
       <div className={styles.samenvattingLabel}>Extra jaarhuur</div>
       <div className={`${styles.samenvattingCel} ${styles.samenvattingWaarde}`}>—</div>

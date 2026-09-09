@@ -67,3 +67,24 @@ export async function haalDealOp(id: string): Promise<Deal | null> {
   if (error) throw new Error(`Woning ophalen mislukt: ${error.message}`);
   return data ? parseDealRij(data) : null;
 }
+
+/**
+ * Kopieert een bestaande woning naar een nieuwe, losstaande deal (feedback Steven Kramer,
+ * 2026-09-08: "het zou top zijn als je panden kan kopiëren") — bijv. om twee varianten van
+ * dezelfde plattegrond naast elkaar te beheren zonder alles opnieuw in te tikken. Neemt
+ * pand, scenario's, notitie en map letterlijk over; alleen de naam krijgt "(kopie)" zodat de
+ * twee entries in "Mijn woningen" uit elkaar te houden zijn. Geen koppeling met het origineel
+ * erna — wijzigen van de kopie raakt de bron nooit.
+ */
+export async function kopieerDeal(id: string): Promise<Deal> {
+  const bron = await haalDealOp(id);
+  if (!bron) throw new Error('Woning kopiëren mislukt: origineel niet gevonden.');
+  return maakDealAan({
+    naam: `${bron.naam} (kopie)`,
+    notitie: bron.notitie,
+    map: bron.map,
+    pandInvoer: bron.pandInvoer,
+    scenarios: bron.scenarios,
+    versiestempel: bron.versiestempel,
+  });
+}

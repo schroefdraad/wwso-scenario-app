@@ -113,6 +113,22 @@
   color: var(--ink-dim);
 }
 
+.kopieerKnop {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.74rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.kopieerKnop:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .notitieCel {
   color: var(--ink-dim);
   max-width: 16rem;

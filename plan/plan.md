@@ -256,6 +256,21 @@ rubrieken daadwerkelijk letterlijk overeenkomen. Eerste steekproef tijdens dit p
 
   Geverifieerd in de browser (Playwright via claude-in-chrome, lokale dev-server tijdelijk met `AUTH_VEREIST=false`): bestaande deal "Bolkruid 92" geopend via `?deal=<id>` (14 ruimten, 8 kamers, koppeling actief) → direct genavigeerd naar een verse `/woning/nieuw` (geen deal-param) → formulier toont "Nieuwe Woning", 0/40 ruimten, geen spoor van Bolkruid 92 — precies het gedrag dat hoort. 266/266 tests groen, tsc/eslint schoon.
 
+- [x] **Vijf stuks feedback verwerkt (opgelost 2026-09-09, v0.7.6), gemeld door Steven Kramer** — uit een lijst van negen punten (`SK 8-9`); twee zijn hieronder afzonderlijk behandeld, twee zijn bewust niet gebouwd (zie "Niet gebouwd" onderaan):
+  1. **Toiletruimte: "Sanitair aanwezig" niet meer apart aanzetten.** Een toiletruimte heeft per definitie sanitair — de aparte aan-knop was pure ruis. `maakRuimte()` en `RUIMTE_TYPE_GEWIJZIGD` (`lib/invoer/reducer.ts`) hangen nu automatisch `nieuwSanitair()` aan zodra het type Toiletruimte wordt (bij aanmaken én bij een typewissel, nooit bestaand sanitair overschrijvend). `toiletType`/fonteintje blijven bewust op "Geen"/0 staan — de gebruiker kiest die zelf, alleen de aan-stap verdwijnt.
+  2. **Standaard-m² voor een nieuwe Toiletruimte: 1,3 m².** Nieuwe `STANDAARD_OPPERVLAKTE`-lookup in `maakRuimte()`, alleen toegepast bij het AANMAKEN (nooit bij een latere typewissel, dat zou een al ingevulde m² kunnen overschrijven).
+  3. **"Ruimte toevoegen"-dropdown** naast "Voorbeeldpand laden" in `RuimteRaster.tsx`, met de volledige `TYPE_GROEPEN`-lijst (dezelfde groepenlijst als de type-select per rij) — niet beperkt tot de vijf `QUICKADD_TYPES`-snelkoppelingen.
+  4. **Bug: een ruimte kopiëren nam de m² niet meer over.** `RIJ_GEDUPLICEERD` in de reducer zette `oppervlakteM2` bewust leeg; dat kostte meer tikwerk dan het opleverde. Nu wordt de hele ruimte gekopieerd, m² inbegrepen.
+  5. **Woningen kopiëren.** Nieuwe `kopieerDeal()` in `lib/deals/opslag.ts` — haalt de bron-deal op en maakt er via `maakDealAan()` een nieuwe, losstaande deal van (pand/scenario's/notitie/map en de EXACTE versiestempel van het origineel, voor reproduceerbaarheid). Nieuwe "⧉ Kopiëren"-knop per rij op `/woningen`.
+
+  Bijkomend, klein: op de scenariovergelijking (`SamenvattingRij.tsx`) staat nu de maandhuur als kleinere sub-regel onder de jaarhuur, in dezelfde cel (feedback #9 uit de lijst).
+
+  **Niet gebouwd, met reden:**
+  - *"Bij een badkamer meerdere mengkranen kunnen invoeren bij een meerpersoonswastafel"* — beleidsboek-check gedaan vóór het bouwen (§2.6.2): het rekenvoorbeeld telt handdoekenradiatoren expliciet als "2 x 0,75 punt" bij een aantal, maar mengkranen staan er nooit met een vermenigvuldiging bij ("1 thermostatische mengkraan (0,50 punt) EN 1 eenhandsmengkraan (0,25 punt)" — twee verschillende typen, niet twee van hetzelfde type). Een `aantal`-veld zou dus punten toekennen die het beleidsboek niet steunt. Teruggekoppeld aan de gebruiker in plaats van stilzwijgend gebouwd of stilzwijgend genegeerd (harde regel 4).
+  - Kopiëren van een handmatig-bewerkt-scenario-detail is niet apart getest — `kopieerDeal()` neemt `scenarios` letterlijk over, dus dat werkt naar verwachting mee, maar is niet los geverifieerd.
+
+  **Browserverificatie deze ronde mislukt door een omgevingsprobleem, niet door de code**: de lokale Playwright-sessie (claude-in-chrome) reageerde niet meer op input (geen enkele click/type-actie veranderde nog iets, zelfs niet op de ONGEWIJZIGDE "Voorbeeldpand laden"-knop). Expliciet geïsoleerd met `git stash`: exact hetzelfde kapotte gedrag trad op met de wijzigingen van deze taak volledig teruggedraaid — dus een browser-/tooling-probleem in die sessie, niet in deze code. Wél gecontroleerd: 266/266 tests groen, tsc/eslint schoon op alle gewijzigde bestanden, en de reducer-logica is stap voor stap nagelopen (dezelfde patronen als de al werkende `RUIMTE_TYPE_GEWIJZIGD`/`maakRuimte`-code ernaast). Aanbevolen: bij de eerstvolgende sessie met een werkende browser alsnog een korte visuele controle doen.
+
 ## Evaluatie — optioneel, niet blokkerend voor de taakvolgorde
 
 - [ ] `/code-review ultra` over de volle codebase — brede, multi-agent cloud-review op codekwaliteit en bugs. Op elk gewenst moment te draaien.

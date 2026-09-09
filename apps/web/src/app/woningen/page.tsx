@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { haalDealenOp } from '../../lib/deals/opslag';
+import { haalDealenOp, kopieerDeal } from '../../lib/deals/opslag';
 import type { Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { HomeLogo } from '../../components/HomeLogo';
@@ -18,12 +18,25 @@ export default function DealsOverzicht() {
   const [deals, setDeals] = useState<Deal[] | null>(null);
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
+  const [kopieerBezigId, setKopieerBezigId] = useState<string | null>(null);
 
   useEffect(() => {
     haalDealenOp()
       .then(setDeals)
       .catch((err) => setFoutmelding(err instanceof Error ? err.message : String(err)));
   }, []);
+
+  async function kopieer(id: string) {
+    setKopieerBezigId(id);
+    try {
+      const kopie = await kopieerDeal(id);
+      setDeals((huidig) => (huidig ? [kopie, ...huidig] : [kopie]));
+    } catch (err) {
+      setFoutmelding(err instanceof Error ? err.message : String(err));
+    } finally {
+      setKopieerBezigId(null);
+    }
+  }
 
   const mappen = useMemo(() => {
     if (!deals) return [];
@@ -78,6 +91,7 @@ export default function DealsOverzicht() {
                     <th>Notitie</th>
                     <th>Laatst bijgewerkt</th>
                     <th>Map</th>
+                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -98,6 +112,17 @@ export default function DealsOverzicht() {
                       </td>
                       <td className={styles.dim}>{formateerDatumTijd(deal.bijgewerkt)}</td>
                       <td className={styles.dim}>{deal.map ? `📁 ${deal.map}` : '—'}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className={styles.kopieerKnop}
+                          disabled={kopieerBezigId === deal.id}
+                          title="Kopiëren naar een nieuwe, losstaande woning"
+                          onClick={() => kopieer(deal.id)}
+                        >
+                          {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

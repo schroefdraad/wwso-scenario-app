@@ -5,7 +5,8 @@ import { useToast } from './ToastContext';
 import { RuimteRijRow } from './RuimteRijComponent';
 import { ToewijzingsOverzicht } from './ToewijzingsOverzicht';
 import { Waarschuwingen } from './Waarschuwingen';
-import { QUICKADD_TYPES } from './typeGroepen';
+import { QUICKADD_TYPES, TYPE_GROEPEN } from './typeGroepen';
+import type { RuimteType } from '@wwso/engine';
 import styles from './styles.module.css';
 
 export function RuimteRaster() {
@@ -70,6 +71,40 @@ export function RuimteRaster() {
           >
             Voorbeeldpand laden
           </button>
+          <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
+          {/* Generiek toevoegen voor elk type uit TYPE_GROEPEN, niet alleen de vijf QUICKADD_TYPES
+           * hieronder (feedback Steven Kramer, 2026-09-08: een dropdown met alle typen "zoals in
+           * het hoofdmenu" — dezelfde groepenlijst als de type-select per rij). */}
+          <select
+            className={styles.btn}
+            disabled={state.ruimtes.length >= 40}
+            value=""
+            aria-label="Ruimte toevoegen"
+            onChange={(e) => {
+              const type = e.target.value as RuimteType;
+              if (!type) return;
+              const bestaand = state.ruimtes.filter((r) => r.type === type).length;
+              const naam = bestaand === 0 ? type : `${type} ${bestaand + 1}`;
+              dispatch({
+                soort: 'RUIMTE_TOEGEVOEGD',
+                ruimte: { type, naam, kamers: Array.from({ length: aantalKamers }, (_, i) => i + 1) },
+              });
+              e.target.value = '';
+            }}
+          >
+            <option value="" disabled>
+              Ruimte toevoegen…
+            </option>
+            {TYPE_GROEPEN.map((groep) => (
+              <optgroup key={groep.label} label={groep.label}>
+                {groep.types.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
           <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
           <span className={styles.hint}>Snel toevoegen:</span>
           <div className={styles.quickadd}>

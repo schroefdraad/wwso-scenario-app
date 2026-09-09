@@ -7,7 +7,7 @@ import { useInvoer } from './InvoerContext';
 import { useLade, type LadeSegment } from './LadeContext';
 import { Toggle } from './Toggle';
 import { InfoBadge } from '../InfoBadge';
-import { nieuweKeuken, nieuwSanitair } from './ladeDefaults';
+import { nieuweKeuken, nieuwSanitair } from '../../lib/invoer/ladeDefaults';
 import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import {
   marginaalKeukenBoolean,

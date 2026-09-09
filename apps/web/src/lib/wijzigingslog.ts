@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.5';
+export const APP_VERSIE = '0.7.6';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,17 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.6',
+    datum: '2026-09-09',
+    wijzigingen: [
+      'Toiletruimte: "Sanitair aanwezig" hoeft niet meer apart aangezet te worden, en de m² wordt standaard op 1,3 gezet (aanpasbaar).',
+      'Nieuw: "Ruimte toevoegen"-dropdown naast "Voorbeeldpand laden", met alle ruimtetypen — niet alleen de vijf snelkoppelingen.',
+      'Bug: een ruimte kopiëren nam de m² niet meer over — dat gebeurt nu weer wel, samen met de rest van de ruimte.',
+      'Nieuw: woningen kopiëren vanuit "Mijn woningen" — maakt een losstaande kopie met pand, scenario\'s, notitie en map.',
+      'Bij de scenariovergelijking staat nu ook de maandhuur onder de jaarhuur.',
+    ],
+  },
   {
     versie: '0.7.5',
     datum: '2026-09-08',

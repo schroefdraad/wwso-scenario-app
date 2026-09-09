@@ -2,6 +2,15 @@ import type { RuimteType } from '@wwso/engine';
 import { DUBBEL_GEDEELDE_RUIMTE_TYPES, testpand6Kamers } from '@wwso/engine';
 import { NIEUWE_INVOERSTATE, type InvoerState, type PandVeldenState, type RuimteRij } from './types';
 import { pandInvoerNaarState } from './vanPandInvoer';
+import { nieuwSanitair } from './ladeDefaults';
+
+/** Standaard oppervlakte per type, alleen toegepast bij het AANMAKEN van een ruimte (nooit bij
+ * een latere typewissel — dat zou een al ingevulde m² kunnen overschrijven). Toiletruimte
+ * (feedback Steven Kramer, 2026-09-08): een fonteinruimte is vrijwel altijd rond de 1,3 m², dus
+ * een startwaarde scheelt intikken; de gebruiker kan 'm gewoon aanpassen. */
+const STANDAARD_OPPERVLAKTE: Partial<Record<RuimteType, string>> = {
+  Toiletruimte: '1.3',
+};
 
 export const VERWARMD_DEFAULT = new Set<RuimteType>([
   'Privévertrek',
@@ -69,13 +78,18 @@ function maakRuimte(state: InvoerState, overrides: Partial<RuimteRij>): RuimteRi
     nr: volgendNr(state.ruimtes),
     naam: '',
     type,
-    oppervlakteM2: '',
+    oppervlakteM2: STANDAARD_OPPERVLAKTE[type] ?? '',
     verdieping: '0',
     verwarmd: KOUD_TYPES.has(type) ? false : VERWARMD_DEFAULT.has(type),
     verkoeld: false,
     aantalAdressenMetToegang: dubbel ? (state.laatsteAantalAdressen ?? '') : '',
     aantalAdressenOvergenomen: dubbel && state.laatsteAantalAdressen !== undefined,
     kamers: [],
+    // Toiletruimte (feedback Steven Kramer, 2026-09-08): "Sanitair aanwezig" hoeft niet meer apart
+    // aangezet te worden — een toiletruimte heeft per definitie sanitair, dus die stap is puur
+    // ruis. `nieuwSanitair()` laat toiletType/fonteintje bewust nog op "Geen"/0 staan, de
+    // gebruiker kiest die zelf (alleen de aparte aan-knop verdwijnt).
+    sanitair: type === 'Toiletruimte' ? nieuwSanitair() : undefined,
     ...overrides,
   };
 }
@@ -126,6 +140,10 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
             aantalAdressenOvergenomen: dubbel && !r.aantalAdressenMetToegang && state.laatsteAantalAdressen !== undefined,
             verwarmd: koud ? false : VERWARMD_DEFAULT.has(actie.type),
             verkoeld: false,
+            // Zelfde reden als in maakRuimte hierboven — wisselen NAAR Toiletruimte hoeft de
+            // "Sanitair aanwezig"-stap niet meer apart te vragen. Bestaand sanitair (bijv. van vóór
+            // de typewissel) blijft ongewijzigd staan, nooit overschreven.
+            sanitair: actie.type === 'Toiletruimte' ? (r.sanitair ?? nieuwSanitair()) : r.sanitair,
             kamers: r.kamers.filter((k) => k <= n),
           };
         }),
@@ -146,12 +164,14 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
       const bron = state.ruimtes.find((r) => r.id === actie.id);
       if (!bron) return state;
       const opgehoogdeNaam = bron.naam.replace(/(\d+)\s*$/, (_, getal: string) => String(parseInt(getal, 10) + 1));
+      // Alles kopiëren, ook m² (feedback Steven Kramer, 2026-09-08: "als ik een ruimte kopieer
+      // wil ik dat alles gekopieerd wordt/ook de m2") — voorheen werd oppervlakteM2 bewust leeg-
+      // gemaakt, wat meer tikwerk kostte dan het opleverde.
       const nieuw: RuimteRij = {
         ...bron,
         id: `r${state.volgendeRuimteId}`,
         nr: volgendNr(state.ruimtes),
         naam: opgehoogdeNaam === bron.naam ? `${bron.naam} (kopie)` : opgehoogdeNaam,
-        oppervlakteM2: '',
       };
       const index = state.ruimtes.findIndex((r) => r.id === actie.id);
       const ruimtes = [...state.ruimtes];

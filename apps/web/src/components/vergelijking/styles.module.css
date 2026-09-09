@@ -266,6 +266,15 @@
   font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
 }
 
+/** Maandhuur naast jaarhuur in dezelfde cel (feedback Steven Kramer, 2026-09-08) — kleiner en
+ * gedempt, zodat de jaarhuur de hoofdwaarde blijft. */
+.samenvattingSub {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+
 .samenvattingWaardePositief {
   color: var(--accent);
 }
