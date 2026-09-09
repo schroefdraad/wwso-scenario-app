@@ -85,8 +85,8 @@ const S01: MaatregelDefinitie = {
             ingebouwdKastjeMetWastafel: false,
             kastruimte: false,
             aantalStopcontacten: 0,
-            eenhandsmengkraan: false,
-            thermostatischeMengkraan: false,
+            eenhandsmengkraan: 0,
+            thermostatischeMengkraan: 0,
           },
         },
       },
@@ -164,8 +164,8 @@ const S02: MaatregelDefinitie<S02Params> = {
             ingebouwdKastjeMetWastafel: false,
             kastruimte: false,
             aantalStopcontacten: 0,
-            eenhandsmengkraan: false,
-            thermostatischeMengkraan: false,
+            eenhandsmengkraan: 0,
+            thermostatischeMengkraan: 0,
           },
         },
       },
@@ -256,8 +256,8 @@ const S03: MaatregelDefinitie<S03Params> = {
             ingebouwdKastjeMetWastafel: false,
             kastruimte: false,
             aantalStopcontacten: 0,
-            eenhandsmengkraan: false,
-            thermostatischeMengkraan: false,
+            eenhandsmengkraan: 0,
+            thermostatischeMengkraan: 0,
           },
         },
       },
@@ -290,7 +290,7 @@ const S04: MaatregelDefinitie = {
   mutaties(ctx, kandidaat) {
     const s = ctx.pand.sanitair.find((x) => x.ruimteNr === kandidaat.doel.nr);
     if (!s) return [];
-    return [{ soort: 'sanitair-wijzigen', ruimteNr: s.ruimteNr, patch: { extra: { ...s.extra, thermostatischeMengkraan: true } } }];
+    return [{ soort: 'sanitair-wijzigen', ruimteNr: s.ruimteNr, patch: { extra: { ...s.extra, thermostatischeMengkraan: 1 } } }];
   },
 };
 

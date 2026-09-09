@@ -67,8 +67,11 @@ function extraPuntenRuw(post: SanitairVoorziening, tarievenset: Tarievenset): nu
     (post.aantalWastafels + post.aantalMeerpersoonswastafels) * max.stopcontactenPerWastafel;
   som += Math.min(e.aantalStopcontacten, toegestaneStopcontacten) * t.stopcontact;
 
-  if (e.eenhandsmengkraan) som += t.eenhandsmengkraan;
-  if (e.thermostatischeMengkraan) som += t.thermostatischeMengkraan;
+  // Eenmalig, niet vermenigvuldigd met het aantal (zie de doc-comment bij
+  // SanitairExtraVoorzieningen) — een tweede mengkraan van hetzelfde type levert geen extra punten
+  // op, alleen de eerste telt.
+  if (e.eenhandsmengkraan > 0) som += t.eenhandsmengkraan;
+  if (e.thermostatischeMengkraan > 0) som += t.thermostatischeMengkraan;
   return som;
 }
 

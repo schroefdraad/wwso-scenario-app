@@ -103,8 +103,8 @@ describe('R6 — Extra sanitaire voorzieningen (§2.6.2)', () => {
           bubbelfunctieBad: true,
           doucheafscheidingVolledig: true,
           aantalHanddoekenradiatoren: 2,
-          thermostatischeMengkraan: true,
-          eenhandsmengkraan: true,
+          thermostatischeMengkraan: 1,
+          eenhandsmengkraan: 1,
         },
       },
       4,
@@ -126,7 +126,7 @@ describe('R6 — Extra sanitaire voorzieningen (§2.6.2)', () => {
         bubbelfunctieBad: true,
         doucheafscheidingVolledig: true,
         aantalHanddoekenradiatoren: 2,
-        thermostatischeMengkraan: true,
+        thermostatischeMengkraan: 1,
       },
     });
     // extra ruw = 1,50 + 1,25 + 1,50 + 0,50 = 4,75 → afgetopt op douche = 3
@@ -149,7 +149,7 @@ describe('R6 — Extra sanitaire voorzieningen (§2.6.2)', () => {
         ...GEEN_SANITAIR_EXTRA,
         bubbelfunctieBad: true,
         doucheafscheidingVolledig: true,
-        thermostatischeMengkraan: true,
+        thermostatischeMengkraan: 1,
       },
     });
     // alleen de basispunten van de douche blijven staan
@@ -161,7 +161,7 @@ describe('R6 — Extra sanitaire voorzieningen (§2.6.2)', () => {
       ruimteNr: 1,
       toiletType: 'Hangend in badkamer',
       aantalWastafels: 1,
-      extra: { ...GEEN_SANITAIR_EXTRA, thermostatischeMengkraan: true, aantalStopcontacten: 2 },
+      extra: { ...GEEN_SANITAIR_EXTRA, thermostatischeMengkraan: 1, aantalStopcontacten: 2 },
     });
     // 2,75 toilet + 1 wastafel + 0 douche/bad + min(extra, 0) = 3,75
     expect(berekenR6(input, tarievenset).perKamer[1]).toBe(3.75);

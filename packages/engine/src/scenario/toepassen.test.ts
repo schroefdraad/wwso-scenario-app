@@ -137,8 +137,8 @@ describe('pasScenarioToe — mutatiesoorten', () => {
           ingebouwdKastjeMetWastafel: false,
           kastruimte: false,
           aantalStopcontacten: 0,
-          eenhandsmengkraan: false,
-          thermostatischeMengkraan: false,
+          eenhandsmengkraan: 0,
+          thermostatischeMengkraan: 0,
         },
       },
     };

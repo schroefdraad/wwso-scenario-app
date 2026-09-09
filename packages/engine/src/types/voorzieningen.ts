@@ -100,11 +100,25 @@ export const SanitairExtraEisen = z.object({
 });
 export type SanitairExtraEisen = z.infer<typeof SanitairExtraEisen>;
 
+/** Accepteert zowel het oude `boolean` (vóór 2026-09-09 opgeslagen deals) als een nieuw aantal —
+ * zie `eenhandsmengkraan`/`thermostatischeMengkraan` hieronder. Een oude `true` wordt 1, `false`
+ * wordt 0; zo blijft bestaande data zonder migratie inleesbaar (harde regel: nooit een nieuw
+ * verplicht/ander-getypeerd veld zonder achterwaartse compatibiliteit, zie het `Keuken.verwarmd`-
+ * incident van 2026-09-04). */
+const AantalOfOudeBoolean = z.union([z.boolean(), z.number().int().min(0)]).transform((v) => (typeof v === 'boolean' ? (v ? 1 : 0) : v));
+
 /**
  * Extra sanitaire voorzieningen (§2.6.2). Handdoekenradiatoren en stopcontacten zijn aantallen:
  * het rekenvoorbeeld bij §2.6.2 waardeert expliciet "2 handdoekenradiatoren (2 x 0,75 punt)",
  * en stopcontacten kennen een maximum van twee per (meerpersoons)wastafel.
- */
+ *
+ * `eenhandsmengkraan`/`thermostatischeMengkraan` zijn sinds 2026-09-09 ook een aantal (feedback
+ * Steven Kramer: bij een meerpersoonswastafel wil je kunnen vastleggen dat er meerdere kranen
+ * zijn), maar leveren — anders dan handdoekenradiatoren — GEEN punten per stuk op: het
+ * rekenvoorbeeld bij §2.6.2 telt "1 thermostatische mengkraan (0,50 punt) EN 1 eenhandsmengkraan
+ * (0,25 punt)" als twee verschillende, elk eenmalige voorzieningen, nooit met een "n x"-
+ * vermenigvuldiging zoals bij handdoekenradiatoren. De punten gelden dus eenmalig zodra het
+ * aantal > 0 is, zie `berekenSanitairExtra` in `rubrieken/r6-sanitair.ts`. */
 export const SanitairExtraVoorzieningen = z.object({
   bubbelfunctieBad: z.boolean(),
   doucheafscheidingVolledig: z.boolean(),
@@ -113,8 +127,8 @@ export const SanitairExtraVoorzieningen = z.object({
   /** Minimaal 40 cm in breedte én hoogte; gecapt op 0,75 punt totaal. */
   kastruimte: z.boolean(),
   aantalStopcontacten: z.number().int().min(0),
-  eenhandsmengkraan: z.boolean(),
-  thermostatischeMengkraan: z.boolean(),
+  eenhandsmengkraan: AantalOfOudeBoolean,
+  thermostatischeMengkraan: AantalOfOudeBoolean,
 });
 export type SanitairExtraVoorzieningen = z.infer<typeof SanitairExtraVoorzieningen>;
 

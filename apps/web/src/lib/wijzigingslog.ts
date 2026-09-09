@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.6';
+export const APP_VERSIE = '0.7.7';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.7',
+    datum: '2026-09-09',
+    wijzigingen: [
+      'Sanitair: "Eenhandsmengkraan" en "Thermostatische mengkraan" zijn nu aantalvelden i.p.v. vinkjes — handig bij een meerpersoonswastafel met meerdere kranen. De punten (§2.6.2) blijven zoals in het beleidsboek: eenmalig zodra het aantal > 0 is, niet vermenigvuldigd met het aantal.',
+    ],
+  },
   {
     versie: '0.7.6',
     datum: '2026-09-09',

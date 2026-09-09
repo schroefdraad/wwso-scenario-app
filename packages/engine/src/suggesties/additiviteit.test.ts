@@ -25,13 +25,13 @@ describe('additiviteit — restpost bij overlappende maatregelen', () => {
     const keuken = testpand6Kamers.keukens[0];
 
     const metS04 = pasScenarioToe(testpand6Kamers, [
-      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: true } } },
+      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: 1 } } },
     ]);
     const metK08 = pasScenarioToe(testpand6Kamers, [
       { soort: 'keuken-wijzigen', ruimteNr: keuken.ruimteNr, patch: { extra: { ...keuken.extra, vaatwasmachine: true } } },
     ]);
     const metBeide = pasScenarioToe(testpand6Kamers, [
-      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: true } } },
+      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: 1 } } },
       { soort: 'keuken-wijzigen', ruimteNr: keuken.ruimteNr, patch: { extra: { ...keuken.extra, vaatwasmachine: true } } },
     ]);
 

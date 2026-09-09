@@ -17,12 +17,12 @@ const pand = testpand6Kamers;
 
 describe('marginalePunten', () => {
   it('geeft 0 voor een sanitaire extra als de extra-eisen-poort niet gehaald is (ruimte 10)', () => {
-    expect(marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, 10, 'eenhandsmengkraan')).toBe(0);
+    expect(marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, 10, 'eenhandsmengkraan', 0)).toBe(0);
     expect(marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, 10, 'aantalStopcontacten', 0)).toBe(0);
   });
 
   it('geeft een positief getal voor een sanitaire extra als de poort wél gehaald is en er douche/bad-ruimte over is (ruimte 9)', () => {
-    const waarde = marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, 9, 'eenhandsmengkraan');
+    const waarde = marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, 9, 'eenhandsmengkraan', 0);
     expect(waarde).not.toBeNull();
     expect(waarde!).toBeGreaterThan(0);
   });
@@ -100,8 +100,8 @@ describe('marginalePunten', () => {
             ingebouwdKastjeMetWastafel: false,
             kastruimte: false,
             aantalStopcontacten: 0,
-            eenhandsmengkraan: false,
-            thermostatischeMengkraan: false,
+            eenhandsmengkraan: 0,
+            thermostatischeMengkraan: 0,
           },
         },
       ],
@@ -113,6 +113,6 @@ describe('marginalePunten', () => {
 
   it('geeft null terug in plaats van te crashen als de motor faalt (onbekend COROP-gebied)', () => {
     const kapotPand = { ...pand, pand: { ...pand.pand, coropGebied: 'Onbestaand gebied' } };
-    expect(marginaalSanitairExtraBoolean(kapotPand, tarievenset, peildatum, 8, 'eenhandsmengkraan')).toBeNull();
+    expect(marginaalSanitairVolgendeEenheid(kapotPand, tarievenset, peildatum, 8, 'eenhandsmengkraan', 0)).toBeNull();
   });
 });

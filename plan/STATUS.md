@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-07
+Laatst bijgewerkt: 2026-09-09
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -308,3 +308,38 @@ naar GitHub (`0037d82`) leverde dus GEEN nieuwe productie-deployment op totdat `
 er expliciet achteraan gedraaid is (`dpl_4ZpRWvK6rnSzUUzPsyUcvg2Qa3wj`, geverifieerd met `vercel
 ls`/`vercel inspect`). Vercel CLI 59.3.0 staat lokaal geïnstalleerd en ingelogd als
 `schroefdraad` — de eerdere sessiehint dat de CLI ontbreekt, klopt dus niet (meer).
+
+## Sessie 2026-09-08 t/m 2026-09-09 — samenvatting (v0.7.4 t/m v0.7.7: opslaan-bugs, negen stuks feedback Steven Kramer, mengkranen)
+
+Volledig technisch verslag van elk punt staat in `plan/plan.md`; hier alleen de samenvatting.
+
+- **v0.7.4** — bug gemeld door Steven ("'s-Gravesandestraat 78" doorgerekend + PDF geëxporteerd,
+  daarna nergens terug te vinden): "Doorrekenen →" sloeg de woning nooit op, alleen de losse
+  "Woning opslaan"-knop deed dat. Root cause bevestigd met de exacte `Topbar.tsx`-code, niet
+  aangenomen. Fix: "Doorrekenen" roept nu altijd eerst dezelfde opslaan-logica aan
+  (`slaWoningOp()`) en blijft bij een mislukking op het invoerscherm staan. De verloren woning van
+  Steven is met 100% numerieke nauwkeurigheid gereconstrueerd uit zijn PDF-export (per-kamer,
+  per-rubriek toelichtingsregels teruggerekend en gevalideerd tegen de motor) en als nieuwe deal
+  aangemaakt.
+- **v0.7.5** — bug gemeld door Steven ("moet Puntum eerst sluiten voor een nieuwe woning", "nieuwe
+  woning aan mijn map toevoegen lukt niet"): een nooit-gewiste sessionStorage-concept-autosave
+  droeg de koppeling aan een oude, andere woning mee naar een verse "+ Nieuwe woning". Fix: het
+  concept wordt nu genegeerd én expliciet gewist zodra het een `bewerktDeal`-koppeling draagt.
+- **v0.7.6** — vijf van negen feedbackpunten uit Stevens lijst "SK 8-9": toiletruimte-sanitair
+  automatisch aan + standaard 1,3 m², een "Ruimte toevoegen"-dropdown met alle ruimtetypen, een
+  ruimte kopiëren neemt de m² weer mee, woningen kopiëren vanuit "Mijn woningen", maandhuur als
+  sub-regel bij de jaarhuur op de scenariovergelijking. Twee punten bewust niet gebouwd (zie
+  hieronder, v0.7.7); twee al eerder afgehandeld in vorige sessies. Browserverificatie mislukte
+  deze ronde door een omgevingsprobleem (claude-in-chrome reageerde nergens meer op, ook niet op
+  ongewijzigde bestaande functionaliteit) — geïsoleerd met `git stash` als niet-code-gerelateerd,
+  transparant zo gedocumenteerd in plaats van verzwegen of als vals-geverifieerd gemeld.
+- **v0.7.7** — het "niet gebouwd"-punt van v0.7.6 (meerdere mengkranen bij een
+  meerpersoonswastafel) alsnog gebouwd als compromis: een aantal-veld voor documentatie, maar de
+  punten blijven eenmalig zoals het beleidsboek voorschrijft (geen "n x"-vermenigvuldiging).
+  `SanitairExtraVoorzieningen.eenhandsmengkraan`/`.thermostatischeMengkraan` van `boolean` naar een
+  achterwaarts-compatibel aantal-type; UI toont vanaf de 2e eenheid consequent "0 pt". Browser
+  werkte deze ronde weer normaal — live geverifieerd (aantal naar 2 gezet, badge bleef "0 pt").
+
+266/266 tests groen (na elke stap), tsc/eslint schoon op alle packages. Alle vier releases
+gecommit, gepusht en met `vercel --prod` gedeployed (deze CLI-workflow is dus bevestigd de norm
+voor dit niet-Git-gekoppelde Vercel-project, zie de sessie hierboven).

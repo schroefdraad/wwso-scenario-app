@@ -79,24 +79,30 @@ export function marginaalKeukenVolgendeKastruimte(pand: PandInvoer, tarievenset:
   );
 }
 
-/** Marginale waarde van één boolean sanitaire extra-voorziening (Comfort/Kranen/Douche en bad). */
+/** Marginale waarde van één boolean sanitaire extra-voorziening (Comfort/Douche en bad). Sluit
+ * naast de bestaande aantal-velden ook `eenhandsmengkraan`/`thermostatischeMengkraan` uit — die
+ * zijn sinds 2026-09-09 ook een aantal, zie `marginaalSanitairVolgendeEenheid` hieronder. */
 export function marginaalSanitairExtraBoolean(
   pand: PandInvoer,
   tarievenset: Tarievenset,
   peildatum: string,
   ruimteNr: number,
-  veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten'>,
+  veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan'>,
 ): number | null {
   return marginaal(patchSanitairExtra(pand, ruimteNr, { [veld]: true }), patchSanitairExtra(pand, ruimteNr, { [veld]: false }), tarievenset, peildatum);
 }
 
-/** Marginale waarde van de eerstvolgende handdoekenradiator of het eerstvolgende stopcontact. */
+/** Marginale waarde van de eerstvolgende handdoekenradiator, stopcontact of mengkraan. Voor de
+ * twee mengkraan-velden (feedback Steven Kramer, 2026-09-09: "meerdere mengkranen kunnen
+ * invoeren, maar de punten maar één keer toekennen") levert dit vanaf de tweede altijd 0 op —
+ * `berekenSanitairExtra` telt ze eenmalig, niet vermenigvuldigd met het aantal (zie de
+ * doc-comment bij `SanitairExtraVoorzieningen`). */
 export function marginaalSanitairVolgendeEenheid(
   pand: PandInvoer,
   tarievenset: Tarievenset,
   peildatum: string,
   ruimteNr: number,
-  veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten',
+  veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan',
   huidig: number,
 ): number | null {
   return marginaal(patchSanitairExtra(pand, ruimteNr, { [veld]: huidig + 1 }), patchSanitairExtra(pand, ruimteNr, { [veld]: huidig }), tarievenset, peildatum);

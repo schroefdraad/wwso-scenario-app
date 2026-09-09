@@ -294,10 +294,13 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   const zetSanitair = (patch: Partial<Omit<SanitairVoorziening, 'ruimteNr'>>) =>
     dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { sanitair: sanitair ? { ...sanitair, ...patch } : undefined } });
 
-  const puntVoorExtra = (veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten'>): number | null =>
-    pand && tarievenset && peildatum ? marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null;
-  const puntVoorVolgendeEenheid = (veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten', huidig: number): number | null =>
-    pand && tarievenset && peildatum ? marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
+  const puntVoorExtra = (
+    veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan'>,
+  ): number | null => (pand && tarievenset && peildatum ? marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null);
+  const puntVoorVolgendeEenheid = (
+    veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan',
+    huidig: number,
+  ): number | null => (pand && tarievenset && peildatum ? marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null);
   const puntVoorDoucheBad = (veld: 'douche' | 'bad' | 'badDoucheCombinatie'): number | null =>
     pand && tarievenset && peildatum ? marginaalSanitairDoucheBad(pand, tarievenset, peildatum, rij.nr, veld) : null;
   const puntVoorToiletType = (type: SanitairVoorziening['toiletType']): number | null =>
@@ -499,18 +502,33 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
               />
             </ExtraGroep>
             <ExtraGroep titel="Kranen">
-              <ExtraCheck
-                label="Eenhandsmengkraan"
-                checked={sanitair.extra.eenhandsmengkraan}
-                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: v } })}
-                punten={puntVoorExtra('eenhandsmengkraan')}
-              />
-              <ExtraCheck
-                label="Thermostatische mengkraan"
-                checked={sanitair.extra.thermostatischeMengkraan}
-                onChange={(v) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: v } })}
-                punten={puntVoorExtra('thermostatischeMengkraan')}
-              />
+              <div className={styles.extraRij}>
+                <label>Eenhandsmengkranen</label>
+                <input
+                  type="number"
+                  min={0}
+                  style={{ width: '4rem' }}
+                  value={sanitair.extra.eenhandsmengkraan}
+                  onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: Number(e.target.value) || 0 } })}
+                />
+                <PuntBadge waarde={puntVoorVolgendeEenheid('eenhandsmengkraan', sanitair.extra.eenhandsmengkraan)} />
+                <InfoBadge>
+                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2) — een tweede eenhandsmengkraan hier voegt niks meer toe, maar mag je wel
+                  vastleggen (bijv. bij een meerpersoonswastafel).
+                </InfoBadge>
+              </div>
+              <div className={styles.extraRij}>
+                <label>Thermostatische mengkranen</label>
+                <input
+                  type="number"
+                  min={0}
+                  style={{ width: '4rem' }}
+                  value={sanitair.extra.thermostatischeMengkraan}
+                  onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: Number(e.target.value) || 0 } })}
+                />
+                <PuntBadge waarde={puntVoorVolgendeEenheid('thermostatischeMengkraan', sanitair.extra.thermostatischeMengkraan)} />
+                <InfoBadge>Levert maar één keer punten op, ongeacht het aantal (§2.6.2).</InfoBadge>
+              </div>
             </ExtraGroep>
             <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
           </div>

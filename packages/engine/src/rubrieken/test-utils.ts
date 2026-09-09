@@ -89,8 +89,8 @@ export const GEEN_SANITAIR_EXTRA: SanitairExtraVoorzieningen = {
   ingebouwdKastjeMetWastafel: false,
   kastruimte: false,
   aantalStopcontacten: 0,
-  eenhandsmengkraan: false,
-  thermostatischeMengkraan: false,
+  eenhandsmengkraan: 0,
+  thermostatischeMengkraan: 0,
 };
 
 export function maakKeuken(opts: Partial<Keuken> & { ruimteNr: number }): Keuken {

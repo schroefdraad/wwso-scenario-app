@@ -22,7 +22,7 @@ describe('afronding — dezelfde maatregel, andere uitkomst per kamer', () => {
     const ruimte9 = testpand6Kamers.sanitair.find((s) => s.ruimteNr === 9)!;
 
     const naS04 = pasScenarioToe(testpand6Kamers, [
-      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: true } } },
+      { soort: 'sanitair-wijzigen', ruimteNr: 9, patch: { extra: { ...ruimte9.extra, thermostatischeMengkraan: 1 } } },
     ]);
     const eindtellingNa = berekenEindtelling(naS04, tarievenset, peildatum);
 
