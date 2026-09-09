@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.7';
+export const APP_VERSIE = '0.7.8';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,17 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.8',
+    datum: '2026-09-09',
+    wijzigingen: [
+      '"Optimalisaties" staat nu als titel boven het tabblad-per-scenario, niet meer per tabblad herhaald.',
+      'Maandhuur staat nu als eigen regel in de scenariovergelijking, naast Jaarhuur.',
+      'Aftrekpunten (§2.13): de "oppervlakte < 8 m²"-situatie (automatisch bepaald uit de ruimte-invoer) staat nu ook in de tabel, naast de drie handmatige situaties.',
+      'Mijn woningen: het overzicht is breder, zodat alle kolommen passen zonder onnodig te scrollen.',
+      'Bug: een nieuwe map aanmaken op de scenariovergelijking kon op een smal scherm de "Opslaan"-knop buiten beeld duwen — die rij wrapt nu netjes, en Enter in het naamveld slaat ook direct op.',
+    ],
+  },
   {
     versie: '0.7.7',
     datum: '2026-09-09',

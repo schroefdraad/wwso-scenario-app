@@ -3,6 +3,11 @@ import type { PandInvoer } from '../types/index';
 import { rondAfOpKwartpunten, ruimtesPerKamer, vertrekOppervlakteM2 } from './gedeeld';
 import type { RubriekResultaat } from './types';
 
+/** §2.13, situatie 1 — geëxporteerd zodat de UI (het aftrekpunten-overzicht op het invoerscherm)
+ * dezelfde grens toont als de motor daadwerkelijk gebruikt, in plaats van een los, mogelijk
+ * uit sync lopend getal. */
+export const MIN_OPPERVLAKTE_M2 = 8;
+
 /**
  * R13 — Aftrekpunten (§2.13). Vier situaties, elk onafhankelijk −4 punten — een kamer die aan
  * twee situaties voldoet verliest dus 8 punten.
@@ -21,8 +26,6 @@ export function berekenR13(input: PandInvoer, tarievenset: Tarievenset): Rubriek
   const toelichting: string[] = [];
   const aftrek = tarievenset.aftrekPuntenPerSituatie;
   const s = input.handmatigePosten.aftrekSituaties;
-
-  const MIN_OPPERVLAKTE_M2 = 8;
 
   for (const [kamer, ruimtes] of perKamerRuimtes) {
     const oppervlakteM2 = vertrekOppervlakteM2(ruimtes);

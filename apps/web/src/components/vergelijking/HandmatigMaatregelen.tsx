@@ -56,7 +56,6 @@ export function HandmatigMaatregelen({
   return (
     <section>
       <div className={styles.blokKop}>
-        <h2>Optimalisaties</h2>
         <label className={styles.handmatigInvesteringVeld}>
           Investering herindeling (€)
           <InfoBadge>

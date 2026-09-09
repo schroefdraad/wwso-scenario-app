@@ -399,6 +399,16 @@ export function Vergelijking({
                 onBlur={() => {
                   if (!dealMap) setNieuweMapModus(false);
                 }}
+                onKeyDown={(e) => {
+                  // Enter direct laten opslaan (i.p.v. alleen de "Opslaan"-knop verderop in de
+                  // rij) — op smalle schermen kan die knop buiten beeld staan zodra deze rij
+                  // wrapt, waardoor het leek alsof een nieuwe map helemaal niet op te slaan was
+                  // (feedback Emma, 2026-09-09).
+                  if (e.key === 'Enter' && dealMap) {
+                    e.preventDefault();
+                    dealOpslaan();
+                  }
+                }}
                 aria-label="Naam van de nieuwe map"
                 placeholder="Naam nieuwe map"
                 className={styles.dealMapVeld}
@@ -480,6 +490,7 @@ export function Vergelijking({
           onBewerkHandmatig={bewerkHandmatig}
           heeftVerwervingswaarde={verwervingswaardeEuro !== undefined}
         />
+        <h2 className={styles.optimalisatiesTitel}>Optimalisaties</h2>
         <div className={styles.scenarioTabsBlok}>
           <div className={styles.tabBalk} role="tablist" aria-label="Scenario">
             {slots.map((slot, i) => (

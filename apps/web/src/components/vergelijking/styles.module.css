@@ -28,6 +28,7 @@
 
 .dealOpslaan {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   margin-left: auto;
@@ -158,6 +159,11 @@
 /** Eén tabblad per scenario (2026-09-05) i.p.v. een gedeelde checkboxtabel + losse blokken
  * eronder — voorkomt dat je bij het bewerken van scenario 2 eerst langs scenario 1's tabel moet
  * scrollen. */
+.optimalisatiesTitel {
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+}
+
 .scenarioTabsBlok {
   background: var(--paper-raised);
   border: 1px solid var(--line);
@@ -266,15 +272,6 @@
   font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
 }
 
-/** Maandhuur naast jaarhuur in dezelfde cel (feedback Steven Kramer, 2026-09-08) — kleiner en
- * gedempt, zodat de jaarhuur de hoofdwaarde blijft. */
-.samenvattingSub {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--ink-dim);
-  font-weight: 400;
-}
-
 .samenvattingWaardePositief {
   color: var(--accent);
 }
@@ -349,11 +346,6 @@
 .blokKop {
   padding: 0.9rem 1.2rem;
   border-bottom: 1px solid var(--line);
-}
-
-.blokKop h2 {
-  font-size: 1rem;
-  margin: 0 0 0.2rem;
 }
 
 .tabelScroll {
