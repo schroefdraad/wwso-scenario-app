@@ -13,6 +13,17 @@ import type { Bandbreedte, InvesteringOpbouw } from './types';
  */
 export const CONSERVATIEVE_BTW_FACTOR = 1.21;
 
+/**
+ * Jaarlijkse huurstijging voor de terugverdientijd/marginaal-rendement-berekening (feedback Myle,
+ * 2026-09-11: "wordt de extra jaarhuur geïndexeerd?"). Bron: `resources/Rendementscalculator_
+ * Crooswijkseweg 95-A03.xlsx`, cel "Huurstijging" — 0,033 op zowel het AS IS- als het TO
+ * BE-tabblad, dus geen losse aanname per pand nodig. Niet in `KostencatalogusAannames`: die tab
+ * komt uit een ander brondocument (`Kostenkentallen_WWSO_optimalisatie.xlsx`) en het
+ * importscript faalt hard als een verwachte parameter ontbreekt (harde regel 4) — deze waarde
+ * hoort dus hier, niet daar.
+ */
+export const HUURSTIJGING_PER_JAAR = 0.033;
+
 export function nulBandbreedte(): Bandbreedte {
   return { optimistisch: 0, verwacht: 0, pessimistisch: 0 };
 }
@@ -96,30 +107,48 @@ export function totaalUitOpbouw(opbouw: InvesteringOpbouw): Bandbreedte {
 }
 
 /**
- * Terugverdientijd per scenario van de bandbreedte (§5 van het ontwerp): de extra jaarhuur
- * staat vast (komt uit de rekenmotor), alleen de investering varieert. `optimistisch` hoort dus
- * bij de laagste kosten en dus de kortste terugverdientijd.
+ * Aantal jaren tot de cumulatieve extra huur de investering evenaart, met de extra jaarhuur van
+ * het eerste jaar als basis die daarna elk jaar met `HUURSTIJGING_PER_JAAR` meegroeit (een
+ * groeiende meetkundige reeks) — in plaats van een vlak bedrag per jaar. Gesloten-vorm-oplossing
+ * voor een reëel (niet per se geheel) aantal jaren n:
+ *   investering = extraJaarhuur × [(1+r)^n − 1] / r  ⟺  n = ln(1 + investering·r / extraJaarhuur) / ln(1+r)
+ * Voor r → 0 valt dit terug op de oude vlakke `investering / extraJaarhuur`; voor r > 0 (de
+ * praktijksituatie) is n altijd kleiner dan die vlakke uitkomst — vandaar dat indexatie de
+ * terugverdientijd verkort, nooit verlengt.
+ */
+function jarenTotTerugverdiend(investeringEuro: number, extraJaarhuurEuro: number): number {
+  return Math.log(1 + (investeringEuro * HUURSTIJGING_PER_JAAR) / extraJaarhuurEuro) / Math.log(1 + HUURSTIJGING_PER_JAAR);
+}
+
+/**
+ * Terugverdientijd per scenario van de bandbreedte (§5 van het ontwerp, geïndexeerd sinds
+ * 2026-09-12): de extra jaarhuur van jaar 1 staat vast (komt uit de rekenmotor), alleen de
+ * investering varieert. `optimistisch` hoort dus bij de laagste kosten en dus de kortste
+ * terugverdientijd.
  */
 export function berekenTerugverdientijd(investering: Bandbreedte, extraJaarhuurEuro: number): Bandbreedte | null {
   if (extraJaarhuurEuro <= 0) return null;
   return {
-    optimistisch: rondAfOp2Decimalen(investering.optimistisch / extraJaarhuurEuro),
-    verwacht: rondAfOp2Decimalen(investering.verwacht / extraJaarhuurEuro),
-    pessimistisch: rondAfOp2Decimalen(investering.pessimistisch / extraJaarhuurEuro),
+    optimistisch: rondAfOp2Decimalen(jarenTotTerugverdiend(investering.optimistisch, extraJaarhuurEuro)),
+    verwacht: rondAfOp2Decimalen(jarenTotTerugverdiend(investering.verwacht, extraJaarhuurEuro)),
+    pessimistisch: rondAfOp2Decimalen(jarenTotTerugverdiend(investering.pessimistisch, extraJaarhuurEuro)),
   };
 }
 
 /**
  * Presentatiegetal, wiskundig identiek aan 100/terugverdientijd (§6 van het ontwerp) — geen
- * onafhankelijke sorteersleutel, wél leesbaar voor wie in rendementen denkt.
+ * onafhankelijke sorteersleutel, wél leesbaar voor wie in rendementen denkt. Blijft bewust aan de
+ * (geïndexeerde) terugverdientijd gekoppeld i.p.v. losgezet als eenvoudige eerstejaars-yield, om
+ * geen twee tegenstrijdige getallen naast elkaar in dezelfde tabel te tonen.
  */
 export function berekenMarginaalRendement(investering: Bandbreedte, extraJaarhuurEuro: number): Bandbreedte | null {
-  if (extraJaarhuurEuro <= 0) return null;
+  const terugverdientijd = berekenTerugverdientijd(investering, extraJaarhuurEuro);
+  if (!terugverdientijd) return null;
   return {
-    // optimistisch rendement hoort bij de laagste investering
-    optimistisch: rondAfOp2Decimalen((100 * extraJaarhuurEuro) / investering.optimistisch),
-    verwacht: rondAfOp2Decimalen((100 * extraJaarhuurEuro) / investering.verwacht),
-    pessimistisch: rondAfOp2Decimalen((100 * extraJaarhuurEuro) / investering.pessimistisch),
+    // optimistisch rendement hoort bij de laagste investering en dus de kortste terugverdientijd
+    optimistisch: rondAfOp2Decimalen(100 / terugverdientijd.optimistisch),
+    verwacht: rondAfOp2Decimalen(100 / terugverdientijd.verwacht),
+    pessimistisch: rondAfOp2Decimalen(100 / terugverdientijd.pessimistisch),
   };
 }
 

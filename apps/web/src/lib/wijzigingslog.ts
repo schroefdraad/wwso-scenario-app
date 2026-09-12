@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.8';
+export const APP_VERSIE = '0.7.9';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.9',
+    datum: '2026-09-12',
+    wijzigingen: [
+      'Terugverdientijd en marginaal rendement houden nu rekening met huurindexatie (3,3% per jaar, uit de rendementscalculator) — de extra jaarhuur groeit dus mee in plaats van vlak te blijven, waardoor de terugverdientijd korter uitvalt dan voorheen.',
+    ],
+  },
   {
     versie: '0.7.8',
     datum: '2026-09-09',

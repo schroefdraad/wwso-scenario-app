@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-09
+Laatst bijgewerkt: 2026-09-12
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -343,3 +343,19 @@ Volledig technisch verslag van elk punt staat in `plan/plan.md`; hier alleen de 
 266/266 tests groen (na elke stap), tsc/eslint schoon op alle packages. Alle vier releases
 gecommit, gepusht en met `vercel --prod` gedeployed (deze CLI-workflow is dus bevestigd de norm
 voor dit niet-Git-gekoppelde Vercel-project, zie de sessie hierboven).
+
+## Sessie 2026-09-12 — samenvatting (v0.7.9: huurindexatie in terugverdientijd)
+
+Feedback van Myle (21:52, 11-09-2026): moet de extra jaarhuur geïndexeerd worden bij de
+terugverdientijd-berekening? Voorheen niet — een vlakke `investering / extraJaarhuurEuro`-deling.
+Op verzoek van de gebruiker eerst de primaire bron nagegaan i.p.v. zelf een percentage te kiezen:
+`resources/Rendementscalculator_Crooswijkseweg 95-A03.xlsx` bevat een cel "Huurstijging" = 3,3%
+per jaar (gelijk op AS IS en TO BE). Nieuwe constante `HUURSTIJGING_PER_JAAR` in
+`packages/engine/src/suggesties/kosten.ts` (bewust niet in `KostencatalogusAannames`, dat hoort
+bij een ander brondocument). `berekenTerugverdientijd` gebruikt nu een groeiende-meetkundige-
+reeks-formule i.p.v. een vlakke deling — terugverdientijden worden korter, nooit langer, precies
+zoals de feedback voorspelde. `berekenMarginaalRendement` blijft op verzoek van de gebruiker
+wiskundig gekoppeld aan de (nu geïndexeerde) terugverdientijd. Volledig verslag in `plan/plan.md`.
+266/266 tests groen, tsc/eslint schoon — geen enkele bestaande test hing af van een exacte
+terugverdientijd/rendement-waarde. Nog niet gecommit/gedeployed, wacht op akkoord van de
+gebruiker.
