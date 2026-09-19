@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.11';
+export const APP_VERSIE = '0.7.12';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.12',
+    datum: '2026-09-19',
+    wijzigingen: [
+      'Bugfix: "Snel invullen: Kitchenette 122cm/240cm" nam geen extra kastruimte mee, ook al biedt beide varianten meer kastruimte dan het wettelijke minimum. 122cm-kitchenette levert nu 1,5 punt extra op, 240cm-kitchenette 0,75 punt.',
+    ],
+  },
   {
     versie: '0.7.11',
     datum: '2026-09-19',

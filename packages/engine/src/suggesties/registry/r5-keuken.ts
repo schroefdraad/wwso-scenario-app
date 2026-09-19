@@ -68,11 +68,19 @@ const KITCHENETTE_EXTRA_LEEG: Keuken['extra'] = {
  * K-01 — kitchenette 122 cm. Uit de offerte (`resources/Kosten per keukenblok.xlsx`, 122cm-tab):
  * spoelbak+kraan, inductieplaat, afzuigkap — geen koelkast, oven of vaatwasser (staan niet op de
  * inclusieflijst van deze variant).
+ *
+ * Kastruimte (2026-09-19, gebruiker keek het bijgevoegde productfoto na): de offerte noemt "2x
+ * bovenkast" + "2x benedenkast" als aparte regels — de foto bevestigt dit (2 losse deurfronten
+ * boven, 2 losse fronten onder, samen ongeveer de volle 122cm breed per rij). Basiseis
+ * (§2.5.1: 2 kasten van min. 50cm = 100cm) is al gedekt door `tweeInbouwkastenVan50Cm`. Met een
+ * aanname van standaard 60cm-modules komt boven+onder samen op ±244cm, dus 144cm boven de
+ * 100cm-basis → 2 volle eenheden van 60cm (§2.5.3) = +1,5 pt. Schatting, net als de rest van de
+ * catalogus — geen exacte cm-opgave in de offerte.
  */
 export const KITCHENETTE_122_PRESET: KitchenettePreset = {
   aanrechtlengteM: 1.22,
   basiseisen: KITCHENETTE_BASISEISEN,
-  extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true },
+  extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true, extraKastruimteEenhedenVan60Cm: 2 },
   // §2.3.2: deelt de bestaande privéruimte (geen eigen wand/deur), dus hetzelfde
   // verwarmingscircuit als het vertrek — geen apart geïnstalleerde radiator in de offerte.
   verwarmd: true,
@@ -82,11 +90,26 @@ export const KITCHENETTE_122_PRESET: KitchenettePreset = {
  * K-09 — kitchenette 240 cm, alternatief voor K-01 op dezelfde kamer. Inclusieflijst uit de
  * offerte (240cm-tab): spoelbak+kraan, inductieplaat, afzuigkap, elektrische oven, vaatwasser,
  * koelkast.
+ *
+ * Kastruimte (2026-09-19, gebruiker keek de bijgevoegde technische tekening na): de offertetekst
+ * noemt "2x bovenkast", maar de tekening toont 3 losse kastvlakken bovenin (geen losse
+ * onderkasten — die ruimte is volledig gevuld met oven/vaatwasser/koelkast). Basiseis (§2.5.1:
+ * 100cm) is al gedekt. Met dezelfde 60cm-modelaanname als K-01: 3 × 60cm = 180cm, dus 80cm boven
+ * de 100cm-basis → 1 volle eenheid van 60cm (§2.5.3) = +0,75 pt. Schatting, geen exacte
+ * cm-opgave in de offerte.
  */
 export const KITCHENETTE_240_PRESET: KitchenettePreset = {
   aanrechtlengteM: 2.4,
   basiseisen: KITCHENETTE_BASISEISEN,
-  extra: { ...KITCHENETTE_EXTRA_LEEG, afzuiginstallatie: true, kookplaatInductie: true, ovenElektrisch: true, vaatwasmachine: true, koelkast: true },
+  extra: {
+    ...KITCHENETTE_EXTRA_LEEG,
+    afzuiginstallatie: true,
+    kookplaatInductie: true,
+    ovenElektrisch: true,
+    vaatwasmachine: true,
+    koelkast: true,
+    extraKastruimteEenhedenVan60Cm: 1,
+  },
   // §2.3.2: deelt de bestaande privéruimte (geen eigen wand/deur), dus hetzelfde
   // verwarmingscircuit als het vertrek — geen apart geïnstalleerde radiator in de offerte.
   verwarmd: true,

@@ -90,9 +90,16 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-09-19, v0.7.10)**: drie losse gebruikersmeldingen in één sessie afgehandeld
-— zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Ook de al langer openstaande
-PDF-kopstijl-keuze is deze sessie binnengekomen ("donkere lint") en meeverwerkt.
+**Meest recent (2026-09-19, v0.7.11)**: disclaimer gebouwd en gedeployed (zie "Sessie 2026-09-19"
+onderaan). Daarna gestart met de feedbackknop: de gebruiker wil een e-mailmelding per binnengekomen
+feedback i.p.v. alleen de Supabase-tabel handmatig bekijken. Resend-integratie geïnstalleerd via de
+Vercel Marketplace (domein `puntum.nl`, regio `eu-west-1`) — **maar geblokkeerd tot de gebruiker
+het domein bij Resend geverifieerd heeft (SPF/DKIM-DNS-records)**. Op verzoek van de gebruiker wordt
+er nog niet verder gebouwd (migratie/UI/server-actie) tot die verificatie rond is. Zie de
+feedbackknop-taak in `plan/plan.md` voor de dashboard-link en volledige status.
+
+Daarvoor (nog steeds relevant, niet begonnen): de feedbackknop-taak zelf, en Sentry — allebei nog
+vóór taak 18.
 
 Daarvóór: drie nieuwe, nog ongebouwde taken vóór taak 18 vastgelegd in
 `plan/plan.md` (disclaimer, feedbackknop, Sentry — zie "Sessie 2026-09-13" onderaan en
