@@ -83,6 +83,46 @@ Ondertussen: blokkerende meldingen van Steven direct oppakken, cosmetische meldi
 
   Geverifieerd in de browser: "Utrecht" ingetypt → Gemeente en COROP-gebied automatisch beide op "Utrecht" gezet. "Aalst" ingetypt (komt voor in Buren, Waalre én Zaltbommel) → Gemeente bleef ongewijzigd, hint toont alle drie de kandidaten → handmatig "Zaltbommel" gekozen → COROP-gebied correct "Gelderland (Zuid-West)". Nul console-errors van de app zelf. 259/259 tests groen (7 nieuw in `packages/data/src/geografie/geografie.test.ts`), tsc/eslint/build schoon.
 
+## Vóór taak 18 — bèta-gereedheid (2026-09-13, zie `briefings/BRIEFING_sessie_20260913.md`)
+
+Besproken met de gebruiker hoe de app beta-klaar te maken op twee punten: een juridisch/
+inhoudelijk voorbehoud bij de rekenresultaten, en gestructureerde feedback/bugmeldingen van de 2
+externe testgebruikers verzamelen zonder dat ze zelf reproductiestappen hoeven te typen. Alle drie
+onderstaande punten gaan vóór taak 18 (gemeentelijke regels), geen vaste onderlinge volgorde
+behalve dat de feedbackknop als kleinste/direct bruikbaarste stuk eerst gepland is, met Sentry er
+meteen achteraan.
+
+- [x] **Disclaimer bij elke berekening (2026-09-19, v0.7.11).** Definitieve tekst: *"Indicatieve
+      berekening op basis van het Beleidsboek WWSO (januari 2026). Geen rechten te ontlenen aan
+      deze uitkomst — raadpleeg bij twijfel de officiële Huurprijscheck van de Huurcommissie."*
+      Tekst gedeeld tussen scherm en PDF via één nieuwe constante (`lib/disclaimer.ts`,
+      `DISCLAIMER_TEKST`), zodat ze nooit uit elkaar kunnen lopen. Toegevoegd aan
+      `components/Footer.tsx` (altijd zichtbaar, niet achter de inklapbare wijzigingslog) en aan
+      `PuntenrapportDocument.tsx`'s vaste footer (`FOOTER_HOOGTE` verhoogd van 34 naar 44 om de
+      extra regel te laten passen). Geverifieerd in de browser (Testwijk 123) en in een
+      daadwerkelijk gedownload PDF-exemplaar — beide tonen de tekst correct. 267/267 tests groen,
+      tsc/eslint schoon.
+- [ ] Feedbackknop in de app — nieuwe Supabase-tabel `feedback`, org-scoped, zelfde RLS-patroon als
+      `deals` (taak 17: `org_id`-default via `huidige_org_id()`). Velden: `url` (incl.
+      querystring), `email` (uit sessie), `user_agent`, `console_log_buffer` (laatste N entries uit
+      een simpele `window.onerror`/`console.error`-buffer), `bericht` (vrij tekstveld), `org_id`,
+      `created_at`. UI: kleine, altijd zichtbare knop/icoon die een klein formulier opent met alleen
+      het vrije tekstveld — de rest wordt onzichtbaar meegestuurd. Open punt: e-mailadres bewaren is
+      een bewuste uitzondering op "geen persoonsgegevens in de MVP" (zie "Vastgelegde beslissingen"
+      in STATUS.md) — zonder afzender is feedback niet opvolgbaar bij 2-3 gebruikers, dus vastleggen
+      als expliciete uitzondering, niet stilzwijgend.
+- [ ] Sentry (gratis tier) voor automatische foutregistratie — Next.js-SDK toevoegen aan `apps/web`,
+      alleen client- en server-side error capturing (geen performance/tracing, scope klein houden).
+      Vangt stille crashes die niemand meldt — meerdere bugs in de backlog hierboven (bijv. de
+      's-Gravesandestraat-bug, v0.7.4) vielen pas laat op omdat niemand ze meldde. Verificatie: een
+      bewust gegooide test-error in dev verschijnt in het Sentry-dashboard met stacktrace en
+      breadcrumbs.
+
+Bewust NIET meegenomen: algemene voorwaarden. Pas relevant bij een echt vermarkt product met
+betaalstroom/externe klant-rechtspersoon (fase 4/vermarkten) — nu nog "open testomgeving" met 3
+bekende gebruikers. Bovendien geen taak voor Claude Code; bij opstarten hoort een jurist, niet
+gegenereerde tekst.
+
 ## Fase 4 — Na de MVP
 
 *On hold tot het exit-criterium van de tussenfase hierboven gehaald is.*

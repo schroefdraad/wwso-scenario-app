@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase/client';
 import { APP_VERSIE, WIJZIGINGSLOG } from '../lib/wijzigingslog';
+import { DISCLAIMER_TEKST } from '../lib/disclaimer';
 import { formateerDatum } from '../lib/datum';
 import styles from './Footer.module.css';
 
@@ -44,6 +45,7 @@ export function Footer() {
           </span>
         )}
       </div>
+      <div className={styles.disclaimer}>{DISCLAIMER_TEKST}</div>
       {open && (
         <div className={styles.log}>
           {WIJZIGINGSLOG.map((entry) => (

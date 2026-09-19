@@ -3,6 +3,7 @@ import { pandWaarderingVan, type ControleResultaat, type EindtellingResultaat, t
 import { RUBRIEK_LABELS, RUBRIEK_VOLGORDE } from '../resultaat/rubriek-labels';
 import { filterToelichtingVoorKamer, toegankelijkeRuimteNrsVoorKamer } from '../resultaat/toelichting-filter';
 import { formateerDatum } from '../datum';
+import { DISCLAIMER_TEKST } from '../disclaimer';
 import { PUNTUM_MERK_ACCENT, PUNTUM_MERK_WIT, PUNTUM_WOORDMERK_INKT, PUNTUM_WOORDMERK_WIT } from './merkbeelden';
 import { INTER_BOLD, INTER_REGULAR } from './lettertype';
 
@@ -50,7 +51,7 @@ const KLEUR = {
 };
 
 const HEADER_HOOGTE = 74;
-const FOOTER_HOOGTE = 34;
+const FOOTER_HOOGTE = 44;
 const PAGINA_ZIJKANT = 42;
 
 const stijl = StyleSheet.create({
@@ -108,12 +109,12 @@ const stijl = StyleSheet.create({
     right: 0,
     height: FOOTER_HOOGTE,
     paddingHorizontal: PAGINA_ZIJKANT,
-    paddingTop: 7,
+    paddingTop: 6,
     borderTopWidth: 1,
     borderTopColor: KLEUR.accent,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
+  footerDisclaimer: { fontSize: 6.5, color: KLEUR.inktZwak, marginBottom: 4, lineHeight: 1.3 },
+  footerRij: { flexDirection: 'row', justifyContent: 'space-between' },
   footerTekst: { fontSize: 7, color: KLEUR.inktZwak },
 
   titel: { fontSize: 18, fontFamily: 'Inter', fontWeight: 700, marginBottom: 3, marginTop: 4 },
@@ -257,11 +258,14 @@ function Voet({ adres }: { adres: string }) {
   const gegenereerdOp = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
   return (
     <View style={stijl.footer} fixed>
-      <Text style={stijl.footerTekst}>
-        Puntum · WWSO-puntentelling · {adres}
-      </Text>
-      <Text style={stijl.footerTekst}>Gegenereerd op {gegenereerdOp}</Text>
-      <Text style={stijl.footerTekst} render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} / ${totalPages}`} />
+      <Text style={stijl.footerDisclaimer}>{DISCLAIMER_TEKST}</Text>
+      <View style={stijl.footerRij}>
+        <Text style={stijl.footerTekst}>
+          Puntum · WWSO-puntentelling · {adres}
+        </Text>
+        <Text style={stijl.footerTekst}>Gegenereerd op {gegenereerdOp}</Text>
+        <Text style={stijl.footerTekst} render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} / ${totalPages}`} />
+      </View>
     </View>
   );
 }

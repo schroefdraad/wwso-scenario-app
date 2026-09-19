@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.10';
+export const APP_VERSIE = '0.7.11';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.11',
+    datum: '2026-09-19',
+    wijzigingen: [
+      'Disclaimer toegevoegd onderaan elke pagina en op de PDF-export: "Indicatieve berekening op basis van het Beleidsboek WWSO (januari 2026). Geen rechten te ontlenen aan deze uitkomst — raadpleeg bij twijfel de officiële Huurprijscheck van de Huurcommissie."',
+    ],
+  },
   {
     versie: '0.7.10',
     datum: '2026-09-19',
