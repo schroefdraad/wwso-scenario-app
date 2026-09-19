@@ -90,16 +90,20 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-09-19, v0.7.11)**: disclaimer gebouwd en gedeployed (zie "Sessie 2026-09-19"
-onderaan). Daarna gestart met de feedbackknop: de gebruiker wil een e-mailmelding per binnengekomen
-feedback i.p.v. alleen de Supabase-tabel handmatig bekijken. Resend-integratie geïnstalleerd via de
-Vercel Marketplace (domein `puntum.nl`, regio `eu-west-1`) — **maar geblokkeerd tot de gebruiker
-het domein bij Resend geverifieerd heeft (SPF/DKIM-DNS-records)**. Op verzoek van de gebruiker wordt
-er nog niet verder gebouwd (migratie/UI/server-actie) tot die verificatie rond is. Zie de
-feedbackknop-taak in `plan/plan.md` voor de dashboard-link en volledige status.
+**Meest recent (2026-09-19, v0.7.10 t/m v0.7.13)**: vijf stuks gebruikersfeedback in één sessie
+afgehandeld (wastafel/fonteintje-badge, gemeente-suggestiebug, disclaimer, kitchenette-kastruimte,
+scenario-staleness) — zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Alle vier
+code-releases gecommit, gepusht en gedeployed.
 
-Daarvoor (nog steeds relevant, niet begonnen): de feedbackknop-taak zelf, en Sentry — allebei nog
-vóór taak 18.
+**Openstaand uit diezelfde sessie: de feedbackknop is halverwege, geblokkeerd op een externe
+stap.** De gebruiker wil een e-mailmelding per binnengekomen feedback i.p.v. alleen de
+Supabase-tabel handmatig bekijken. Resend-integratie geïnstalleerd via de Vercel Marketplace
+(domein `puntum.nl`, regio `eu-west-1`) — **maar geblokkeerd tot de gebruiker het domein bij
+Resend geverifieerd heeft (SPF/DKIM-DNS-records)**. Op verzoek van de gebruiker wordt er nog niet
+verder gebouwd (migratie/UI/server-actie) tot die verificatie rond is. Zie de feedbackknop-taak in
+`plan/plan.md` voor de dashboard-link en volledige status.
+
+Daarvoor (nog steeds relevant, niet begonnen): Sentry — nog vóór taak 18.
 
 Daarvóór: drie nieuwe, nog ongebouwde taken vóór taak 18 vastgelegd in
 `plan/plan.md` (disclaimer, feedbackknop, Sentry — zie "Sessie 2026-09-13" onderaan en
@@ -433,7 +437,7 @@ lege checkboxen toegevoegd aan `plan/plan.md`, in een nieuwe sectie "Vóór taak
 bèta-gereedheid", vóór Fase 4 — precies zoals de briefing als volgende stap aangaf. Geen code
 gewijzigd, geen van de drie is nog gestart.
 
-## Sessie 2026-09-19 — samenvatting (v0.7.10: wastafel/fonteintje-badge, gemeente-bug, PDF-kopstijl)
+## Sessie 2026-09-19 — samenvatting (v0.7.10 t/m v0.7.13: badges, gemeente-bug, disclaimer, kitchenette-kastruimte, scenario-staleness)
 
 Drie losse meldingen van de gebruiker in één sessie afgehandeld, elk eerst met de motor zelf
 nagerekend (niet aangenomen) vóór er iets gefixt werd.
@@ -479,3 +483,48 @@ nagerekend (niet aangenomen) vóór er iets gefixt werd.
 browsergetest (Playwright via claude-in-chrome, lokale dev-server tijdelijk met
 `AUTH_VEREIST=false`, erna gestopt) — inclusief een expliciete regressiecheck van de
 gemeente-suggestiefix op een schone staat na het wissen van `sessionStorage`.
+Gecommit/gepusht/gedeployed als v0.7.10 (`f3656b7`).
+
+**Vervolg, zelfde dag — v0.7.11: disclaimer.** Eerste van de drie bèta-gereedheidstaken uit
+`briefings/BRIEFING_sessie_20260913.md` gebouwd: een indicatieve-berekening-voorbehoud, gedeeld
+tussen `Footer.tsx` (elke pagina, altijd zichtbaar) en `PuntenrapportDocument.tsx` (PDF-footer)
+via één nieuwe `DISCLAIMER_TEKST`-constante (`lib/disclaimer.ts`). Geverifieerd in de browser én
+in een daadwerkelijk gedownload PDF-exemplaar. Gecommit/gepusht/gedeployed (`fd47917`).
+
+**Vervolg — feedbackknop gestart, geblokkeerd op e-maildomein-verificatie.** Gebruiker koos voor
+een e-mailmelding per binnengekomen feedback (i.p.v. alleen de Supabase-tabel handmatig
+bekijken). Resend-integratie geïnstalleerd via de Vercel Marketplace (`vercel integration add
+resend -m domain=puntum.nl -m region=eu-west-1`) — `RESEND_API_KEY`/`RESEND_EMAIL_DOMAIN` staan
+in `.env.local` (root + `apps/web`) en op Vercel. **Geblokkeerd tot de gebruiker het domein
+`puntum.nl` bij Resend verifieert (SPF/DKIM-DNS-records)** — dashboard:
+https://vercel.com/d/dashboard/integrations/resend/icfg_XosUvSJTHTkppnOyvVPjaECz/resources/ir_BaqUOKUsUUU6b3TY.
+Op verzoek van de gebruiker: nog niet verder gebouwd (migratie/UI/server-actie) tot die
+verificatie rond is. Zie de feedbackknop-taak in `plan/plan.md` voor het volledige verslag.
+
+**Vervolg — v0.7.12: kitchenette-kastruimte.** Gemeld met een screenshot: "Snel invullen:
+Kitchenette 122/240cm" nam geen extra kastruimte mee. Root cause nagegaan tegen de primaire bron
+(`resources/Kosten per keukenblok.xlsx`, inclusief de ingebedde productfoto/technische tekening
+— op verzoek van de gebruiker specifiek bekeken in plaats van aangenomen): 122cm heeft 2 boven- +
+2 onderkasten, 240cm heeft 3 bovenkasten (niet de 2 die de offertetekst suggereerde) en geen
+onderkasten (ruimte gevuld met oven/vaatwasser/koelkast). Met een 60cm-modelaanname: 122cm +1,5
+pt, 240cm +0,75 pt. Beide presets in `r5-keuken.ts` bijgewerkt, kostencatalogus-omschrijvingen
+rechtgetrokken, nieuwe regressietest. 269/269 tests groen. Gecommit/gepusht/gedeployed (`18fc458`
+→ v0.7.12).
+
+**Vervolg — v0.7.13: scenario zonder kamerbewerking volgde de AS-IS niet automatisch.** Gemeld
+door de gebruiker, die ook meteen de kern van de oplossing aandroeg: het bestaande
+`kamerBewerkt`-veld onderscheidt al precies "moet automatisch meebewegen met de AS-IS" (geen
+kamerbewerking) van "moet nooit overschreven worden" (wél een kamerbewerking) — alleen werd dat
+onderscheid nergens toegepast op welk pand een scenario gebruikt. Nieuwe pure functie
+`effectiefScenarioPand()` in `scenario-bouw.ts`, gebruikt door beide hooks in
+`useScenarioPakket.ts` i.p.v. `slot.pand` rechtstreeks. 2 nieuwe tests, 271/271 groen. Live
+geverifieerd met een volledige round-trip (AS-IS opslaan → label-scenario opslaan → AS-IS
+bewerken en opnieuw opslaan → verse paginaherlaad toont het scenario correct bijgewerkt, zonder
+het label opnieuw te hoeven kiezen). Gecommit/gepusht/gedeployed (`a5644ab` → v0.7.13).
+
+**Operationele noot, deze hele sessie**: CDP-screenshot- en soms ook click-timeouts kwamen
+herhaaldelijk voor (browsertool-omgevingsissue, niet code-gerelateerd) — coordinate-based clicks
+lieten af en toe geen waarde in de React-state achter zonder foutmelding. Verificatie is daarom
+grotendeels via `find`/ref-based clicks, `get_page_text` en directe `sessionStorage`/DOM-
+JS-evaluatie gedaan in plaats van screenshots, met expliciete tussentijdse checks i.p.v. aannames
+dat een klik geland was.
