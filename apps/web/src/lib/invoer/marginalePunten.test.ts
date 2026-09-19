@@ -7,7 +7,7 @@ import {
   marginaalSanitairDoucheBad,
   marginaalSanitairExtraBoolean,
   marginaalSanitairVolgendeEenheid,
-  marginaalSanitairVolgendeWastafel,
+  puntenHuidigeWastafels,
   puntenToiletType,
 } from './marginalePunten';
 
@@ -81,7 +81,7 @@ describe('marginalePunten', () => {
         {
           ruimteNr: 1,
           toiletType: 'Geen' as const,
-          aantalWastafels: 0,
+          aantalWastafels: 1,
           aantalMeerpersoonswastafels: 0,
           douche: false,
           bad: false,
@@ -106,9 +106,50 @@ describe('marginalePunten', () => {
         },
       ],
     };
-    const waarde = marginaalSanitairVolgendeWastafel(pandMetSlaapkamerWastafel, tarievenset, peildatum, 1, 'aantalWastafels', 0);
+    const waarde = puntenHuidigeWastafels(pandMetSlaapkamerWastafel, tarievenset, peildatum, 1, 'aantalWastafels', 1);
     expect(waarde).not.toBeNull();
     expect(waarde!).toBeGreaterThan(0);
+  });
+
+  it('badge toont 0 zodra een volgende wastafel buiten de badkamer toch al tegen het plafond loopt', () => {
+    // Regressietest voor de bug uit de feedback (2026-09-19): het oude badge toonde de marginale
+    // waarde van een vólgende wastafel (huidig → huidig+1), wat al bij het eerste exemplaar op 0
+    // omsloeg zodra het plafond van 1 punt per vertrek bereikt was — alsof de zojuist ingevulde
+    // wastafel zelf niks opleverde. Het nieuwe badge toont de huidige bijdrage (huidig vs. 0), dus
+    // blijft op 1 punt staan, ook al zou een 2e wastafel in dat vertrek niks meer toevoegen.
+    const pandMetSlaapkamerWastafel = {
+      ...pand,
+      sanitair: [
+        ...pand.sanitair,
+        {
+          ruimteNr: 1,
+          toiletType: 'Geen' as const,
+          aantalWastafels: 1,
+          aantalMeerpersoonswastafels: 0,
+          douche: false,
+          bad: false,
+          badDoucheCombinatie: false,
+          extraEisen: {
+            waterdichteVloerafwerking: false,
+            vrijeHoogte2MeterOverHelft: false,
+            waterdichteWandafwerking: false,
+            wastafelMetMengkraanEnSpiegel: false,
+            doucheOfBadMetWarmEnKoudWater: false,
+          },
+          extra: {
+            bubbelfunctieBad: false,
+            doucheafscheidingVolledig: false,
+            aantalHanddoekenradiatoren: 0,
+            ingebouwdKastjeMetWastafel: false,
+            kastruimte: false,
+            aantalStopcontacten: 0,
+            eenhandsmengkraan: 0,
+            thermostatischeMengkraan: 0,
+          },
+        },
+      ],
+    };
+    expect(puntenHuidigeWastafels(pandMetSlaapkamerWastafel, tarievenset, peildatum, 1, 'aantalWastafels', 1)).toBe(1);
   });
 
   it('geeft null terug in plaats van te crashen als de motor faalt (onbekend COROP-gebied)', () => {

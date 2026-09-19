@@ -50,12 +50,19 @@ export function PandFormulier() {
     zet('coropGebied', coropVoorGemeente(gemeente) ?? '');
   };
 
-  /** Suggereert een gemeente op basis van de getypte stad — alleen bij een EENDUIDIGE match
-   * (harde regel 4: nooit gokken). Bij nul of meerdere kandidaten (bijv. "Aalst" ligt in drie
-   * gemeentes) blijft de gemeente ongewijzigd en kiest de gebruiker zelf hieronder. */
-  const zetStad = (stad: string) => {
-    zet('stad', stad);
-    const kandidaten = gemeentesVoorWoonplaats(stad);
+  /** Suggereert een gemeente op basis van de VOLLEDIG getypte stad — alleen bij een EENDUIDIGE
+   * match (harde regel 4: nooit gokken). Bij nul of meerdere kandidaten (bijv. "Aalst" ligt in
+   * drie gemeentes) blijft de gemeente ongewijzigd en kiest de gebruiker zelf hieronder.
+   *
+   * Draait bewust pas op `onBlur`, niet op elke toetsaanslag: ~20% van de ~5.400 plaatsnamen
+   * heeft een kortere plaatsnaam als exacte prefix (bijv. "Rott" is zelf een bestaand plaatsje in
+   * Vaals, en typt zich vanzelf uit tijdens "Rotterdam"). Op `onChange` sloeg de suggestie dan
+   * halverwege het typen al toe op die tussentijdse substring, en omdat een dáárna meerduidige
+   * uitkomst (zoals "Rotterdam" zelf, met 2 gemeentes) de gemeente bewust ongewijzigd laat, bleef
+   * die verkeerde tussentijdse gemeente stilzwijgend staan (bevinding gebruiker, 2026-09-19). */
+  const zetStad = (stad: string) => zet('stad', stad);
+  const suggereerGemeenteOpBlur = () => {
+    const kandidaten = gemeentesVoorWoonplaats(pand.stad);
     if (kandidaten.length === 1) zetGemeente(kandidaten[0]);
   };
 
@@ -84,7 +91,7 @@ export function PandFormulier() {
             </div>
             <div className={styles.veld}>
               <label htmlFor="p-stad">Stad</label>
-              <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} />
+              <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} onBlur={suggereerGemeenteOpBlur} />
             </div>
             <div className={styles.veld}>
               <span className={styles.labelRij}>

@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.9';
+export const APP_VERSIE = '0.7.10';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.10',
+    datum: '2026-09-19',
+    wijzigingen: [
+      'Het puntenbadge naast "Aantal wastafels"/"Aantal fonteintjes" en "Meerpersoonswastafels" toont nu de punten die het huidige aantal oplevert, niet meer de (vaak 0, want al tegen het maximum van 1 punt per vertrek) waarde van een volgend exemplaar.',
+      'De vijf extra-eisen (§2.6.2) blijven nu verborgen in elke ruimte zonder douche/bad aangevinkt, niet meer alleen in een toiletruimte — die eisen leveren daar toch nooit punten op.',
+      'Bugfix: het typen van een plaatsnaam kon de Gemeente stilzwijgend op een verkeerde tussentijdse match laten staan (bijv. "Rotterdam" typen liep even via het bestaande plaatsje "Rott" en bleef op gemeente Vaals staan). De suggestie draait nu pas als het Stad-veld verlaten wordt.',
+      'PDF-export: het donkere-lint-koptype ("band") is nu de standaard in plaats van de lichte variant.',
+    ],
+  },
   {
     versie: '0.7.9',
     datum: '2026-09-12',

@@ -15,7 +15,7 @@ import {
   marginaalSanitairDoucheBad,
   marginaalSanitairExtraBoolean,
   marginaalSanitairVolgendeEenheid,
-  marginaalSanitairVolgendeWastafel,
+  puntenHuidigeWastafels,
   puntenToiletType,
 } from '../../lib/invoer/marginalePunten';
 import styles from './styles.module.css';
@@ -305,8 +305,8 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
     pand && tarievenset && peildatum ? marginaalSanitairDoucheBad(pand, tarievenset, peildatum, rij.nr, veld) : null;
   const puntVoorToiletType = (type: SanitairVoorziening['toiletType']): number | null =>
     pand && tarievenset && peildatum ? puntenToiletType(pand, tarievenset, peildatum, rij.nr, type) : null;
-  const puntVoorVolgendeWastafel = (veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels', huidig: number): number | null =>
-    pand && tarievenset && peildatum ? marginaalSanitairVolgendeWastafel(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
+  const puntVoorHuidigeWastafels = (veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels', huidig: number): number | null =>
+    pand && tarievenset && peildatum ? puntenHuidigeWastafels(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
 
   if (!sanitair) {
     return (
@@ -329,6 +329,12 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   // velden voor een ruimte die ze toch nooit gebruikt (feedback Emma Morrison, 2026-08-21).
   const isToiletruimte = rij.type === 'Toiletruimte';
   const isBadruimte = rij.type === 'Badruimte';
+  // §2.6.2: extra punten kunnen alleen voor voorzieningen "die zich bevinden in een bad- of
+  // doucheruimte" — de motor capt extraGecapt sowieso op doucheBadPunten (r6-sanitair.ts), dus
+  // zonder douche/bad in déze ruimte leveren de vijf eisen en alle extra's altijd 0 op, ongeacht
+  // ruimtetype. Zelfde reden als de toiletruimte-uitzondering hierboven: minder verwarrende velden
+  // voor een ruimte die ze toch nooit gebruikt (feedback gebruiker, 2026-09-19).
+  const heeftDoucheOfBad = sanitair.douche || sanitair.bad || sanitair.badDoucheCombinatie;
   // §2.6.1: een toilet wordt alleen gewaardeerd als het in een toiletruimte óf een badkamer
   // staat ("Toilet buiten toiletruimte of badkamer: n.v.t."), en de staand/hangend-punten
   // verschillen per ruimtetype. Filteren voorkomt de inconsistente combinatie die bij de
@@ -374,7 +380,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             zetSanitair({ aantalWastafels: isToiletruimte ? Math.min(1, Math.max(0, waarde)) : waarde });
           }}
         />
-        <PuntBadge waarde={puntVoorVolgendeWastafel('aantalWastafels', sanitair.aantalWastafels)} />
+        <PuntBadge waarde={puntVoorHuidigeWastafels('aantalWastafels', sanitair.aantalWastafels)} />
       </div>
       {!isToiletruimte && (
         <div className={styles.veldrij}>
@@ -386,7 +392,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             value={sanitair.aantalMeerpersoonswastafels}
             onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
           />
-          <PuntBadge waarde={puntVoorVolgendeWastafel('aantalMeerpersoonswastafels', sanitair.aantalMeerpersoonswastafels)} />
+          <PuntBadge waarde={puntVoorHuidigeWastafels('aantalMeerpersoonswastafels', sanitair.aantalMeerpersoonswastafels)} />
         </div>
       )}
       {!isToiletruimte && (
@@ -417,7 +423,14 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
         <p className={styles.hint}>Een toiletruimte heeft geen douche/bad, dus de extra-voorzieningen daarvoor blijven hier verborgen — die leveren toch 0 punten op (§2.6.2).</p>
       )}
 
-      {!isToiletruimte && (
+      {!isToiletruimte && !heeftDoucheOfBad && (
+        <p className={styles.hint}>
+          Deze ruimte heeft (nog) geen douche of bad aangevinkt, dus de vijf extra-eisen en de extra-voorzieningen daarvoor blijven hier verborgen — die leveren
+          toch 0 punten op zolang er geen douche/bad is (§2.6.2).
+        </p>
+      )}
+
+      {!isToiletruimte && heeftDoucheOfBad && (
         <>
           <div className={styles.poortBlok}>
             <div className={styles.poortMaster}>

@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-12
+Laatst bijgewerkt: 2026-09-19
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -90,7 +90,15 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-Gedeployed naar productie (2026-09-07, versie 0.7.3 — zie "Sessie 2026-09-07" hieronder). Stap 1
+**Meest recent (2026-09-19, v0.7.10)**: drie losse gebruikersmeldingen in één sessie afgehandeld
+— zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Ook de al langer openstaande
+PDF-kopstijl-keuze is deze sessie binnengekomen ("donkere lint") en meeverwerkt.
+
+Daarvóór: drie nieuwe, nog ongebouwde taken vóór taak 18 vastgelegd in
+`plan/plan.md` (disclaimer, feedbackknop, Sentry — zie "Sessie 2026-09-13" onderaan en
+`briefings/BRIEFING_sessie_20260913.md`). Geen van de drie is nog gestart.
+
+Daarvóór, nog steeds relevant: gedeployed naar productie (2026-09-07, versie 0.7.3 — zie "Sessie 2026-09-07" hieronder). Stap 1
 van de bèta-lancering (notities + mappen) is klaar. Eerstvolgende stap: stap 2, multi-tenant/
 org_id's scheiden voor drie testers — nog te ontwerpen samen met de gebruiker, dit blijft de
 grootste blokkade voor de bèta zelf. Daarna, of ondertussen: taak B (kitchenette-varianten — de
@@ -357,5 +365,110 @@ reeks-formule i.p.v. een vlakke deling — terugverdientijden worden korter, noo
 zoals de feedback voorspelde. `berekenMarginaalRendement` blijft op verzoek van de gebruiker
 wiskundig gekoppeld aan de (nu geïndexeerde) terugverdientijd. Volledig verslag in `plan/plan.md`.
 266/266 tests groen, tsc/eslint schoon — geen enkele bestaande test hing af van een exacte
-terugverdientijd/rendement-waarde. Nog niet gecommit/gedeployed, wacht op akkoord van de
-gebruiker.
+terugverdientijd/rendement-waarde. **Gecommit (`4a7e032`), gepusht en gedeployed naar productie
+(v0.7.9)** nadat de gebruiker "doe maar" zei.
+
+## Sessie 2026-09-12 deel 2 — samenvatting (PDF-herontwerp, nog niet afgerond)
+
+Verzoek van de gebruiker: mooier PDF-format, logo + woordmerk in de header, lettertype-vraag,
+gegevens in tabellen, header/footer op elke pagina, mockups om uit te kiezen. Volledig technisch
+verslag in `outputs/RAPPORT_pdf-herontwerp_2026-09-12.md`.
+
+- **Merkbeelden schoongemaakt**: `title.jpeg` bevatte een niet-geplatte transparantie
+  (schaakbordpatroon gebakken in de JPEG); opnieuw geëxporteerd naar `apps/web/public/branding/`
+  in vier varianten (groen/wit, icoon/woordmerk), ingebakken als data-URI in
+  `apps/web/src/lib/pdf/merkbeelden.ts`.
+- **Lettertype**: op de site triviaal (één regel in `globals.css`, Geist-font ligt al klaar maar
+  wordt niet gebruikt) — dit is NIET aangepast, alleen geconstateerd. In de PDF is **Inter**
+  zelf gehost (self-hosted, statisch, gesubset op Latijn+leestekens+pijltjes, ~130KB per gewicht
+  i.p.v. de ~900KB volledige variabele Google Font), in `apps/web/src/lib/pdf/lettertype.ts`.
+  Bijkomend gefixt: de rekenmotor gebruikt overal "→" in toelichtingsteksten, wat in de oude
+  standaard PDF-fonts als een verkeerd glyph rendert — Inter lost dat op zonder de motor (35
+  bestanden, golden-master-tests) aan te raken.
+- **`PuntenrapportDocument.tsx` herbouwd**: nieuwe "Overzicht per kamer"-tabel op pagina 1
+  (ontbrak volledig), rubriektabellen per kamer nu echt gerasterd met zebra-arcering, vaste
+  kop/voet op elke pagina (`fixed`) met het merk-lockup. Onderweg ook een paginabreak-bug
+  gevonden en gefixt (Controles-sectie had `wrap={false}` op het hele blok, wat een halve lege
+  pagina veroorzaakte na Kamer 6 — nu per controlerij).
+- **Twee mockups** (`stijlVariant: 'licht' | 'band'`, prop op `PuntenrapportDocument`, default
+  `'licht'`) gegenereerd uit `testpand6Kamers` via een nieuw herbruikbaar scriptje
+  (`apps/web/scripts/pdf-mockup.tsx`, buiten de browser om via `renderToFile`). Gepubliceerd als
+  vergelijkingsartifact voor de gebruiker.
+- 266/266 tests groen, tsc/eslint schoon.
+
+**✅ Kopstijl-keuze binnengekomen (2026-09-19): `band` (de donkere lint).** Zie "Sessie 2026-09-19"
+onderaan voor de verwerking (default gezet, `Resultaatscherm.tsx` geeft 'm nu door, versie
+opgehoogd naar 0.7.10).
+
+## Sessie 2026-09-13 — samenvatting (disclaimer + feedback verzamelen, alleen gepland, nog niet gebouwd)
+
+Volledig verslag: `briefings/BRIEFING_sessie_20260913.md`. Besproken hoe de app beta-klaar te
+maken op twee punten: een juridisch/inhoudelijk voorbehoud bij de rekenresultaten, en gestructureerde
+bugmeldingen/feedback van de 2 externe testgebruikers verzamelen zonder dat ze zelf
+reproductiestappen hoeven te typen.
+
+- **Disclaimer: nu bouwen**, niet uitstellen tot vermarkten — reden: `wwso.xlsx` wijkt op 15
+  punten af van het beleidsboek (zie "Belangrijkste bevinding tot nu toe" hierboven), en de
+  uitkomst is wat een verhuurder aan een huurder voorlegt.
+- **Feedback verzamelen: twee complementaire mechanismen**, allebei nu, niet na elkaar: (1) een
+  feedbackknop die automatisch context meestuurt (URL incl. `?deal=<id>`, e-mail, user agent,
+  laatste console-errors) plus een vrij tekstveld, opgeslagen in een nieuwe Supabase-tabel
+  `feedback`; (2) Sentry (gratis tier) voor automatische foutregistratie van onverwerkte
+  JS-errors — vangt stille crashes die niemand meldt.
+- **Algemene voorwaarden: bewust nog niet.** Pas relevant bij een echt vermarkt product met
+  betaalstroom (fase 4/vermarkten), en sowieso geen taak voor Claude Code (hoort een jurist bij).
+- Open punt, nog niet besloten: mag het e-mailadres in de feedbacktabel blijven staan gezien de
+  "geen persoonsgegevens"-beslissing? Voorstel uit de briefing: wel bewaren (anders niet
+  opvolgbaar bij 2-3 gebruikers), maar expliciet als bewuste uitzondering vastleggen.
+
+**Vandaag (2026-09-14) uitgevoerd**: de drie taken (disclaimer, feedbackknop, Sentry) zijn als
+lege checkboxen toegevoegd aan `plan/plan.md`, in een nieuwe sectie "Vóór taak 18 —
+bèta-gereedheid", vóór Fase 4 — precies zoals de briefing als volgende stap aangaf. Geen code
+gewijzigd, geen van de drie is nog gestart.
+
+## Sessie 2026-09-19 — samenvatting (v0.7.10: wastafel/fonteintje-badge, gemeente-bug, PDF-kopstijl)
+
+Drie losse meldingen van de gebruiker in één sessie afgehandeld, elk eerst met de motor zelf
+nagerekend (niet aangenomen) vóór er iets gefixt werd.
+
+- **Wastafel/fonteintje-badge toonde 0 pt terwijl het punt wél werd toegekend.** Gemeld met een
+  screenshot: een wastafel in een privévertrek (en later, apart gemeld, een fonteintje in een
+  toiletruimte — intern hetzelfde `aantalWastafels`-veld) toonde "0 pt" naast een net ingevuld
+  aantal. Met de motor bevestigd dat het punt wél meetelt (1 wastafel buiten de badkamer = 1 pt,
+  gewoon opgeteld in R6). Root cause: `marginaalSanitairVolgendeWastafel` in `marginalePunten.ts`
+  toonde de marginale waarde van een vólgende (2e) wastafel, niet van de zojuist ingevulde — en
+  omdat buiten de badkamer een plafond van 1 (resp. 1,50 voor meerpersoons) punt per vertrek
+  geldt, sloeg dat badge al bij het eerste exemplaar op 0 om. Hernoemd naar
+  `puntenHuidigeWastafels` (huidig vs. 0 i.p.v. huidig vs. huidig+1), toegepast op zowel
+  `aantalWastafels` als `aantalMeerpersoonswastafels` in `RuimteLade.tsx`. Nieuwe regressietest in
+  `marginalePunten.test.ts`. Live geverifieerd in de browser: "Aantal wastafels: 1" → nu "+1 pt",
+  "Meerpersoonswastafels: 1" → "+1,5 pt".
+- **Bijvangst, zelfde plek**: de vijf extra-eisen van §2.6.2 (en de bijbehorende extra-
+  voorzieningen) stonden nog gewoon zichtbaar in een privévertrek zonder douche/bad aangevinkt —
+  terwijl die eisen sowieso nooit tot extra punten leiden zonder douche/bad (de motor capt ze op
+  `doucheBadPunten`, altijd 0 in dat geval). Zelfde behandeling als de al bestaande
+  toiletruimte-uitzondering: nu verborgen achter een nieuwe `heeftDoucheOfBad`-check, met een
+  vergelijkbare hint-tekst.
+- **Bugfix, gevonden tijdens het browsertesten van de badge-fix (niet gemeld door de gebruiker,
+  zelf opgemerkt tijdens verificatie)**: de gemeente-suggestie in `PandFormulier.tsx` draaide op
+  élke toetsaanslag. Typen van "Rotterdam" liep tussentijds via "Rott" — zelf een bestaand,
+  eenduidig plaatsje in de gemeente Vaals — en zette de gemeente dus al ná vier letters op
+  "Vaals". Omdat "Rotterdam" zelf in 2 gemeentes ligt (Rotterdam, Albrandswaard) liet de bewust
+  terughoudende "nooit gokken bij meerdere kandidaten"-regel die foute tussentijdse "Vaals"
+  vervolgens gewoon stilstaan. Met een script nagegaan hoe vaak dit kan voorkomen: **~1.100 van de
+  5.443 plaatsnamen (~20%) hebben een kortere plaatsnaam als exacte prefix** — geen zeldzaam
+  randgeval. Root-cause bevestigd door de fix uit te proberen op een écht schone
+  `sessionStorage`-staat (de bestaande concept-autosave maakte het testen zelf twee keer lastig
+  door oude, verontreinigde staat terug te zetten). Fix: de suggestie draait nu pas op `onBlur`
+  van het Stad-veld i.p.v. op elke toetsaanslag — een eenduidige stad vult nog steeds automatisch
+  in, een meerduidige (of tussentijdse) substring wordt niet meer voortijdig gegokt.
+- **PDF-kopstijl-keuze binnengekomen**: "de donkere lint" (= de `'band'`-variant uit het
+  PDF-herontwerp van 2026-09-12, zie die sessie hieronder). Als standaard gezet
+  (`PuntenrapportDocument.tsx`, `stijlVariant = 'band'`) én expliciet doorgegeven vanuit
+  `Resultaatscherm.tsx` bij het genereren van de PDF-export — dit was de laatste openstaande stap
+  van het PDF-herontwerp, dat tot nu toe nooit gedeployed was.
+
+267/267 tests groen (1 nieuw), tsc/eslint schoon op alle geraakte bestanden. Uitgebreid
+browsergetest (Playwright via claude-in-chrome, lokale dev-server tijdelijk met
+`AUTH_VEREIST=false`, erna gestopt) — inclusief een expliciete regressiecheck van de
+gemeente-suggestiefix op een schone staat na het wissen van `sessionStorage`.

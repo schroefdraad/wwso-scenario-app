@@ -109,14 +109,18 @@ export function marginaalSanitairVolgendeEenheid(
 }
 
 /**
- * Marginale waarde van de eerstvolgende (meerpersoons)wastafel — los van `extra`, want deze
- * velden staan direct op `SanitairVoorziening` (§2.6.1). Buiten de badkamer geldt een cap per
- * vertrek (`wastafelPuntenPerVertrekBuitenBadkamer`/meerpersoons-variant), en die punten tellen
- * altijd mee, ook als de vijf extra-eisen van §2.6.2 niet gehaald zijn — die eisen gaten alleen
- * `extra`. Voorheen ontbrak hier elke badge, waardoor het leek alsof een wastafel in een
- * niet-badkamer-ruimte 0 punten opleverde zolang de eisen-poort niet gehaald was.
+ * Huidige bijdrage van de al ingevulde (meerpersoons)wastafels — los van `extra`, want deze
+ * velden staan direct op `SanitairVoorziening` (§2.6.1). Die punten tellen altijd mee, ook als de
+ * vijf extra-eisen van §2.6.2 niet gehaald zijn — die eisen gaten alleen `extra`.
+ *
+ * Toont bewust wat het HUIDIGE aantal oplevert (huidig vs. 0), niet de marginale waarde van een
+ * volgend exemplaar (huidig vs. huidig+1, zoals bij handdoekenradiatoren/stopcontacten). Buiten
+ * de badkamer geldt een cap per vertrek (`wastafelPuntenPerVertrekBuitenBadkamer`/meerpersoons-
+ * variant) van 1 (resp. 1,50) punt: met de "volgende eenheid"-variant sloeg het badge al bij het
+ * eerste exemplaar op 0 om (de 2e wastafel levert niks meer op), wat las alsof de net ingevulde
+ * wastafel zelf 0 punten gaf (feedback gebruiker, 2026-09-19).
  */
-export function marginaalSanitairVolgendeWastafel(
+export function puntenHuidigeWastafels(
   pand: PandInvoer,
   tarievenset: Tarievenset,
   peildatum: string,
@@ -124,7 +128,7 @@ export function marginaalSanitairVolgendeWastafel(
   veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels',
   huidig: number,
 ): number | null {
-  return marginaal(patchSanitair(pand, ruimteNr, { [veld]: huidig + 1 }), patchSanitair(pand, ruimteNr, { [veld]: huidig }), tarievenset, peildatum);
+  return marginaal(patchSanitair(pand, ruimteNr, { [veld]: huidig }), patchSanitair(pand, ruimteNr, { [veld]: 0 }), tarievenset, peildatum);
 }
 
 /** Marginale waarde van douche, bad of de bad/douche-combinatie los. */

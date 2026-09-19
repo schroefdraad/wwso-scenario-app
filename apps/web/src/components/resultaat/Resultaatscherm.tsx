@@ -56,7 +56,7 @@ export function Resultaatscherm({
     try {
       const [{ pdf }, { PuntenrapportDocument }] = await Promise.all([import('@react-pdf/renderer'), import('../../lib/pdf/PuntenrapportDocument')]);
       const blob = await pdf(
-        <PuntenrapportDocument pand={pand} eindtelling={eindtelling} controles={controles} tarievensetPeildatum={peildatum} />,
+        <PuntenrapportDocument pand={pand} eindtelling={eindtelling} controles={controles} tarievensetPeildatum={peildatum} stijlVariant="band" />,
       ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
