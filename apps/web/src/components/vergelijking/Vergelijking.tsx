@@ -197,9 +197,9 @@ export function Vergelijking({
   // useScenarioPakket-aanroepen eronder. Elk scenario heeft nu altijd een `pand` (2026-09-05),
   // dus dit levert voor elk scenario de maatregelen op die specifiek op DAT pand van toepassing
   // zijn — voor een onaangeraakt scenario is dat het pand van de as-is zelf.
-  const handmatigeKandidaten0 = useHandmatigeKandidaten(slots[0], tarievenset, peildatum, kostencatalogus);
-  const handmatigeKandidaten1 = useHandmatigeKandidaten(slots[1], tarievenset, peildatum, kostencatalogus);
-  const handmatigeKandidaten2 = useHandmatigeKandidaten(slots[2], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidaten0 = useHandmatigeKandidaten(pand, slots[0], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidaten1 = useHandmatigeKandidaten(pand, slots[1], tarievenset, peildatum, kostencatalogus);
+  const handmatigeKandidaten2 = useHandmatigeKandidaten(pand, slots[2], tarievenset, peildatum, kostencatalogus);
   const handmatigeKandidatenPerSlot = [handmatigeKandidaten0, handmatigeKandidaten1, handmatigeKandidaten2];
 
   const pakket0 = useScenarioPakket(pand, slots[0], handmatigeKandidaten0, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);

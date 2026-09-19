@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers, type KandidaatWaardering, type PandInvoer } from '@wwso/engine';
-import { alternatiefGroepSleutel, beschikbareEnergielabelDoelen, energielabelKostenschatting, nieuweSelectieNaToggle, pandMetEnergielabel } from './scenario-bouw';
+import {
+  alternatiefGroepSleutel,
+  beschikbareEnergielabelDoelen,
+  effectiefScenarioPand,
+  energielabelKostenschatting,
+  nieuweSelectieNaToggle,
+  pandMetEnergielabel,
+} from './scenario-bouw';
 
 /** Minimale nep-kandidaat — `nieuweSelectieNaToggle` kijkt alleen naar sleutel/maatregelId/doel. */
 function nepKandidaat(sleutel: string, maatregelId: string, doel: { soort: string; nr?: number }): KandidaatWaardering {
@@ -96,5 +103,21 @@ describe('pandMetEnergielabel — feedback Emma Morrison 2026-09-07 (een labelwi
     const resultaat = pandMetEnergielabel(testpand6Kamers, 'A++');
     expect(resultaat.pand.energielabel).toBe('A++');
     expect(resultaat.pand.aantalKamers).toBe(testpand6Kamers.pand.aantalKamers);
+  });
+});
+
+describe('effectiefScenarioPand — bevinding gebruiker 2026-09-19 (energielabel-scenario bleef de oude AS-IS tonen na een AS-IS-wijziging)', () => {
+  const oudeAsIs = testpand6Kamers;
+  const nieuweAsIs: PandInvoer = { ...testpand6Kamers, pand: { ...testpand6Kamers.pand, aantalKamers: testpand6Kamers.pand.aantalKamers + 1 } };
+  const handmatigBewerktPand: PandInvoer = { ...testpand6Kamers, pand: { ...testpand6Kamers.pand, aantalKamers: testpand6Kamers.pand.aantalKamers + 99 } };
+
+  it('volgt de levende AS-IS zodra er geen kamerbewerking is, ook als slot.pand een oudere momentopname is', () => {
+    const slot = { pand: oudeAsIs, kamerBewerkt: false };
+    expect(effectiefScenarioPand(nieuweAsIs, slot)).toBe(nieuweAsIs);
+  });
+
+  it('blijft het bewust afwijkende TO-BE-pand gebruiken zodra kamerBewerkt, ongeacht een latere AS-IS-wijziging', () => {
+    const slot = { pand: handmatigBewerktPand, kamerBewerkt: true };
+    expect(effectiefScenarioPand(nieuweAsIs, slot)).toBe(handmatigBewerktPand);
   });
 });

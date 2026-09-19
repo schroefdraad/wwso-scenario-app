@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.12';
+export const APP_VERSIE = '0.7.13';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.13',
+    datum: '2026-09-19',
+    wijzigingen: [
+      'Bugfix: een scenario met alleen een energielabel-wisseling (geen kamerbewerking) bleef de oude AS-IS-punten tonen nadat de AS-IS zelf bewerkt en opnieuw opgeslagen was — pas na het loskoppelen en opnieuw kiezen van het label werd het scenario bijgewerkt. Zo\'n scenario volgt nu automatisch de actuele AS-IS; een scenario met een eigen kamerbewerking blijft terecht ongewijzigd bij een latere AS-IS-aanpassing.',
+    ],
+  },
   {
     versie: '0.7.12',
     datum: '2026-09-19',

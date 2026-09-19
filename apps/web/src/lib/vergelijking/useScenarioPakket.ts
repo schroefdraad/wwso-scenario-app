@@ -4,6 +4,7 @@ import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import {
   bouwHandmatigScenarioMetMaatregelenUitSleutels,
   berekenKandidatenVoorHandmatigPand,
+  effectiefScenarioPand,
   energielabelKostenschatting,
   pandMetEnergielabel,
   type EnergielabelScenarioDoel,
@@ -63,17 +64,22 @@ export interface HandmatigeKandidatenResultaat {
  * checkbox-lijst als het uiteindelijke pakket hergebruiken hetzelfde resultaat.
  */
 export function useHandmatigeKandidaten(
+  asIs: PandInvoer,
   slot: ScenarioSlot,
   tarievenset: Tarievenset,
   peildatum: string,
   kostencatalogus: Kostencatalogus,
 ): HandmatigeKandidatenResultaat {
-  // Losgetrokken op `pand`/`energielabelDoel` (niet het hele `slot`): sleutels/investering/prijzen
-  // wijzigen bij elke checkbox-toggle, en zouden anders deze dure herberekening ook bij elke
-  // toggle triggeren terwijl alleen het pand + labeldoel de kandidatenlijst bepalen.
+  // Zie `effectiefScenarioPand` in scenario-bouw.ts: `slot.pand` is een momentopname die zonder
+  // kamerbewerking niet vanzelf meebeweegt met een latere AS-IS-wijziging.
+  const effectiefPand = effectiefScenarioPand(asIs, slot);
+  // Losgetrokken op `effectiefPand`/`energielabelDoel` (niet het hele `slot`): sleutels/
+  // investering/prijzen wijzigen bij elke checkbox-toggle, en zouden anders deze dure
+  // herberekening ook bij elke toggle triggeren terwijl alleen het pand + labeldoel de
+  // kandidatenlijst bepalen.
   const bewerktPand = useMemo(
-    () => (slot.energielabelDoel ? pandMetEnergielabel(slot.pand, slot.energielabelDoel) : slot.pand),
-    [slot.pand, slot.energielabelDoel],
+    () => (slot.energielabelDoel ? pandMetEnergielabel(effectiefPand, slot.energielabelDoel) : effectiefPand),
+    [effectiefPand, slot.energielabelDoel],
   );
   return useMemo(
     () => berekenKandidatenVoorHandmatigPand(bewerktPand, tarievenset, peildatum, kostencatalogus),
@@ -109,7 +115,10 @@ export function useScenarioPakket(
     const heeftKosteninformatie = slot.sleutels.size > 0 || totaleHandmatigeInvesteringEuro > 0;
     if (!slot.kamerBewerkt && !slot.energielabelDoel && !heeftKosteninformatie) return null;
 
-    const bewerktPand = slot.energielabelDoel ? pandMetEnergielabel(slot.pand, slot.energielabelDoel) : slot.pand;
+    // Zie `effectiefScenarioPand` in scenario-bouw.ts: `slot.pand` is een momentopname die zonder
+    // kamerbewerking niet vanzelf meebeweegt met een latere AS-IS-wijziging.
+    const effectiefPand = effectiefScenarioPand(asIs, slot);
+    const bewerktPand = slot.energielabelDoel ? pandMetEnergielabel(effectiefPand, slot.energielabelDoel) : effectiefPand;
 
     // Zonder gekozen maatregelen, zonder labelkosten én zonder ingevulde handmatige investering is
     // er nog helemaal geen kostinformatie — dan blijft Investering/Terugverdientijd expliciet

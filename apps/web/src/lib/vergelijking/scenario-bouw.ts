@@ -41,6 +41,21 @@ export function beschikbareEnergielabelDoelen(pand: PandInvoer): EnergielabelSce
 }
 
 /**
+ * Welk pand een scenario-slot daadwerkelijk moet gebruiken (bevinding gebruiker, 2026-09-19):
+ * `slot.pand` is een momentopname (gevuld bij het aanmaken van het slot, of teruggelezen uit een
+ * opgeslagen deal) die niet vanzelf meebeweegt met een latere AS-IS-wijziging. Zonder
+ * kamerbewerking hoort een scenario ALTIJD de levende as-is te volgen — pas zodra de gebruiker
+ * zelf kamers heeft bewerkt (`kamerBewerkt`), is `slot.pand` een bewust afwijkend TO-BE-pand dat
+ * nooit stilzwijgend door een AS-IS-wijziging overschreven mag worden. Vóór deze functie gebruikten
+ * `useScenarioPakket`/`useHandmatigeKandidaten` overal `slot.pand` rechtstreeks, waardoor een
+ * energielabel-scenario (dat geen kamerbewerking heeft) de oude AS-IS-punten bleef tonen totdat de
+ * gebruiker de labelwisseling handmatig losmaakte en opnieuw koos.
+ */
+export function effectiefScenarioPand(asIs: PandInvoer, slot: { pand: PandInvoer; kamerBewerkt: boolean }): PandInvoer {
+  return slot.kamerBewerkt ? slot.pand : asIs;
+}
+
+/**
  * Het pand ná een energielabel-wisseling naar `doelLabel`, toegepast op WELK pand dan ook (de
  * as-is, óf een al met de hand bewerkt scenario-pand) — dezelfde `pand-patch`-mutatie die de
  * E-01 t/m E-09-catalogusmaatregelen ook gebruiken (`registry/r4-energie.ts`). Sinds 2026-09-07

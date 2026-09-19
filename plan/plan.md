@@ -58,6 +58,31 @@ Vier taken, voortgekomen uit Stevens antwoorden op de vier openstaande vragen (g
   Web: nieuwe `ScenarioSlot`-variant `'energielabel'` (naast `'kandidaten'`/`'handmatig'`) door `useScenarioPakket.ts`/`Vergelijking.tsx`/`MaatregelTabel.tsx`/`scenarioBewerkBrug.ts` (VergelijkingSnapshot) en `deals/types.ts` (ScenarioSelectie-unie, met een test voor het parse-round-trip) — dezelfde discipline als de bestaande twee slotsoorten: een maatregel aanvinken of "Leegmaken" zet het scenario terug naar kandidaten-modus. `beschikbareEnergielabelDoelen()` (`scenario-bouw.ts`) filtert de wisselknop-opties op zowel "kostenveld ingevuld" als "niet gelijk aan het huidige as-is-label" (een "upgrade" naar het label dat het pand al heeft, is geen scenario om te tonen). De drie kostenvelden lopen door de volledige invoer-roundtrip (`PandFormulier.tsx` → `InvoerState` → `projecteerNaarPandInvoer`/`pandInvoerNaarState`).
 
   Geverifieerd in de browser (Playwright via claude-in-chrome, lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer normaal teruggezet): voorbeeldpand → A+ (€8.000) en A+++ (€25.000) ingevuld, A++ leeg gelaten → vergelijkingspagina toont per scenario-kolom een wisselknop met precies "Label A+" en "Label A+++" (A++ terecht niet aangeboden) → Scenario 1 op A+++: jaarhuur €35.457 → €43.128, investering exact €25.000, TVT 3,3 jr, rendement 30,68% → Scenario 2 op A+: jaarhuur €41.459, investering €8.000, TVT 1,3 jr, rendement 75,02% → "Bekijk volledig resultaat" op het A+-scenario toont dezelfde jaarhuur (€41.458,56) met hogere punten op alle 6 kamers. Nul console-errors van de app zelf. 250/250 tests groen (9 nieuw t.o.v. de 241 na Tussenfase-taak A: 3 in `pakketten.test.ts`, 4 in `scenario-bouw.test.ts`, 2 in `deals/types.test.ts`), tsc/eslint schoon.
+
+  **Bugfix (2026-09-19), gemeld door de gebruiker (v0.7.13)**: een energielabel-scenario (geen
+  kamerbewerking) bleef de oude AS-IS-punten tonen nadat de AS-IS bewerkt en opnieuw opgeslagen
+  was — pas na het loskoppelen van het label en opnieuw kiezen werkte het scenario bij; een volledige
+  paginaherlaad zonder dat omweggetje hielp soms wél (nieuw slot), soms niet (een via een opgeslagen
+  deal teruggeladen slot bevat zelf ook een bevroren `pand`). Root cause: `ScenarioSlot.pand` is een
+  momentopname (gevuld bij het aanmaken van het slot, of teruggelezen uit `slotsUitScenarios`) die
+  nooit vanzelf meebeweegt met een latere AS-IS-wijziging — `useHandmatigeKandidaten`/
+  `useScenarioPakket` gebruikten overal `slot.pand` rechtstreeks, ook voor onaangeraakte scenario's.
+  De gebruiker zelf wees op de kern van de oplossing: het bestaande `kamerBewerkt`-veld onderscheidt
+  precies "moet wél automatisch meebewegen" (geen kamerbewerking) van "moet nooit stilzwijgend
+  overschreven worden" (wél een kamerbewerking, een bewust afwijkend TO-BE-pand). Nieuwe pure functie
+  `effectiefScenarioPand(asIs, slot)` in `scenario-bouw.ts` (`slot.kamerBewerkt ? slot.pand : asIs`),
+  gebruikt door beide hooks in `useScenarioPakket.ts` i.p.v. `slot.pand` rechtstreeks. 2 nieuwe tests
+  in `scenario-bouw.test.ts`. 271/271 tests groen, tsc/eslint schoon. Live geverifieerd met een
+  volledige round-trip (JS-evaluatie i.p.v. screenshot/klikken, wegens een terugkerende CDP-
+  screenshot- én click-focus-timeout deze sessie — coordinate-based clicks lieten intussen géén
+  waarde in de state achter zonder foutmelding, dus elke stap expliciet met `sessionStorage`/
+  `document.activeElement` geverifieerd): AS-IS opgeslagen (€4.403/jr) → Scenario 1 op Label A+
+  gezet en opgeslagen (€5.746/jr) → AS-IS bewerkt (wastafel toegevoegd) en opnieuw opgeslagen
+  (€4.524/jr) → **verse paginaherlaad** naar de scenariopagina toont Scenario 1 nu correct op
+  €5.869/jr (de nieuwe AS-IS + dezelfde labelwisseling-marge), zonder het label opnieuw aan te
+  raken. Bijkomende bevestiging: de "S-01 Wastafel"-suggestie in Optimalisaties verdween terecht uit
+  de kandidatenlijst van Scenario 1 zodra de AS-IS er al één had — bevestigt dat ook
+  `useHandmatigeKandidaten` de levende AS-IS gebruikt, niet alleen `useScenarioPakket`.
 - [x] Tussenfase-taak D: Per-maatregel prijsveld in `HandmatigMaatregelen.tsx` — naast (niet i.p.v.) het bestaande `handmatigeInvesteringEuro`-totaalveld, een overschrijfbaar prijsveld per aangevinkte maatregel, voorgevuld met de catalogusprijs. Investering = handmatig bedrag + som van de per-maatregel prijzen. Zichtbaar maken *welke* maatregel een investeringsverschil tussen scenario's veroorzaakt. Zelfde patroon geldt voor de kitchenette-varianten uit taak B, die dit hergebruiken zodra ze gebouwd worden. Raakt `bouwHandmatigScenarioMetMaatregelen`/`pakketten.ts` en `HandmatigMaatregelen.tsx`.
 
   Engine: `bouwPakketResultaat` (`pakketten.ts`) kreeg een nieuwe optionele `investeringOverrides`-parameter (sleutel → vast bedrag) en een `investeringVoorRegel()`-helper die 'm toepast op zowel de per-regel `investeringEuro` als de totale som — een override vervangt de hele bandbreedte (riders inbegrepen) door één vast bedrag, want de gebruiker geeft hier het complete bedrag op. `bouwHandmatigScenarioMetMaatregelen` kreeg een nieuwe `maatregelPrijzenEuro`-parameter die dit doorgeeft; ontbrekende sleutels vallen terug op de catalogusprijs, dus bestaande aanroepen blijven ongewijzigd werken.
