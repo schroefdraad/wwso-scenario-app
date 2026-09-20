@@ -95,15 +95,21 @@ afgehandeld (wastafel/fonteintje-badge, gemeente-suggestiebug, disclaimer, kitch
 scenario-staleness) — zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Alle vier
 code-releases gecommit, gepusht en gedeployed.
 
-**Openstaand uit diezelfde sessie: de feedbackknop is halverwege, geblokkeerd op een externe
-stap.** De gebruiker wil een e-mailmelding per binnengekomen feedback i.p.v. alleen de
-Supabase-tabel handmatig bekijken. Resend-integratie geïnstalleerd via de Vercel Marketplace
-(domein `puntum.nl`, regio `eu-west-1`) — **maar geblokkeerd tot de gebruiker het domein bij
-Resend geverifieerd heeft (SPF/DKIM-DNS-records)**. Op verzoek van de gebruiker wordt er nog niet
-verder gebouwd (migratie/UI/server-actie) tot die verificatie rond is. Zie de feedbackknop-taak in
-`plan/plan.md` voor de dashboard-link en volledige status.
+**Update (2026-09-20): domeinverificatie rond, Sentry gebouwd en geverifieerd.**
 
-Daarvoor (nog steeds relevant, niet begonnen): Sentry — nog vóór taak 18.
+- **`puntum.nl` bij Resend geverifieerd** — DKIM/SPF-DNS-records via Namecheap gezet (Mail
+  Settings eerst op Custom MX nodig voor het MX-record-type). De feedbackknop zelf (migratie/UI/
+  server-actie) staat nu open om te bouwen, nog niet gestart. Zie de feedbackknop-taak in
+  `plan/plan.md`.
+- **Sentry gebouwd (gratis tier, alleen foutregistratie, geen performance/tracing).** Geprovisioned
+  via de Vercel Marketplace na een bug in Vercel's eigen CLI-accept-terms-flow (`Missing
+  billingPlanId`, omzeild via de dashboardpagina). De wizard crashte op een ontbrekende TTY in deze
+  omgeving, dus handmatig opgezet volgens het huidige App Router-conventiepatroon. Onderweg een
+  echte bug gevonden en gefixt: de DSN-env-var was nog niet geladen op het moment dat
+  `instrumentation.ts` draait (Turbopack-timing) — opgelost door de DSN letterlijk in de
+  configbestanden te zetten (Sentry's eigen wizard-aanpak, DSN is geen geheim). Geverifieerd met
+  een tijdelijke test-route: issue kwam correct aan in het Sentry-dashboard. 271/271 tests groen.
+  Volledig verslag in `plan/plan.md`, sectie "Vóór taak 18 — bèta-gereedheid".
 
 Daarvóór: drie nieuwe, nog ongebouwde taken vóór taak 18 vastgelegd in
 `plan/plan.md` (disclaimer, feedbackknop, Sentry — zie "Sessie 2026-09-13" onderaan en

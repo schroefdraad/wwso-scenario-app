@@ -142,18 +142,38 @@ meteen achteraan.
       Supabase-trigger/Edge Function die Resend aanroept zodra er een nieuwe rij in `feedback`
       verschijnt. **Resend-integratie geïnstalleerd via de Vercel Marketplace** (`vercel integration
       add resend -m domain=puntum.nl -m region=eu-west-1`) — `RESEND_API_KEY`/`RESEND_EMAIL_DOMAIN`
-      staan al in `.env.local` (root én `apps/web`) en op Vercel. **Geblokkeerd tot het domein
-      `puntum.nl` bij Resend geverifieerd is (SPF/DKIM-DNS-records, door de gebruiker zelf te
-      zetten)** — dashboard: https://vercel.com/d/dashboard/integrations/resend/icfg_XosUvSJTHTkppnOyvVPjaECz/resources/ir_BaqUOKUsUUU6b3TY.
-      Op expliciet verzoek van de gebruiker: wacht met de rest van de bouw (migratie/UI/server-actie)
-      tot de verificatie rond is, in plaats van nu al door te bouwen op een nog niet werkende
-      e-mailverzending.
-- [ ] Sentry (gratis tier) voor automatische foutregistratie — Next.js-SDK toevoegen aan `apps/web`,
-      alleen client- en server-side error capturing (geen performance/tracing, scope klein houden).
-      Vangt stille crashes die niemand meldt — meerdere bugs in de backlog hierboven (bijv. de
-      's-Gravesandestraat-bug, v0.7.4) vielen pas laat op omdat niemand ze meldde. Verificatie: een
-      bewust gegooide test-error in dev verschijnt in het Sentry-dashboard met stacktrace en
-      breadcrumbs.
+      staan al in `.env.local` (root én `apps/web`) en op Vercel. **Domein `puntum.nl` bij Resend
+      geverifieerd (2026-09-20)** — DNS-records (DKIM-TXT, SPF-MX, SPF-TXT) via Namecheap gezet
+      (had daar eerst "Mail Settings" op Custom MX nodig voordat het MX-record-type in Host Records
+      verscheen); status bevestigd op "verified" via de Resend-API. Rest van de bouw
+      (migratie/UI/server-actie) staat nu open, nog niet gestart.
+- [x] **Sentry (gratis tier) voor automatische foutregistratie (2026-09-20).** Geprovisioned via de
+      Vercel Marketplace (`vercel integration add sentry`, org "puntum", regio EU/Duitsland voor
+      data-residentie, plan Developer/$0) — resource `sentry-fuchsia-globe`, gekoppeld aan project
+      `web`. De CLI's eigen accept-terms-flow gaf een `Missing billingPlanId`-fout na het accepteren
+      in de browser (bug in Vercel's kant van de flow, niet bij ons); opgelost door de integratie
+      in plaats daarvan via de gewone Marketplace-dashboardpagina (https://vercel.com/marketplace/sentry)
+      te installeren, waarna de CLI-provisioning wel slaagde.
+
+      `npx @sentry/wizard` crashte op een ontbrekende TTY in deze omgeving (`ERR_TTY_INIT_FAILED`
+      bij een prompt); de Next.js-integratie is daarom handmatig opgezet volgens het huidige
+      App Router-conventiepatroon (`src/instrumentation.ts` met `register()`/`onRequestError`,
+      `src/instrumentation-client.ts`, `sentry.server.config.ts`/`sentry.edge.config.ts` op de
+      projectroot, `global-error.tsx`, `withSentryConfig` in `next.config.ts` — geïmporteerd uit
+      `@sentry/nextjs/config`, niet `@sentry/nextjs` zelf, die vorm is deprecated). Bewust geen
+      `tracesSampleRate`/replay-config: alleen foutregistratie, scope klein gehouden zoals gepland.
+
+      **Bug gevonden tijdens verificatie**: `process.env.NEXT_PUBLIC_SENTRY_DSN` staat niet
+      gegarandeerd al in `process.env` op het moment dat `instrumentation.ts`'s `register()` draait
+      (Turbopack-timing) — `sentry.server.config.ts` logde stil "No DSN provided, client will not
+      send events" en er kwam dus nooit een issue aan. Opgelost door de DSN als letterlijke string
+      in alle drie de configbestanden op te nemen in plaats van de env var uit te lezen — exact de
+      aanpak die Sentry's eigen wizard-templates ook gebruiken (een DSN is geen geheim, vandaar de
+      `NEXT_PUBLIC_`-prefix). Geverifieerd met een tijdelijke, bewust gooiende API-route
+      (`/api/sentry-test`, na verificatie weer verwijderd): 500-response in de browser/dev-server-
+      log, issue kwam aan in het `sentry-fuchsia-globe`-project in het Sentry-dashboard (niet in
+      `sentry-aero-mirror`, een leeg default-project dat los van onze integratie al bestond).
+      271/271 tests groen, tsc/eslint/build schoon.
 
 Bewust NIET meegenomen: algemene voorwaarden. Pas relevant bij een echt vermarkt product met
 betaalstroom/externe klant-rechtspersoon (fase 4/vermarkten) — nu nog "open testomgeving" met 3

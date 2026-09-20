@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   // @wwso/engine en @wwso/data zijn workspace-packages die hun eigen TS-broncode direct
@@ -16,4 +17,11 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "skael-2z",
+  project: "sentry-fuchsia-globe",
+  // Alleen sourcemap-upload tijdens CI, niet bij lokale builds.
+  silent: !process.env.CI,
+  // Groter deel van de clientbundel als bronbestand uploaden voor leesbare stacktraces.
+  widenClientFileUpload: true,
+});
