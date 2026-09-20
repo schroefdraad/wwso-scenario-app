@@ -95,12 +95,11 @@ afgehandeld (wastafel/fonteintje-badge, gemeente-suggestiebug, disclaimer, kitch
 scenario-staleness) — zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Alle vier
 code-releases gecommit, gepusht en gedeployed.
 
-**Update (2026-09-20): domeinverificatie rond, Sentry gebouwd en geverifieerd.**
+**Update (2026-09-20): alle drie de bèta-gereedheidstaken zijn nu af** (disclaimer was al klaar,
+Sentry en de feedbackknop zijn dit vandaag geworden).
 
 - **`puntum.nl` bij Resend geverifieerd** — DKIM/SPF-DNS-records via Namecheap gezet (Mail
-  Settings eerst op Custom MX nodig voor het MX-record-type). De feedbackknop zelf (migratie/UI/
-  server-actie) staat nu open om te bouwen, nog niet gestart. Zie de feedbackknop-taak in
-  `plan/plan.md`.
+  Settings eerst op Custom MX nodig voor het MX-record-type).
 - **Sentry gebouwd (gratis tier, alleen foutregistratie, geen performance/tracing).** Geprovisioned
   via de Vercel Marketplace na een bug in Vercel's eigen CLI-accept-terms-flow (`Missing
   billingPlanId`, omzeild via de dashboardpagina). De wizard crashte op een ontbrekende TTY in deze
@@ -110,6 +109,19 @@ code-releases gecommit, gepusht en gedeployed.
   configbestanden te zetten (Sentry's eigen wizard-aanpak, DSN is geen geheim). Geverifieerd met
   een tijdelijke test-route: issue kwam correct aan in het Sentry-dashboard. 271/271 tests groen.
   Volledig verslag in `plan/plan.md`, sectie "Vóór taak 18 — bèta-gereedheid".
+- **Feedbackknop gebouwd.** Nieuwe `feedback`-tabel (migratie `0004_feedback.sql`, append-only,
+  org-scoped), knop rechtsonder alleen zichtbaar bij een ingelogde sessie, stuurt URL/e-mail/
+  user-agent/laatste console-fouten onzichtbaar mee, alleen het berichtveld is zichtbaar.
+  E-mailmelding via een Next.js route handler i.p.v. de oorspronkelijk geplande Supabase Edge
+  Function (geen CLI-link in dit project, en de Resend-call kan toch niet vanuit de browser).
+  Onderweg een genuine RLS-verrassing gevonden en gedocumenteerd tijdens het testen (zie
+  `plan/plan.md` voor de volledige diagnose). Volledig browser-geverifieerd (knop → tekst → rij in
+  `feedback` → e-mail 200 OK), 271/271 tests groen, tsc/eslint/build schoon.
+
+**Volgende stap richting bèta: multi-tenant/org_id's scheiden voor de drie testers** — nog te
+ontwerpen, dit is nu de enige resterende blokkade vóór de bèta-lancering zelf (zie "Openstaande
+beslissingen" hierboven). Daarnaast blijft de auth-toggle bewust open tot Steven klaar is met
+testen, en staat er nog een lichte privacy-check van de vrije-tekstvelden open.
 
 Daarvóór: drie nieuwe, nog ongebouwde taken vóór taak 18 vastgelegd in
 `plan/plan.md` (disclaimer, feedbackknop, Sentry — zie "Sessie 2026-09-13" onderaan en

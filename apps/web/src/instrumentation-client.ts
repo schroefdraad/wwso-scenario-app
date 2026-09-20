@@ -1,6 +1,7 @@
 // Initialiseert Sentry op de client (draait vóór React hydration).
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from "@sentry/nextjs";
+import "./lib/feedback/consoleBuffer";
 
 Sentry.init({
   // Letterlijke DSN, zelfde reden als sentry.server.config.ts.

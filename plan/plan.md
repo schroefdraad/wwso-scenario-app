@@ -128,15 +128,46 @@ meteen achteraan.
       extra regel te laten passen). Geverifieerd in de browser (Testwijk 123) en in een
       daadwerkelijk gedownload PDF-exemplaar — beide tonen de tekst correct. 267/267 tests groen,
       tsc/eslint schoon.
-- [ ] Feedbackknop in de app — nieuwe Supabase-tabel `feedback`, org-scoped, zelfde RLS-patroon als
-      `deals` (taak 17: `org_id`-default via `huidige_org_id()`). Velden: `url` (incl.
-      querystring), `email` (uit sessie), `user_agent`, `console_log_buffer` (laatste N entries uit
-      een simpele `window.onerror`/`console.error`-buffer), `bericht` (vrij tekstveld), `org_id`,
-      `created_at`. UI: kleine, altijd zichtbare knop/icoon die een klein formulier opent met alleen
-      het vrije tekstveld — de rest wordt onzichtbaar meegestuurd. Open punt: e-mailadres bewaren is
-      een bewuste uitzondering op "geen persoonsgegevens in de MVP" (zie "Vastgelegde beslissingen"
-      in STATUS.md) — zonder afzender is feedback niet opvolgbaar bij 2-3 gebruikers, dus vastleggen
-      als expliciete uitzondering, niet stilzwijgend.
+- [x] **Feedbackknop in de app (2026-09-20).** Nieuwe Supabase-tabel `feedback` (migratie
+      `0004_feedback.sql`), org-scoped via `huidige_org_id()`, zelfde RLS-patroon als `deals` maar
+      append-only (alleen insert+select-policy voor `authenticated`, geen update/delete). Velden:
+      `url`, `email` (uit sessie), `user_agent`, `console_log` (laatste 20 console-fouten/
+      onafgehandelde JS-errors, zie `lib/feedback/consoleBuffer.ts` — een side-effect-module die
+      `console.error`/`window.onerror`/`unhandledrejection` patcht, geïmporteerd vanuit
+      `instrumentation-client.ts` zodat 'ie al vanaf de eerste paginalaad meeloopt), `bericht`
+      (het enige zichtbare veld), `org_id`, `aangemaakt`. UI: `FeedbackKnop.tsx`, een kleine
+      knop rechtsonder in `layout.tsx` (zelfde plek als `Footer`), alleen zichtbaar met een
+      ingelogde sessie (zonder e-mailadres is een melding niet opvolgbaar) — zelfde
+      auth-gating-patroon als Footer's uitlogknop.
+
+      E-mailmelding: **bewust een Next.js route handler (`/api/feedback-notificatie`) i.p.v. de
+      oorspronkelijk geplande Supabase-trigger/Edge Function** — dit project heeft geen
+      Supabase-CLI-link (zie de migratiebestanden), dus een Edge Function deployen zou nieuwe
+      infrastructuur/tooling vergen, terwijl `RESEND_API_KEY` al als Vercel-env-var beschikbaar was
+      (zie de Sentry-taak hierboven). De Resend-call kan sowieso niet vanuit de browser (geen CORS-
+      support), dus hij moest sowieso server-side; een Route Handler hergebruikt de bestaande
+      Vercel-infrastructuur i.p.v. een tweede platform erbij te halen. Best-effort: een falende
+      e-mailmelding laat de melder niet denken dat de feedback zelf niet is aangekomen (die staat
+      al in de database vóórdat de e-mail-aanroep gebeurt).
+
+      E-mailadres bewaren is een bewuste uitzondering op "geen persoonsgegevens in de MVP" (zie
+      "Vastgelegde beslissingen" in STATUS.md) — zonder afzender is feedback niet opvolgbaar bij
+      2-3 gebruikers, vastgelegd als expliciete uitzondering, niet stilzwijgend.
+
+      **Verificatie liep tegen een genuine RLS-verrassing aan**: een `for insert to anon with
+      check (true)`-testpolicy liet anon-inserts consequent falen (42501), zowel via de
+      PostgREST-API als via een rechtstreekse `set role anon; insert ...` in de SQL-editor —
+      ondanks kloppende `pg_policies`-output (permissive, juiste rol, `with_check = true`),
+      kloppende GRANTs, RLS aan/FORCE uit, en geen schaduwtabel. Overstappen naar exact het
+      patroon dat `deals`'s tijdelijke testpolicy al gebruikt (`for all to anon using (true) with
+      check (true)`) loste het meteen op — de daadwerkelijke `authenticated`-policies van
+      `feedback` volgen wél het per-commando-patroon van `deals` (aparte insert/select-policies),
+      dat patroon zelf is dus niet de oorzaak. Oorzaak niet verder uitgezocht (kostte al vier
+      diagnostische rondes); puur relevant als een tijdelijke test-policy ooit opnieuw nodig is.
+      Alle tijdelijke test-artefacten (anon-testpolicy, org_id-coalesce-fallback, testrijen) zijn
+      na verificatie weer verwijderd. 271/271 tests groen, tsc/eslint/build schoon, volledige
+      browser-round-trip geverifieerd (knop → tekst → rij in `feedback` incl. `console_log: []` →
+      e-mail 200 OK).
       **Uitbreiding (2026-09-19, gekozen door de gebruiker i.p.v. alleen de Supabase-tabel zelf
       bekijken): een e-mailmelding naar de gebruiker bij elke binnengekomen feedback**, via een
       Supabase-trigger/Edge Function die Resend aanroept zodra er een nieuwe rij in `feedback`
