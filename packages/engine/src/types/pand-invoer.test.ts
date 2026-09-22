@@ -88,6 +88,17 @@ describe('PandInvoer — testpand van 6 kamers', () => {
     expect(result.success).toBe(false);
   });
 
+  it('wijst een toiletType af dat niet bij het ruimtetype past (bijv. een toiletruimte-tarief op een badkamer)', () => {
+    const kapot = {
+      ...testpand6Kamers,
+      sanitair: testpand6Kamers.sanitair.map((post) =>
+        post.ruimteNr === 8 ? { ...post, toiletType: 'Staand in toiletruimte' as const } : post,
+      ),
+    };
+    const result = PandInvoer.safeParse(kapot);
+    expect(result.success).toBe(false);
+  });
+
   describe('energielabelOnbekendOfVervallen — backward-compatible default (2026-09-05)', () => {
     it('accepteert een pand-object zonder dit veld en vult de default false in', () => {
       const pandZonderVeld: Record<string, unknown> = { ...testpand6Kamers.pand };

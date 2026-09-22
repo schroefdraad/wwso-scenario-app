@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { RuimteType } from './ruimte';
 
 /**
  * De vijf basiseisen voor een keuken (§2.5.1). Ontbreekt er één, dan krijgt de ruimte géén
@@ -82,6 +83,20 @@ export const ToiletType = z.enum([
   'Hangend in badkamer',
 ]);
 export type ToiletType = z.infer<typeof ToiletType>;
+
+/**
+ * Welke `toiletType`-waarden bij een ruimtetype horen — 'in toiletruimte' hoort bij een
+ * `Toiletruimte`, 'in badkamer' bij een `Badruimte`; elk ander type kent geen toiletpunten
+ * ("Geen" is dan de enige optie). Eén bron van waarheid voor zowel de UI-dropdown
+ * (`RuimteLade.tsx`) als de `PandInvoer`-validatie (`pand-invoer.ts`) — voorkomt de
+ * badkamer/toiletruimte-tariefverwisseling die bij de Huurcommissie-crossvalidatie
+ * (2026-09-04) in testdata bleek te zitten.
+ */
+export function toegestaneToiletTypes(ruimteType: RuimteType): ToiletType[] {
+  if (ruimteType === 'Toiletruimte') return ['Geen', 'Staand in toiletruimte', 'Hangend in toiletruimte'];
+  if (ruimteType === 'Badruimte') return ['Geen', 'Staand in badkamer', 'Hangend in badkamer'];
+  return ['Geen'];
+}
 
 /**
  * De vijf eisen waaraan een bad- of doucheruimte moet voldoen om überhaupt extra punten te

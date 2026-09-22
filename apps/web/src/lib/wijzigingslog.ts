@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.15';
+export const APP_VERSIE = '0.7.16';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.16',
+    datum: '2026-09-22',
+    wijzigingen: [
+      'Kleine validatie-toevoeging: het toilettype van een sanitaire voorziening moet nu passen bij het ruimtetype (toiletruimte- of badkamer-tarief) — voorkomt de inconsistente combinatie die tijdens de Huurcommissie-crossvalidatie (2026-09-04) in testdata aan het licht kwam. Gedeelde `toegestaneToiletTypes()`-functie voor zowel het toiletType-dropdownveld als de puntentelling-validatie.',
+    ],
+  },
   {
     versie: '0.7.15',
     datum: '2026-09-20',

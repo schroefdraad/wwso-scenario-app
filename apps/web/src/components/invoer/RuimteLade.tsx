@@ -1,6 +1,6 @@
 'use client';
 
-import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, type Keuken, type SanitairVoorziening } from '@wwso/engine';
+import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, toegestaneToiletTypes, type Keuken, type SanitairVoorziening } from '@wwso/engine';
 import { alleTarievensets, type Tarievenset } from '@wwso/data';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
@@ -328,7 +328,6 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   // douche/bad-punten, die hier altijd 0 zijn), dus die secties tonen we niet: minder verwarrende
   // velden voor een ruimte die ze toch nooit gebruikt (feedback Emma Morrison, 2026-08-21).
   const isToiletruimte = rij.type === 'Toiletruimte';
-  const isBadruimte = rij.type === 'Badruimte';
   // §2.6.2: extra punten kunnen alleen voor voorzieningen "die zich bevinden in een bad- of
   // doucheruimte" — de motor capt extraGecapt sowieso op doucheBadPunten (r6-sanitair.ts), dus
   // zonder douche/bad in déze ruimte leveren de vijf eisen en alle extra's altijd 0 op, ongeacht
@@ -339,16 +338,14 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   // staat ("Toilet buiten toiletruimte of badkamer: n.v.t."), en de staand/hangend-punten
   // verschillen per ruimtetype. Filteren voorkomt de inconsistente combinatie die bij de
   // Huurcommissie-crossvalidatie (2026-09-04) in de testdata bleek te zitten — een badkamer met
-  // een toiletruimte-tarief. Een al opgeslagen, niet (meer) passende waarde blijft zichtbaar in
-  // de lijst (data nooit stilzwijgend wijzigen), maar is verder niet opnieuw te kiezen.
-  const toegestaneToiletTypes: SanitairVoorziening['toiletType'][] = isToiletruimte
-    ? ['Geen', 'Staand in toiletruimte', 'Hangend in toiletruimte']
-    : isBadruimte
-      ? ['Geen', 'Staand in badkamer', 'Hangend in badkamer']
-      : ['Geen'];
-  const toiletTypeOpties = toegestaneToiletTypes.includes(sanitair.toiletType)
-    ? toegestaneToiletTypes
-    : [sanitair.toiletType, ...toegestaneToiletTypes];
+  // een toiletruimte-tarief. Gedeelde bron (`toegestaneToiletTypes` uit `@wwso/engine`) met de
+  // gelijknamige `PandInvoer`-validatie, zodat UI en schema nooit uit sync kunnen lopen. Een al
+  // opgeslagen, niet (meer) passende waarde blijft zichtbaar in de lijst (data nooit stilzwijgend
+  // wijzigen), maar is verder niet opnieuw te kiezen.
+  const toiletTypeKandidaten = toegestaneToiletTypes(rij.type);
+  const toiletTypeOpties = toiletTypeKandidaten.includes(sanitair.toiletType)
+    ? toiletTypeKandidaten
+    : [sanitair.toiletType, ...toiletTypeKandidaten];
 
   return (
     <div>

@@ -26,9 +26,11 @@ import type { PandInvoer } from '../../types/index';
  * staat op de default `false`, dus het label wordt gewoon gebruikt (feedback Emma, 2026-09-05).
  *
  * Toiletruimten hebben geen eigen m² op de site (ze horen niet bij "Vertrekken" of
- * "Overige ruimten" — 0 punten in R1/R2). Gemodelleerd als 'Verkeersruimte' (niet-verwarmd)
- * zodat ze puur als drager voor de sanitaire voorziening dienen, zonder zelf oppervlakte-
- * punten te genereren.
+ * "Overige ruimten" — 0 punten in R1/R2, want 'Toiletruimte' zit in geen van beide lijsten).
+ * Gemodelleerd als 'Toiletruimte' (niet-verwarmd) — bevestigd numeriek identiek aan de eerdere
+ * 'Verkeersruimte'-modellering (die geen van de rubrieken anders behandelt), maar semantisch
+ * correct: dit maakt de fixture consistent met `toiletType`, zie de toiletType/ruimte.type-
+ * cross-validatie in `PandInvoer.superRefine`.
  */
 export const kleiweg179bKamer2: PandInvoer = {
   pand: {
@@ -51,8 +53,8 @@ export const kleiweg179bKamer2: PandInvoer = {
     { nr: 4, naam: 'Badkamer 1 (gedeeld)', type: 'Badruimte', oppervlakteM2: 4.6, verdieping: 0, verwarmd: true, verkoeld: false },
     { nr: 5, naam: 'Badkamer 2 (gedeeld)', type: 'Badruimte', oppervlakteM2: 3.5, verdieping: 0, verwarmd: true, verkoeld: false },
     { nr: 6, naam: 'Badkamer 3 (gedeeld)', type: 'Badruimte', oppervlakteM2: 6.7, verdieping: 0, verwarmd: true, verkoeld: false },
-    { nr: 7, naam: 'Toiletruimte 1 (gedeeld)', type: 'Verkeersruimte', oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false },
-    { nr: 8, naam: 'Toiletruimte 2 (gedeeld)', type: 'Verkeersruimte', oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 7, naam: 'Toiletruimte 1 (gedeeld)', type: 'Toiletruimte', oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false },
+    { nr: 8, naam: 'Toiletruimte 2 (gedeeld)', type: 'Toiletruimte', oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false },
     { nr: 9, naam: 'Balkon (privé)', type: 'Buitenruimte privé', oppervlakteM2: 4.7, verdieping: 1, verwarmd: false, verkoeld: false },
   ],
   toewijzing: [
