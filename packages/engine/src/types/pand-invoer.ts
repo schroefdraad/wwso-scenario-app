@@ -3,7 +3,7 @@ import { Pand } from './pand';
 import { Ruimte, DUBBEL_GEDEELDE_RUIMTE_TYPES } from './ruimte';
 import { Toewijzing } from './toewijzing';
 import { HandmatigePosten } from './handmatige-posten';
-import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek, toegestaneToiletTypes } from './voorzieningen';
+import { Keuken, SanitairVoorziening, GemeenschappelijkeParkeerplek } from './voorzieningen';
 
 /**
  * De volledige invoer voor één puntentelling: pand, ruimtes, de K1-K12-toewijzingsmatrix
@@ -24,7 +24,6 @@ export const PandInvoer = z
   })
   .superRefine((data, ctx) => {
     const ruimteNrs = new Set(data.ruimtes.map((r) => r.nr));
-    const ruimteBijNr = new Map(data.ruimtes.map((r) => [r.nr, r] as const));
     if (ruimteNrs.size !== data.ruimtes.length) {
       ctx.addIssue({
         code: 'custom',
@@ -80,20 +79,11 @@ export const PandInvoer = z
     });
 
     data.sanitair.forEach((post, i) => {
-      const ruimte = ruimteBijNr.get(post.ruimteNr);
-      if (!ruimte) {
+      if (!ruimteNrs.has(post.ruimteNr)) {
         ctx.addIssue({
           code: 'custom',
           path: ['sanitair', i, 'ruimteNr'],
           message: `Sanitaire voorziening verwijst naar ruimte ${post.ruimteNr}, die niet in ruimtes voorkomt.`,
-        });
-        return;
-      }
-      if (!toegestaneToiletTypes(ruimte.type).includes(post.toiletType)) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['sanitair', i, 'toiletType'],
-          message: `Toilettype '${post.toiletType}' past niet bij ruimte ${post.ruimteNr} (${ruimte.type}) — zie toegestaneToiletTypes().`,
         });
       }
     });

@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.16';
+export const APP_VERSIE = '0.7.17';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -15,10 +15,17 @@ export interface WijzigingslogEntry {
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
   {
+    versie: '0.7.17',
+    datum: '2026-09-25',
+    wijzigingen: [
+      'Productie-incident direct verholpen: "Woningen ophalen mislukt" voor woningen waar een ruimte ooit van type wisselde (bijv. Toiletruimte → Badruimte) zonder het toiletType-veld bij te werken. De harde toiletType/ruimtetype-validatie uit v0.7.16 wees zulke, al langer bestaande data af bij het laden. Teruggedraaid naar alleen een UI-filter (voorkomt nieuwe inconsistente keuzes, wijzigt nooit stilzwijgend bestaande data) — geen harde afwijzing meer bij het laden.',
+    ],
+  },
+  {
     versie: '0.7.16',
     datum: '2026-09-22',
     wijzigingen: [
-      'Kleine validatie-toevoeging: het toilettype van een sanitaire voorziening moet nu passen bij het ruimtetype (toiletruimte- of badkamer-tarief) — voorkomt de inconsistente combinatie die tijdens de Huurcommissie-crossvalidatie (2026-09-04) in testdata aan het licht kwam. Gedeelde `toegestaneToiletTypes()`-functie voor zowel het toiletType-dropdownveld als de puntentelling-validatie.',
+      'Kleine validatie-toevoeging: het toilettype van een sanitaire voorziening moet nu passen bij het ruimtetype (toiletruimte- of badkamer-tarief) — voorkomt de inconsistente combinatie die tijdens de Huurcommissie-crossvalidatie (2026-09-04) in testdata aan het licht kwam. Gedeelde `toegestaneToiletTypes()`-functie voor zowel het toiletType-dropdownveld als de puntentelling-validatie. **Zie v0.7.17: de validatie bleek te streng voor al bestaande data en is teruggedraaid naar alleen het UI-filter.**',
     ],
   },
   {
