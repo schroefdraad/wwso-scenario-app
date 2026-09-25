@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-19
+Laatst bijgewerkt: 2026-09-22
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -54,7 +54,7 @@ Fase 3 is technisch af, maar Fase 4 (taak 18 e.v.) start pas na een meetbaar exi
   - **PSP**: pas relevant zodra er daadwerkelijk betaald gaat worden — hangt af van de nog niet gemaakte keuze tussen de twee vermarkt-modellen (zie hierboven). Kan niet eerder starten dan die keuze.
 - **✅ Afgerond (2026-09-05, v0.6.1): "Ingangsdatum label (optioneel)"-veld vervangen door een vinkje.** Emma's feedback: vaak staat op Funda alleen de labelletter, niet de ingangsdatum, en het oude gedrag (geen datum ingevuld → motor valt terug op bouwjaar) telt een correct/actueel label dan onterecht niet mee. Emma zelf wees het voorgestelde vinkje-compromis eerst af ("geen label bekend lost gewoon alles op"), maar de gebruiker koos bewust om het toch te bouwen als testbare afwijking van haar feedback ("als het slecht test kunnen we het eruit halen"). Gebouwd: `Pand.energielabelIngangsdatum` (exacte datum + de hele §2.4.3-geldigheidstoets, incl. de 10-jaars-vervaltermijn en de 2015-2021-"vereenvoudigd label"-uitzondering) vervangen door `Pand.energielabelOnbekendOfVervallen: z.boolean().default(false)` — een gekozen label wordt nu gebruikt tenzij de gebruiker dit vinkje aanzet, dan valt `berekenR4` terug op de bouwjaargrens. `.default(false)` i.p.v. verplicht, zelfde les als het eerdere `Keuken.verwarmd`-incident. E-09 (opnieuw laten registreren) en de energielabel-scenario-mutaties (E-01 t/m E-08, Tussenfase-taak C) zijn meeverhuisd naar het nieuwe veld. 263/263 tests groen, tsc/eslint schoon, browser-geverifieerd.
 
-**R6 Sanitair — afgesloten, geen bug.** Ruimte 8 en 13 matchten exact met de Huurcommissie-tool. Ruimte 10's restgat bleek volledig verklaarbaar: een testfixture-fout (verkeerd `toiletType` voor een Badruimte — de engine valideert dit niet tegen `ruimte.type`, overweeg dit als kleine validatie-toevoeging), een eigen testartefact in de Huurcommissie-UI (vastzittende dropdown), en een "bad + aparte douche"-waardering (8 vs 6 pt) die na gericht beleidsboek-onderzoek (geen cap van 7 gevonden, §2.6.1 kent maar 3 categorieën) bevestigd is als de correcte, letterlijke lezing aan onze kant — vermoedelijk een vereenvoudiging in de Huurcommissie-tool zelf. Geen actie vereist vóór de bèta-lancering.
+**R6 Sanitair — afgesloten, geen bug.** Ruimte 8 en 13 matchten exact met de Huurcommissie-tool. Ruimte 10's restgat bleek volledig verklaarbaar: een testfixture-fout (verkeerd `toiletType` voor een Badruimte — **inmiddels gefixt, zie v0.7.16 hieronder**), een eigen testartefact in de Huurcommissie-UI (vastzittende dropdown), en een "bad + aparte douche"-waardering (8 vs 6 pt) die na gericht beleidsboek-onderzoek (geen cap van 7 gevonden, §2.6.1 kent maar 3 categorieën) bevestigd is als de correcte, letterlijke lezing aan onze kant — vermoedelijk een vereenvoudiging in de Huurcommissie-tool zelf. Geen actie vereist vóór de bèta-lancering.
 
 ## Aandachtspunten voor een volgende golden-master ronde (geen openstaande beslissing)
 - **Eén-staps versus tweestaps m²-afronding bij R1** (bevinding D3, Hoefstraat). De drie Kleiweg-kamers geven bij beide methoden dezelfde uitkomst en onderscheiden ze dus niet. Wacht op een pand dat het verschil wél laat zien.
@@ -90,7 +90,21 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-09-19, v0.7.10 t/m v0.7.13)**: vijf stuks gebruikersfeedback in één sessie
+**Meest recent (2026-09-22, v0.7.16)**: de kleine validatie-todo uit de R6-Sanitair-bevinding
+hierboven gebouwd — `toiletType` wordt nu cross-gevalideerd tegen `ruimte.type` (een nieuwe
+gedeelde `toegestaneToiletTypes()`-functie in `packages/engine/src/types/voorzieningen.ts`, gebruikt
+door zowel het UI-dropdownveld in `RuimteLade.tsx` als de `PandInvoer`-Zod-validatie). De Kleiweg-
+golden-master-fixture is meegenomen (Toiletruimte in plaats van Verkeersruimte, numeriek bevestigd
+identiek). 272/272 tests groen (1 nieuw), tsc/eslint/build schoon, browser-geverifieerd (lokale
+dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer teruggezet): een Toiletruimte toont alleen
+"Geen"/"Staand in toiletruimte"/"Hangend in toiletruimte", een Badruimte alleen de badkamer-varianten.
+Gecommit (`85e2b32`), gepusht en gedeployed naar productie.
+
+**Vervolg richting bèta blijft ongewijzigd**: multi-tenant/org_id's scheiden voor de drie testers is
+nog steeds de eerstvolgende echte stap (zie "Openstaande beslissingen" hierboven) — deze sessie was
+puur het afronden van al lopend/onafgerond werk, geen voortgang op die stap.
+
+**Vorige sessie (2026-09-19, v0.7.10 t/m v0.7.13)**: vijf stuks gebruikersfeedback in één sessie
 afgehandeld (wastafel/fonteintje-badge, gemeente-suggestiebug, disclaimer, kitchenette-kastruimte,
 scenario-staleness) — zie "Sessie 2026-09-19" onderaan voor het volledige verslag. Alle vier
 code-releases gecommit, gepusht en gedeployed.
@@ -546,3 +560,33 @@ lieten af en toe geen waarde in de React-state achter zonder foutmelding. Verifi
 grotendeels via `find`/ref-based clicks, `get_page_text` en directe `sessionStorage`/DOM-
 JS-evaluatie gedaan in plaats van screenshots, met expliciete tussentijdse checks i.p.v. aannames
 dat een klik geland was.
+
+## Sessie 2026-09-22 — samenvatting (v0.7.16: toiletType/ruimtetype-validatie, restje van een eerdere sessie afgerond)
+
+Bij aanvang van deze sessie stond er al een niet-gecommitte, kennelijk halfafgeronde wijziging in de
+working tree (`RuimteLade.tsx`, `pand-invoer.ts`, `voorzieningen.ts`, de Kleiweg-golden-master-fixture
+en een nieuwe test) — de kleine validatie-todo die al genoemd stond bij de R6-Sanitair-bevinding van
+2026-09-04 (zie hierboven): `toiletType` werd nergens cross-gevalideerd tegen `ruimte.type`, waardoor
+een toiletruimte-tarief op een badkamer (of omgekeerd) zonder foutmelding door de invoer kwam.
+
+Vóór het committen eerst grondig getest, in plaats van blind te vertrouwen dat het werk af was:
+volledige testsuite (272/272 groen, 1 nieuw), `tsc --noEmit` op alle packages (schoon), lint op de
+gewijzigde bestanden (schoon — de enige lint-fouten in de repo zitten in een niet-gerelateerd, los
+scratch-bestand `outputs/pdf-mockups/build-artifact.cjs` uit de PDF-sessie van 2026-09-12),
+productie-build (`next build`, schoon inclusief Next.js' eigen TypeScript-check), en een browsertest
+(lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer teruggezet naar beide `.env.local`-
+bestanden): het voorbeeldpand geladen, de Toiletruimte-rij (ruimte 10) toont nu terecht alleen
+"Geen"/"Staand in toiletruimte"/"Hangend in toiletruimte", de Badruimte-rij (ruimte 8) toont terecht
+alleen de badkamer-varianten — de nieuwe gedeelde `toegestaneToiletTypes()`-functie werkt zowel in de
+UI-dropdown als (via de bestaande Zod-validatie) in de puntentelling. Doorrekenen gaf de verwachte
+jaarhuur (€35.457,24 AS-IS voor het voorbeeldpand), geen regressie.
+
+**Operationele noot**: `computer`-tool coordinate/ref-based clicks bleven een paar keer hangen zonder
+effect (zelfde soort browsertool-flakiness als de sessie van 2026-09-19) — "Doorrekenen" navigeerde
+pas na een directe JS-`click()` via `javascript_tool`. Geen app-bug.
+
+Gecommit (`85e2b32`) met alleen de 6 betrokken bestanden (bewust niet de overige, losstaande
+untracked bestanden in de working tree zoals de PDF-mockup-resources en briefings van eerdere
+sessies), gepusht naar GitHub en gedeployed naar productie met `vercel --prod`
+(`dpl_HPg5zc8nxA7ZiyhBNsv3FRLnyboB`, status READY). Versienummer opgehoogd naar 0.7.16
+(`apps/web/src/lib/wijzigingslog.ts`).
