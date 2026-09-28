@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers } from '@wwso/engine';
-import { parseDealRij } from './types';
+import { magDealBewerken, parseDealRij, type EigenProfiel } from './types';
 
 function geldigeRij(overrides: Record<string, unknown> = {}) {
   return {
@@ -138,10 +138,51 @@ describe('parseDealRij', () => {
     expect(() => parseDealRij(rij)).toThrow();
   });
 
+  it('parseert org_id/is_demo, met is_demo terugvallend op false voor rijen van vóór multi-tenant (2026-09-28)', () => {
+    const legacy = parseDealRij(geldigeRij());
+    expect(legacy.orgId).toBe('00000000-0000-0000-0000-000000000001');
+    expect(legacy.isDemo).toBe(false);
+
+    const demo = parseDealRij(geldigeRij({ org_id: '00000000-0000-0000-0000-000000000002', is_demo: true }));
+    expect(demo.orgId).toBe('00000000-0000-0000-0000-000000000002');
+    expect(demo.isDemo).toBe(true);
+  });
+
   it('parseert een notitie en map (backlog 2026-09-04)', () => {
     const rij = geldigeRij({ notitie: 'Interessant pand, wachten op WOZ-beschikking.', map: 'Rotterdam-Zuid' });
     const deal = parseDealRij(rij);
     expect(deal.notitie).toBe('Interessant pand, wachten op WOZ-beschikking.');
     expect(deal.map).toBe('Rotterdam-Zuid');
+  });
+});
+
+describe('magDealBewerken (multi-tenant org-scheiding, 2026-09-28)', () => {
+  const eigenOrg = '00000000-0000-0000-0000-000000000001';
+  const andereOrg = '00000000-0000-0000-0000-000000000002';
+
+  function profiel(overrides: Partial<EigenProfiel> = {}): EigenProfiel {
+    return { email: 'emma@morrison-media.nl', orgId: eigenOrg, isEigenaar: false, features: [], ...overrides };
+  }
+
+  it('mag bewerken: eigen org, geen demo', () => {
+    expect(magDealBewerken({ orgId: eigenOrg, isDemo: false }, profiel())).toBe(true);
+  });
+
+  it('mag niet bewerken: eigen org, wél demo (spiegelt de RLS-uitzondering op is_demo)', () => {
+    expect(magDealBewerken({ orgId: eigenOrg, isDemo: true }, profiel())).toBe(false);
+  });
+
+  it('mag niet bewerken: andere org, geen demo', () => {
+    expect(magDealBewerken({ orgId: andereOrg, isDemo: false }, profiel())).toBe(false);
+  });
+
+  it('de eigenaar mag alles bewerken, ook andermans org en de demo-woning', () => {
+    const eigenaar = profiel({ isEigenaar: true });
+    expect(magDealBewerken({ orgId: andereOrg, isDemo: true }, eigenaar)).toBe(true);
+    expect(magDealBewerken({ orgId: andereOrg, isDemo: false }, eigenaar)).toBe(true);
+  });
+
+  it('zonder profiel (niet ingelogd / nog aan het laden) mag niets bewerkt worden', () => {
+    expect(magDealBewerken({ orgId: eigenOrg, isDemo: false }, null)).toBe(false);
   });
 });

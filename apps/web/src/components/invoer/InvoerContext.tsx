@@ -23,6 +23,11 @@ export interface InitieelDeal {
   map: string;
   scenarios: ScenarioSelectie[];
   pandInvoer: PandInvoer;
+  /** Multi-tenant org-scheiding (2026-09-28): mag de ingelogde gebruiker deze woning rechtstreeks
+   * bijwerken, of moet "Opslaan" een eigen kopie maken (zie `Topbar.tsx`, `magDealBewerken` in
+   * `lib/deals/profiel.ts`)? Door de aanroeper (`/woning/nieuw`) meegegeven i.p.v. hier zelf
+   * opgezocht — deze context kent geen Supabase-detail zoals het eigen profiel. */
+  magBewerken: boolean;
 }
 
 /** Een AS-IS-kopie die als handmatig TO-BE-scenario bewerkt wordt (backlog: AS-IS kopiëren naar een handmatig scenario, feedback Emma Morrison, 2026-08-21 — via /woning/nieuw?scenario=<slot>). */
@@ -69,7 +74,14 @@ export function InvoerProvider({
         state: {
           ...pandInvoerNaarState(initieelDeal.pandInvoer),
           notitieOntwerp: initieelDeal.notitie,
-          bewerktDeal: { id: initieelDeal.id, naam: initieelDeal.naam, notitie: initieelDeal.notitie, map: initieelDeal.map, scenarios: initieelDeal.scenarios },
+          bewerktDeal: {
+            id: initieelDeal.id,
+            naam: initieelDeal.naam,
+            notitie: initieelDeal.notitie,
+            map: initieelDeal.map,
+            scenarios: initieelDeal.scenarios,
+            magBewerken: initieelDeal.magBewerken,
+          },
         },
       });
       return;

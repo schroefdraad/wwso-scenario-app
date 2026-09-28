@@ -83,8 +83,14 @@ export interface InvoerState {
    * (backlog: as-is achteraf aanpasbaar maken). "Doorrekenen" draagt dit door naar het
    * resultaat-/vergelijkingsscherm zodat "Woning opslaan" dezelfde deal bijwerkt in plaats van een
    * nieuwe aan te maken. Afwezig voor een nieuw, nog niet opgeslagen pand.
+   *
+   * `magBewerken` (multi-tenant org-scheiding, 2026-09-28): `false` bij een woning die wél
+   * zichtbaar is maar niet van de eigen org (de permanente demo-woning, of een gedeelde kopie die
+   * per ongeluk toch bewerkbaar leek) — "Opslaan" maakt dan een nieuwe, eigen kopie i.p.v. de
+   * bestaande rij te proberen bijwerken (die zou de RLS `with check` alsnog weigeren, zie
+   * `Topbar.tsx`).
    */
-  bewerktDeal?: { id: string; naam: string; notitie: string; map: string; scenarios: ScenarioSelectie[] };
+  bewerktDeal?: { id: string; naam: string; notitie: string; map: string; scenarios: ScenarioSelectie[]; magBewerken: boolean };
   /**
    * Gezet zodra dit scherm een AS-IS-kopie is die als handmatig TO-BE-scenario bewerkt wordt
    * (via `/woning/nieuw?scenario=<slot>`, backlog: AS-IS kopiëren naar een handmatig scenario,

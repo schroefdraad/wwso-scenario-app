@@ -80,12 +80,23 @@ const DealRij = z.object({
    * onnodig hard falen. */
   notitie: z.string().default(''),
   map: z.string().default(''),
+  /** Multi-tenant org-scheiding (2026-09-28, `0006_deals_demo_en_delen.sql`). `.default(false)`
+   * als vangnet naast de DB-default, zelfde reden als hierboven: de migratie is handmatig
+   * gedraaid, dus een omgeving die 'm nog niet draaide mag niet onnodig hard falen. */
+  is_demo: z.boolean().default(false),
 });
 
 /** App-facing vorm (camelCase, met de PandInvoer al gevalideerd en het versiestempel gebundeld
  * zoals de rest van de engine hem kent — zie `packages/engine/src/versiestempel.ts`). */
 export interface Deal {
   id: string;
+  /** Multi-tenant org-scheiding (2026-09-28) — nodig om client-side te bepalen of deze woning van
+   * de eigen org is (zie `lib/deals/profiel.ts`, `magDealBewerken`). Nooit gebruikt om zelf te
+   * filteren wat zichtbaar is — dat doet RLS al, dit is puur UI-gedrag op wat al zichtbaar is. */
+  orgId: string;
+  /** De permanente voorbeeldwoning (2026-09-28) — zichtbaar in elke org, alleen door de eigenaar
+   * bewerkbaar. Zie `magDealBewerken`. */
+  isDemo: boolean;
   naam: string;
   /** Vrije notitie bij deze deal, zichtbaar in het deals-overzicht (backlog 2026-09-04). Lege
    * string = geen notitie, nooit `null` — de rest van de app hoeft dat onderscheid niet te maken. */
@@ -106,11 +117,40 @@ export interface Deal {
  * (harde regel 4: nooit stilzwijgend gokken) — dat kan alleen gebeuren als de tabel buiten deze
  * app om is bewerkt, iets dat zichtbaar moet zijn, niet weggeslikt.
  */
+/**
+ * Het eigen profiel uit `allowed_emails` (multi-tenant org-scheiding, 2026-09-28 — zie
+ * `outputs/RAPPORT_multi-tenant-architectuurplan_2026-09-28.md`). Het type staat hier (niet in
+ * `lib/deals/profiel.ts`, waar de Supabase-ophaalfunctie zelf leeft) zodat dit bestand — en
+ * `magDealBewerken` hieronder — geen module-level Supabase-clientinitialisatie meeslepen; die
+ * gooit een harde fout zonder `.env.local` (zie `lib/supabase/client.ts`), wat een zuivere
+ * unit-test van deze functie onnodig zou breken.
+ */
+export interface EigenProfiel {
+  email: string;
+  orgId: string;
+  isEigenaar: boolean;
+  features: string[];
+}
+
+/**
+ * Mag deze gebruiker (`profiel`) de gegeven woning rechtstreeks bijwerken/verwijderen? Spiegelt
+ * exact de `leden_bijwerken_eigen_org`/`leden_verwijderen_eigen_org`-policies uit
+ * `0006_deals_demo_en_delen.sql`: eigen org + geen demo-rij, OF de eigenaar (die mag alles). Dit is
+ * puur een UI-hint (welke knoppen/teksten tonen) — RLS blijft de daadwerkelijke afdwinging.
+ */
+export function magDealBewerken(deal: Pick<Deal, 'orgId' | 'isDemo'>, profiel: EigenProfiel | null): boolean {
+  if (profiel?.isEigenaar) return true;
+  if (!profiel) return false;
+  return deal.orgId === profiel.orgId && !deal.isDemo;
+}
+
 export function parseDealRij(ruw: unknown): Deal {
   const rij = DealRij.parse(ruw);
   const pandInvoer = PandInvoer.parse(rij.pand_invoer);
   return {
     id: rij.id,
+    orgId: rij.org_id,
+    isDemo: rij.is_demo,
     naam: rij.naam,
     notitie: rij.notitie,
     map: rij.map,

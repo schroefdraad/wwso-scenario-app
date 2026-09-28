@@ -13,6 +13,7 @@ import { OverigePosten } from '../../../components/invoer/OverigePosten';
 import { NotitieVeld } from '../../../components/invoer/NotitieVeld';
 import { RuimteLade } from '../../../components/invoer/RuimteLade';
 import { haalDealOp } from '../../../lib/deals/opslag';
+import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
 import { haalScenarioBewerkStartOp } from '../../../lib/vergelijking/scenarioBewerkBrug';
 import styles from '../../../components/invoer/styles.module.css';
 
@@ -48,13 +49,24 @@ function NieuwPandContent() {
       return;
     }
     setStatus('laden');
-    haalDealOp(dealParam)
-      .then((deal) => {
+    // Profiel + deal parallel ophalen: het profiel bepaalt alleen `magBewerken` (UI-gedrag), de
+    // deal zelf blijft leidend voor of de pagina laadt — een profiel-ophaalfout mag het laden van
+    // een woning niet blokkeren, `magDealBewerken` valt bij `null` gewoon terug op "niet bewerken".
+    Promise.all([haalDealOp(dealParam), haalEigenProfielOp().catch(() => null)])
+      .then(([deal, profiel]) => {
         if (!deal) {
           setStatus('niet-gevonden');
           return;
         }
-        setInitieelDeal({ id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, pandInvoer: deal.pandInvoer });
+        setInitieelDeal({
+          id: deal.id,
+          naam: deal.naam,
+          notitie: deal.notitie,
+          map: deal.map,
+          scenarios: deal.scenarios,
+          pandInvoer: deal.pandInvoer,
+          magBewerken: magDealBewerken(deal, profiel),
+        });
         setStatus('klaar');
       })
       .catch(() => setStatus('niet-gevonden'));

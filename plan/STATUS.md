@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-22
+Laatst bijgewerkt: 2026-09-25
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -40,10 +40,40 @@ Wel beschikbaar als input:
 Fase 3 is technisch af, maar Fase 4 (taak 18 e.v.) start pas na een meetbaar exit-criterium: **twee opeenvolgende zelfstandige sessies van Steven Kramer (energielabelverduurzamen.nl) zonder een nieuwe blokkerende melding.** Cosmetische feedback mag opstapelen voor een gebundelde ronde; nice-to-haves worden los gescoopt. Vier tussenfase-taken staan klaar in `plan/plan.md` (geen vaste volgorde): automatische pakketten verwijderen, kitchenette-varianten (122cm/8pt, 240cm/14pt), energielabel-kostenvelden + scenariovergelijking, en een per-maatregel prijsveld in `HandmatigMaatregelen.tsx`. Zie `briefings/BRIEFING_sessie_20260901_deel2.md` voor de volledige onderbouwing.
 
 ## Openstaande beslissingen
+- **Brug Shortlist → Puntum — niet langer alleen een idee (2026-09-27).** Was bewust geen
+  planonderdeel (zie `briefings/BRIEFING_brug_shortlist_puntum_2026-09-27.md`), maar de gebruiker
+  gaat er de volgende sessie mee aan de slag. Drie ongeblokkeerde items nu in `plan/plan.md` vóór
+  Fase 4 ("Brug Shortlist → Puntum — voorbereiding"): een verificatiescript aan de scraperkant (ander
+  project), en twee kleine Puntum-verbeteringen (bulk verwarmd/verkoeld, plattegrond-promptuitbreiding).
+  Taak 21 (de eigenlijke importadapter) blijft wél achter de Fase-4-tussenfase-hold — die is niet
+  opgeheven, alleen deze drie kleine, onafhankelijke stukken zijn ervan losgemaakt. Volledige
+  uitwerking + tijdwinstberekening: `outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md`.
 - **⚠ Auth-toggle staat momenteel OPEN op productie** (`AUTH_VEREIST`/de RLS-toggle uit `supabase/toggle-auth-uit.sql`) — bewust zo gelaten op verzoek van de gebruiker tijdens een testsessie (2026-09-01), en op 2026-09-04 expliciet naar áchteren geschoven: de tussenfase-taken A-D moeten juist door Steven getest worden, dus blijft de toggle open totdat dat testen klaar is. Zolang die aan staat is er geen toegangscontrole op de `deals`-tabel. Pas dicht (`supabase/toggle-auth-aan.sql` + env var weghalen) als er geen actief testen meer gepland is.
 - **Bèta-lancering met drie testers (plan van de gebruiker, 2026-09-04)**: volgorde (1) notities + mappen bouwen ✅ afgerond, (2) multi-tenant/org_id's scheiden, (3) bèta lanceren. Stap 1 is klaar (zie "Wat werkt" en `plan/plan.md`) — eerstvolgende stap is stap 2, multi-tenant. Eigen domein is inmiddels beschikbaar (zie de eigen-SMTP-regel in `plan/plan.md`), dus de mail-rate-limit hoeft geen blokkade meer te zijn bij drie testers.
 - Twee vermarkt-modellen (A: software aan zelfstandige eindgebruikers, vraagt multi-tenant; B: instrument in Stevens dienst, mogelijk licentie) — bewust nog niet gekozen. Werkprincipe: bij twijfel bouwen voor wie er nu daadwerkelijk is (Steven/Model B-achtig), niet voor een hypothetische Model-A-toekomst.
-- Multi-tenant/gescheiden org_id's — nu de eerstvolgende concrete stap voor de bèta-lancering hierboven (stap 1, notities/mappen, is klaar). Nog te ontwerpen: hoe org_id's precies gescheiden worden voor drie testers (zie `supabase/migrations/0002_auth_allowlist.sql`'s `allowed_emails`-aanpak, die dit al voorzag als "een kwestie van andere org_id-waarden zetten").
+- **Multi-tenant/gescheiden org_id's — architectuurplan klaar (2026-09-28), nog niet geïmplementeerd.**
+  Spar-gesprek gevoerd, zes ontwerpkeuzes vastgesteld, daarna op Opus gepland (zelfde criterium als
+  de vier bestaande `⬆ Opus`-taken): volledig plan in
+  `outputs/RAPPORT_multi-tenant-architectuurplan_2026-09-28.md`. Kern: Myle+Emma+Steven blijven
+  samen in de bestaande org, drie nieuwe lege orgs gereserveerd voor toekomstige testers (nieuwe
+  `orgs`-tabel, want org_id was tot nu toe een losse uuid zonder rij), Myle krijgt read-only
+  cross-org-inzage (`is_eigenaar()`-functie), een per-gebruiker `features`-kolom op
+  `allowed_emails` (niet per-org — nodig omdat de Shortlist-brug wel voor Myle/Emma maar niet voor
+  Steven zichtbaar mag zijn ondanks gedeelde org), een `deal_shares`-koppeltabel voor het delen van
+  woningen tussen orgs, en een `is_demo`-vlag op `deals` voor een permanente, read-only
+  voorbeeldwoning (de bestaande Crooswijkseweg-testdeal + twee scenario's) die in élke org
+  zichtbaar is, ook toekomstige. **Alle 11 deelbeslissingen zijn inmiddels bevestigd (2026-09-28,
+  rapport §7)**: Myle krijgt ook schrijfrecht cross-org (niet alleen lezen — bewuste afwijking van
+  de aanbeveling, geaccepteerd gevolg: geen `gewijzigd_door`-audit-spoor), de demo wordt de
+  Crooswijkseweg-rij van 2026-09-22 (kopie, in een eigen demo-org), delen gebeurt naar een
+  specifieke org, read-only, als kopie (niet live) en alleen door de bezittende org, achter
+  dezelfde per-gebruiker featureflag als de Shortlist-brug (sleutel `'import'`; delen zelf eerst
+  gepilot met Myle/Emma), Myle mag ook cross-org feedback lezen, geen org-switcher in de UI, de
+  drie toekomstige testerorgs worden nu al met een generiek label aangemaakt. **Eén
+  ontwerpvereenvoudiging volgt uit de "kopie i.p.v. live delen"-keuze**: de in het rapport
+  geschetste `deal_shares`-RLS-laag is daardoor overbodig geworden, nog te herzien bij
+  implementatie (rapport §7 punt 4). Implementatie zelf staat nog niet gepland — eerstvolgende stap
+  is dit als taak in `plan/plan.md` zetten.
 - Taxatiefactor (Steven Kramer, 2026-08-28) — voor nu niet relevant volgens Steven, op de plank, geen actie.
 - Hoe de kostencatalogus onderhouden wordt zodra er meerdere gebruikers zijn — nu nog een xlsx die handmatig wordt ingelezen; alle 49 maatregelen staan nog op `schatting`. Kitchenette-prijzen komen uit een sheet van Steven, nog te ontvangen.
 - **✅ R3 Verwarming-bug gefixt (2026-09-04, versie 0.5.4).** Cross-validatie tegen de officiële Huurcommissie Huurprijscheck (zie `outputs/RAPPORT_huurcommissie-crossvalidatie_2026-09-04.md`) legde bloot dat een kamer met een private kitchenette de verwarmingspunten van die open keuken niet apart meetelde — het beleidsboek §2.3.2 schrijft juist voor dat zo'n open keuken als een tweede verwarmd vertrek gewaardeerd wordt ("Een privé verwarmde woonkamer met open keuken wordt dus gewaardeerd met 4 punten"). Gefixt in `r3-verwarming.ts` + een nieuw `Keuken.verwarmd`-veld (eigen toggle, niet automatisch overgenomen van de kamer) + 4 regressietests + een UX-fix voor het Toiletype-dropdownveld (filtert nu op ruimtetype). R5 keuken-verdeling was een testfout (geen bug). **R11 WOZ-waarde is definitief afgesloten, geen bug bij ons**: zowel de WOZ-invoer als een apart adres-breed "aantal onzelfstandige woonruimtes"-veld (stond al goed op 6) zijn gecontroleerd en correct — de Huurcommissie-tool geeft desondanks structureel 0 punten voor WOZ bij onzelfstandige woonruimte, zonder beleidsmatige grond (§2.11 vereist expliciet 10-14 punten, adres-breed gelijk voor elke kamer op hetzelfde adres). Discrepantie tussen de Huurcommissie-tool en het beleidsboek zelf, niet bij ons — onze 12 punten zijn correct, ook voor de andere 5 kamers. Verder onderzoek vereist contact met de Huurcommissie zelf, buiten scope.
@@ -90,19 +120,30 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-09-22, v0.7.16)**: de kleine validatie-todo uit de R6-Sanitair-bevinding
-hierboven gebouwd — `toiletType` wordt nu cross-gevalideerd tegen `ruimte.type` (een nieuwe
-gedeelde `toegestaneToiletTypes()`-functie in `packages/engine/src/types/voorzieningen.ts`, gebruikt
-door zowel het UI-dropdownveld in `RuimteLade.tsx` als de `PandInvoer`-Zod-validatie). De Kleiweg-
-golden-master-fixture is meegenomen (Toiletruimte in plaats van Verkeersruimte, numeriek bevestigd
-identiek). 272/272 tests groen (1 nieuw), tsc/eslint/build schoon, browser-geverifieerd (lokale
-dev-server tijdelijk met `AUTH_VEREIST=false`, erna weer teruggezet): een Toiletruimte toont alleen
-"Geen"/"Staand in toiletruimte"/"Hangend in toiletruimte", een Badruimte alleen de badkamer-varianten.
-Gecommit (`85e2b32`), gepusht en gedeployed naar productie.
+**Meest recent (2026-09-25, v0.7.17 — hotfix van een productie-incident uit v0.7.16).** De
+toiletType/ruimtetype-validatie uit v0.7.16 (zie hieronder) bleek ook toegepast te worden bij het
+**inladen** van bestaande woningen uit Supabase, niet alleen bij nieuwe invoer — `PandInvoer.parse()`
+in `lib/deals/types.ts` gebruikt hetzelfde schema. Elke woning waarvan ooit een ruimte van type
+wisselde (bijv. Toiletruimte → Badruimte) zonder dat het `toiletType`-veld werd bijgewerkt, werd
+daardoor hard afgewezen bij het laden — de gebruiker meldde dit meteen als "Woningen ophalen
+mislukt" met de exacte Zod-foutmelding. Root cause bevestigd tegen de code (niet aangenomen), fix
+binnen dezelfde sessie: de harde `PandInvoer.superRefine`-cross-validatie is verwijderd; de
+bescherming bestaat voortaan alleen nog als UI-filter in `RuimteLade.tsx` (`toegestaneToiletTypes()`
+blijft staan en voorkomt dat je *nieuw* een inconsistente combinatie kiest, maar blokkeert nooit meer
+het laden van bestaande data). 271/271 tests groen (de test die de harde afwijzing verwachtte is
+verwijderd), tsc/eslint/build schoon. Gecommit (`98f5773`), gepusht en gedeployed naar productie
+(`dpl_AVa7fdbLPV7KQGW92wKuuHkw2w7R`); de gebruiker heeft bevestigd dat "Woningen ophalen" weer werkt.
+
+**Les, zelfde categorie als het `Keuken.verwarmd`-incident van 2026-09-04**: een nieuwe of strengere
+Zod-validatie op een schema dat ook gebruikt wordt om al opgeslagen Supabase-data terug te lezen, is
+een breaking change zodra ook maar één bestaande rij niet aan de nieuwe regel voldoet — ook als alle
+tests lokaal slagen, want de testsuite dekt geen productiedata. Zulke controles horen op het
+UI-invoerpad, niet in het gedeelde parse-schema, tenzij je zeker weet dat alle bestaande opgeslagen
+data er al aan voldoet.
 
 **Vervolg richting bèta blijft ongewijzigd**: multi-tenant/org_id's scheiden voor de drie testers is
 nog steeds de eerstvolgende echte stap (zie "Openstaande beslissingen" hierboven) — deze sessie was
-puur het afronden van al lopend/onafgerond werk, geen voortgang op die stap.
+puur het afronden en daarna repareren van al lopend/onafgerond werk, geen voortgang op die stap.
 
 **Vorige sessie (2026-09-19, v0.7.10 t/m v0.7.13)**: vijf stuks gebruikersfeedback in één sessie
 afgehandeld (wastafel/fonteintje-badge, gemeente-suggestiebug, disclaimer, kitchenette-kastruimte,
@@ -590,3 +631,35 @@ untracked bestanden in de working tree zoals de PDF-mockup-resources en briefing
 sessies), gepusht naar GitHub en gedeployed naar productie met `vercel --prod`
 (`dpl_HPg5zc8nxA7ZiyhBNsv3FRLnyboB`, status READY). Versienummer opgehoogd naar 0.7.16
 (`apps/web/src/lib/wijzigingslog.ts`).
+
+## Sessie 2026-09-25 — samenvatting (v0.7.17: productie-incident uit v0.7.16 direct gefixt)
+
+Binnen enkele dagen na de v0.7.16-deploy meldde de gebruiker "Woningen ophalen mislukt" met een
+letterlijke Zod-foutmelding over `sanitair.toiletType`. Direct onderzocht in plaats van aangenomen:
+`grep` naar waar `PandInvoer.parse`/`safeParse` wordt aangeroepen bevestigde dat `lib/deals/types.ts`
+(regel 111, de functie die een deal-rij uit Supabase terugleest) exact hetzelfde `PandInvoer`-schema
+gebruikt als het invoerscherm — de in v0.7.16 toegevoegde `superRefine`-cross-validatie
+(toiletType tegen ruimte.type) werd dus ook toegepast op al jarenlang opgeslagen data. De gemelde
+woning had op een gegeven moment ruimte 10 van Toiletruimte naar Badruimte gewisseld zonder dat het
+toiletType-veld meeveranderde — precies het scenario dat de eigen UI-comment in `RuimteLade.tsx` al
+beschreef ("Een al opgeslagen, niet (meer) passende waarde blijft zichtbaar... maar is niet opnieuw
+te kiezen"), maar dat de nieuwe schema-validatie alsnog hard blokkeerde.
+
+Fix: de `superRefine`-check en de nu ongebruikte `ruimteBijNr`/`toegestaneToiletTypes`-import
+verwijderd uit `pand-invoer.ts`, de bijbehorende test uit `pand-invoer.test.ts` verwijderd. De
+UI-filtering in `RuimteLade.tsx` (voorkomt nieuwe inconsistente keuzes) bleef ongewijzigd staan —
+alleen de harde, data-blokkerende laag is teruggedraaid. 271/271 tests groen, tsc/eslint/build
+schoon. Wijzigingslog: v0.7.17 toegevoegd, de v0.7.16-entry met een terugverwijzing aangevuld
+(bestaande changelog-entries zelf niet herschreven, alleen aangevuld — een changelog is een
+historisch record). Gecommit (`98f5773`), gepusht en gedeployed naar productie
+(`dpl_AVa7fdbLPV7KQGW92wKuuHkw2w7R`). Gebruiker heeft na de deploy bevestigd dat "Woningen ophalen"
+weer werkt.
+
+**Les**: zie de nieuwe alinea bij "Volgende concrete actie" hierboven — dit is dezelfde
+incidentklasse als het `Keuken.verwarmd`-incident van 2026-09-04 (taak-6-fix in de Sessie
+2026-09-04-deel-3-samenvatting): een nieuwe/strengere Zod-regel op een schema dat ook bestaande
+Supabase-data terugleest, is een breaking change zodra ook maar één opgeslagen rij er niet aan
+voldoet, ongeacht of de testsuite groen is. Bij een volgende soortgelijke validatiewens: eerst
+vaststellen of de regel puur voor nieuwe invoer geldt (dan in de UI/het formulier) of ook voor
+bestaande data moet gelden (dan een migratie/opschoning van de data zelf, nooit een harde
+parse-afwijzing).

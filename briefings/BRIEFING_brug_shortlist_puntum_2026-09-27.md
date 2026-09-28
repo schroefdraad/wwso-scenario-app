@@ -11,6 +11,14 @@ Bijbehorend document aan de scraperkant:
 `C:\Users\Myle\Documents\Realestate Workflow\outputs\RAPPORT_brug_puntum_blauwdruk_20260927.md`
 (de volledige blauwdruk; deze briefing is de WWSO-kant + wat er sindsdien bijkwam).
 
+**Uitgewerkt vervolg (2026-09-27, zelfde dag):**
+`outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md` — workflow end-to-end en de
+automatiseringen gerangschikt. Corrigeert twee punten hieronder: `aantalKamers` is géén
+scraper-match (Funda's "kamers" ≠ het aantal onzelfstandige wooneenheden) en `wozPeildatum`
+wordt door geen enkele rubriek gelezen. Vervangt het `m2Geschat`-voorstel + de vijfde controle door
+een goedkopere variant zonder schemawijziging, en behandelt de afscherming van de import (de scraper
+is privé) via de multi-tenant-stap.
+
 ---
 
 ## Vondst 1 — beide projecten plannen dezelfde brug, één kant naar een dood doel
@@ -152,6 +160,10 @@ bouwen (nieuwe secret-rotatie, nieuwe faalmodus). Paste/upload van de JSON die d
 Drive zet is genoeg. Optioneel later een Apps Script-menu-item ("Kopieer voor Puntum") met een
 `HtmlService`-dialoog — past in het bestaande Sheet-knoppenpatroon, nul nieuwe infra.
 
+⚠ **Openstaand, nog niet opgelost (zie hieronder, "Nog niet geverifieerd"):** welke JSON precies?
+"De JSON die de scraper al naar Drive zet" (`funda_results.json`, het volledige record) en "de rij
+als JSON" (het Apps Script-idee) zijn niet hetzelfde bestand.
+
 ---
 
 ## Nog niet geverifieerd
@@ -163,6 +175,17 @@ Drive zet is genoeg. Optioneel later een Apps Script-menu-item ("Kopieer voor Pu
 - De exacte labelteksten van die kenmerken (de voorbeelden hierboven zijn typisch, geen
   gecontroleerde veldnamen).
 - Of plattegrond-URL's in de HTML staan of pas na JS-rendering verschijnen.
+- **Bron van de JSON in stap 2 van de workflow, ingebracht door de gebruiker (2026-09-27).** De
+  Handoff-paragraaf hierboven noemt twee opties ("de JSON die de scraper al naar Drive zet" vs. "de
+  rij als JSON" via een Apps-Script-menu) zonder te kiezen — en dat is geen vrije keuze: de
+  Sheet-rij is een afgeleide voor de rankingformule (`=(650*max_kamers*12)/(vraagprijs+30000)*100`)
+  en bevat vermoedelijk alleen adres/vraagprijs/kamers/score, terwijl `funda_results.json` het
+  volledige scraper-record is (WOZ, bouwjaar, energielabel, en straks de fase-A-kenmerken). Vondst 2
+  hierboven citeert zelf al tegen `funda_results.json`, niet tegen de Sheet. Consequentie: "Kopieer
+  voor Puntum" moet het record uit `funda_results.json` ophalen (via `funda_id`/adres), niet de
+  zichtbare Sheet-rij serialiseren — anders krijgt de importadapter een schema met stelselmatig
+  ontbrekende velden. Volledig uitgewerkt in
+  `outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md`, §8 punt 7.
 
 ---
 

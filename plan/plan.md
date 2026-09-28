@@ -211,6 +211,125 @@ betaalstroom/externe klant-rechtspersoon (fase 4/vermarkten) — nu nog "open te
 bekende gebruikers. Bovendien geen taak voor Claude Code; bij opstarten hoort een jurist, niet
 gegenereerde tekst.
 
+## Multi-tenant org-scheiding — voorbereiding bèta (2026-09-28) **`⬆ Opus`** (architectuurplan afgerond)
+
+*Niet gedekt door de Fase-4-hold hieronder — dit ís de bètastap zelf (zie `plan/STATUS.md`,
+"Openstaande beslissingen"), geen Fase-4-item. Architectuurplan volledig uitgewerkt en alle
+deelbeslissingen bevestigd: `outputs/RAPPORT_multi-tenant-architectuurplan_2026-09-28.md`. Zes
+ontwerpkeuzes kwamen uit een spar-gesprek vóór het plannen; de planningsrun zelf liep drie keer vast
+op een tijdelijke Opus-platformfout voordat een vierde poging lukte.*
+
+**Kernontwerp**: Myle, Emma en Steven blijven samen in de bestaande org; drie nieuwe, lege orgs
+gereserveerd voor toekomstige testers (nu al aangemaakt met een generiek label, e-mailadressen nog
+onbekend); een nieuwe `orgs`-tabel (want `org_id` was tot nu toe een losse uuid zonder eigen rij);
+Myle krijgt volledige lees- én schrijftoegang dwars door alle orgs (`is_eigenaar()`-functie —
+bewust gekozen tegen de aanbeveling in het rapport in, geaccepteerd gevolg: geen
+`gewijzigd_door`-kolom, dus niet-navolgbaar wie een cross-org-wijziging deed); een per-gebruiker
+`features text[]`-kolom op `allowed_emails` (niet per-org, want de Shortlist-brug mag wél voor Myle/
+Emma maar niet voor Steven zichtbaar zijn ondanks gedeelde org — sleutel `'import'`); een
+`is_demo`-vlag op `deals` voor een permanente, read-only voorbeeldwoning (kopie van de
+Crooswijkseweg-rij van 2026-09-22, in een eigen demo-org, met twee scenario's) die in élke org
+zichtbaar is, ook nog niet bestaande toekomstige orgs; en een deel-mechanisme (naar een specifieke
+org, read-only, als eenmalige kopie — niet een levend gedeeld origineel — alleen door de bezittende
+org, zelf ook achter de `'import'`-achtige featureflag-mechaniek, sleutel nog te kiezen, eerst
+gepilot met Myle/Emma).
+
+**Ontwerpvereenvoudiging t.o.v. de eerste versie van het rapport**: omdat delen een kopie stuurt in
+plaats van doorlopende toegang te geven, is de oorspronkelijk geschetste `deal_shares`-RLS-laag
+(met de bijbehorende recursie-veilige helperfuncties) niet meer nodig als toegangsmechanisme — een
+eenmalige server-actie "deel naar org X" (zelfde patroon als de bestaande `kopieerDeal`, met een
+gekozen doel-`org_id`) volstaat. Nog te herzien in het rapport bij implementatie (§7, punt 4).
+
+**Sequencing uit het rapport** (§5): twee migraties (`0005_orgs_en_gebruikersvlaggen.sql` puur
+additief, `0006_deals_demo_en_delen.sql` met de risicovolle policy-vervanging + een
+`0006_rollback.sql` die eerst droog geoefend wordt), dan een app-deploy (read-only-gedrag,
+"Opslaan als eigen woning", badges), pas dáárna `0007_demo_woning.sql` die de demo-rij daadwerkelijk
+aanmaakt. Uitgebreid testplan met transactionele rol-simulaties (§6) om te voorkomen dat de drie
+huidige gebruikers per ongeluk buitengesloten raken — zelfde risicocategorie als de
+`Keuken.verwarmd`- en `toiletType`-incidenten.
+
+- [x] Migratie `0005_orgs_en_gebruikersvlaggen.sql` (2026-09-28): `orgs`-tabel + 5 rijen,
+      `allowed_emails`-kolommen (`is_eigenaar`, `features`, lowercase-constraint, FK naar `orgs`),
+      `is_eigenaar()`/`heeft_feature()`-functies, RLS op `orgs`, FK's op `deals`/`feedback` naar
+      `orgs`. Handmatig gedraaid in de Supabase SQL-editor, succesvol uitgevoerd.
+- [x] Migratie `0006_deals_demo_en_delen.sql` geschreven én gedraaid (2026-09-28):
+      `deals.is_demo`, vier vervangen policies op `deals` (Myle's onvoorwaardelijke
+      lees-én-schrijf-cross-org-toegang via `is_eigenaar()`, demo-uitzondering voor iedereen
+      anders), de `feedback`-leespolicy uitgebreid, en `deel_woning_naar_org()` — een
+      `security definer`-functie die een eenmalige kopie naar een gekozen doel-org maakt (i.p.v.
+      de oorspronkelijk geschetste `deal_shares`-koppeltabel, overbodig geworden doordat delen een
+      kopie is, geen levende koppeling). Featureflag `'delen'` toegevoegd aan Myle/Emma als pilot.
+- [x] `0006_rollback.sql` geschreven en droog geoefend (2026-09-28, binnen `begin ... rollback`,
+      `pg_policies` kwam identiek terug) — zet de vier `deals`-policies en de `feedback`-
+      leespolicy woord voor woord terug naar 0002/0004, verwijdert `deel_woning_naar_org()`, trekt
+      de `'delen'`-featureflag in. Blijft liggen als vangnet, niet meer nodig als aparte stap.
+- [x] App-kant (2026-09-28): `lib/deals/types.ts` uitgebreid met `Deal.orgId`/`Deal.isDemo` +
+      `EigenProfiel`/`magDealBewerken()` (pure functie, spiegelt de RLS-policies — bewust niet in
+      `lib/deals/profiel.ts` gezet, want dat bestand importeert de Supabase-client, die zonder
+      `.env.local` een harde fout gooit bij het laden van de module — zou een zuivere unit-test van
+      de pure functie breken). Nieuw `lib/deals/profiel.ts`: `haalEigenProfielOp()` leest de eigen
+      `allowed_emails`-rij. `Topbar.tsx`: "Opslaan"/"Woning opslaan" wordt "Opslaan als eigen
+      woning" en maakt een NIEUWE deal (i.p.v. `werkDealBij`, dat anders een rauwe 42501 zou geven)
+      zodra `bewerktDeal.magBewerken` false is, plus een "· Voorbeeld (alleen-lezen)"-aanduiding in
+      de titelbalk. `magBewerken` loopt mee door `InvoerContext.tsx`/`lib/invoer/types.ts` en wordt
+      berekend in `app/woning/nieuw/page.tsx` bij het laden van een bestaande deal.
+      `app/woningen/page.tsx`: "· Voorbeeld"-badge bij `isDemo`-rijen, mapfilter-dropdown beperkt
+      tot mapnamen van de EIGEN org (voorkomt dat andermans mapnamen verschijnen zodra cross-org-
+      zichtbare woningen bestaan). 6 nieuwe tests (`types.test.ts`), 277/277 tests groen,
+      tsc/eslint/productie-build schoon. Nog niet browser-geverifieerd (kan pas zinvol na migratie
+      0007 — er bestaat nog geen `is_demo`-rij om tegen te testen).
+- [x] Testplan uit het rapport (§6), backend-deel afgerond (2026-09-28, transactioneel in de
+      SQL-editor, telkens `begin/rollback` — niets blijvend veranderd): nulmeting (23 woningen, 0
+      feedback, alle drie in org `…0001`), policy-matrix per rol (Myle/Emma/Steven zien allemaal
+      23 woningen; Myle kan schrijven; Emma/Steven hebben resp. wel/geen `import`/`delen`-features;
+      een onbekend e-mailadres ziet 0), leaktest (Emma kan `is_demo` niet op haar eigen woning
+      zetten — geblokkeerd met een 42501-fout, het verwachte gedrag), en de deelfunctie
+      (`deel_woning_naar_org()` kopieerde een woning naar de gereserveerde Bètatester-1-org, telling
+      kwam uit op 1). **Nog open: browser-rondgang met echte logins, demo-gedrag en repo-tests** —
+      die volgen na de app-kant hieronder (zelfde volgorde-eis als voor migratie 0007).
+- [x] Migratie `0007_demo_woning.sql` geschreven (2026-09-28, nog niet gedraaid) — drie stappen:
+      een verplichte controlequery (precies 1 rij verwacht), de kopie zelf (zoekt de bronrij via
+      `naam ilike '%crooswijk%' and bijgewerkt::date = '2026-09-22'` i.p.v. een handmatig
+      gekopieerde uuid, om een kopieerfout te voorkomen), en een verificatiequery achteraf.
+      **Vereist vóór het draaien**: de twee scenario's moeten al op het origineel staan (gewone
+      app-actie in de eigen org) — de kopie neemt scenario's over zoals ze op dat moment zijn.
+- [ ] **Nieuw (2026-09-28): Supabase Auth custom SMTP instellen** (dashboard → Authentication →
+      Settings → SMTP Settings, Resend-relay op `puntum.nl`, credentials al beschikbaar als
+      `RESEND_API_KEY`) — omzeilt Supabase's ingebouwde limiet van 2 mails/uur voor magic-link-
+      logins, nodig vóórdat er meerdere nieuwe bètatesters tegelijk uitgenodigd worden. Geen extra
+      Namecheap-DNS-werk nodig (domein al geverifieerd bij Resend voor de feedback-mails) — puur
+      een dashboardconfiguratie, niet iets wat via een migratie kan.
+- [ ] Drie `allowed_emails`-inserts voor de nieuwe testers — geen migratie, gewoon beheer zodra een
+      e-mailadres bekend is.
+
+*Blijft gekoppeld aan de auth-toggle-stap (zie `plan/STATUS.md`): de migraties zelf zijn
+onafhankelijk uitvoerbaar, maar de auth-toggle moet dicht vóórdat er data van echt gescheiden orgs
+naast elkaar staat — anders is de org-scheiding cosmetisch voor wie de publieke anon-key heeft.*
+
+## Brug Shortlist → Puntum — voorbereiding (2026-09-27)
+
+*Niet gedekt door de Fase-4-hold hieronder — dit raakt de multi-tenant-stap niet en is klein genoeg
+om los te doen. Volledige uitwerking:
+`outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md` +
+`briefings/BRIEFING_brug_shortlist_puntum_2026-09-27.md`. Fase B/C (de eigenlijke importadapter in
+Puntum, zie Taak 21 hieronder) vallen wél onder de Fase-4-hold.*
+
+- [ ] Fase A (in `Realestate Workflow`, ander project/plan.md, niet hier): verificatiescript naar het
+      patroon van `scripts/debug_omschrijving.py` — checkt of de Funda-kenmerken-`<dt>/<dd>`-blokken
+      (slaapkamers, badkamers, badkamervoorzieningen, woonlagen, bergruimte-m², buitenruimte-m²,
+      verwarmingssoort) en plattegrond-URL's op de bestaande `js_render=false`-detailpagina
+      (`fetch_omschrijving()`, `main.py:331`) staan, of alleen met `js_render=true` verschijnen — de
+      enige bestaande `dt`/`dd`-parser (`fetch_funda_woz`, `main.py:435`) draait op die dure call,
+      dus dit is nog niet bevestigd. Bepaalt of A1/A2 daadwerkelijk gratis zijn qua ZenRows-credits.
+- [ ] Quick win #1: bulkactie "markeer alle vertrekken verwarmd/verkoeld" op het invoerscherm — één
+      knop naast de bestaande `SCAFFOLD_PRIVEVERTREKKEN`-knop (`RuimteRaster.tsx`), zet `verwarmd`/
+      `verkoeld` in één klik op alle ruimterijen i.p.v. per rij. Blijft een actieve klik, geen default.
+- [ ] Quick win #5: `prompts/PROMPT_plattegrond_kamerafmetingen.md` uitbreiden (als variant náást het
+      bestaande bestand, niet erover heen) — `vasteTrap`/`beschotenDak` uitlezen bij elke zolder
+      (dicht een correctheidsgat: zolder zonder vaste trap geeft aftrekpunten, §2.2.2.3), `verdieping`
+      toevoegen aan de outputtabel, twee vertrouwensassen (leesvertrouwen vs. meetbasis) i.p.v. één,
+      en een machine-leesbaar JSON-blok onder de bestaande mensen-tabel voor een latere import.
+
 ## Fase 4 — Na de MVP
 
 *On hold tot het exit-criterium van de tussenfase hierboven gehaald is.*
@@ -218,7 +337,13 @@ gegenereerde tekst.
 - [ ] Taak 18: Waarschuwingslaag gemeentelijke regels (start Rotterdam)
 - [ ] Taak 19: Schakelaar zittende huurder versus mutatie
 - [ ] Taak 20: Koppeling scenario naar de TO BE-tab van de rendementscalculator
-- [ ] Taak 21: Importadapter privé Shortlist Sheet — alleen eigen versie
+- [ ] Taak 21: Importadapter privé Shortlist Sheet — alleen eigen versie. **Grotendeels uitgewerkt**
+      (2026-09-27, zie `outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md`): de pandvelden
+      bestaan al voor ~70% via de scraper, het echte gat is `ruimtes[]` + de exploitatiekeuzes
+      (kamertoewijzing, wie verhuurt hoeveel kamers) die de scraper nooit kan leveren. Landt in
+      `InvoerState` (niet in `PandInvoer` direct) via een nieuwe `lib/invoer/vanImport.ts` + een
+      reviewscherm `/woning/importeren` met herkomst per veld — geen `m2Geschat`-vlag/vijfde controle
+      nodig, geschatte m² worden per rij expliciet geaccepteerd i.p.v. stil doorgerekend.
 - [ ] Taak 22: Vergelijking met zelfstandige verhuur (WWS) — uitgewerkt tot een volledige fase, zie **Fase 5** hieronder
 - [ ] Taak 23: De zeven open punten uit tab Toelichting van wwso.xlsx afhandelen
 

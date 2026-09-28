@@ -32,22 +32,37 @@ export function Topbar() {
    * hij wel/niet verder navigeert (bij een mislukte save NIET wegnavigeren, anders is de invoer
    * alsnog kwijt).
    */
+  // Multi-tenant org-scheiding (2026-09-28): een woning die wél zichtbaar is maar niet van de
+  // eigen org (de permanente demo-woning, zie `magBewerken` op `bewerktDeal`) mag niet met
+  // `werkDealBij` bijgewerkt worden — de RLS `with check` zou dat alsnog weigeren (42501), een
+  // rauwe foutmelding voor iets dat de UI had moeten voorkomen. In plaats daarvan maakt "Opslaan"
+  // dan gewoon een nieuwe, eigen kopie (zelfde patroon als de bestaande "⧉ Kopiëren"-knop op
+  // /woningen), en de sessie koppelt vanaf dat moment aan díe nieuwe, wél bewerkbare woning.
+  const magBewerken = !state.bewerktDeal || state.bewerktDeal.magBewerken;
+
   async function slaWoningOp() {
     if (!pand) return null;
     setDealOpslaanStatus('bezig');
     try {
       const tarievenset = alleTarievensets().at(-1)!;
       const kostencatalogus = nieuwsteKostencatalogus();
+      const naam = state.bewerktDeal
+        ? magBewerken
+          ? state.bewerktDeal.naam
+          : `${state.bewerktDeal.naam} (kopie)`
+        : pand.pand.adres || 'Naamloze woning';
       const invoer = {
-        naam: state.bewerktDeal?.naam ?? (pand.pand.adres || 'Naamloze woning'),
+        naam,
         notitie: state.notitieOntwerp,
         map: state.bewerktDeal?.map ?? '',
         pandInvoer: pand,
         scenarios: state.bewerktDeal?.scenarios ?? [],
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
-      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios } });
+      const deal = state.bewerktDeal && magBewerken ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
+      // Na een kopie is de sessie voortaan aan de NIEUWE, eigen woning gekoppeld — magBewerken
+      // is dan altijd true, ongeacht wat de bron was.
+      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, magBewerken: true } });
       setDealOpslaanStatus('gelukt');
       return deal;
     } catch {
@@ -104,6 +119,11 @@ export function Topbar() {
         {n} kamer{n === 1 ? '' : 's'}
       </span>
       {state.bewerktDeal && <span className={styles.sub}>· bewerkt woning &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
+      {state.bewerktDeal && !magBewerken && (
+        <span className={styles.sub} title="Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.">
+          · Voorbeeld (alleen-lezen)
+        </span>
+      )}
       {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
       <nav className={styles.sections}>
         <a className={styles.sectionLink} href="#sectie-woning">
@@ -129,7 +149,7 @@ export function Topbar() {
             title={!pand ? (stap ?? undefined) : undefined}
             onClick={dealVroegOpslaan}
           >
-            {state.bewerktDeal ? 'Opslaan' : 'Woning opslaan'}
+            {state.bewerktDeal ? (magBewerken ? 'Opslaan' : 'Opslaan als eigen woning') : 'Woning opslaan'}
           </button>
           {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
           {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
