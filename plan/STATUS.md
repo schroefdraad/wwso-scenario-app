@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-09-25
+Laatst bijgewerkt: 2026-09-30
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -120,7 +120,30 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-09-25, v0.7.17 — hotfix van een productie-incident uit v0.7.16).** De
+**Meest recent (2026-09-30).** Drie losse stukken afgerond en gedeployed, zie "Sessie 2026-09-30"
+onderaan voor het volledige verslag:
+- Migratie `0007_demo_woning.sql` afgerond, gefixt (filter op rij-id i.p.v. een achterhaald
+  `bijgewerkt`-datumfilter) en browser-geverifieerd — de permanente demo-woning
+  (`is_demo = true`, org `…0002`) staat nu live, met "· Voorbeeld"-badge en read-only-gedrag
+  precies zoals gebouwd. Daarmee zijn alle drie multi-tenant-migraties (0005-0007) + de app-kant
+  nu voltooid en in productie.
+- Supabase Auth custom SMTP ingesteld (Resend-relay op `puntum.nl`) en met een echte
+  magic-link-mail getest — omzeilt de ingebouwde 2 mails/uur-limiet, nodig zodra er meerdere
+  nieuwe bètatesters tegelijk worden uitgenodigd.
+- Twee losse "Brug Shortlist → Puntum"-quick wins (zie `plan/plan.md`, die sectie): een bulkknop
+  "Alles verwarmd"/"Alles verkoeld" op het invoerscherm, en een nieuwe promptvariant
+  `prompts/PROMPT_plattegrond_kamerafmetingen_uitgebreid.md` (naast het bestaande bestand) met
+  `vasteTrap`/`beschotenDak`, verdieping, twee vertrouwensassen en een machine-leesbaar JSON-blok.
+
+**Nog open richting een echte bèta-lancering** (bevestigd met de gebruiker, 2026-09-30: bewust
+voor een latere sessie, net als het domein-werk hierboven):
+- De auth-toggle staat nog open op productie — blijft zo tot Steven's tussenfase-testen klaar is
+  (nog niet het geval). Zonder die toggle dicht is de multi-tenant org-scheiding cosmetisch.
+- Drie `allowed_emails`-inserts voor de nieuwe testers — wacht op hun e-mailadressen.
+- Fase A van de brug (verificatiescript) hoort in het andere project ("Realestate Workflow"), niet
+  hier.
+
+**Daarvóór (2026-09-25, v0.7.17 — hotfix van een productie-incident uit v0.7.16).** De
 toiletType/ruimtetype-validatie uit v0.7.16 (zie hieronder) bleek ook toegepast te worden bij het
 **inladen** van bestaande woningen uit Supabase, niet alleen bij nieuwe invoer — `PandInvoer.parse()`
 in `lib/deals/types.ts` gebruikt hetzelfde schema. Elke woning waarvan ooit een ruimte van type
@@ -140,6 +163,52 @@ een breaking change zodra ook maar één bestaande rij niet aan de nieuwe regel 
 tests lokaal slagen, want de testsuite dekt geen productiedata. Zulke controles horen op het
 UI-invoerpad, niet in het gedeelde parse-schema, tenzij je zeker weet dat alle bestaande opgeslagen
 data er al aan voldoet.
+
+## Sessie 2026-09-30 — samenvatting (migratie 0007 afgerond, custom SMTP, twee brug-quick-wins)
+
+Drie losse stukken, elk los gecommit/gepusht/gedeployed:
+
+- **Migratie 0007 afgerond.** De gebruiker had de twee/drie scenario's op de Crooswijkseweg-
+  bronrij (aangemaakt 2026-09-22) via de app ingevuld ter voorbereiding — dat schoof `bijgewerkt`
+  naar 2026-09-30, waardoor het oorspronkelijke `naam ilike ... and bijgewerkt::date = '2026-09-22'`-
+  filter in `0007_demo_woning.sql` 0 rijen zou teruggeven (bevestigd via een read-only
+  REST-API-check met de anon-key, auth-toggle staat toch al open). Filter vervangen door de nu
+  bekende, stabiele rij-id. Volgorde-eis uit het bestand zelf gevolgd: eerst de app-kant
+  (commit `e6522ba`, stond al lokaal klaar sinds 2026-09-28 maar nog nooit gedeployed) naar
+  productie (`dpl_7rxFLGUmYiXzBLMPMv2CHR2PqJXL`), pas daarna de drie migratiestappen — door de
+  gebruiker zelf gedraaid in de Supabase SQL-editor (STAP 1/2/3, elke keer het verwachte resultaat).
+  Browser-geverifieerd (lokaal, tijdelijk `AUTH_VEREIST=false`, erna teruggezet): demo-woning
+  bovenaan "Mijn woningen" met "· Voorbeeld"-badge, vergelijkingspagina toont alle drie scenario's
+  correct, invoerscherm toont "· Voorbeeld (alleen-lezen)" en de knop heet er "Opslaan als eigen
+  woning" — precies het gebouwde gedrag. Cross-org-zichtbaarheid zelf is daarmee niet los getest
+  (RLS staat nog open), dat was al apart gedekt door de eerdere transactionele SQL-rolsimulaties.
+- **Supabase Auth custom SMTP.** Dashboardpagina is verplaatst (niet meer onder Authentication →
+  Settings, nu onder Authentication → Emails → SMTP Settings, `/auth/smtp`) — eerst de oude URL
+  geprobeerd, die redirect naar Sessions. Gebruiker heeft zelf de Resend-relaygegevens ingevuld
+  (host `smtp.resend.com`, poort 465, username `resend`, wachtwoord = `RESEND_API_KEY` uit
+  `apps/web/.env.local`, sender `noreply@puntum.nl`). API-key is bewust niet door Claude ingevoerd
+  — credentials/tokens in een formulier zetten staat op de verboden-actielijst, ook op expliciet
+  verzoek; wel de exacte instellingen aangeleverd en de dashboardpagina alvast geopend. Werking
+  bevestigd met een echte magic-link-aanvraag op het eigen adres van de gebruiker (na toestemming)
+  — "Check je mail"-bevestiging in de app, mail kwam aan.
+- **Twee brug-quick-wins** (zie `plan/plan.md`, sectie "Brug Shortlist → Puntum"): bulkknoppen
+  "Alles verwarmd"/"Alles verkoeld" (nieuwe reducer-actie `ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET`,
+  zet nooit `false` — blijft een actieve klik, geen default) en de nieuwe promptvariant
+  `prompts/PROMPT_plattegrond_kamerafmetingen_uitgebreid.md` naast het bestaande bestand (dat
+  ongewijzigd blijft). 277/277 tests groen, productie-build schoon, gecommit (`d16b801`), gepusht
+  en gedeployed (`dpl_E8A5JvkL2RBBadJHbNnbKB5rKnYy`).
+
+**Operationele noot — browsertool-omgevingsprobleem.** De live-klikverificatie van de bulkknoppen
+liep vast op `Error: Access to storage is not allowed from this context` (sessionStorage
+geblokkeerd in de geautomatiseerde tabcontext) — geen React-hydratieprobleem, want zowel
+coördinaat-clicks, ref-based clicks als losse `dispatchEvent`-reeksen bleven zonder effect.
+Losstaand van de code: reducer-logica en checkbox-binding zijn direct tegen de broncode
+gecontroleerd (zelfde patroon als bestaande, al werkende cases) en tests/build zijn groen. De
+gebruiker is gevraagd het zelf in de browser te proberen; nog geen bevestiging ontvangen.
+
+**Volgende sessie, op verzoek van de gebruiker bewust uitgesteld (2026-09-30):** het domein
+inrichten (zie de openstaande SMTP/DNS-achtige puntjes) en de auth-toggle/tester-e-mails,
+allebei samen oppakken. Geen van beide is vandaag verder gebracht.
 
 **Vervolg richting bèta blijft ongewijzigd**: multi-tenant/org_id's scheiden voor de drie testers is
 nog steeds de eerstvolgende echte stap (zie "Openstaande beslissingen" hierboven) — deze sessie was
