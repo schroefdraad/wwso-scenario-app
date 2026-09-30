@@ -72,6 +72,29 @@ export function RuimteRaster() {
             Voorbeeldpand laden
           </button>
           <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnKlein}`}
+            disabled={state.ruimtes.length === 0}
+            onClick={() => {
+              dispatch({ soort: 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET', veld: 'verwarmd' });
+              toon('Alle ruimten op verwarmd gezet');
+            }}
+          >
+            Alles verwarmd
+          </button>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnKlein}`}
+            disabled={state.ruimtes.length === 0}
+            onClick={() => {
+              dispatch({ soort: 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET', veld: 'verkoeld' });
+              toon('Alle ruimten op verkoeld gezet');
+            }}
+          >
+            Alles verkoeld
+          </button>
+          <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
           {/* Generiek toevoegen voor elk type uit TYPE_GROEPEN, niet alleen de vijf QUICKADD_TYPES
            * hieronder (feedback Steven Kramer, 2026-09-08: een dropdown met alle typen "zoals in
            * het hoofdmenu" — dezelfde groepenlijst als de type-select per rij). */}

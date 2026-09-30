@@ -39,6 +39,7 @@ export type InvoerActie =
   | { soort: 'RIJ_GEDUPLICEERD'; id: string }
   | { soort: 'KAMER_GETOGGELD'; id: string; kamer: 'alle' | number }
   | { soort: 'SCAFFOLD_PRIVEVERTREKKEN' }
+  | { soort: 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET'; veld: 'verwarmd' | 'verkoeld' }
   | { soort: 'VOORBEELDPAND_GELADEN' }
   | { soort: 'ALLES_GEWIST' }
   | { soort: 'CONCEPT_GELADEN'; state: InvoerState }
@@ -213,6 +214,9 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
       }
       return { ...state, ruimtes: [...state.ruimtes, ...nieuwe], volgendeRuimteId: volgendId };
     }
+
+    case 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET':
+      return { ...state, ruimtes: state.ruimtes.map((r) => ({ ...r, [actie.veld]: true })) };
 
     case 'VOORBEELDPAND_GELADEN':
       return pandInvoerNaarState(testpand6Kamers);

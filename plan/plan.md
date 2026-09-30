@@ -287,12 +287,28 @@ huidige gebruikers per ongeluk buitengesloten raken — zelfde risicocategorie a
       (`deel_woning_naar_org()` kopieerde een woning naar de gereserveerde Bètatester-1-org, telling
       kwam uit op 1). **Nog open: browser-rondgang met echte logins, demo-gedrag en repo-tests** —
       die volgen na de app-kant hieronder (zelfde volgorde-eis als voor migratie 0007).
-- [x] Migratie `0007_demo_woning.sql` geschreven (2026-09-28, nog niet gedraaid) — drie stappen:
-      een verplichte controlequery (precies 1 rij verwacht), de kopie zelf (zoekt de bronrij via
-      `naam ilike '%crooswijk%' and bijgewerkt::date = '2026-09-22'` i.p.v. een handmatig
-      gekopieerde uuid, om een kopieerfout te voorkomen), en een verificatiequery achteraf.
-      **Vereist vóór het draaien**: de twee scenario's moeten al op het origineel staan (gewone
-      app-actie in de eigen org) — de kopie neemt scenario's over zoals ze op dat moment zijn.
+- [x] Migratie `0007_demo_woning.sql` geschreven, gefixt en gedraaid (2026-09-30). De drie
+      scenario's op de Crooswijkseweg-bronrij zijn via de app ingevuld (2026-09-30, niet meer
+      2026-09-22 zoals oorspronkelijk gepland), waardoor `bijgewerkt` verschoof en de
+      oorspronkelijke `naam ilike ... and bijgewerkt::date = '2026-09-22'`-filter 0 rijen zou
+      geven — de migratie is aangepast naar een filter op de bekende, stabiele rij-id
+      (`680623a2-f8b6-4a52-9dff-1491a5a7a96d`, geverifieerd via de REST-API vóór het draaien).
+      App-kant (commit `e6522ba`) eerst naar productie gedeployed (`dpl_7rxFLGUmYiXzBLMPMv2CHR2PqJXL`),
+      pas daarna de migratie gedraaid, zoals de volgordevereiste in het bestand zelf voorschrijft.
+      Alle drie stappen (controle, insert, verificatie) door de gebruiker gedraaid in de Supabase
+      SQL-editor: precies 1 bronrij gevonden (3 scenario's), insert geslaagd, verificatie geeft
+      precies 1 `is_demo = true`-rij terug in de demo-org.
+      **Browser-geverifieerd (2026-09-30)**: lokale dev-server tijdelijk met `AUTH_VEREIST=false`
+      (Playwright via claude-in-chrome, erna weer teruggezet). De demo-woning verschijnt bovenaan
+      "Mijn woningen" met het "· Voorbeeld"-badge (6 kamers, 3 scenario's); de vergelijkingspagina
+      toont alle drie scenariokolommen met correcte bedragen; het invoerscherm toont
+      "· Voorbeeld (alleen-lezen)" in de Topbar en de knop heet daar "Opslaan als eigen woning"
+      i.p.v. het normale "Opslaan" — precies het gebouwde gedrag uit de app-kant-stap hierboven.
+      Kanttekening: cross-org-zichtbaarheid zelf is hiermee niet los getest, want productie-RLS
+      staat nog open (zie de auth-toggle-status in `plan/STATUS.md`) — met `AUTH_VEREIST=false`
+      omzeilt de lokale sessie sowieso alle org-scoping, dus dit bevestigt de UI/read-only-laag,
+      niet de RLS-policy's zelf (die zijn al apart getest via de transactionele SQL-rolsimulaties
+      hierboven).
 - [ ] **Nieuw (2026-09-28): Supabase Auth custom SMTP instellen** (dashboard → Authentication →
       Settings → SMTP Settings, Resend-relay op `puntum.nl`, credentials al beschikbaar als
       `RESEND_API_KEY`) — omzeilt Supabase's ingebouwde limiet van 2 mails/uur voor magic-link-
@@ -321,14 +337,26 @@ Puntum, zie Taak 21 hieronder) vallen wél onder de Fase-4-hold.*
       (`fetch_omschrijving()`, `main.py:331`) staan, of alleen met `js_render=true` verschijnen — de
       enige bestaande `dt`/`dd`-parser (`fetch_funda_woz`, `main.py:435`) draait op die dure call,
       dus dit is nog niet bevestigd. Bepaalt of A1/A2 daadwerkelijk gratis zijn qua ZenRows-credits.
-- [ ] Quick win #1: bulkactie "markeer alle vertrekken verwarmd/verkoeld" op het invoerscherm — één
-      knop naast de bestaande `SCAFFOLD_PRIVEVERTREKKEN`-knop (`RuimteRaster.tsx`), zet `verwarmd`/
-      `verkoeld` in één klik op alle ruimterijen i.p.v. per rij. Blijft een actieve klik, geen default.
-- [ ] Quick win #5: `prompts/PROMPT_plattegrond_kamerafmetingen.md` uitbreiden (als variant náást het
-      bestaande bestand, niet erover heen) — `vasteTrap`/`beschotenDak` uitlezen bij elke zolder
-      (dicht een correctheidsgat: zolder zonder vaste trap geeft aftrekpunten, §2.2.2.3), `verdieping`
-      toevoegen aan de outputtabel, twee vertrouwensassen (leesvertrouwen vs. meetbasis) i.p.v. één,
-      en een machine-leesbaar JSON-blok onder de bestaande mensen-tabel voor een latere import.
+- [x] Quick win #1 (2026-09-30): bulkactie "markeer alle vertrekken verwarmd/verkoeld" op het
+      invoerscherm — twee knoppen ("Alles verwarmd" / "Alles verkoeld") naast de bestaande
+      `SCAFFOLD_PRIVEVERTREKKEN`-knop (`RuimteRaster.tsx`), nieuwe reducer-actie
+      `ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET` (`reducer.ts`) zet het gekozen veld op `true` voor alle
+      ruimterijen tegelijk i.p.v. per rij. Blijft een actieve klik, geen default (zet nooit `false`,
+      dus per-rij uitzetten blijft nodig voor ruimtes waar het niet klopt). 277/277 tests groen,
+      productie-build schoon. **Niet live-in-browser geklikt geverifieerd** — de lokale
+      browserverificatie liep vast op een `Access to storage is not allowed from this context`-fout
+      in de geautomatiseerde tabcontext (sessionStorage-toegang geblokkeerd), los van de code zelf.
+      Correctheid gecontroleerd via directe codelezing (zelfde patroon als de bestaande
+      `RUIMTE_TYPE_GEWIJZIGD`/`KAMER_GETOGGELD`-cases, checkbox `checked` bindt rechtstreeks aan
+      `rij.verwarmd`/`rij.verkoeld` in `RuimteRijComponent.tsx`) plus tests/build.
+- [x] Quick win #5 (2026-09-30): `prompts/PROMPT_plattegrond_kamerafmetingen_uitgebreid.md` — nieuwe
+      variant NAAST het bestaande bestand (dat blijft ongewijzigd), zoals gepland. Bevat: `vasteTrap`/
+      `beschotenDak` uitlezen bij elke zolderachtige ruimte (dicht een correctheidsgat: zolder zonder
+      vaste trap geeft aftrekpunten, §2.2.2.3), `verdieping` toegevoegd aan de outputtabel, twee
+      vertrouwensassen (leesvertrouwen vs. meetbasis) i.p.v. één, en een machine-leesbaar JSON-blok
+      onder de bestaande mensen-tabel voor een latere import (`oppervlakteM2: null` + apart
+      `schattingM2`-veld bij laag vertrouwen, zodat een importer een schatting nooit als hard getal
+      leest). Geen code, puur een promptbestand — niets om te testen/bouwen.
 
 ## Fase 4 — Na de MVP
 
