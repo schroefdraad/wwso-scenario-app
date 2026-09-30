@@ -10,6 +10,13 @@
 -- Bron: de bestaande "Crooswijkseweg 95-A03"-testdeal — er staan meerdere duplicaten in de
 -- database (zie plan/plan.md, Tussenfase-taak D, "Bekende restdata"), de gebruiker heeft
 -- expliciet DIE VAN 2026-09-22 aangewezen (rapport §7, punt 3, besloten 2026-09-28).
+--
+-- Filter bewust op `id` i.p.v. `naam ilike ... and bijgewerkt::date = '2026-09-22'`: die datum
+-- klopte alleen zolang de rij ongewijzigd bleef. Op 2026-09-30 zijn de drie scenario's op deze
+-- rij via de app ingevuld (gewone "Woning opslaan"-actie), wat `bijgewerkt` naar diezelfde dag
+-- verschoof — de oorspronkelijke datumfilter zou nu 0 rijen teruggeven. De rij-id zelf
+-- (`680623a2-f8b6-4a52-9dff-1491a5a7a96d`, aangemaakt 2026-09-22, geverifieerd via de REST-API
+-- op 2026-09-30: 3 scenario's) is stabiel en ondubbelzinnig.
 
 -- ---------------------------------------------------------------------------------------------
 -- STAP 1 — VERPLICHTE HANDMATIGE CONTROLE, vóór STAP 2. Draai dit los en controleer dat er
@@ -19,14 +26,11 @@
 --
 --   select id, naam, aangemaakt, bijgewerkt, jsonb_array_length(scenarios) as aantal_scenarios
 --     from deals
---     where naam ilike '%crooswijk%' and bijgewerkt::date = '2026-09-22';
+--     where id = '680623a2-f8b6-4a52-9dff-1491a5a7a96d';
 -- ---------------------------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------------------------
--- STAP 2 — de kopie. Zelfde `naam ilike ... and bijgewerkt::date = ...`-filter als de controle
--- hierboven (geen los gekopieerde uuid nodig — dat zou een handmatige kopieerfout kunnen
--- introduceren, precies de foutcategorie die dit project al eerder raakte bij een testfixture).
--- `limit 1` is hier een extra vangnet, geen vervanging voor de controle in stap 1.
+-- STAP 2 — de kopie. Zelfde `id`-filter als de controle hierboven.
 --
 -- notitie/map bewust LEEG: de privacy-check van 2026-09-20 vond persoonlijke ordening (voornamen
 -- van testers) in het map-veld — een rij die zichtbaar wordt voor elke huidige én toekomstige org
@@ -44,9 +48,7 @@ select
   pand_invoer, scenarios, '', '',
   tarievenset_peildatum, kostencatalogus_versie, registry_versie, engine_versie, true
 from deals
-where naam ilike '%crooswijk%' and bijgewerkt::date = '2026-09-22'
-order by bijgewerkt desc
-limit 1;
+where id = '680623a2-f8b6-4a52-9dff-1491a5a7a96d';
 
 -- ---------------------------------------------------------------------------------------------
 -- STAP 3 — verificatie ná het draaien: precies 1 rij, in de demo-org, met is_demo = true en een
