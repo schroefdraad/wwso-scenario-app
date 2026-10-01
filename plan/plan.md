@@ -322,21 +322,53 @@ huidige gebruikers per ongeluk buitengesloten raken — zelfde risicocategorie a
 onafhankelijk uitvoerbaar, maar de auth-toggle moet dicht vóórdat er data van echt gescheiden orgs
 naast elkaar staat — anders is de org-scheiding cosmetisch voor wie de publieke anon-key heeft.*
 
-## Brug Shortlist → Puntum — voorbereiding (2026-09-27)
+## Brug Shortlist → Puntum — voorbereiding (2026-09-27, gefaseerd plan 2026-10-01)
 
 *Niet gedekt door de Fase-4-hold hieronder — dit raakt de multi-tenant-stap niet en is klein genoeg
-om los te doen. Volledige uitwerking:
-`outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md` +
-`briefings/BRIEFING_brug_shortlist_puntum_2026-09-27.md`. Fase B/C (de eigenlijke importadapter in
-Puntum, zie Taak 21 hieronder) vallen wél onder de Fase-4-hold.*
+om los te doen. Fase B/C (de eigenlijke importadapter in Puntum, zie Taak 21 hieronder) vallen wél
+onder de Fase-4-hold.*
 
-- [ ] Fase A (in `Realestate Workflow`, ander project/plan.md, niet hier): verificatiescript naar het
-      patroon van `scripts/debug_omschrijving.py` — checkt of de Funda-kenmerken-`<dt>/<dd>`-blokken
-      (slaapkamers, badkamers, badkamervoorzieningen, woonlagen, bergruimte-m², buitenruimte-m²,
-      verwarmingssoort) en plattegrond-URL's op de bestaande `js_render=false`-detailpagina
-      (`fetch_omschrijving()`, `main.py:331`) staan, of alleen met `js_render=true` verschijnen — de
-      enige bestaande `dt`/`dd`-parser (`fetch_funda_woz`, `main.py:435`) draait op die dure call,
-      dus dit is nog niet bevestigd. Bepaalt of A1/A2 daadwerkelijk gratis zijn qua ZenRows-credits.
+**Volledig gefaseerd implementatieplan: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`**
+(Opus, reconcilieert de blauwdruk van 2026-09-27 met de FML-vectordata-vondst van 2026-10-01 —
+Funda's plattegrond-embed (Floorplanner) geeft per ruimte een polygoon-m² en per verdieping een
+structuur, zonder AI-beeldlezen). Dit document hieronder is de samenvatting met taak-ID's; voor de
+onderbouwing, het beleidsboek-naslag (§2.2.4/§2.2.1.2) en de 11 open beslissingen voor de gebruiker,
+zie het volledige rapport. **Scraperkant draait op het moment van schrijven nog een bredere
+steekproef (was n=7) — resultaten daarvan horen tegenover §1/§2.4 van het rapport gelegd te worden
+vóórdat C1 gebouwd wordt, niet tegenover dit overzicht hier.**
+
+Belangrijkste koerswijziging t.o.v. de eerdere "Fase A verificatiescript"-taak hieronder: inmiddels
+**bevestigd** dat de Funda-kenmerken-`<dt>/<dd>`-blokken en de volledige fotolijst (incl.
+plattegrond-plaatje) zonder `js_render=true` opgehaald kunnen worden — zie het rapport §1. De oude
+losse verificatietaak is vervangen door de concrete A1-A5-lijst hieronder.
+
+### Spoor 0 — vóór de hold, los uit te trekken (rapport §6, criterium in §6 toegelicht)
+
+- [ ] S0.1: Waarschuwingslijst groeperen i.p.v. `.slice(0, 8)` (`components/invoer/Waarschuwingen.tsx:19`)
+- [ ] S0.2: Skelet-preset uitbreiden — `SCAFFOLD_PRIVEVERTREKKEN` (`lib/invoer/reducer.ts:193-216`)
+      optioneel ook gedeelde rijen (keuken/badruimte/toiletruimte/verkeersruimte/berging) met lege m²
+- [ ] S0.3: Knop "Kopieer voor Shortlist" op het resultaatscherm (max. jaarhuur AS-IS + punten per
+      kamer naar het klembord)
+- [ ] S0.4: Antwoorddocument naar de scraperkant — beantwoordt hun expliciete `role`/NEN2580-vraag
+      vanuit het beleidsboek (geen role-as, naam = suggestie, de `telt_mee_in_wonen`-valkuil). Puur
+      documentatie, voorkomt dat daar een regel gebouwd wordt die hier niet klopt
+- [ ] S0.5: deze plan.md-sectie en Taak 21 verder bijwerken zodra de bredere steekproef binnen is
+
+*Expliciet niet in spoor 0: de naam → `RuimteType`-suggestie als code — zonder adapter (Fase B) is
+dat code zonder afnemer.*
+
+- [ ] Fase A (in `Realestate Workflow`, ander project/plan.md, niet hier) — kenmerken/foto's/
+      provenance, bevestigd goedkoop:
+  - [ ] A1: kenmerken-`<dt>/<dd>` meenemen in de bestaande `js_render=false`-call (slaapkamers,
+        badkamers, badkamervoorzieningen, woonlagen, externe bergruimte-m² (voorwaardelijk),
+        gebouwgebonden buitenruimte-m², verwarming, "Wonen")
+  - [ ] A2: extra `js_render=false`-call naar `{detail_url}media/fotos` voor de volledige fotolijst
+        (incl. plattegrond-plaatje) + `/media/plattegronden`-link/`fmlpub`-detectie als "heeft
+        embed"-vlag
+  - [ ] A3: `stad` als aparte kolom (nog te verifiëren) en `funda_id` als stabiele sleutel
+  - [ ] A4: "Kopieer voor Puntum" haalt het record uit `funda_results.json` op via `funda_id`/adres,
+        niet de zichtbare Sheet-rij (die is een afgeleide voor de rankingformule)
+  - [ ] A5: `wozPeildatum` uit de Kadaster-respons — laagste prioriteit, geen rubriek leest het
 - [x] Quick win #1 (2026-09-30): bulkactie "markeer alle vertrekken verwarmd/verkoeld" op het
       invoerscherm — twee knoppen ("Alles verwarmd" / "Alles verkoeld") naast de bestaande
       `SCAFFOLD_PRIVEVERTREKKEN`-knop (`RuimteRaster.tsx`), nieuwe reducer-actie
@@ -365,13 +397,38 @@ Puntum, zie Taak 21 hieronder) vallen wél onder de Fase-4-hold.*
 - [ ] Taak 18: Waarschuwingslaag gemeentelijke regels (start Rotterdam)
 - [ ] Taak 19: Schakelaar zittende huurder versus mutatie
 - [ ] Taak 20: Koppeling scenario naar de TO BE-tab van de rendementscalculator
-- [ ] Taak 21: Importadapter privé Shortlist Sheet — alleen eigen versie. **Grotendeels uitgewerkt**
-      (2026-09-27, zie `outputs/RAPPORT_brug_workflow_automatisering_2026-09-27.md`): de pandvelden
-      bestaan al voor ~70% via de scraper, het echte gat is `ruimtes[]` + de exploitatiekeuzes
-      (kamertoewijzing, wie verhuurt hoeveel kamers) die de scraper nooit kan leveren. Landt in
-      `InvoerState` (niet in `PandInvoer` direct) via een nieuwe `lib/invoer/vanImport.ts` + een
-      reviewscherm `/woning/importeren` met herkomst per veld — geen `m2Geschat`-vlag/vijfde controle
-      nodig, geschatte m² worden per rij expliciet geaccepteerd i.p.v. stil doorgerekend.
+- [ ] Taak 21: Importadapter privé Shortlist Sheet — alleen eigen versie. **Gefaseerd plan klaar**
+      (2026-10-01, zie `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`, volledige onderbouwing
+      en 11 open beslissingen daar): de pandvelden bestaan al voor ~70% via de scraper, het echte gat
+      is `ruimtes[]` + de exploitatiekeuzes (kamertoewijzing, wie verhuurt hoeveel kamers) die de
+      scraper nooit kan leveren. Landt in `InvoerState` (niet in `PandInvoer` direct) — geen
+      `m2Geschat`-vlag/vijfde controle nodig, geschatte m² worden per rij expliciet geaccepteerd i.p.v.
+      stil doorgerekend. Twee invoerbronnen delen straks één JSON-contract (het machine-leesbare blok
+      uit `prompts/PROMPT_plattegrond_kamerafmetingen_uitgebreid.md`): de foto-route (bestaat al als
+      prompt) én een nieuwe FML-route (Floorplanner-polygoondata, exacter qua m² maar classificeert
+      niet — geen bruikbare `role`-as, geen zolder-/plafondhoogte-kenmerken, dus altijd samen met de
+      foto-route, nooit als vervanging ervan).
+  - [ ] B1: `lib/invoer/vanImport.ts` — ruwe scraper-JSON → `InvoerState`, broer van
+        `lib/invoer/vanPandInvoer.ts`. COROP leeg laten bij meerdere gemeente-kandidaten (geen
+        `onBlur`-suggestie beschikbaar bij een import)
+  - [ ] B2: `/woning/importeren` + reviewscherm — herkomst per veld, afgeleide velden expliciet,
+        skeletvoorstel, "hoeveel kamers ga je verhuren?" nooit voorgevuld uit Funda
+  - [ ] B3: Zod-schema voor het scraperformaat, los van `PandInvoer` — nette melding bij een verouderd
+        JSON-bestand i.p.v. een halve import
+  - [ ] B4: Provenance (`funda_id`, `detail_url`, `vraagprijs`, `scraped_at`) in het notitieveld;
+        `funda_id` als dedupe-check tegen bestaande woningen
+  - [ ] B5: Reviewscherm moet tonen: ontbrekende WOZ zonder taxatiewaarde is een stille
+        onderwaardering (R11 valt terug op het minimum i.p.v. 12-14 punten) — in de steekproef was
+        `woz_waarde` 3 van 3 keer `null`
+  - [ ] B6: UI-gate op `features.includes('import')` via `haalEigenProfielOp()` (kolom/functie bestaan
+        al sinds de multi-tenant-migraties) — pas zinvol ná de auth-toggle dicht
+  - [ ] C1 — FML-route, on-demand per kandidaat, ná B: endpoint deployen (`/plattegrond-fml`,
+        scraperkant) + FML-normalisator in Puntum (alle ruimtes overnemen, óók
+        `telt_mee_in_wonen: false` — die vlag beschrijft Funda's "Wonen"-mandje, geen WWSO-relevantie)
+        + tweede plakveld op het reviewscherm
+  - [ ] C2 — foto-route, parallel aan C1: hetzelfde plakveld accepteert het bestaande JSON-blok
+        ongewijzigd; `vasteTrap`/`beschotenDak` komen altijd hieruit of uit een expliciete vraag,
+        nooit uit FML
 - [ ] Taak 22: Vergelijking met zelfstandige verhuur (WWS) — uitgewerkt tot een volledige fase, zie **Fase 5** hieronder
 - [ ] Taak 23: De zeven open punten uit tab Toelichting van wwso.xlsx afhandelen
 
