@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.17';
+export const APP_VERSIE = '0.7.18';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.18',
+    datum: '2026-10-01',
+    wijzigingen: [
+      'Meterkast-correctie toegevoegd (§2.2.4): een nieuw vinkje per ruimte trekt 0,18 m² af van de oppervlakte bij een gas-/elektrameter in het vertrek of een kast daarin, vóórdat de puntentelling (rubriek 1, 2 en 9) ermee rekent.',
+      'Zolder nu direct selecteerbaar via een eigen 🪜-knop bij elke ruimte (stond voorheen verstopt achter de Keuken- of Sanitair-lade).',
+    ],
+  },
   {
     versie: '0.7.17',
     datum: '2026-09-25',
