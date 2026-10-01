@@ -43,6 +43,7 @@ export function pandInvoerNaarState(p: PandInvoer): InvoerState {
       aantalAdressenOvergenomen: false,
       kamers: kamersBijRuimte.get(r.nr) ?? [],
       zolder: r.zolder,
+      heeftMeterkast: r.heeftMeterkast,
       keuken: keuken
         ? { aanrechtlengteM: keuken.aanrechtlengteM, basiseisen: keuken.basiseisen, extra: keuken.extra, verwarmd: keuken.verwarmd }
         : undefined,

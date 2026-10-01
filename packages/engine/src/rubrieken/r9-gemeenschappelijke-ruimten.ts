@@ -1,6 +1,6 @@
 import type { Tarievenset } from '@wwso/data';
 import type { PandInvoer } from '../types/index';
-import { rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld';
+import { effectieveOppervlakteM2, rondAfOpKwartpunten, ruimtesPerKamer } from './gedeeld';
 import type { RubriekResultaat } from './types';
 
 /**
@@ -48,7 +48,7 @@ export function berekenR9(input: PandInvoer, tarievenset: Tarievenset): RubriekR
 
     const bijdrage = (r: (typeof vertrekken)[number], puntenPerM2: number) => {
       const adressen = r.ruimte.aantalAdressenMetToegang ?? 1;
-      return (puntenPerM2 * r.ruimte.oppervlakteM2) / adressen / r.nKamersMetToegang;
+      return (puntenPerM2 * effectieveOppervlakteM2(r.ruimte)) / adressen / r.nKamersMetToegang;
     };
 
     const vertrekPunten = vertrekken.reduce((som, r) => som + bijdrage(r, t.vertrekPuntenPerM2), 0);

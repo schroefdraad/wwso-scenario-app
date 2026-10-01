@@ -77,6 +77,28 @@ describe('R9 — Gemeenschappelijke vertrekken, overige ruimten en voorzieningen
     }
   });
 
+  it('trekt 0,18 m² af voor een gas-/elektrameter, vóór de puntenberekening (§2.9.6 → §2.2.4)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Fietsenberging',
+          type: 'Gemeenschappelijke overige ruimte',
+          oppervlakteM2: 8,
+          verdieping: 0,
+          verwarmd: false,
+          verkoeld: false,
+          aantalAdressenMetToegang: 1,
+          heeftMeterkast: true,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+    });
+    // (8 − 0,18) × 0,75 = 5,865 → kwartpuntsafronding → 5,75 (zonder correctie was dit 6 pt)
+    expect(berekenR9(input, tarievenset).perKamer[1]).toBe(5.75);
+  });
+
   it('geeft 0 punten zonder gemeenschappelijke ruimten', () => {
     const input = maakPandInvoer({ aantalKamers: 1, ruimtes: [], toewijzing: [] });
     expect(berekenR9(input, tarievenset).perKamer[1]).toBe(0);

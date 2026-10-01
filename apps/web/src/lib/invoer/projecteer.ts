@@ -129,6 +129,7 @@ function toRuimte(r: RuimteRij) {
     verwarmd: r.verwarmd,
     verkoeld: r.verkoeld,
     zolder: r.zolder,
+    heeftMeterkast: r.heeftMeterkast,
     aantalAdressenMetToegang,
   };
 }

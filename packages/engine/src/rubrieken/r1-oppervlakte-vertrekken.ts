@@ -1,6 +1,7 @@
 import type { PandInvoer } from '../types/index';
 import {
   VERTREK_TYPES,
+  effectieveOppervlakteM2,
   oppervlakteVolgensRekenregel,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
@@ -30,11 +31,14 @@ export function berekenR1(input: PandInvoer): RubriekResultaat {
     const vertrekken = ruimtes.filter((r) => VERTREK_TYPES.includes(r.ruimte.type));
     if (vertrekken.length > 0) {
       const regels = vertrekken
-        .map((r) =>
-          r.nKamersMetToegang > 1
-            ? `${r.ruimte.naam}: ${r.ruimte.oppervlakteM2} m² ÷ ${r.nKamersMetToegang} kamers`
-            : `${r.ruimte.naam}: ${r.ruimte.oppervlakteM2} m²`,
-        )
+        .map((r) => {
+          const m2 = effectieveOppervlakteM2(r.ruimte);
+          const basis =
+            r.nKamersMetToegang > 1
+              ? `${r.ruimte.naam}: ${m2} m² ÷ ${r.nKamersMetToegang} kamers`
+              : `${r.ruimte.naam}: ${m2} m²`;
+          return r.ruimte.heeftMeterkast ? `${basis} (− 0,18 m² meterkast, §2.2.4)` : basis;
+        })
         .join(', ');
       toelichting.push(
         `R1 kamer ${kamer}: ${regels} → privé ${priveM2} m² + gedeeld ${gedeeldM2} m² = ${totaalM2} m² × 1 pt = ${punten} pt`,

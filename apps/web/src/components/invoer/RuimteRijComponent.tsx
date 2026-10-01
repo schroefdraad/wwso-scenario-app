@@ -157,6 +157,22 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
           >
             🚿
           </button>
+          <button
+            type="button"
+            className={`${styles.voorzBadgeBtn} ${rij.zolder ? styles.voorzBadgeBtnActief : ''}`}
+            title="Zolder"
+            onClick={() => open(rij.id, 'zolder')}
+          >
+            🪜
+          </button>
+          <button
+            type="button"
+            className={`${styles.voorzBadgeBtn} ${rij.heeftMeterkast ? styles.voorzBadgeBtnActief : ''}`}
+            title="Gas-/elektrameter aanwezig (trekt 0,18 m² af van de oppervlakte, §2.2.4)"
+            onClick={() => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { heeftMeterkast: !rij.heeftMeterkast } })}
+          >
+            ⚡
+          </button>
         </div>
       </td>
       <td className={styles.colActies}>

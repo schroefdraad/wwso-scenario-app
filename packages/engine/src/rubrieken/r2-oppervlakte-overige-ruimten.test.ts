@@ -118,4 +118,50 @@ describe('R2 — Oppervlakte overige ruimten (§2.2.2)', () => {
     });
     expect(berekenR2(input).perKamer[1]).toBe(7.5);
   });
+
+  it('trekt 0,18 m² af voor een gas-/elektrameter vóór de m²-afronding (§2.2.4)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Berging',
+          type: 'Berging',
+          oppervlakteM2: 4.6,
+          verdieping: 0,
+          verwarmd: false,
+          verkoeld: false,
+          heeftMeterkast: true,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+    });
+    // 4,6 − 0,18 = 4,42 m² → 4 m² × 0,75 = 3 punten (zonder correctie was dit 5 m² → 3,75 punten).
+    expect(berekenR2(input).perKamer[1]).toBe(3);
+  });
+
+  it('begrenst de zolderaftrek op de door de meterkast verlaagde zolderwaarde (§2.2.2.3 + §2.2.4)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Kleine zolder met meterkast',
+          type: 'Overige ruimte',
+          oppervlakteM2: 4,
+          verdieping: 2,
+          verwarmd: false,
+          verkoeld: false,
+          zolder: { vasteTrap: false, beschotenDak: false },
+          heeftMeterkast: true,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+    });
+    // Effectieve oppervlakte 4 − 0,18 = 3,82 m² × 0,75 = 2,865 pt zolderwaarde — de aftrek
+    // (max 5 pt) wordt hierdoor begrensd op 2,865, niet op de ongecorrigeerde 3 pt.
+    // Oppervlaktepunten (afgerond op hele m² vóór punten, §2.2.2.1) = 4 m² × 0,75 = 3 pt.
+    // 3 − 2,865 = 0,135 → kwartpuntsafronding → 0,25.
+    expect(berekenR2(input).perKamer[1]).toBe(0.25);
+  });
 });

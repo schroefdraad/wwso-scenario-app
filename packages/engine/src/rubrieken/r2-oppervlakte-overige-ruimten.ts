@@ -1,6 +1,7 @@
 import type { PandInvoer } from '../types/index';
 import {
   OVERIGE_RUIMTE_TYPES,
+  effectieveOppervlakteM2,
   oppervlakteVolgensRekenregel,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
@@ -41,7 +42,7 @@ export function berekenR2(input: PandInvoer): RubriekResultaat {
         !r.ruimte.zolder.vasteTrap,
     );
     const aftrek = zoldersZonderTrap.reduce((som, r) => {
-      const zolderWaarde = r.ruimte.oppervlakteM2 * PUNT_PER_M2;
+      const zolderWaarde = effectieveOppervlakteM2(r.ruimte) * PUNT_PER_M2;
       return som + Math.min(ZOLDER_AFTREK, zolderWaarde) / r.nKamersMetToegang;
     }, 0);
 
@@ -55,8 +56,11 @@ export function berekenR2(input: PandInvoer): RubriekResultaat {
     if (overigeRuimten.length > 0) {
       const aftrekRegel =
         aftrek > 0 ? ` − ${aftrek.toFixed(2)} pt zolderaftrek (geen vaste trap, §2.2.2.3)` : '';
+      const meterkastRegel = overigeRuimten.some((r) => r.ruimte.heeftMeterkast)
+        ? ' (incl. −0,18 m² meterkastcorrectie, §2.2.4)'
+        : '';
       toelichting.push(
-        `R2 kamer ${kamer}: privé ${priveM2} m² + gedeeld ${gedeeldM2} m² = ${totaalM2} m² × 0,75 = ${oppervlaktePunten.toFixed(2)} pt${aftrekRegel} → ${punten} pt`,
+        `R2 kamer ${kamer}: privé ${priveM2} m² + gedeeld ${gedeeldM2} m² = ${totaalM2} m²${meterkastRegel} × 0,75 = ${oppervlaktePunten.toFixed(2)} pt${aftrekRegel} → ${punten} pt`,
       );
     } else {
       toelichting.push(`R2 kamer ${kamer}: geen overige ruimten toegankelijk → 0 pt`);

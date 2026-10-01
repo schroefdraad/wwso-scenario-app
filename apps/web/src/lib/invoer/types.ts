@@ -28,6 +28,7 @@ export interface RuimteRij {
   aantalAdressenOvergenomen: boolean;
   kamers: number[];
   zolder?: ZolderKenmerken;
+  heeftMeterkast?: boolean;
   keuken?: Omit<Keuken, 'ruimteNr'>;
   sanitair?: Omit<SanitairVoorziening, 'ruimteNr'>;
   parkeerplek?: { type: 'I' | 'II' | 'III'; laadpaal: boolean };

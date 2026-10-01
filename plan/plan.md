@@ -451,6 +451,16 @@ rubrieken daadwerkelijk letterlijk overeenkomen. Eerste steekproef tijdens dit p
       kostencatalogus-koppeling voor v1).
 - [ ] Taak 30: Golden-master-validatie tegen een echte WWS Huurprijscheck-export — zelfde
       discipline als taak 8 destijds (Kleiweg 179-B), met een nieuw, écht WWS-pand als testcase.
+- [ ] **Aandachtspunt voor taak 29 (UI), genoteerd 2026-10-01**: dezelfde ontdekbaarheids-leemte als
+      de Zolder-badge had vóór de fix hieronder (zie "Meterkast-correctie + zolder-UX-fix") bestaat
+      nog voor Parkeerplek — in de ruimterij is dat segment van de lade alleen bereikbaar via een
+      omweg (eerst Keuken/Sanitair openen, dan intern van tabblad wisselen), geen eigen badge. Voor
+      WWSO/kamerverhuur is dit minder urgent (parkeerplek is daar een randgeval). Voor WWS/
+      zelfstandige woonruimte is parkeren een stuk relevanter (expliciete rubriek, geen bijzaak) —
+      bevestigd door de gebruiker (2026-10-01). Bij het bouwen van het WWS-invoerscherm (taak 29)
+      hier een directe 🅿️-badge voor meenemen, zelfde patroon als de 🪜 Zolder-badge
+      (`RuimteRijComponent.tsx`, `open(rij.id, 'parkeerplek')`) — of eerder, als het WWSO-
+      invoerscherm (dat hetzelfde `RuimteRijComponent` deelt) al eerder tegen deze leemte aanloopt.
 
 ## Backlog — gevonden tijdens gebruik/feedback
 
@@ -578,6 +588,16 @@ rubrieken daadwerkelijk letterlijk overeenkomen. Eerste steekproef tijdens dit p
   Geen enkele bestaande test controleerde een exacte terugverdientijd/rendement-waarde (alleen null/not-null), dus geen testaanpassingen nodig. 266/266 tests groen, tsc/eslint schoon op `packages/engine`. Sanity-check buiten de testsuite: investering 10.000 / jaarhuur 1.000 → vlak 10,00 jaar, geïndexeerd 8,78 jaar; investering 0 → 0 jaar in beide gevallen (randgeval blijft kloppen).
 
 - [x] **Toiletype gevalideerd tegen ruimtetype (opgelost 2026-09-22, v0.7.16)** — de kleine validatie-todo uit de R6-Sanitair-bevinding van de Huurcommissie-crossvalidatie (2026-09-04, zie `plan/STATUS.md`): `toiletType` werd nergens gecontroleerd tegen `ruimte.type`, dus een toiletruimte-tarief op een badkamer (of omgekeerd) kwam zonder foutmelding door de invoer. Nieuwe gedeelde `toegestaneToiletTypes(ruimteType)` in `packages/engine/src/types/voorzieningen.ts` — Toiletruimte staat alleen "Geen"/"Staand in toiletruimte"/"Hangend in toiletruimte" toe, Badruimte alleen de badkamer-varianten, elk ander type alleen "Geen". Toegepast op twee plekken: `PandInvoer.superRefine` (`pand-invoer.ts`) wijst een niet-passende combinatie nu af, en `RuimteLade.tsx`'s Toilettype-dropdown filtert er al op (verving een lokale, dubbele kopie van dezelfde logica). Kleiweg-golden-master-fixture (`kleiweg-179b-kamer2.ts`) meegenomen: de twee toiletruimtes stonden gemodelleerd als `'Verkeersruimte'` (numeriek toevallig identiek, want geen rubriek behandelt dat type anders) — nu `'Toiletruimte'`, semantisch correct en consistent met hun `toiletType`. 272/272 tests groen (1 nieuw), tsc/eslint/build schoon, browser-geverifieerd (lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna teruggezet): de Toiletruimte-rij toont alleen de toiletruimte-varianten, de Badruimte-rij alleen de badkamer-varianten, doorrekenen geeft nog steeds de verwachte jaarhuur.
+
+- [x] **Meterkast-correctie + zolder-UX-fix (2026-10-01)**, gemeld door de gebruiker naar aanleiding van drie negatieve-effecten-checks buiten rubriek 13 (energieprestatie E/F/G-minpunten + monumentuitzondering, zolder-zonder-vaste-trap-aftrek, meterkast). Twee van de drie bleken al correct gebouwd (`r4-energieprestatie.ts`, `r2-oppervlakte-overige-ruimten.ts`); de meterkast-correctie (§2.2.4: 30×60cm/0,18 m² van de gemeten oppervlakte af bij een gas-/elektrameter in het vertrek of een kast daarin) ontbrak volledig, nergens in de engine geïmplementeerd.
+
+  **Root cause zolder-klacht ("ik kan geen zolder selecteren als privévertrek")**: geen rekenfout — een zolder is een los vinkje dat op elk ruimtetype kan, met een eigen paneel (`ZolderPanel`, al correct gebouwd), maar de ruimterij had alleen een 🍳 Keuken- en 🚿 Sanitair-badge om de lade te openen; Zolder (en Parkeerplek) waren alleen bereikbaar door eerst via een van die twee badges de lade te openen en dan intern van tabblad te wisselen — geen directe ingang, dus niet vindbaar.
+
+  **Engine**: nieuw optioneel veld `Ruimte.heeftMeterkast` (`types/ruimte.ts`, `.optional()` i.p.v. `.default()` — zelfde patroon als het bestaande `zolder`-veld, voorkomt dat alle bestaande `Ruimte`-objectliterals in tests/fixtures aangepast moeten worden). Nieuwe `effectieveOppervlakteM2()`-helper (`gedeeld.ts`) trekt 0,18 m² af vóórdat `ongerondeOppervlakte()` (de gedeelde grondslag van R1/R2/R4/R13) ermee rekent; ook toegepast op de zolderwaarde-cap in R2 (§2.2.2.3) en op R9's gemeenschappelijke-ruimten-bijdrage (§2.9.6 verwijst expliciet terug naar §2.2.4) — bewust NIET op R8 buitenruimten/R10 parkeerplekken, die hun eigen meetinstructie hebben. Toelichting-teksten van R1/R2 tonen de correctie nu expliciet. 6 nieuwe tests (R1/R2/R9), 281/281 tests groen, tsc/eslint/build schoon op alle packages.
+
+  **Web**: `RuimteRij.heeftMeterkast` door de hele plumbing (`types.ts`, `projecteer.ts`, `vanPandInvoer.ts`). Twee nieuwe badges in `RuimteRijComponent.tsx` naast 🍳/🚿: 🪜 Zolder (opent de lade direct op het Zolder-tabblad, `open(rij.id, 'zolder')`) en ⚡ Meterkast (directe toggle, geen lade nodig voor één boolean). Parkeerplek heeft dezelfde ontdekbaarheids-leemte maar is niet aangepast — buiten de scope van deze melding, blijft bereikbaar via Keuken/Sanitair → tabblad wisselen.
+
+  Browser-geverifieerd (lokale dev-server tijdelijk met `AUTH_VEREIST=false`, erna gestopt): 🪜-badge op Kamer 1 opent de lade met het Zolder-tabblad al actief, vinkje "Dit is een zolderruimte" toont meteen Vaste trap/Beschoten dak-velden + de §2.2.1.3-hint; ⚡-badge op Kamer 2 toggelt direct (geen lade) en kleurt groen; beide waarden bevestigd in de invoer-state (`sessionStorage`). Geen volledige "Doorrekenen"-rondgang gedaan (zou het hele pandformulier moeten invullen) — vertrouwd op de 281 groene engine-tests voor de rekenkundige correctheid.
 
 ## Evaluatie — optioneel, niet blokkerend voor de taakvolgorde
 

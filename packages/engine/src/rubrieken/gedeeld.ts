@@ -107,6 +107,21 @@ export function kamersPerRuimte(input: PandInvoer): Map<number, number[]> {
 }
 
 /**
+ * Correctie op de gemeten oppervlakte bij een gas-/elektrameter in de ruimte of een kast
+ * daarin (§2.2.4, "Gas- en/of elektrameter"): 30 × 60 cm = 0,18 m² eraf, vóórdat een rubriek
+ * met de oppervlakte rekent — dit is de minimale afmeting van een meterkast bij bestaande
+ * bouw, geen losse puntenaftrek. Geldt voor vertrekken en overige ruimten (R1/R2) én
+ * gemeenschappelijke vertrekken/overige ruimten (R9, §2.9.6 verwijst terug naar §2.2.4) — niet
+ * voor buitenruimten of parkeerplekken, die hun eigen meetinstructie hebben (§2.8.5 resp.
+ * §2.10).
+ */
+const METERKAST_AFTREK_M2 = 0.18;
+
+export function effectieveOppervlakteM2(ruimte: Ruimte): number {
+  return ruimte.heeftMeterkast ? Math.max(0, ruimte.oppervlakteM2 - METERKAST_AFTREK_M2) : ruimte.oppervlakteM2;
+}
+
+/**
  * De ruwe, ongeronde oppervlakte die één kamer "heeft": alle privéruimten van het gevraagde
  * type opgeteld, plus per gedeelde ruimte het aan de kamer toegerekende deel (§2.1.5: delen
  * door het aantal onzelfstandige woonruimten met toegang en gebruiksrecht).
@@ -125,10 +140,10 @@ export function ongerondeOppervlakte(
 
   const priveM2 = relevant
     .filter((r) => r.nKamersMetToegang === 1)
-    .reduce((som, r) => som + r.ruimte.oppervlakteM2, 0);
+    .reduce((som, r) => som + effectieveOppervlakteM2(r.ruimte), 0);
   const gedeeldM2 = relevant
     .filter((r) => r.nKamersMetToegang > 1)
-    .reduce((som, r) => som + r.ruimte.oppervlakteM2 / r.nKamersMetToegang, 0);
+    .reduce((som, r) => som + effectieveOppervlakteM2(r.ruimte) / r.nKamersMetToegang, 0);
 
   return { priveM2, gedeeldM2, totaalM2: priveM2 + gedeeldM2 };
 }

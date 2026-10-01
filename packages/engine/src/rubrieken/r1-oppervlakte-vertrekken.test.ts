@@ -83,4 +83,25 @@ describe('R1 — Oppervlakte vertrekken (§2.2.1)', () => {
     });
     expect(berekenR1(input).perKamer[1]).toBe(10);
   });
+
+  it('trekt 0,18 m² af voor een gas-/elektrameter vóór de m²-afronding (§2.2.4)', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [
+        {
+          nr: 1,
+          naam: 'Kamer 1',
+          type: 'Privévertrek',
+          oppervlakteM2: 10.6,
+          verdieping: 0,
+          verwarmd: true,
+          verkoeld: false,
+          heeftMeterkast: true,
+        },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+    });
+    // 10,6 − 0,18 = 10,42 m² → eindigt op ≤ 0,49 → 10 m² (zonder correctie was dit 11 m²)
+    expect(berekenR1(input).perKamer[1]).toBe(10);
+  });
 });

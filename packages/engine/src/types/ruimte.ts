@@ -65,6 +65,12 @@ export const Ruimte = z.object({
   /** Alleen invullen als de ruimte een zolderruimte is; zie ZolderKenmerken. */
   zolder: ZolderKenmerken.optional(),
   /**
+   * Zit er een gas- en/of elektrameter in deze ruimte of in een kast daarin? Trekt 30 × 60 cm
+   * (0,18 m²) af van de gemeten oppervlakte vóórdat rubriek 1, 2 of 9 daarmee rekenen (§2.2.4,
+   * "Gas- en/of elektrameter") — een correctie op de oppervlakte zelf, geen losse puntenaftrek.
+   */
+  heeftMeterkast: z.boolean().optional(),
+  /**
    * Aantal adressen in het woongebouw dat toegang en gebruiksrecht heeft tot déze ruimte.
    * Verplicht voor de typen in `DUBBEL_GEDEELDE_RUIMTE_TYPES` (R8/R9/R10) — de motor neemt
    * hier nooit stilzwijgend 1 aan, ook al is dat in de praktijk de meest voorkomende waarde
