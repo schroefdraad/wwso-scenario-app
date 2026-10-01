@@ -120,11 +120,15 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-10-01).** Meterkast-correctie (§2.2.4, ontbrak volledig) toegevoegd aan R1/R2/
-R9, plus een directe 🪜 Zolder-badge in de ruimterij (loste een ontdekbaarheids-bug op: zolder-zijn
-was alleen bereikbaar via een omweg door Keuken/Sanitair). Energieprestatie-minpunten (R4) en de
-zolderaftrek zelf (R2) bleken al correct gebouwd. 281/281 tests groen, browser-geverifieerd. Volledig
-verslag in `plan/plan.md`, sectie direct vóór "Evaluatie".
+**Meest recent (2026-10-01, v0.7.18).** Meterkast-correctie (§2.2.4, ontbrak volledig) toegevoegd aan
+R1/R2/R9, plus een directe 🪜 Zolder-badge in de ruimterij (loste een ontdekbaarheids-bug op:
+zolder-zijn was alleen bereikbaar via een omweg door Keuken/Sanitair). Energieprestatie-minpunten
+(R4) en de zolderaftrek zelf (R2) bleken al correct gebouwd. 281/281 tests groen, browser-
+geverifieerd. Gecommit (`6dadf50`, `8239930`), gepusht en gedeployed naar productie
+(`dpl_HZAMXJwrJTMsiDmAxnL8BHKCmqSX`) — live geverifieerd, footer toont v0.7.18. Volledig verslag in
+`plan/plan.md`, sectie direct vóór "Evaluatie". Parkeerplek heeft dezelfde ontdekbaarheids-leemte
+als Zolder had, bewust niet meegefixt (buiten scope van de melding) — genoteerd als aandachtspunt
+bij taak 29 (WWS-invoerscherm), relevanter voor zelfstandige woonruimte dan voor kamerverhuur.
 
 **Daarvóór (2026-09-30).** Drie losse stukken afgerond en gedeployed, zie "Sessie 2026-09-30"
 onderaan voor het volledige verslag:
