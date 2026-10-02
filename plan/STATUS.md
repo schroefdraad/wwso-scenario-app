@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App
 
-Laatst bijgewerkt: 2026-10-01
+Laatst bijgewerkt: 2026-10-02
 
 ## Wat werkt
 **Fase 0 t/m 3 (taak 1-17) zijn volledig afgerond.** De app draait in productie op Vercel
@@ -120,7 +120,31 @@ Standaard Sonnet. Vier taken zijn in `plan/plan.md` gemarkeerd met `⬆ Opus` (a
 - Notities + mappen afgerond en gedeployed: één notitieveld per deal (zichtbaar in het deals-overzicht) en een map voor persoonlijke ordening (hoogstens één per deal, geen relatie met org_id). Vereiste een handmatige Supabase-migratie (`0003_deals_notitie_map.sql`, door de gebruiker zelf gedraaid) en raakte relatief veel bestanden omdat notitie/map exact hetzelfde threading-patroon als `dealNaam` moesten volgen om nooit stilzwijgend verloren te gaan bij navigatie. Zie `plan/plan.md` voor het volledige verslag.
 
 ## Volgende concrete actie
-**Meest recent (2026-10-01, v0.7.18).** Meterkast-correctie (§2.2.4, ontbrak volledig) toegevoegd aan
+**Meest recent (2026-10-02).** Drie bugs + een ontbrekende functie gevonden tijdens een testsessie
+en dezelfde sessie gefixt, gecommit (`33fa464`) en gedeployed naar productie: (1) "Bewerk
+handmatig" op een al eerder bewerkt scenario viel stil terug naar de AS-IS-staat
+(`Vergelijking.tsx`, `bewerkHandmatig` gebruikte altijd het AS-IS-pand i.p.v. het slot se eigen,
+al bewerkte pand); (2) de échte oorzaak achter een hele stapel per-ongeluk-aangemaakte
+"(kopie)"-woningen: `Topbar.tsx` forkte stilzwijgend een nieuwe, scenario-loze kopie zodra
+`magBewerken` onzeker was, wat o.a. gebeurde bij een simpele tijdelijke hapering in de
+profiel-ophaalcall (nu een automatische retry in `lib/deals/profiel.ts`, en nooit meer stil
+forken — eerst een expliciete `confirm()`); (3) `/woningen` had helemaal geen verwijderknop, alleen
+"Kopiëren" (nu een "🗑 Verwijderen"-knop met een losse bevestigingsstap, `lib/deals/opslag.ts:
+verwijderDeal`). Daarnaast drie ontbrekende maatregelen toegevoegd aan de suggestie-catalogus
+(K-10/K-11 mengkranen keuken, S-07 mengkraan sanitair, allemaal `schatting`-geprijsd net als de
+bestaande S-04/K-07-regels) plus een correctheidsfix op K-07 (combimagnetron/oven zet nu ook het
+ovenpunt, niet meer alleen magnetron — §2.5.4). 282/282 tests groen, tsc/eslint schoon, live
+browser-geverifieerd vóór deploy. Volledig verslag + root causes in `plan/plan.md`, backlog-sectie
+bovenaan.
+
+**Let op — lokale testinstelling nog actief, bewust door de gebruiker zelf terug te zetten:**
+tijdens het testen stonden `AUTH_VEREIST=false` (lokaal `.env.local`/`apps/web/.env.local`) en de
+open RLS-policy (`supabase/toggle-auth-uit.sql`) aan — geen van beide is onderdeel van de
+productie-deploy (pure lokale env/database-state), maar de auth-toggle op productie zelf staat al
+langer open om een andere reden (zie "Openstaande beslissingen" hieronder, al vóór deze sessie
+bekend) en is dus niet per ongeluk opnieuw opengezet.
+
+**Daarvóór (2026-10-01, v0.7.18).** Meterkast-correctie (§2.2.4, ontbrak volledig) toegevoegd aan
 R1/R2/R9, plus een directe 🪜 Zolder-badge in de ruimterij (loste een ontdekbaarheids-bug op:
 zolder-zijn was alleen bereikbaar via een omweg door Keuken/Sanitair). Energieprestatie-minpunten
 (R4) en de zolderaftrek zelf (R2) bleken al correct gebouwd. 281/281 tests groen, browser-
