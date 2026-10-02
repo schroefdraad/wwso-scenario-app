@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.18';
+export const APP_VERSIE = '0.7.19';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.19',
+    datum: '2026-10-02',
+    wijzigingen: [
+      '"Woning bewerken" maakte soms stilzwijgend een nieuwe, losse kopie i.p.v. de bestaande woning bij te werken (zichtbaar als een stapel "(kopie)"-woningen, en als een scenario dat leek te verdwijnen) — gebeurde bij een tijdelijke hapering in de bewerkrechten-check. Die check krijgt nu een automatische herkansing, en bij aanhoudende onzekerheid eerst een duidelijke melding met de kans om te annuleren, in plaats van gewoon door te gaan.',
+      '"Woning bewerken" op een scenario dat je al eerder handmatig had aangepast, viel terug naar de oorspronkelijke as-is-staat — eerdere aanpassingen aan dat scenario gingen zo verloren. Begint nu vanaf de laatst bewerkte staat van dat scenario.',
+      'Nieuwe "🗑 Verwijderen"-knop op het woningenoverzicht (met een bevestigingsstap) — ontbrak volledig, alleen kopiëren was mogelijk.',
+      'Drie ontbrekende optimalisaties toegevoegd: eenhandsmengkraan en thermostatische mengkraan in de keuken, eenhandsmengkraan bij sanitair. Combimagnetron/oven telt nu ook het ovenpunt mee, niet meer alleen het magnetronpunt.',
+    ],
+  },
   {
     versie: '0.7.18',
     datum: '2026-10-01',
