@@ -42,6 +42,20 @@ export function Topbar() {
 
   async function slaWoningOp() {
     if (!pand) return null;
+    // Nooit stilzwijgend forken (2026-10-02, gemeld tijdens testen: een al bewerkte woning + al
+    // opgeslagen scenario leek "te verdwijnen" — bleek telkens een nieuwe, scenario-loze kopie te
+    // zijn omdat `magBewerken` een tijdelijke profiel-ophaalfout niet van "echt geen rechten" kon
+    // onderscheiden, zie `lib/deals/profiel.ts`). Vóór zo'n fork altijd expliciet bevestigen —
+    // `state.bewerktDeal` is alleen gezet voor een AL bestaande woning, dus dit raakt nooit het
+    // normale "nieuwe woning opslaan"-pad.
+    if (state.bewerktDeal && !magBewerken) {
+      const doorgaan = confirm(
+        `Je bewerkrechten voor "${state.bewerktDeal.naam}" konden niet bevestigd worden — dit kan een tijdelijke hapering zijn (bijv. vlak na inloggen).\n\n` +
+          'Doorgaan slaat je wijzigingen op als een NIEUWE, losse kopie — de bestaande woning (met eventuele scenario\'s) blijft dan ongewijzigd staan onder de oude naam.\n\n' +
+          'Annuleren en de pagina verversen lost het meestal op als het inderdaad tijdelijk was.',
+      );
+      if (!doorgaan) return null;
+    }
     setDealOpslaanStatus('bezig');
     try {
       const tarievenset = alleTarievensets().at(-1)!;

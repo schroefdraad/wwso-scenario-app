@@ -326,6 +326,35 @@ const S05: MaatregelDefinitie = {
   },
 };
 
+/**
+ * S-07 — eenhandsmengkraan op de wastafel. Anders dan S-04 (thermostatische doúchekraan, dus
+ * gegate op douche/bad) hoort een eenhandsmengkraan bij een wastafel (§2.6.2) — gate daarom op
+ * "heeft al minstens één wastafel", niet op douche/bad.
+ */
+const S07: MaatregelDefinitie = {
+  id: 'S-07',
+  doelSoort: 'sanitair',
+  vergunningKlasse: 'geen',
+  vergunningBrontekst: 'Nee',
+  puntenrelevant: true,
+  kandidaten(ctx) {
+    return ctx.pand.sanitair
+      .filter((s) => (s.aantalWastafels > 0 || s.aantalMeerpersoonswastafels > 0) && !s.extra.eenhandsmengkraan)
+      .map((s) => ({
+        sleutel: `S-07#sanitair:${s.ruimteNr}`,
+        maatregelId: 'S-07',
+        doel: { soort: 'sanitair' as const, nr: s.ruimteNr },
+        hoeveelheid: 1,
+        omschrijving: `Eenhandsmengkraan op de wastafel (ruimte ${s.ruimteNr})`,
+      }));
+  },
+  mutaties(ctx, kandidaat) {
+    const s = ctx.pand.sanitair.find((x) => x.ruimteNr === kandidaat.doel.nr);
+    if (!s) return [];
+    return [{ soort: 'sanitair-wijzigen', ruimteNr: s.ruimteNr, patch: { extra: { ...s.extra, eenhandsmengkraan: 1 } } }];
+  },
+};
+
 /** S-06 — ventilatie badruimte. Zuivere kostenrider van S-02/S-03. */
 const S06: MaatregelDefinitie = {
   id: 'S-06',
@@ -338,4 +367,4 @@ const S06: MaatregelDefinitie = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const r6SanitairMaatregelen: MaatregelDefinitie<any>[] = [S01, S02, S03, S04, S05, S06];
+export const r6SanitairMaatregelen: MaatregelDefinitie<any>[] = [S01, S02, S03, S04, S05, S06, S07];

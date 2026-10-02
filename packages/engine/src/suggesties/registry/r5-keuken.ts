@@ -278,12 +278,35 @@ const K06 = eenvoudigeExtraMaatregel(
   (r) => `Afzuigkap met afvoer naar buiten (keuken, ruimte ${r})`,
 );
 
+/**
+ * K-07 — combimagnetron/oven. Zet sinds 2026-10-02 zowel `magnetron` als `ovenElektrisch` —
+ * §2.5.4: "één voorziening met twee functies telt als twee losse voorzieningen", en een
+ * ingebouwde combimagnetron/oven is vrijwel altijd elektrisch (nooit gas). Vóór deze datum zette
+ * de maatregel alleen `magnetron`, met als reden "de catalogustekst specificeert dat niet" — de
+ * catalogustekst (kolom J) is inmiddels bijgewerkt om dit expliciet te maken, dus die reden
+ * vervalt. Kandidaten-filter blijft op `!extra.magnetron` (niet ook `!extra.ovenElektrisch`): een
+ * keuken met al een losse oven maar nog geen magnetron kan dit alsnog aanbieden, en zet dan de
+ * oven-vlag gewoon opnieuw op `true` (geen regressie, idempotent).
+ */
 const K07 = eenvoudigeExtraMaatregel(
   'K-07',
   (extra) => extra.magnetron,
-  { magnetron: true },
+  { magnetron: true, ovenElektrisch: true },
   (r) => `Combimagnetron of oven inbouwen (keuken, ruimte ${r})`,
-  'Alleen magnetron meegeteld — een echte combimagnetron/oven telt volgens §2.5.4 als twee voorzieningen, maar de catalogustekst specificeert dat niet.',
+);
+
+const K10 = eenvoudigeExtraMaatregel(
+  'K-10',
+  (extra) => extra.eenhandsmengkraan,
+  { eenhandsmengkraan: true },
+  (r) => `Eenhandsmengkraan plaatsen (keuken, ruimte ${r})`,
+);
+
+const K11 = eenvoudigeExtraMaatregel(
+  'K-11',
+  (extra) => extra.thermostatischeMengkraan,
+  { thermostatischeMengkraan: true },
+  (r) => `Thermostatische mengkraan plaatsen (keuken, ruimte ${r})`,
 );
 
 const K08 = eenvoudigeExtraMaatregel(
@@ -294,4 +317,4 @@ const K08 = eenvoudigeExtraMaatregel(
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const r5KeukenMaatregelen: MaatregelDefinitie<any>[] = [K01, K02, K03, K04, K05, K06, K07, K08, K09];
+export const r5KeukenMaatregelen: MaatregelDefinitie<any>[] = [K01, K02, K03, K04, K05, K06, K07, K08, K09, K10, K11];

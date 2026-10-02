@@ -4,8 +4,8 @@ import { alleKostencatalogi, getKostencatalogus, nieuwsteKostencatalogus } from 
 describe('kostencatalogus — steekproeven tegen resources/Kostenkentallen_WWSO_optimalisatie.xlsx', () => {
   const catalogus = getKostencatalogus('0.1');
 
-  it('bevat alle 50 maatregelen uit de xlsx', () => {
-    expect(catalogus.maatregelen).toHaveLength(50);
+  it('bevat alle 53 maatregelen uit de xlsx', () => {
+    expect(catalogus.maatregelen).toHaveLength(53);
   });
 
   it('leest de aannames exact, als fractie in plaats van percentage', () => {
@@ -40,6 +40,15 @@ describe('kostencatalogus — steekproeven tegen resources/Kostenkentallen_WWSO_
       kostenMaxEuro: 3171.6,
       status: 'offerte',
     });
+  });
+
+  it('leest de nieuwe mengkraan-maatregelen (K-10/K-11/S-07) exact', () => {
+    const k10 = catalogus.maatregelen.find((m) => m.id === 'K-10');
+    expect(k10).toMatchObject({ rubriek: 'R5', categorie: 'Keuken', kostenVerwachtEuro: 250, status: 'schatting' });
+    const k11 = catalogus.maatregelen.find((m) => m.id === 'K-11');
+    expect(k11).toMatchObject({ rubriek: 'R5', categorie: 'Keuken', kostenVerwachtEuro: 420, status: 'schatting' });
+    const s07 = catalogus.maatregelen.find((m) => m.id === 'S-07');
+    expect(s07).toMatchObject({ rubriek: 'R6', categorie: 'Sanitair', kostenVerwachtEuro: 250, status: 'schatting' });
   });
 
   it('leest een proceskostenmaatregel (rubriek PROC) exact', () => {

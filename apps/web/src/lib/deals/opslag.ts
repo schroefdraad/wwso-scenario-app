@@ -62,6 +62,18 @@ export async function haalMappen(): Promise<string[]> {
   return [...gevonden].sort((a, b) => a.localeCompare(b));
 }
 
+/**
+ * Verwijdert een woning permanent. RLS (`leden_verwijderen_eigen_org`, zie
+ * `supabase/migrations/0006_deals_demo_en_delen.sql`) weigert dit al voor de demo-rij en voor
+ * een woning buiten de eigen org — deze functie voegt daar geen eigen check aan toe, de
+ * aanroeper gebruikt `magDealBewerken` (spiegelt dezelfde policy) om de knop zelf al te
+ * verbergen waar dit toch zou falen.
+ */
+export async function verwijderDeal(id: string): Promise<void> {
+  const { error } = await supabase.from('deals').delete().eq('id', id);
+  if (error) throw new Error(`Woning verwijderen mislukt: ${error.message}`);
+}
+
 export async function haalDealOp(id: string): Promise<Deal | null> {
   const { data, error } = await supabase.from('deals').select().eq('id', id).maybeSingle();
   if (error) throw new Error(`Woning ophalen mislukt: ${error.message}`);

@@ -274,8 +274,15 @@ export function Vergelijking({
   function bewerkHandmatig(index: number) {
     const terugUrl = dealId ? `/woning/vergelijking?deal=${dealId}` : '/woning/vergelijking';
     slaSnapshotOp();
+    // `slots[index].pand`, niet het top-level AS-IS `pand` (2026-10-02, gemeld tijdens testen):
+    // voor een al eerder handmatig bewerkt scenario IS slots[index].pand al het bewerkte TO-BE
+    // (zie regel ~181, `kamerBewerkt: true` zet 'm daarop) — een tweede keer "Bewerk handmatig"
+    // moet daar verder bouwen, niet terugvallen naar AS-IS en alle eerdere edits aan dit scenario
+    // verliezen. Voor een nog onaangeraakt slot is `slots[index].pand` toch al gelijk aan AS-IS
+    // (zie `standaardSlots`/`leegScenario`), dus dit verandert niets aan het bestaande gedrag
+    // voor een vers scenario.
     slaScenarioBewerkStartOp({
-      asIsPand: pand,
+      asIsPand: slots[index].pand,
       slotIndex: index,
       naam: slots[index].naam,
       terugUrl,

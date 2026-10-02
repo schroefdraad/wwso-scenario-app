@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { haalDealenOp, kopieerDeal } from '../../lib/deals/opslag';
+import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag';
 import { haalEigenProfielOp, type EigenProfiel } from '../../lib/deals/profiel';
-import type { Deal } from '../../lib/deals/types';
+import { magDealBewerken, type Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { HomeLogo } from '../../components/HomeLogo';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
@@ -21,6 +21,8 @@ export default function DealsOverzicht() {
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
   const [kopieerBezigId, setKopieerBezigId] = useState<string | null>(null);
+  const [verwijderBevestigId, setVerwijderBevestigId] = useState<string | null>(null);
+  const [verwijderBezigId, setVerwijderBezigId] = useState<string | null>(null);
 
   useEffect(() => {
     haalDealenOp()
@@ -43,6 +45,25 @@ export default function DealsOverzicht() {
       setFoutmelding(err instanceof Error ? err.message : String(err));
     } finally {
       setKopieerBezigId(null);
+    }
+  }
+
+  /** Twee klikken nodig (eerst "Verwijderen" toont "Zeker weten?", pas die tweede klik verwijdert
+   * echt) — permanent en onomkeerbaar, dus geen knop die in één klik al iets onherstelbaars doet. */
+  async function verwijder(id: string) {
+    if (verwijderBevestigId !== id) {
+      setVerwijderBevestigId(id);
+      return;
+    }
+    setVerwijderBezigId(id);
+    try {
+      await verwijderDeal(id);
+      setDeals((huidig) => (huidig ? huidig.filter((d) => d.id !== id) : huidig));
+    } catch (err) {
+      setFoutmelding(err instanceof Error ? err.message : String(err));
+    } finally {
+      setVerwijderBezigId(null);
+      setVerwijderBevestigId(null);
     }
   }
 
@@ -132,7 +153,7 @@ export default function DealsOverzicht() {
                       </td>
                       <td className={styles.dim}>{formateerDatumTijd(deal.bijgewerkt)}</td>
                       <td className={styles.dim}>{deal.map ? `📁 ${deal.map}` : '—'}</td>
-                      <td>
+                      <td className={styles.actiesCel}>
                         <button
                           type="button"
                           className={styles.kopieerKnop}
@@ -142,6 +163,24 @@ export default function DealsOverzicht() {
                         >
                           {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
                         </button>
+                        {magDealBewerken(deal, profiel) && (
+                          <>
+                            <button
+                              type="button"
+                              className={verwijderBevestigId === deal.id ? styles.verwijderKnopBevestig : styles.verwijderKnop}
+                              disabled={verwijderBezigId === deal.id}
+                              title={verwijderBevestigId === deal.id ? 'Nogmaals klikken om echt te verwijderen' : 'Woning permanent verwijderen'}
+                              onClick={() => verwijder(deal.id)}
+                            >
+                              {verwijderBezigId === deal.id ? '…' : verwijderBevestigId === deal.id ? 'Zeker weten?' : '🗑 Verwijderen'}
+                            </button>
+                            {verwijderBevestigId === deal.id && verwijderBezigId !== deal.id && (
+                              <button type="button" className={styles.annuleerKnop} onClick={() => setVerwijderBevestigId(null)}>
+                                Annuleren
+                              </button>
+                            )}
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}
