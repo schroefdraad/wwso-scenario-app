@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.31';
+export const APP_VERSIE = '0.7.32';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.32',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Bugfix: na de eerste keer "Woning opslaan" van een nieuwe woning gaf verversen een leeg formulier (de woning was wel opgeslagen). De woning staat nu meteen in de adresbalk, zodat verversen of een bladwijzer hem terugvindt — zonder dat het scherm daarbij opnieuw opbouwt.',
+      'Bugfix: wisselde het invoerscherm zonder volledig herladen naar een andere of een lege nieuwe woning, dan kon de vorige woning blijven staan. Het formulier wordt dan nu altijd opnieuw opgebouwd.',
+    ],
+  },
   {
     versie: '0.7.31',
     datum: '2026-10-03',

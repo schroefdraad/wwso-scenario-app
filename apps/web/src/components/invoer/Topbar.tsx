@@ -12,7 +12,8 @@ import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBew
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { bepaalOpslaanActie } from '../../lib/deals/types';
-import { resultaatUrl } from '../../lib/navigatie';
+import { resultaatUrl, woningBewerkenUrl } from '../../lib/navigatie';
+import { markeerZojuistGekoppeld } from '../../lib/invoer/koppeling';
 
 export function Topbar() {
   const { state, dispatch } = useInvoer();
@@ -89,12 +90,22 @@ export function Topbar() {
     }
   }
 
+  /** Na "Woning opslaan" of een kopie staat er een (nieuwe) woning achter dit scherm — zet die in
+   * de URL, zodat een refresh hem terugvindt i.p.v. een leeg formulier (zie `koppeling.ts`). */
+  function zetWoningInUrl(dealId: string) {
+    if (new URLSearchParams(window.location.search).get('deal') === dealId) return;
+    markeerZojuistGekoppeld(dealId);
+    router.replace(woningBewerkenUrl(dealId), { scroll: false });
+  }
+
   async function dealVroegOpslaan() {
-    await slaWoningOp();
+    const deal = await slaWoningOp();
+    if (deal) zetWoningInUrl(deal.id);
   }
 
   async function forceerKopieOpslaan() {
-    await slaWoningOp(true);
+    const deal = await slaWoningOp(true);
+    if (deal) zetWoningInUrl(deal.id);
   }
 
   /**

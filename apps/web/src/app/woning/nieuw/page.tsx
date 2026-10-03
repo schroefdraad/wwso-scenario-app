@@ -15,6 +15,7 @@ import { RuimteLade } from '../../../components/invoer/RuimteLade';
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
 import { haalScenarioBewerkStartOp } from '../../../lib/vergelijking/scenarioBewerkBrug';
+import { isZojuistGekoppeld } from '../../../lib/invoer/koppeling';
 import styles from '../../../components/invoer/styles.module.css';
 
 function NieuwPandContent() {
@@ -42,6 +43,10 @@ function NieuwPandContent() {
       return;
     }
     setInitieelScenario(undefined);
+
+    // Deze `?deal=` is zojuist door het invoerscherm zelf gezet na de eerste opslag — de state is
+    // al gelijk aan de database, dus niet opnieuw laden (zie `lib/invoer/koppeling.ts`).
+    if (isZojuistGekoppeld(dealParam)) return;
 
     if (!dealParam) {
       setStatus('klaar');
@@ -99,7 +104,15 @@ function NieuwPandContent() {
   }
 
   return (
-    <InvoerProvider initieelDeal={initieelDeal} initieelScenario={initieelScenario}>
+    // `key`: wisselt de URL op dezelfde pagina naar een ándere woning (of naar een lege nieuwe),
+    // dan wordt het formulier echt opnieuw opgebouwd i.p.v. dat de vorige woning blijft staan
+    // (staat-navigatie-audit 2026-10-03). De eigen URL-wissel na de eerste opslag verandert
+    // `initieelDeal` niet en laat het formulier dus staan.
+    <InvoerProvider
+      key={initieelDeal?.id ?? (initieelScenario ? `scenario-${initieelScenario.slotIndex}` : 'nieuw')}
+      initieelDeal={initieelDeal}
+      initieelScenario={initieelScenario}
+    >
       <ToastProvider>
         <LadeProvider>
           <div className={styles.page}>
