@@ -27,6 +27,16 @@
   white-space: nowrap;
 }
 
+/* Niet-sticky statusstrook onder de topnavigatie (2026-10-02) — losgetrokken van `.topbar`:
+ * kameraantal/woningnaam/alleen-lezen/scenario-context is info, geen navigatie. */
+.woningContext {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
 .sub {
   color: var(--ink-dim);
   font-size: 0.82rem;

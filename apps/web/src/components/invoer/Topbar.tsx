@@ -19,7 +19,6 @@ export function Topbar() {
   const router = useRouter();
   const stap = useMemo(() => ontbrekendeStap(state), [state]);
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
-  const n = parseInt(state.pand.aantalKamers, 10) || 0;
   useDocumentTitle(`${state.pand.adres || 'Nieuwe woning'} · WWSO Scenario App`);
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'>('idle');
 
@@ -133,24 +132,13 @@ export function Topbar() {
     state.pand.bouwjaar
   );
 
-      // Het adres zelf staat niet meer in de topnavigatie (feedback 2026-10-02: "hoort hier niet
-  // thuis") — het is al zichtbaar in het ①Woning-adresveld zelf én in de browsertab-titel
-  // (`useDocumentTitle` hierboven), een derde plek voegde niks toe. De context-chip hieronder is
-  // bewust tot ÉÉN regel samengevoegd (was eerst twee losse chips die bij een niet-bewerkbare
-  // woning tegelijk zichtbaar waren: "bewerkt woning X" + "Voorbeeld (alleen-lezen)").
+      // De topnavigatie is nu zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor
+  // navigatie") — alle statusinfo (kameraantal, woningnaam, alleen-lezen/scenario-context) staat
+  // niet meer hier, maar in de losse, niet-sticky `WoningContext` hieronder in dit bestand
+  // (gerenderd door de paginacomponent net onder deze header).
   return (
     <header className={styles.topbar}>
       <HomeLogo />
-      <span className={styles.titel}>{state.handmatigScenario ? 'Scenario bewerken' : state.bewerktDeal ? 'Woning bewerken' : 'Nieuwe woning'}</span>
-      <span className={styles.sub}>
-        {n} kamer{n === 1 ? '' : 's'}
-      </span>
-      {state.bewerktDeal && (
-        <span className={styles.sub} title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
-          · &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
-        </span>
-      )}
-      {state.handmatigScenario && <span className={styles.sub}>· &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
       <nav className={styles.sections}>
         <a className={styles.sectionLink} href="#sectie-woning">
           ① Woning <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
@@ -212,5 +200,33 @@ export function Topbar() {
         </button>
       )}
     </header>
+  );
+}
+
+/**
+ * De statusinfo die vóór 2026-10-02 in de sticky `Topbar` stond (kameraantal, woningnaam,
+ * alleen-lezen/scenario-context) — losgetrokken op feedback ("topnavigatie is voor navigatie"):
+ * dit is géén navigatie, dus hoort niet in de sticky header. Eigen, niet-sticky strook net
+ * daaronder, gerenderd door de paginacomponent (`app/woning/nieuw/page.tsx`).
+ */
+export function WoningContext() {
+  const { state } = useInvoer();
+  const n = parseInt(state.pand.aantalKamers, 10) || 0;
+  const magBewerken = !state.bewerktDeal || state.bewerktDeal.magBewerken;
+
+  if (!state.bewerktDeal && !state.handmatigScenario && state.ruimtes.length === 0) return null;
+
+  return (
+    <div className={styles.woningContext}>
+      <span className={styles.sub}>
+        {n} kamer{n === 1 ? '' : 's'}
+      </span>
+      {state.bewerktDeal && (
+        <span className={styles.sub} title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
+          · &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
+        </span>
+      )}
+      {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
+    </div>
   );
 }

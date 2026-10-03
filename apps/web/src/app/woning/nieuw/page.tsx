@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { InvoerProvider, type InitieelDeal, type InitieelScenario } from '../../../components/invoer/InvoerContext';
 import { ToastProvider } from '../../../components/invoer/ToastContext';
 import { LadeProvider } from '../../../components/invoer/LadeContext';
-import { Topbar } from '../../../components/invoer/Topbar';
+import { Topbar, WoningContext } from '../../../components/invoer/Topbar';
 import { PandFormulier } from '../../../components/invoer/PandFormulier';
 import { RuimteRaster } from '../../../components/invoer/RuimteRaster';
 import { OverigePosten } from '../../../components/invoer/OverigePosten';
@@ -104,6 +104,7 @@ function NieuwPandContent() {
         <LadeProvider>
           <div className={styles.page}>
             <Topbar />
+            <WoningContext />
             <main className={styles.main}>
               <PandFormulier />
               <RuimteRaster />
