@@ -182,11 +182,17 @@ export function SamenvattingRij({
                 Scenario bewerken →
               </button>
             </span>
-            {kolom.pakket && (
-              <button type="button" className={styles.btnLink} onClick={() => onLeegmaken(i)}>
-                Leegmaken
-              </button>
-            )}
+            {/* Zelfde logica als "Bekijk volledig resultaat": altijd zichtbaar, uitgegrijsd zolang
+                het scenario nog leeg is (feedback 2026-10-03). Bij de as-is bestaat deze knop niet. */}
+            <button
+              type="button"
+              className={styles.btnLink}
+              disabled={!kolom.pakket}
+              title={kolom.pakket ? undefined : 'Dit scenario is al leeg'}
+              onClick={() => onLeegmaken(i)}
+            >
+              Leegmaken
+            </button>
           </div>
         </div>
       ))}
