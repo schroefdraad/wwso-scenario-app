@@ -149,7 +149,7 @@ export function magDealBewerken(deal: Pick<Deal, 'orgId' | 'isDemo'>, toegang: T
 /**
  * TIJDELIJK (2026-10-03, tot de bèta — zie "Toegang & rollen voor de bèta" in `plan/plan.md`):
  * niemand ingelogd. Zolang inloggen op productie bewust uit staat (`AUTH_VEREIST=false`, zodat
- * Steven kan testen), had niemand een profiel → elke woning gold als alleen-lezen → elke
+ * Steven, Emma en Myle kunnen testen), had niemand een profiel → elke woning gold als alleen-lezen → elke
  * "Opslaan"/"Doorrekenen" maakte een nieuwe "(kopie)", en "eerst opslaan vóór de volgende stap"
  * werkte op de vergelijking helemaal niet. Zonder identiteit valt er niets af te schermen (de
  * database staat dan ook open), dus: gewoon bijwerken, alleen de demo-woning blijft beschermd.

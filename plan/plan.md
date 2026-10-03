@@ -325,7 +325,7 @@ naast elkaar staat — anders is de org-scheiding cosmetisch voor wie de publiek
 ## Toegang & rollen voor de bèta (2026-10-03, na het kopie-probleem)
 
 **Aanleiding.** De rollenlaag hierboven is gebouwd voor een wereld waarin iedereen inlogt, maar
-op productie staat inloggen bewust uit (auth-toggle, zodat Steven kan testen). Zonder sessie was
+op productie staat inloggen bewust uit (auth-toggle, zodat Steven, Emma en Myle kunnen testen). Zonder sessie was
 er geen profiel → `magDealBewerken` gaf `false` voor elke woning → elke "Opslaan"/"Doorrekenen"
 maakte een nieuwe "(kopie)" (tot 8 diep bij Kanaalkade 49-B), en de regel "eerst opslaan vóór
 de volgende stap" (v0.7.24) werkte op de vergelijking helemaal niet.
@@ -336,7 +336,7 @@ de demo-woning blijft beschermd. Bewust geen sloop van de rollenlaag: RLS-polici
 en delen blijven de fundering voor de bèta. Geen nieuw gat: de database staat met de toggle open
 toch al open voor de anon-key.
 
-**Vóór de bèta-livegang** (pas starten als Steven klaar is met testen — zie de auth-toggle-
+**Vóór de bèta-livegang** (pas starten als het testen door Steven, Emma en Myle klaar is — zie de auth-toggle-
 afspraak in `plan/STATUS.md`):
 - [x] Opruimen (2026-10-03, op verzoek van de gebruiker: "alles weg behalve de laatste versie"):
       11 Kanaalkade 49-B-rijen verwijderd, alleen de laatst bijgewerkte (`be90f4e4`) bewaard.
