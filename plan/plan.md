@@ -338,8 +338,9 @@ toch al open voor de anon-key.
 
 **Vóór de bèta-livegang** (pas starten als Steven klaar is met testen — zie de auth-toggle-
 afspraak in `plan/STATUS.md`):
-- [ ] Opruimen: de "(kopie)"-rijen van Kanaalkade 49-B (10 stuks, lijst 2026-10-03) — welke weg
-      mogen beslist de gebruiker, niet automatisch verwijderen.
+- [x] Opruimen (2026-10-03, op verzoek van de gebruiker: "alles weg behalve de laatste versie"):
+      11 Kanaalkade 49-B-rijen verwijderd, alleen de laatst bijgewerkte (`be90f4e4`) bewaard.
+      Back-up van de verwijderde rijen: `outputs/backup_kanaalkade_kopieen_2026-10-03.json`.
 - [ ] Auth-toggle dicht: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weghalen op Vercel.
 - [ ] De tijdelijke `ANONIEM`-regel weer verwijderen uit `magDealBewerken` (zonder sessie kom je
       de app dan niet meer in) — plus de bijbehorende regressietests aanpassen.
