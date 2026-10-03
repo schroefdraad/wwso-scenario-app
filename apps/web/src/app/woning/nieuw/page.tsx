@@ -51,9 +51,22 @@ function NieuwPandContent() {
     setStatus('laden');
     // Profiel + deal parallel ophalen: het profiel bepaalt alleen `magBewerken` (UI-gedrag), de
     // deal zelf blijft leidend voor of de pagina laadt — een profiel-ophaalfout mag het laden van
-    // een woning niet blokkeren, `magDealBewerken` valt bij `null` gewoon terug op "niet bewerken".
-    Promise.all([haalDealOp(dealParam), haalEigenProfielOp().catch(() => null)])
-      .then(([deal, profiel]) => {
+    // een woning niet blokkeren.
+    //
+    // `bewerkrechtenOnzeker` (2026-10-02) houdt bewust bij OF de profiel-call zelf faalde (na de
+    // automatische retry in `haalEigenProfielOp`), los van `magDealBewerken`'s uitkomst — een
+    // legitieme `profiel: null` (niet op de allowlist) is geen onzekerheid, dat IS het antwoord.
+    // Alleen een echte fout maakt de uitkomst onbetrouwbaar; zie `Topbar.tsx` voor waarom dat
+    // onderscheid ertoe doet (nooit een "ga door en maak een kopie"-keuze aanbieden als we het
+    // gewoon niet weten).
+    Promise.all([
+      haalDealOp(dealParam),
+      haalEigenProfielOp().then(
+        (profiel) => ({ profiel, onzeker: false }),
+        () => ({ profiel: null, onzeker: true }),
+      ),
+    ])
+      .then(([deal, { profiel, onzeker }]) => {
         if (!deal) {
           setStatus('niet-gevonden');
           return;
@@ -66,6 +79,7 @@ function NieuwPandContent() {
           scenarios: deal.scenarios,
           pandInvoer: deal.pandInvoer,
           magBewerken: magDealBewerken(deal, profiel),
+          bewerkrechtenOnzeker: onzeker,
         });
         setStatus('klaar');
       })

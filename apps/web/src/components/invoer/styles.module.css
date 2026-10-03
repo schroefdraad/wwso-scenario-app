@@ -393,6 +393,35 @@
   text-align: right;
 }
 
+.m2Cel {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Naast het m²-veld i.p.v. tussen de voorzieningen-iconen (feedback 2026-10-02): een
+ * meterkast is een oppervlaktecorrectie op déze ruimte, geen eigen voorzieningencategorie zoals
+ * Keuken/Sanitair/Zolder/Parkeerplek — stond daar qua hiërarchie en logica niet op zijn plek. */
+.meterkastBtn {
+  border: 1px dashed var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meterkastBtnActief {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .colVerd input {
   width: 3rem;
   text-align: right;
@@ -515,6 +544,15 @@
 
 .quickadd {
   display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* Houdt de "Snel toevoegen:"-hint en de bijbehorende knoppen als één flex-item samen, zodat ze
+ * nooit los van elkaar naar een andere regel wrappen in de bredere .gridFooter-rij. */
+.quickaddGroep {
+  display: flex;
+  align-items: center;
   gap: 0.35rem;
   flex-wrap: wrap;
 }

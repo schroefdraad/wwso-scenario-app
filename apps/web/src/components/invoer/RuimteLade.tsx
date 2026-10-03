@@ -60,7 +60,7 @@ const SANITAIR_EISEN: [keyof SanitairVoorziening['extraEisen'], string][] = [
 
 export function RuimteLade() {
   const { state } = useInvoer();
-  const { lade, sluit, zetSegment } = useLade();
+  const { lade, sluit } = useLade();
   const rij = state.ruimtes.find((r) => r.id === lade.ruimteId);
 
   useEffect(() => {
@@ -73,12 +73,12 @@ export function RuimteLade() {
 
   if (!rij) return null;
 
-  const segmenten: { key: LadeSegment; label: string; aan: boolean }[] = [
-    { key: 'keuken', label: 'Keuken', aan: !!rij.keuken },
-    { key: 'sanitair', label: 'Sanitair', aan: !!rij.sanitair },
-    { key: 'parkeerplek', label: 'Parkeerplek', aan: !!rij.parkeerplek },
-    { key: 'zolder', label: 'Zolder', aan: !!rij.zolder },
-  ];
+  const segmentLabel: Record<LadeSegment, string> = {
+    keuken: 'Keuken',
+    sanitair: 'Sanitair',
+    parkeerplek: 'Parkeerplek',
+    zolder: 'Zolder',
+  };
 
   return (
     <>
@@ -87,7 +87,7 @@ export function RuimteLade() {
         <div className={styles.drawerKop}>
           <div>
             <h3 id="drawer-titel">
-              Ruimte {rij.nr} · {rij.naam || '(naamloos)'}
+              Ruimte {rij.nr} · {rij.naam || '(naamloos)'} · {segmentLabel[lade.segment]}
             </h3>
             <div className={styles.sub}>
               {rij.type} · {rij.oppervlakteM2 || '0'} m²
@@ -98,19 +98,6 @@ export function RuimteLade() {
           </button>
         </div>
         <div className={styles.drawerBody}>
-          <div className={styles.segmenten}>
-            {segmenten.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                className={`${styles.segmentBtn} ${s.aan ? styles.segmentBtnAan : ''} ${lade.segment === s.key ? styles.segmentBtnActief : ''}`}
-                onClick={() => zetSegment(s.key)}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
           {lade.segment === 'keuken' && <KeukenPanel rij={rij} />}
           {lade.segment === 'sanitair' && <SanitairPanel rij={rij} />}
           {lade.segment === 'parkeerplek' && <ParkeerplekPanel rij={rij} />}

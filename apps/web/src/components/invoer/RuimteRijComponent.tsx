@@ -6,6 +6,7 @@ import { KamerChipStrip } from './KamerChipStrip';
 import { useInvoer } from './InvoerContext';
 import { useLade } from './LadeContext';
 import { useToast } from './ToastContext';
+import { InfoBadge } from '../InfoBadge';
 import { DUBBEL_GEDEELDE_RUIMTE_TYPES } from '@wwso/engine';
 import { KOUD_TYPES } from '../../lib/invoer/reducer';
 import { TYPE_GROEPEN } from './typeGroepen';
@@ -73,12 +74,27 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
         </select>
       </td>
       <td className={styles.colM2}>
-        <input
-          value={rij.oppervlakteM2}
-          placeholder="0,0"
-          aria-label={`Oppervlakte, ruimte ${rij.nr}`}
-          onChange={(e) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { oppervlakteM2: e.target.value } })}
-        />
+        <div className={styles.m2Cel}>
+          <input
+            value={rij.oppervlakteM2}
+            placeholder="0,0"
+            aria-label={`Oppervlakte, ruimte ${rij.nr}`}
+            onChange={(e) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { oppervlakteM2: e.target.value } })}
+          />
+          <button
+            type="button"
+            className={`${styles.meterkastBtn} ${rij.heeftMeterkast ? styles.meterkastBtnActief : ''}`}
+            aria-label={`Gas-/elektrameter aanwezig, ruimte ${rij.nr}`}
+            aria-pressed={rij.heeftMeterkast}
+            onClick={() => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { heeftMeterkast: !rij.heeftMeterkast } })}
+          >
+            ⚡
+          </button>
+          <InfoBadge>
+            Gas-/elektrameter aanwezig in deze ruimte of in een kast daarin — trekt 0,18 m² af van de oppervlakte vóórdat de puntentelling (rubriek 1, 2 en 9)
+            ermee rekent (§2.2.4).
+          </InfoBadge>
+        </div>
       </td>
       <td className={styles.colVerd}>
         <input
@@ -167,11 +183,11 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
           </button>
           <button
             type="button"
-            className={`${styles.voorzBadgeBtn} ${rij.heeftMeterkast ? styles.voorzBadgeBtnActief : ''}`}
-            title="Gas-/elektrameter aanwezig (trekt 0,18 m² af van de oppervlakte, §2.2.4)"
-            onClick={() => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { heeftMeterkast: !rij.heeftMeterkast } })}
+            className={`${styles.voorzBadgeBtn} ${rij.parkeerplek ? styles.voorzBadgeBtnActief : ''}`}
+            title="Parkeerplek"
+            onClick={() => open(rij.id, 'parkeerplek')}
           >
-            ⚡
+            🅿️
           </button>
         </div>
       </td>

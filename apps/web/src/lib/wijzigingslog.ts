@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.19';
+export const APP_VERSIE = '0.7.20';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.20',
+    datum: '2026-10-02',
+    wijzigingen: [
+      'Verfijning op de v0.7.19-fix: bij onzekere bewerkrechten staan "Opslaan"/"Doorrekenen" nu gewoon uit (geen wegklikbare melding meer) — ernaast staat een losse, bewust secundaire knop "Toch opslaan als nieuwe kopie →" voor het geval van een écht aanhoudende storing, zodat je niet volledig vast kan komen te zitten.',
+      'Ruimten-sectie opgeschoond: "Voorbeeldpand laden"/"Alles verwarmd"/"Alles verkoeld" weg, "Snel toevoegen" staat weer gegarandeerd op dezelfde regel als de bijbehorende knoppen.',
+      'Ruimte-voorzieningen: de tab-switcher (Keuken/Sanitair/Zolder/Parkeerplek) bovenin het paneel is weg — je ziet meteen het paneel van het icoon waar je op klikte. Parkeerplek heeft nu ook een eigen icoon in de ruimterij (🅿️, stond er eerst niet). Het elektra/meterkast-icoontje staat voortaan naast het m²-veld (waar het inhoudelijk bij hoort) met een echte uitleg i.p.v. alleen een hover-tooltip.',
+      'Topnavigatie opgeschoond: het adres staat er niet meer los in (al zichtbaar in het Woning-veld zelf en de browsertab-titel), en de titel is nu een korte contextlabel.',
+    ],
+  },
   {
     versie: '0.7.19',
     datum: '2026-10-02',

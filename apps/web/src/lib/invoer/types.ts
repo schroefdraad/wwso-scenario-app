@@ -90,8 +90,18 @@ export interface InvoerState {
    * per ongeluk toch bewerkbaar leek) — "Opslaan" maakt dan een nieuwe, eigen kopie i.p.v. de
    * bestaande rij te proberen bijwerken (die zou de RLS `with check` alsnog weigeren, zie
    * `Topbar.tsx`).
+   *
+   * `bewerkrechtenOnzeker` (2026-10-02, gemeld tijdens testen: "ik vind het vervelend dat hij
+   * forkt, dat laat het aantal kopieën uit de hand lopen"): bewust GESCHEIDEN van `magBewerken`.
+   * `magBewerken: false` betekent hier "bevestigd niet van mij" (demo-woning, andere org) — dat
+   * is een legitieme, herkende situatie en de fork-als-eigen-kopie blijft daar precies zo werken
+   * als bedoeld. `bewerkrechtenOnzeker: true` betekent "kon niet bevestigd worden, geen idee of
+   * dit wel/niet van mij is" (de profiel-ophaalcall faalde, zelfs na de automatische retry in
+   * `lib/deals/profiel.ts`) — daarvoor biedt `Topbar.tsx` geen "ga door en maak een kopie"-optie
+   * meer aan (een confirm-dialoog is te makkelijk weg te klikken), maar blokkeert opslaan
+   * volledig met een foutmelding om opnieuw te proberen.
    */
-  bewerktDeal?: { id: string; naam: string; notitie: string; map: string; scenarios: ScenarioSelectie[]; magBewerken: boolean };
+  bewerktDeal?: { id: string; naam: string; notitie: string; map: string; scenarios: ScenarioSelectie[]; magBewerken: boolean; bewerkrechtenOnzeker: boolean };
   /**
    * Gezet zodra dit scherm een AS-IS-kopie is die als handmatig TO-BE-scenario bewerkt wordt
    * (via `/woning/nieuw?scenario=<slot>`, backlog: AS-IS kopiëren naar een handmatig scenario,

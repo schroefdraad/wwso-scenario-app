@@ -1,7 +1,6 @@
 'use client';
 
 import { useInvoer } from './InvoerContext';
-import { useToast } from './ToastContext';
 import { RuimteRijRow } from './RuimteRijComponent';
 import { ToewijzingsOverzicht } from './ToewijzingsOverzicht';
 import { Waarschuwingen } from './Waarschuwingen';
@@ -11,7 +10,6 @@ import styles from './styles.module.css';
 
 export function RuimteRaster() {
   const { state, dispatch } = useInvoer();
-  const { toon } = useToast();
   const aantalKamers = parseInt(state.pand.aantalKamers, 10) || 0;
   const poortOpen = aantalKamers > 0;
 
@@ -60,40 +58,6 @@ export function RuimteRaster() {
           >
             Maak {aantalKamers || 0} privévertrekken aan
           </button>
-          <button
-            type="button"
-            className={styles.btn}
-            onClick={() => {
-              if (state.ruimtes.length > 0 && !confirm('Er staan al ruimten ingevoerd. Voorbeeldpand laden en overschrijven?')) return;
-              dispatch({ soort: 'VOORBEELDPAND_GELADEN' });
-              toon('Voorbeeldpand geladen (testpand6Kamers)');
-            }}
-          >
-            Voorbeeldpand laden
-          </button>
-          <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnKlein}`}
-            disabled={state.ruimtes.length === 0}
-            onClick={() => {
-              dispatch({ soort: 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET', veld: 'verwarmd' });
-              toon('Alle ruimten op verwarmd gezet');
-            }}
-          >
-            Alles verwarmd
-          </button>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnKlein}`}
-            disabled={state.ruimtes.length === 0}
-            onClick={() => {
-              dispatch({ soort: 'ALLE_RUIMTES_VERWARMD_VERKOELD_GEZET', veld: 'verkoeld' });
-              toon('Alle ruimten op verkoeld gezet');
-            }}
-          >
-            Alles verkoeld
-          </button>
           <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
           {/* Generiek toevoegen voor elk type uit TYPE_GROEPEN, niet alleen de vijf QUICKADD_TYPES
            * hieronder (feedback Steven Kramer, 2026-09-08: een dropdown met alle typen "zoals in
@@ -129,26 +93,28 @@ export function RuimteRaster() {
             ))}
           </select>
           <span style={{ width: 1, height: '1.6rem', background: 'var(--line)' }} />
-          <span className={styles.hint}>Snel toevoegen:</span>
-          <div className={styles.quickadd}>
-            {QUICKADD_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                className={`${styles.btn} ${styles.btnKlein}`}
-                disabled={state.ruimtes.length >= 40}
-                onClick={() => {
-                  const bestaand = state.ruimtes.filter((r) => r.type === type).length;
-                  const naam = bestaand === 0 ? type : `${type} ${bestaand + 1}`;
-                  dispatch({
-                    soort: 'RUIMTE_TOEGEVOEGD',
-                    ruimte: { type, naam, kamers: Array.from({ length: aantalKamers }, (_, i) => i + 1) },
-                  });
-                }}
-              >
-                + {type}
-              </button>
-            ))}
+          <div className={styles.quickaddGroep}>
+            <span className={styles.hint}>Snel toevoegen:</span>
+            <div className={styles.quickadd}>
+              {QUICKADD_TYPES.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  className={`${styles.btn} ${styles.btnKlein}`}
+                  disabled={state.ruimtes.length >= 40}
+                  onClick={() => {
+                    const bestaand = state.ruimtes.filter((r) => r.type === type).length;
+                    const naam = bestaand === 0 ? type : `${type} ${bestaand + 1}`;
+                    dispatch({
+                      soort: 'RUIMTE_TOEGEVOEGD',
+                      ruimte: { type, naam, kamers: Array.from({ length: aantalKamers }, (_, i) => i + 1) },
+                    });
+                  }}
+                >
+                  + {type}
+                </button>
+              ))}
+            </div>
           </div>
           <span className={styles.tellerRechts}>{state.ruimtes.length}/40</span>
         </div>

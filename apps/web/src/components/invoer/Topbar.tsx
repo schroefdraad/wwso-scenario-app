@@ -21,7 +21,7 @@ export function Topbar() {
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
   const n = parseInt(state.pand.aantalKamers, 10) || 0;
   useDocumentTitle(`${state.pand.adres || 'Nieuwe woning'} · WWSO Scenario App`);
-  const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
+  const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'>('idle');
 
   /**
    * Gedeelde opslaan-logica achter zowel de "Woning opslaan"-knop als "Doorrekenen →"
@@ -39,22 +39,26 @@ export function Topbar() {
   // dan gewoon een nieuwe, eigen kopie (zelfde patroon als de bestaande "⧉ Kopiëren"-knop op
   // /woningen), en de sessie koppelt vanaf dat moment aan díe nieuwe, wél bewerkbare woning.
   const magBewerken = !state.bewerktDeal || state.bewerktDeal.magBewerken;
+  // Zie de uitleg bij `bewerkrechtenOnzeker` in `lib/invoer/types.ts`. Bewust los van `magBewerken`
+  // gehouden: "bevestigd niet van mij" (demo-woning/andere org) mag gewoon forken zoals ontworpen,
+  // alleen "kon niet bevestigd worden" wordt hier geblokkeerd.
+  const bewerkrechtenOnzeker = state.bewerktDeal?.bewerkrechtenOnzeker ?? false;
 
-  async function slaWoningOp() {
+  /**
+   * `forceerKopie` (2026-10-02, vervolg op de vorige fix): bij onzekere bewerkrechten blokkeert
+   * `slaWoningOp` zichzelf standaard (geen fork via de hoofdknoppen, zie hieronder) — maar
+   * volledig blokkeren zonder ontsnapping is ook niet goed: bij een écht aanhoudende storing (niet
+   * transiënt, retry in `profiel.ts` heeft al geen effect) zit je dan alsnog helemaal vast, ook
+   * als je weloverwogen tóch verder wil als kopie. Daarom een losse, bewust secundaire knop
+   * ("Toch opslaan als nieuwe kopie →", alleen zichtbaar bij onzekere bewerkrechten) die deze
+   * functie met `forceerKopie: true` aanroept — een aparte, duidelijk gelabelde knop i.p.v. een
+   * confirm()-dialoog die je per ongeluk wegklikt.
+   */
+  async function slaWoningOp(forceerKopie = false) {
     if (!pand) return null;
-    // Nooit stilzwijgend forken (2026-10-02, gemeld tijdens testen: een al bewerkte woning + al
-    // opgeslagen scenario leek "te verdwijnen" — bleek telkens een nieuwe, scenario-loze kopie te
-    // zijn omdat `magBewerken` een tijdelijke profiel-ophaalfout niet van "echt geen rechten" kon
-    // onderscheiden, zie `lib/deals/profiel.ts`). Vóór zo'n fork altijd expliciet bevestigen —
-    // `state.bewerktDeal` is alleen gezet voor een AL bestaande woning, dus dit raakt nooit het
-    // normale "nieuwe woning opslaan"-pad.
-    if (state.bewerktDeal && !magBewerken) {
-      const doorgaan = confirm(
-        `Je bewerkrechten voor "${state.bewerktDeal.naam}" konden niet bevestigd worden — dit kan een tijdelijke hapering zijn (bijv. vlak na inloggen).\n\n` +
-          'Doorgaan slaat je wijzigingen op als een NIEUWE, losse kopie — de bestaande woning (met eventuele scenario\'s) blijft dan ongewijzigd staan onder de oude naam.\n\n' +
-          'Annuleren en de pagina verversen lost het meestal op als het inderdaad tijdelijk was.',
-      );
-      if (!doorgaan) return null;
+    if (bewerkrechtenOnzeker && !forceerKopie) {
+      setDealOpslaanStatus('onzeker');
+      return null;
     }
     setDealOpslaanStatus('bezig');
     try {
@@ -76,7 +80,7 @@ export function Topbar() {
       const deal = state.bewerktDeal && magBewerken ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
       // Na een kopie is de sessie voortaan aan de NIEUWE, eigen woning gekoppeld — magBewerken
       // is dan altijd true, ongeacht wat de bron was.
-      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, magBewerken: true } });
+      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, magBewerken: true, bewerkrechtenOnzeker: false } });
       setDealOpslaanStatus('gelukt');
       return deal;
     } catch {
@@ -87,6 +91,10 @@ export function Topbar() {
 
   async function dealVroegOpslaan() {
     await slaWoningOp();
+  }
+
+  async function forceerKopieOpslaan() {
+    await slaWoningOp(true);
   }
 
   /**
@@ -125,20 +133,24 @@ export function Topbar() {
     state.pand.bouwjaar
   );
 
+      // Het adres zelf staat niet meer in de topnavigatie (feedback 2026-10-02: "hoort hier niet
+  // thuis") — het is al zichtbaar in het ①Woning-adresveld zelf én in de browsertab-titel
+  // (`useDocumentTitle` hierboven), een derde plek voegde niks toe. De context-chip hieronder is
+  // bewust tot ÉÉN regel samengevoegd (was eerst twee losse chips die bij een niet-bewerkbare
+  // woning tegelijk zichtbaar waren: "bewerkt woning X" + "Voorbeeld (alleen-lezen)").
   return (
     <header className={styles.topbar}>
       <HomeLogo />
-      <span className={styles.titel}>{state.pand.adres || 'Nieuwe woning'}</span>
+      <span className={styles.titel}>{state.handmatigScenario ? 'Scenario bewerken' : state.bewerktDeal ? 'Woning bewerken' : 'Nieuwe woning'}</span>
       <span className={styles.sub}>
         {n} kamer{n === 1 ? '' : 's'}
       </span>
-      {state.bewerktDeal && <span className={styles.sub}>· bewerkt woning &ldquo;{state.bewerktDeal.naam}&rdquo;</span>}
-      {state.bewerktDeal && !magBewerken && (
-        <span className={styles.sub} title="Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.">
-          · Voorbeeld (alleen-lezen)
+      {state.bewerktDeal && (
+        <span className={styles.sub} title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
+          · &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
         </span>
       )}
-      {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
+      {state.handmatigScenario && <span className={styles.sub}>· &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
       <nav className={styles.sections}>
         <a className={styles.sectionLink} href="#sectie-woning">
           ① Woning <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
@@ -159,21 +171,31 @@ export function Topbar() {
           <button
             type="button"
             className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`}
-            disabled={!pand || dealOpslaanStatus === 'bezig'}
-            title={!pand ? (stap ?? undefined) : undefined}
+            disabled={!pand || dealOpslaanStatus === 'bezig' || bewerkrechtenOnzeker}
+            title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : !pand ? (stap ?? undefined) : undefined}
             onClick={dealVroegOpslaan}
           >
             {state.bewerktDeal ? (magBewerken ? 'Opslaan' : 'Opslaan als eigen woning') : 'Woning opslaan'}
           </button>
           {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
           {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
+          {bewerkrechtenOnzeker && (
+            <>
+              <span className={styles.sub} title='Probeer eerst de pagina te verversen — dat lost het meestal op als het een tijdelijke hapering was.'>
+                Bewerkrechten konden niet bevestigd worden
+              </span>
+              <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`} disabled={!pand || dealOpslaanStatus === 'bezig'} onClick={forceerKopieOpslaan}>
+                Toch opslaan als nieuwe kopie →
+              </button>
+            </>
+          )}
         </>
       )}
       <button
         type="button"
         className={`${styles.btn} ${styles.btnPrimair}`}
-        disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig')}
-        title={stap ?? undefined}
+        disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig') || (!state.handmatigScenario && bewerkrechtenOnzeker)}
+        title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : stap ?? undefined}
         onClick={doorrekenen}
       >
         {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}

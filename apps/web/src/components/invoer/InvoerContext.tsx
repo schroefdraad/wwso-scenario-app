@@ -28,6 +28,9 @@ export interface InitieelDeal {
    * `lib/deals/profiel.ts`)? Door de aanroeper (`/woning/nieuw`) meegegeven i.p.v. hier zelf
    * opgezocht — deze context kent geen Supabase-detail zoals het eigen profiel. */
   magBewerken: boolean;
+  /** Zie de uitleg bij `bewerktDeal` in `lib/invoer/types.ts` — `true` als de profiel-ophaalcall
+   * zelf faalde (na retry), los van wat `magBewerken` zegt. */
+  bewerkrechtenOnzeker: boolean;
 }
 
 /** Een AS-IS-kopie die als handmatig TO-BE-scenario bewerkt wordt (backlog: AS-IS kopiëren naar een handmatig scenario, feedback Emma Morrison, 2026-08-21 — via /woning/nieuw?scenario=<slot>). */
@@ -81,6 +84,7 @@ export function InvoerProvider({
             map: initieelDeal.map,
             scenarios: initieelDeal.scenarios,
             magBewerken: initieelDeal.magBewerken,
+            bewerkrechtenOnzeker: initieelDeal.bewerkrechtenOnzeker,
           },
         },
       });
