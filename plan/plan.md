@@ -322,6 +322,34 @@ huidige gebruikers per ongeluk buitengesloten raken — zelfde risicocategorie a
 onafhankelijk uitvoerbaar, maar de auth-toggle moet dicht vóórdat er data van echt gescheiden orgs
 naast elkaar staat — anders is de org-scheiding cosmetisch voor wie de publieke anon-key heeft.*
 
+## Toegang & rollen voor de bèta (2026-10-03, na het kopie-probleem)
+
+**Aanleiding.** De rollenlaag hierboven is gebouwd voor een wereld waarin iedereen inlogt, maar
+op productie staat inloggen bewust uit (auth-toggle, zodat Steven kan testen). Zonder sessie was
+er geen profiel → `magDealBewerken` gaf `false` voor elke woning → elke "Opslaan"/"Doorrekenen"
+maakte een nieuwe "(kopie)" (tot 8 diep bij Kanaalkade 49-B), en de regel "eerst opslaan vóór
+de volgende stap" (v0.7.24) werkte op de vergelijking helemaal niet.
+
+**Tijdelijke fix (v0.7.30, gedaan).** `haalEigenProfielOp` onderscheidt nu "niemand ingelogd"
+(`ANONIEM`) van "ingelogd maar niet op de allowlist" (`null`). Anoniem = gewoon bijwerken, alleen
+de demo-woning blijft beschermd. Bewust geen sloop van de rollenlaag: RLS-policies, demo-woning
+en delen blijven de fundering voor de bèta. Geen nieuw gat: de database staat met de toggle open
+toch al open voor de anon-key.
+
+**Vóór de bèta-livegang** (pas starten als Steven klaar is met testen — zie de auth-toggle-
+afspraak in `plan/STATUS.md`):
+- [ ] Opruimen: de "(kopie)"-rijen van Kanaalkade 49-B (10 stuks, lijst 2026-10-03) — welke weg
+      mogen beslist de gebruiker, niet automatisch verwijderen.
+- [ ] Auth-toggle dicht: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weghalen op Vercel.
+- [ ] De tijdelijke `ANONIEM`-regel weer verwijderen uit `magDealBewerken` (zonder sessie kom je
+      de app dan niet meer in) — plus de bijbehorende regressietests aanpassen.
+- [ ] Rollen echt testen met verschillende gebruikers: eigenaar (Myle), gewoon lid, iemand van een
+      andere org, de demo-woning, en "ingelogd maar niet op de allowlist". Per rol: opslaan,
+      doorrekenen, doorklikken op de vergelijking (automatisch opslaan), kopiëren, verwijderen.
+- [ ] Kopie-meldingen en foutmeldingen nalopen met echte rollen (geen rauwe RLS-fout 42501 meer
+      zichtbaar, "alleen-lezen" overal begrijpelijk uitgelegd).
+- [ ] De SMTP- en `allowed_emails`-stappen hierboven, zodat testers kunnen inloggen.
+
 ## Brug Shortlist → Puntum — voorbereiding (2026-09-27, gefaseerd plan 2026-10-01)
 
 *Niet gedekt door de Fase-4-hold hieronder — dit raakt de multi-tenant-stap niet en is klein genoeg

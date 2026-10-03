@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.29';
+export const APP_VERSIE = '0.7.30';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,13 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.30',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Bugfix: zonder in te loggen gold elke woning als alleen-lezen, waardoor elke keer "Opslaan" of "Doorrekenen" een nieuwe "(kopie)" maakte, en automatisch opslaan op de vergelijking niet werkte. Zolang inloggen nog niet verplicht is, worden woningen nu gewoon bijgewerkt — alleen de voorbeeldwoning blijft beschermd.',
+    ],
+  },
   {
     versie: '0.7.29',
     datum: '2026-10-03',

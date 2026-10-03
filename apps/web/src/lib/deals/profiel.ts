@@ -1,8 +1,8 @@
 import { supabase } from '../supabase/client';
-import type { EigenProfiel } from './types';
+import { ANONIEM, type Toegang } from './types';
 
-export type { EigenProfiel } from './types';
-export { magDealBewerken } from './types';
+export type { EigenProfiel, Toegang } from './types';
+export { magDealBewerken, profielVan } from './types';
 
 /**
  * `null` zonder ingelogde sessie (dezelfde auth-gating als `Footer`/`FeedbackKnop`) of als het
@@ -19,12 +19,14 @@ export { magDealBewerken } from './types';
  * — bij een écht structurele fout (RLS, netwerk down) gooit de tweede poging alsnog, en blijft de
  * aanroeper verantwoordelijk voor het nooit-stilzwijgend-forken (zie `Topbar.tsx`).
  */
-export async function haalEigenProfielOp(): Promise<EigenProfiel | null> {
+export async function haalEigenProfielOp(): Promise<Toegang> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const email = user?.email;
-  if (!email) return null;
+  // Geen sessie = anoniem (tijdelijk, zie `ANONIEM` in types.ts) — niet hetzelfde als "ingelogd
+  // maar niet op de allowlist" (`null` hieronder).
+  if (!email) return ANONIEM;
 
   let laatsteFout: Error | undefined;
   for (let poging = 1; poging <= 2; poging++) {

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag';
-import { haalEigenProfielOp, type EigenProfiel } from '../../lib/deals/profiel';
+import { haalEigenProfielOp, profielVan, type Toegang } from '../../lib/deals/profiel';
 import { magDealBewerken, type Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { AppHeader, headerKnop } from '../../components/AppHeader';
@@ -17,7 +17,8 @@ const GEEN_MAP = '(geen map)';
 export default function DealsOverzicht() {
   useDocumentTitle('Mijn woningen · WWSO Scenario App');
   const [deals, setDeals] = useState<Deal[] | null>(null);
-  const [profiel, setProfiel] = useState<EigenProfiel | null>(null);
+  const [toegang, setToegang] = useState<Toegang>(null);
+  const profiel = profielVan(toegang);
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
   const [kopieerBezigId, setKopieerBezigId] = useState<string | null>(null);
@@ -32,8 +33,8 @@ export default function DealsOverzicht() {
     // mapnamen die zichtbaar zijn" — een lichte UX-onvolkomenheid, geen reden om de hele pagina
     // te laten falen.
     haalEigenProfielOp()
-      .then(setProfiel)
-      .catch(() => setProfiel(null));
+      .then(setToegang)
+      .catch(() => setToegang(null));
   }, []);
 
   async function kopieer(id: string) {
@@ -168,7 +169,7 @@ export default function DealsOverzicht() {
                         >
                           {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
                         </button>
-                        {magDealBewerken(deal, profiel) && (
+                        {magDealBewerken(deal, toegang) && (
                           <>
                             <button
                               type="button"

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers } from '@wwso/engine';
-import { magDealBewerken, parseDealRij, type EigenProfiel } from './types';
+import { ANONIEM, isAnoniem, magDealBewerken, parseDealRij, profielVan, type EigenProfiel } from './types';
 
 function geldigeRij(overrides: Record<string, unknown> = {}) {
   return {
@@ -182,7 +182,25 @@ describe('magDealBewerken (multi-tenant org-scheiding, 2026-09-28)', () => {
     expect(magDealBewerken({ orgId: andereOrg, isDemo: false }, eigenaar)).toBe(true);
   });
 
-  it('zonder profiel (niet ingelogd / nog aan het laden) mag niets bewerkt worden', () => {
+  it('ingelogd maar niet op de allowlist (of nog aan het laden) mag niets bewerkt worden', () => {
     expect(magDealBewerken({ orgId: eigenOrg, isDemo: false }, null)).toBe(false);
+  });
+});
+
+describe('kopie-probleem 2026-10-03 — tijdelijke regel zolang inloggen op productie uit staat', () => {
+  const org = '00000000-0000-0000-0000-000000000001';
+
+  it('incident: zonder inlog werd elke woning alleen-lezen en maakte elke "Opslaan" een kopie — nu gewoon bijwerken', () => {
+    expect(magDealBewerken({ orgId: org, isDemo: false }, ANONIEM)).toBe(true);
+  });
+
+  it('de demo-woning blijft ook zonder inlog beschermd (opslaan maakt daar een eigen kopie)', () => {
+    expect(magDealBewerken({ orgId: org, isDemo: true }, ANONIEM)).toBe(false);
+  });
+
+  it('anoniem is iets anders dan "ingelogd zonder toegang", en levert geen profiel op', () => {
+    expect(isAnoniem(ANONIEM)).toBe(true);
+    expect(isAnoniem(null)).toBe(false);
+    expect(profielVan(ANONIEM)).toBeNull();
   });
 });

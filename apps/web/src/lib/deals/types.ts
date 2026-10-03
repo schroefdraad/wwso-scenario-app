@@ -138,10 +138,39 @@ export interface EigenProfiel {
  * `0006_deals_demo_en_delen.sql`: eigen org + geen demo-rij, OF de eigenaar (die mag alles). Dit is
  * puur een UI-hint (welke knoppen/teksten tonen) — RLS blijft de daadwerkelijke afdwinging.
  */
-export function magDealBewerken(deal: Pick<Deal, 'orgId' | 'isDemo'>, profiel: EigenProfiel | null): boolean {
+export function magDealBewerken(deal: Pick<Deal, 'orgId' | 'isDemo'>, toegang: Toegang): boolean {
+  if (isAnoniem(toegang)) return !deal.isDemo;
+  const profiel = toegang;
   if (profiel?.isEigenaar) return true;
   if (!profiel) return false;
   return deal.orgId === profiel.orgId && !deal.isDemo;
+}
+
+/**
+ * TIJDELIJK (2026-10-03, tot de bèta — zie "Toegang & rollen voor de bèta" in `plan/plan.md`):
+ * niemand ingelogd. Zolang inloggen op productie bewust uit staat (`AUTH_VEREIST=false`, zodat
+ * Steven kan testen), had niemand een profiel → elke woning gold als alleen-lezen → elke
+ * "Opslaan"/"Doorrekenen" maakte een nieuwe "(kopie)", en "eerst opslaan vóór de volgende stap"
+ * werkte op de vergelijking helemaal niet. Zonder identiteit valt er niets af te schermen (de
+ * database staat dan ook open), dus: gewoon bijwerken, alleen de demo-woning blijft beschermd.
+ *
+ * Bewust GESCHEIDEN van `null` ("ingelogd, maar niet op de allowlist"): dat blijft "geen
+ * bewerkrechten", net als vóór deze wijziging. Verdwijnt zodra inloggen weer verplicht is — dan
+ * kom je zonder sessie de app niet meer in.
+ */
+export const ANONIEM = { anoniem: true } as const;
+export type Anoniem = typeof ANONIEM;
+
+/** Wat `haalEigenProfielOp` teruggeeft: een profiel, `null` (ingelogd maar geen toegang) of `ANONIEM`. */
+export type Toegang = EigenProfiel | null | Anoniem;
+
+export function isAnoniem(toegang: Toegang): toegang is Anoniem {
+  return toegang !== null && 'anoniem' in toegang;
+}
+
+/** Het profiel zelf, of `null` als er geen is (anoniem of geen toegang). */
+export function profielVan(toegang: Toegang): EigenProfiel | null {
+  return toegang && !isAnoniem(toegang) ? toegang : null;
 }
 
 export function parseDealRij(ruw: unknown): Deal {
