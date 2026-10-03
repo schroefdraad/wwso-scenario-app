@@ -137,6 +137,22 @@ ovenpunt, niet meer alleen magnetron — §2.5.4). 282/282 tests groen, tsc/esli
 browser-geverifieerd vóór deploy. Volledig verslag + root causes in `plan/plan.md`, backlog-sectie
 bovenaan.
 
+**Vervolg (2026-10-02, v0.7.20), ook gedeployed (`a24e3c4`).** Twee stukken: (1) de fork-fix
+hierboven verfijnd op feedback van de gebruiker ("confirm() is te makkelijk wegklikbaar, en
+volledig blokkeren zonder ontsnapping is ook niet goed") — "Opslaan"/"Doorrekenen" blokkeren nu
+gewoon bij onzekere bewerkrechten, met ernaast een losse, bewust secundaire knop "Toch opslaan als
+nieuwe kopie →" voor een écht aanhoudende storing. (2) Vijf losse UI-feedbackpunten afgehandeld:
+Ruimten-footer opgeschoond (Voorbeeldpand/Alles verwarmd/verkoeld weg), de tab-switcher in de
+ruimte-lade weg (toont direct het aangeklikte paneel), Parkeerplek kreeg een eigen icoon in de
+ruimterij (ontbrak, inconsistent met de tab die er wel was), het elektra/meterkast-icoon verhuisd
+naast het m²-veld met een echte uitleg, en de topnavigatie opgeschoond (adres weg, chips
+samengevoegd). Hierna is op verzoek van de gebruiker een **gerichte audit van de
+staat-navigatielaag** gestart (dealId/scenario/bewerkrechten-threading over paginanavigaties) —
+reden: dit is al de 5e/6e keer dat dit bugpatroon terugkomt sinds augustus, en er is geen
+geautomatiseerde test die het vangt. Zie de analyse en het voorstel in de sessiegeschiedenis van
+dit gesprek; vervolgstappen (consolidatie van de drie sessionStorage-bruggen, regressietests per
+incident) volgen na de audit.
+
 **Let op — lokale testinstelling nog actief, bewust door de gebruiker zelf terug te zetten:**
 tijdens het testen stonden `AUTH_VEREIST=false` (lokaal `.env.local`/`apps/web/.env.local`) en de
 open RLS-policy (`supabase/toggle-auth-uit.sql`) aan — geen van beide is onderdeel van de
