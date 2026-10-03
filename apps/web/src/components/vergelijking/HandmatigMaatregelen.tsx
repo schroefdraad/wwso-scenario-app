@@ -8,11 +8,6 @@ import { alternatiefGroepSleutel } from '../../lib/vergelijking/scenario-bouw';
 import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 
-const VERGUNNING_LABEL: Record<string, string> = {
-  'mogelijk-melding': 'melding',
-  vergunning: 'vergunning',
-};
-
 /**
  * Optimalisaties voor ÉÉN scenario-tabblad (sinds 2026-09-05 het uniforme pad voor elk scenario,
  * niet meer alleen voor een handmatig bewerkte kamer — zie `useScenarioPakket.ts`'s doc-comment
@@ -110,12 +105,8 @@ export function HandmatigMaatregelen({
                         <td className={styles.maatregelOmschrijving}>
                           <span className={styles.maatregelId}>{k.maatregel.id}</span>
                           {k.kandidaat.omschrijving}
-                          {VERGUNNING_LABEL[k.vergunningKlasse] && (
-                            <span className={styles.vergunningBadge}>
-                              {VERGUNNING_LABEL[k.vergunningKlasse]}
-                              <InfoBadge>{k.maatregel.vergunningOfMelding}</InfoBadge>
-                            </span>
-                          )}
+                          {/* Geen "melding"/"vergunning"-label meer (feedback 2026-10-03: deze app gaat
+                              niet over vergunningen). De classificatie blijft in de engine bestaan. */}
                         </td>
                         <td className={styles.tvtCel}>+{formateerEuro(k.extraJaarhuurEuro)}</td>
                         <td className={styles.tvtCel}>

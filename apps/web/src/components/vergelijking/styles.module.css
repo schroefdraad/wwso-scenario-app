@@ -374,17 +374,6 @@
   margin-right: 0.4rem;
 }
 
-.vergunningBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.68rem;
-  padding: 0.05rem 0.4rem;
-  border-radius: 999px;
-  background: var(--amber-soft);
-  color: var(--amber);
-  margin-left: 0.4rem;
-}
 
 .tvtCel {
   font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;

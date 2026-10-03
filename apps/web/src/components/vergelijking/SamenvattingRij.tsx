@@ -14,8 +14,8 @@ export interface ScenarioKolom {
 
 /**
  * Bovenste vergelijkingsraster: as-is naast maximaal drie scenario's (taakomschrijving taak 14).
- * Toont exact de kolom uit taak 11 (investering, terugverdientijd, marginaal rendement, ΔBAR,
- * vergunningplicht) plus de resulterende jaarhuur — dat is de kern van de "directe hertelling".
+ * Toont exact de kolom uit taak 11 (investering, terugverdientijd, marginaal rendement, ΔBAR)
+ * plus de resulterende jaarhuur — dat is de kern van de "directe hertelling".
  */
 export function SamenvattingRij({
   asIsWaardering,
