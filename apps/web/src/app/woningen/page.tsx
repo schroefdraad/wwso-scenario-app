@@ -153,7 +153,7 @@ export default function DealsOverzicht() {
                           {deal.naam}
                         </Link>
                         {deal.isDemo && (
-                          <span className={styles.dim} title="Permanente voorbeeldwoning — alleen-lezen, kopiëren maakt een eigen bewerkbare versie.">
+                          <span className={styles.dim} title="Voorbeeldwoning (alleen-lezen)">
                             {' '}
                             · Voorbeeld
                           </span>
@@ -177,7 +177,7 @@ export default function DealsOverzicht() {
                           type="button"
                           className={styles.kopieerKnop}
                           disabled={kopieerBezigId === deal.id}
-                          title="Kopiëren naar een nieuwe, losstaande woning"
+                          title="Kopiëren naar nieuwe woning"
                           onClick={() => kopieer(deal.id)}
                         >
                           {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}

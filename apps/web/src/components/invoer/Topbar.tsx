@@ -173,7 +173,7 @@ export function Topbar() {
                     : !pand
                       ? (stap ?? undefined)
                       : !magBewerken
-                        ? 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'
+                        ? 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'
                         : undefined
                 }
                 onClick={dealVroegOpslaan}
@@ -228,7 +228,7 @@ export function WoningContext() {
     <WoningContextStrook
       onderdelen={[
         state.bewerktDeal && (
-          <span title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
+          <span title={magBewerken ? undefined : 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'}>
             &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
           </span>
         ),

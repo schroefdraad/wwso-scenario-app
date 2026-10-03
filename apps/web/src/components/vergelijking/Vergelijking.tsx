@@ -511,7 +511,7 @@ export function Vergelijking({
               bewerkrechtenOnzeker
                 ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
                 : !magBewerken
-                  ? 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'
+                  ? 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'
                   : undefined
             }
           >

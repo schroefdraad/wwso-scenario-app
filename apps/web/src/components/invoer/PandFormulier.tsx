@@ -105,13 +105,12 @@ export function PandFormulier() {
             <div className={styles.veld}>
               <span className={styles.labelRij}>
                 <label htmlFor="p-gemeente">Gemeente</label>
-                <InfoBadge>
-                  {gemeenteKandidaten.length > 1 ? (
-                    <>&quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.</>
-                  ) : (
-                    <>Automatisch gesuggereerd op basis van &quot;Stad&quot; — bepaalt de huurtabel (§2.11).</>
-                  )}
-                </InfoBadge>
+                {/* Alleen nog bij een meerduidige stad (tekstreview 2026-10-03: de standaardtoelichting mocht weg). */}
+                {gemeenteKandidaten.length > 1 && (
+                  <InfoBadge>
+                    &quot;{pand.stad}&quot; komt voor in meerdere gemeentes ({gemeenteKandidaten.join(', ')}) — kies de juiste.
+                  </InfoBadge>
+                )}
               </span>
               <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
                 <option value="">— kies —</option>
@@ -125,7 +124,7 @@ export function PandFormulier() {
             <div className={`${styles.veld} ${styles.veldGate}`}>
               <span className={styles.labelRij}>
                 <label htmlFor="p-kamers">Aantal kamers</label>
-                <InfoBadge>Bepaalt de kolommen in de toewijzing hieronder — de poort van dit scherm.</InfoBadge>
+                <InfoBadge>Bepaalt het aantal kolommen in de toewijzing hieronder</InfoBadge>
               </span>
               <input
                 id="p-kamers"
@@ -212,7 +211,7 @@ export function PandFormulier() {
                     label="Ingangsdatum onbekend of ouder dan 10 jaar"
                   />
                   Ingangsdatum onbekend of ouder dan 10 jaar
-                  <InfoBadge>Onaangevinkt wordt het gekozen label gewoon gebruikt. Aangevinkt valt de motor terug op de bouwjaargrenzen (R4) — net als bij &quot;geen label bekend&quot;.</InfoBadge>
+                  <InfoBadge>Aangevinkt valt de motor terug op de bouwjaargrenzen net als bij &quot;geen label bekend&quot;.</InfoBadge>
                 </span>
               )}
             </div>

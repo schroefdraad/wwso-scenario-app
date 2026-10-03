@@ -568,8 +568,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                 <label>Eenhandsmengkranen</label>
                 {/* (i) direct naast de naam: rechts in de rij opende de popover buiten het paneel. */}
                 <InfoBadge>
-                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2) — een tweede eenhandsmengkraan hier voegt niks meer toe, maar mag je wel
-                  vastleggen (bijv. bij een meerpersoonswastafel).
+                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2)
                 </InfoBadge>
                 <input
                   type="number"
@@ -706,7 +705,7 @@ function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
             label="Laadpaal"
             onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, laadpaal: v } } })}
           />
-          <InfoBadge>Alleen als de laadpaal exclusief voor bewoners is: +{tarieven.laadpaalPunten} pt, gedeeld door het aantal adressen (§2.10.5).</InfoBadge>
+          <InfoBadge>Alleen als de laadpaal exclusief voor bewoners is: punten worden gedeeld door het aantal adressen (§2.10.5).</InfoBadge>
         </div>
       )}
       <p className={styles.parkeerVoorwaarden}>

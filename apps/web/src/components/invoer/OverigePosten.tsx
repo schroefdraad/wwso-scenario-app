@@ -71,7 +71,7 @@ export function OverigePosten() {
           <div className={styles.postKop}>
             <Toggle checked={state.losseLaadpaalAan} label="Losse laadpaal" onChange={(v) => dispatch({ soort: 'LAADPAAL_GEWIJZIGD', aan: v })} />
             <strong>Losse laadpaal aanwezig (R12.3)</strong>
-            <InfoBadge>Een laadpaal bij een gemeenschappelijke parkeerplek hoort niet hier maar bij die parkeerplek (R10).</InfoBadge>
+            <InfoBadge>Hoort de laadpaal bij een gedeelde parkeerplek? Vul hem dan in bij die parkeerplek onder ② Ruimten, niet hier (R10).</InfoBadge>
           </div>
           {state.losseLaadpaalAan && (
             <div className={styles.postDetail}>

@@ -54,9 +54,7 @@ export function HandmatigMaatregelen({
         <label className={styles.handmatigInvesteringVeld}>
           Investering herindeling (€)
           <InfoBadge>
-            De kamer/herindeling zelf heeft geen catalogusprijs — vul die investering hieronder zelf in. Maatregelen die je hier aanvinkt (bijv. airco of een
-            kitchenette in de nieuwe kamer) tellen met hun échte kosten mee bovenop dat bedrag (plus de energielabel-kostenschatting, als dit scenario ook
-            een labelwisseling bevat).
+            Vul hier de kosten in voor een herindeling of de realisatie van een extra kamer.
           </InfoBadge>
           <input
             type="number"

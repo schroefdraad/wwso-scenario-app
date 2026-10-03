@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.36';
+export const APP_VERSIE = '0.7.37';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.37',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Uitlegteksten (i) en tooltips korter en duidelijker gemaakt, onder meer bij aantal kamers, energielabel, eenhandsmengkranen, laadpaal en investering herindeling.',
+      'Gemeente: het (i)-pictogram verschijnt alleen nog als de stad in meerdere gemeentes ligt.',
+      'Mijn woningen: kortere tooltips bij "Kopiëren" en bij de voorbeeldwoning.',
+    ],
+  },
   {
     versie: '0.7.36',
     datum: '2026-10-03',
