@@ -1,0 +1,262 @@
+<title>Puntenrapport kopstijlen</title>
+<style>
+  :root {
+    --paper: #f4f5f2;
+    --paper-raised: #ffffff;
+    --paper-sunken: #eaece6;
+    --line: #d7dace;
+    --line-strong: #b3b8a8;
+    --ink: #1d2018;
+    --ink-dim: #5a5f52;
+    --accent: #2f6a53;
+    --accent-soft: #dbe9e1;
+    --shadow: rgba(29, 32, 24, 0.14);
+    --radius: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14161a;
+      --paper-raised: #1b1e22;
+      --paper-sunken: #101215;
+      --line: #2c302b;
+      --line-strong: #3e433c;
+      --ink: #e7e8e2;
+      --ink-dim: #a1a698;
+      --accent: #7bc79a;
+      --accent-soft: #1c332a;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #14161a;
+    --paper-raised: #1b1e22;
+    --paper-sunken: #101215;
+    --line: #2c302b;
+    --line-strong: #3e433c;
+    --ink: #e7e8e2;
+    --ink-dim: #a1a698;
+    --accent: #7bc79a;
+    --accent-soft: #1c332a;
+    --shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-sans-serif, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  header.page {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 3.4vw, 34px);
+    line-height: 1.15;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .shared {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .chip {
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  @media (max-width: 860px) {
+    .columns { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+
+  .card-head {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .variant-name {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--line-strong);
+    flex: none;
+  }
+
+  .swatch.licht { background: linear-gradient(135deg, #ffffff 50%, var(--accent) 50%); }
+  .swatch.band { background: var(--accent); }
+
+  .variant-desc {
+    font-size: 13.5px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .shots {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+  }
+
+  .shot-frame {
+    background: var(--paper-sunken);
+    padding: 18px;
+  }
+
+  .shot-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+
+  .shot-label {
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+
+  footer.note {
+    margin-top: 36px;
+    font-size: 13px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+
+  footer.note code {
+    background: var(--paper-sunken);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12.5px;
+  }
+</style>
+
+<div class="wrap">
+  <header class="page">
+    <p class="eyebrow">Puntum · PDF-export</p>
+    <h1>Twee kopstijlen voor het puntenrapport</h1>
+    <p class="lede">
+      Zelfde data (het 6-kamer-testpand), zelfde tabellen, zelfde lettertype (Inter) en dezelfde
+      logo-bestanden — het enige verschil tussen de twee opties hieronder is de kleur en vorm van
+      de kop- en voetregel die op elke pagina terugkomt.
+    </p>
+    <div class="shared">
+      <span class="chip">Overzichtstabel per kamer</span>
+      <span class="chip">Gerasterde rubriektabellen</span>
+      <span class="chip">Zebra-arcering</span>
+      <span class="chip">Paginanummer + datum in de voet</span>
+    </div>
+  </header>
+
+  <div class="columns">
+    <section class="card">
+      <div class="card-head">
+        <p class="variant-name"><span class="swatch licht"></span>Licht</p>
+        <p class="variant-desc">Witte kopregel, het "P"-icoon in huisstijlgroen, een dunne groene lijn eronder. Subtieler, minder inkt bij printen.</p>
+      </div>
+      <div class="shots">
+        <div class="shot-frame">
+          <p class="shot-label">Pagina 1 — overzicht</p>
+          <img src="__LICHT_P1__" alt="Licht-variant, pagina 1 met overzichtstabel" />
+        </div>
+        <div class="shot-frame">
+          <p class="shot-label">Pagina 2 — kamerdetail</p>
+          <img src="__LICHT_P2__" alt="Licht-variant, pagina 2 met rubriektabel van kamer 1" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <p class="variant-name"><span class="swatch band"></span>Band</p>
+        <p class="variant-desc">Volle-breedte donkergroene kopband, logo en woordmerk in wit. Steviger merkmoment, opvallender op elke pagina.</p>
+      </div>
+      <div class="shots">
+        <div class="shot-frame">
+          <p class="shot-label">Pagina 1 — overzicht</p>
+          <img src="__BAND_P1__" alt="Band-variant, pagina 1 met overzichtstabel" />
+        </div>
+        <div class="shot-frame">
+          <p class="shot-label">Pagina 2 — kamerdetail</p>
+          <img src="__BAND_P2__" alt="Band-variant, pagina 2 met rubriektabel van kamer 1" />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="note">
+    Beide zijn al werkende code (<code>stijlVariant: 'licht' | 'band'</code> op
+    <code>PuntenrapportDocument</code>) — kiezen is een kwestie van welke standaard
+    <code>Resultaatscherm.tsx</code> gebruikt bij "Download PDF". Niets hiervan is al gecommit of
+    gedeployed.
+  </footer>
+</div>

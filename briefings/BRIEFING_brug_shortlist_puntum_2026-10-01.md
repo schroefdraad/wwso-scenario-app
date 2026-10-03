@@ -203,9 +203,35 @@ Randweg 77 en Kromhoutstraat 14's afwijkingen moesten vandaag met de hand nagere
 - `aandeel_pct_van_totaal` per floor — welk deel van het totaal die verdieping is, zodat een
   dominante verdieping meteen opvalt.
 
-**Nog niet gedaan:** grotere steekproef om de vuistregel-drempels te valideren/tunen (nu arbitrair
-op basis van 7 panden); endpoint deployen naar Cloud Run; Hertshoornvaren 8 / Noordschans 4 nog
-niet opnieuw getest met alle fixes.
+**Nog niet gedaan:** endpoint deployen naar Cloud Run.
+
+## Bijgewerkt: n=20 steekproef, een echte bug gevonden + gefixt, en één onopgeloste ondertelling
+
+Op advies ("niet breder samplen, dieper op specifieke gevallen — de resterende problemen zijn
+structureel, geen statistiek-vraag") is een gerichte vervolgronde gedaan i.p.v. nog meer
+willekeurige panden: n=20 totaal, plus een herhaling van mislukkingen en een diepe blik op één
+onverklaarde uitschieter.
+
+**Echte bug gevonden en gefixt.** Bij Katendrechtsestraat 102 werd "Begane grond" (een échte
+verdieping) ten onrechte uitgesloten als "combinatie van andere floors". Oorzaak: twee
+onafhankelijke, piepkleine `Column`-structuurelementjes (0,26 en 0,28 m², geen kamers) op
+verschillende verdiepingen ronden allebei af naar 0,3 m² en worden zo als "overlap" gezien. Fix:
+ruimtes <0,5 m² doen niet meer mee in de overlap-matching (wel gewoon in `totaal_m2`). Resultaat:
+Katendrechtsestraat van -28,8% (fout) naar **-4,0%** (correct). Regressietest op eerdere gevallen
+bevestigt dat niets kapot is gegaan.
+
+**Maaskade 28-B (-24,8%, ondertelling): onderzocht, niet opgelost.** Geen gemiste verdieping, geen
+ontbrekende polygonen, geen eenhedenbug. De plattegrond is gemaakt door een derde partij ("©
+Zibber") — vermoedelijk een visuele tekening die niet 1-op-1 overeenkomt met Funda's officiële
+NEN2580-"Wonen"-cijfer. Geen bug aan scraperkant, een datakwaliteitsgat in de bron — relevant voor
+jullie kant: zulke gevallen zijn niet op te lossen door slimmer te rekenen, alleen te vangen met
+de `vlag`.
+
+**Herhaling afgerond:** Rakstraat 13-A lukte dit keer en gaf exact hetzelfde resultaat als eerder
+(101,85 m², +13,2% VLAG) — eerdere mislukking was een fluke, dit is een stabiel, onverklaard
+afwijkend geval (klein appartement, geen Column- of Berging-oorzaak). Hertshoornvaren 8 mislukte
+**2x op rij, elke keer op een andere manier** — voelt minder als toeval, meer als iets
+listing-specifieks; staat als onopgelost, niet verder geprobeerd.
 
 ---
 
