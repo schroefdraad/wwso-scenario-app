@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { huidigeVersiestempel, pasScenarioToe, type Energielabel, type PandInvoer, type PandWaardering } from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
 import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
@@ -17,7 +16,7 @@ import {
   type VergelijkingSnapshot,
 } from '../../lib/vergelijking/scenarioBewerkBrug';
 import type { ScenarioSelectie } from '../../lib/deals/types';
-import { HomeLogo } from '../HomeLogo';
+import { AppHeader, WoningContextStrook, kamersLabel } from '../AppHeader';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { SamenvattingRij } from './SamenvattingRij';
 import { HandmatigMaatregelen } from './HandmatigMaatregelen';
@@ -389,12 +388,12 @@ export function Vergelijking({
 
   return (
     <div className={styles.wrap}>
-      <header className={styles.kop}>
-        <HomeLogo />
-        <h1>Scenariovergelijking</h1>
-        <span className={styles.kopSub}>
-          {pand.pand.adres} · {pand.pand.stad}
-        </span>
+      <AppHeader titel="Scenariovergelijking" />
+      <WoningContextStrook onderdelen={[pand.pand.adres, pand.pand.stad, kamersLabel(pand.pand.aantalKamers)]} />
+      <main className={styles.main}>
+        {/* Naam/map/notitie/opslaan stonden tot 2026-10-03 in de topnavigatie — formuliervelden,
+            geen navigatie, dus een eigen blok bovenaan de pagina (topnav-audit, punt 1). */}
+        <section className={styles.woningGegevens} aria-label="Woninggegevens">
         <div className={styles.dealOpslaan}>
           <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de woning" className={styles.dealNaamVeld} />
           {nieuweMapModus ? (
@@ -467,9 +466,6 @@ export function Vergelijking({
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
-        <Link href="/woningen" className={styles.dealenLink}>
-          Mijn woningen →
-        </Link>
         <textarea
           value={dealNotitie}
           onChange={(e) => setDealNotitie(e.target.value)}
@@ -478,8 +474,7 @@ export function Vergelijking({
           className={styles.dealNotitieVeld}
           rows={2}
         />
-      </header>
-      <main className={styles.main}>
+        </section>
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
           asIsDealId={dealId}

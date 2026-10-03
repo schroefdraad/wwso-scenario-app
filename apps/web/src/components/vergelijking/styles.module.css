@@ -7,23 +7,17 @@
   min-height: 100vh;
 }
 
-.kop {
-  padding: 1rem 1.4rem;
-  border-bottom: 1px solid var(--line);
+/* Naam/map/opslaan/notitie — sinds 2026-10-03 een eigen blok bovenaan de pagina i.p.v. in de
+ * topnavigatie. */
+.woningGegevens {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1.2rem;
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.kop h1 {
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.kopSub {
-  color: var(--ink-dim);
-  font-size: 0.85rem;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .dealOpslaan {
@@ -31,7 +25,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin-left: auto;
 }
 
 .dealNaamVeld {
@@ -80,8 +73,6 @@
 }
 
 .dealNotitieVeld {
-  flex: 1 1 100%;
-  order: 10;
   border: 1px solid var(--line-strong);
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
@@ -101,16 +92,6 @@
   color: var(--red);
   font-size: 0.8rem;
   max-width: 20rem;
-}
-
-.dealenLink {
-  color: var(--accent);
-  font-size: 0.85rem;
-  text-decoration: none;
-}
-
-.dealenLink:hover {
-  text-decoration: underline;
 }
 
 .main {

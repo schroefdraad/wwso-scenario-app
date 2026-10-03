@@ -6,7 +6,7 @@ import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag
 import { haalEigenProfielOp, type EigenProfiel } from '../../lib/deals/profiel';
 import { magDealBewerken, type Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
-import { HomeLogo } from '../../components/HomeLogo';
+import { AppHeader, headerKnop } from '../../components/AppHeader';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import styles from './styles.module.css';
 
@@ -87,25 +87,30 @@ export default function DealsOverzicht() {
 
   return (
     <div className={styles.wrap}>
-      <header className={styles.kop}>
-        <HomeLogo />
-        <h1>Mijn woningen</h1>
-        {mappen.length > 0 && (
-          <select value={mapFilter} onChange={(e) => setMapFilter(e.target.value)} className={styles.mapFilter} aria-label="Filter op map">
-            <option value="">Alle mappen</option>
-            {mappen.map((m) => (
-              <option key={m} value={m}>
-                📁 {m}
-              </option>
-            ))}
-            <option value={GEEN_MAP}>Geen map</option>
-          </select>
-        )}
-        <Link href="/woning/nieuw" className={styles.nieuwLink}>
-          + Nieuwe woning
-        </Link>
-      </header>
+      <AppHeader
+        titel="Mijn woningen"
+        toonMijnWoningen={false}
+        acties={
+          <Link href="/woning/nieuw" className={headerKnop.primair}>
+            + Nieuwe woning
+          </Link>
+        }
+      />
       <main className={styles.main}>
+        {/* Filter hoort bij de lijst, niet in de topnavigatie (topnav-audit 2026-10-03). */}
+        {mappen.length > 0 && (
+          <div className={styles.filterRij}>
+            <select value={mapFilter} onChange={(e) => setMapFilter(e.target.value)} className={styles.mapFilter} aria-label="Filter op map">
+              <option value="">Alle mappen</option>
+              {mappen.map((m) => (
+                <option key={m} value={m}>
+                  📁 {m}
+                </option>
+              ))}
+              <option value={GEEN_MAP}>Geen map</option>
+            </select>
+          </div>
+        )}
         {foutmelding && <p className={`${styles.melding} ${styles.foutmelding}`}>Woningen ophalen mislukt: {foutmelding}</p>}
         {!foutmelding && deals === null && <p className={styles.melding}>Bezig met laden…</p>}
         {!foutmelding && deals !== null && deals.length === 0 && (

@@ -7,17 +7,8 @@
   min-height: 100vh;
 }
 
-.kop {
-  padding: 1rem 1.4rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-}
-
-.kop h1 {
-  font-size: 1.1rem;
-  margin: 0;
+.filterRij {
+  margin-bottom: 1rem;
 }
 
 .mapFilter {
@@ -28,17 +19,6 @@
   font-size: 0.85rem;
   background: var(--paper-raised);
   color: var(--ink);
-}
-
-.nieuwLink {
-  margin-left: auto;
-  color: var(--accent);
-  font-size: 0.85rem;
-  text-decoration: none;
-}
-
-.nieuwLink:hover {
-  text-decoration: underline;
 }
 
 .main {

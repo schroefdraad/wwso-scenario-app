@@ -77,10 +77,19 @@ export function PandFormulier() {
         : gemeenteKandidaten
       : ALLE_GEMEENTES;
 
+  // Sectiestatus staat sinds 2026-10-03 hier in de kop, niet meer als badge in de topnavigatie.
+  const pandCompleet = !!(pand.adres && pand.stad && pand.coropGebied && pand.wozOppervlak && pand.bouwjaar);
+
   return (
     <section className={styles.blok} id="sectie-woning">
       <div className={styles.blokKop}>
         <h2>① Woning</h2>
+        <span
+          className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}
+          title={pandCompleet ? 'Alle verplichte woninggegevens zijn ingevuld' : 'Nog niet alle verplichte woninggegevens zijn ingevuld'}
+        >
+          {pandCompleet ? '✓' : '…'}
+        </span>
       </div>
       <div className={styles.blokInhoud}>
         <div className={styles.pandGrid}>

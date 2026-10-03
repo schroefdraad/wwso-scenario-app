@@ -1,0 +1,103 @@
+.kop {
+  background: var(--paper-raised);
+  border-bottom: 1px solid var(--line);
+  padding: 0.6rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  min-height: 3.2rem;
+  box-sizing: border-box;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+.titel {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.navLink {
+  color: var(--ink);
+  font-size: 0.84rem;
+  text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+.navLink:hover {
+  background: var(--paper-sunken);
+}
+
+.knop {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  border-radius: 6px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: var(--ink);
+  font-family: inherit;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.knop:hover {
+  background: var(--paper-sunken);
+}
+
+.knop:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.knopPrimair {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.knopPrimair:hover {
+  background: var(--accent);
+  filter: brightness(1.06);
+}
+
+.knopPrimair:disabled {
+  filter: none;
+}
+
+.knopKlein {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.76rem;
+  border-radius: 5px;
+}
+
+.status {
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+}
+
+.statusFout {
+  color: var(--red);
+}
+
+/* Niet-sticky statusstrook onder de header (2026-10-02, gedeeld sinds 2026-10-03). */
+.context {
+  padding: 0.5rem 1.4rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-dim);
+  font-size: 0.82rem;
+}

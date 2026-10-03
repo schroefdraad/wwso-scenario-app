@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.22';
+export const APP_VERSIE = '0.7.23';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,18 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.23',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Eén en dezelfde topnavigatie op alle schermen (Mijn woningen, invoer, resultaat, vergelijking): logo en paginatitel links, "Mijn woningen" en de acties rechts, met de hoofdactie steeds als groene knop. Daarvoor zag de balk er per scherm anders uit en sprong hij bij elke paginawissel.',
+      'Woninginformatie (naam, adres, stad, kamers, peildatum) staat op elk scherm in dezelfde regel direct onder de topnavigatie — de woningnaam eerst, het kameraantal daarna, en "1 kamer" in het enkelvoud.',
+      'Vergelijking: naam, map, notitie en de opslaan-knop staan nu in een eigen blok bovenaan de pagina i.p.v. in de topnavigatie.',
+      'Resultaat: "Mijn woningen" staat nu ook in de topnavigatie.',
+      'Invoer: de sectielinks ① Woning / ② Ruimten / ③ Overige posten staan niet meer in de topnavigatie — het vinkje van Woning staat nu in de sectiekop zelf. De knop heet bij een bestaande woning gewoon "Opslaan" (was soms "Opslaan als eigen woning").',
+      'Mijn woningen: het mapfilter staat nu boven de lijst i.p.v. in de topnavigatie.',
+    ],
+  },
   {
     versie: '0.7.22',
     datum: '2026-10-03',

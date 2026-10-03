@@ -2,17 +2,15 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { alleTarievensets, nieuwsteKostencatalogus } from '@wwso/data';
 import { huidigeVersiestempel } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
-import { HomeLogo } from '../HomeLogo';
+import { AppHeader, WoningContextStrook, headerKnop, kamersLabel } from '../AppHeader';
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
-import styles from './styles.module.css';
 
 export function Topbar() {
   const { state, dispatch } = useInvoer();
@@ -124,82 +122,72 @@ export function Topbar() {
     router.push('/woning/resultaat');
   }
 
-  const pandCompleet = !!(
-    state.pand.adres &&
-    state.pand.stad &&
-    state.pand.coropGebied &&
-    state.pand.wozOppervlak &&
-    state.pand.bouwjaar
-  );
-
-      // De topnavigatie is nu zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor
-  // navigatie") — alle statusinfo (kameraantal, woningnaam, alleen-lezen/scenario-context) staat
-  // niet meer hier, maar in de losse, niet-sticky `WoningContext` hieronder in dit bestand
-  // (gerenderd door de paginacomponent net onder deze header).
+  // De topnavigatie is zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor navigatie").
+  // Statusinfo staat in de losse `WoningContext` hieronder; de sectiestatus (① Woning ✓/…) staat
+  // sinds 2026-10-03 in de sectiekop op de pagina zelf, niet meer als ankerlinks in de header.
+  const titel = state.handmatigScenario ? 'Scenario bewerken' : state.bewerktDeal ? 'Woning bewerken' : 'Nieuwe woning';
   return (
-    <header className={styles.topbar}>
-      <HomeLogo />
-      <nav className={styles.sections}>
-        <a className={styles.sectionLink} href="#sectie-woning">
-          ① Woning <span className={`${styles.badge} ${pandCompleet ? styles.badgeOk : ''}`}>{pandCompleet ? '✓' : '…'}</span>
-        </a>
-        <a className={styles.sectionLink} href="#sectie-ruimten">
-          ② Ruimten <span className={`${styles.badge} ${state.ruimtes.length > 0 ? styles.badgeOk : ''}`}>{state.ruimtes.length}</span>
-        </a>
-        <a className={styles.sectionLink} href="#sectie-overig">
-          ③ Overige posten <span className={`${styles.badge} ${styles.badgeOk}`}>✓</span>
-        </a>
-      </nav>
-      <div className={styles.spacer} />
-      <Link href="/woningen" className={styles.sectionLink}>
-        Mijn woningen
-      </Link>
-      {!state.handmatigScenario && (
+    <AppHeader
+      titel={titel}
+      sticky
+      acties={
         <>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`}
-            disabled={!pand || dealOpslaanStatus === 'bezig' || bewerkrechtenOnzeker}
-            title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : !pand ? (stap ?? undefined) : undefined}
-            onClick={dealVroegOpslaan}
-          >
-            {state.bewerktDeal ? (magBewerken ? 'Opslaan' : 'Opslaan als eigen woning') : 'Woning opslaan'}
-          </button>
-          {dealOpslaanStatus === 'gelukt' && <span className={styles.sub}>Opgeslagen ✓</span>}
-          {dealOpslaanStatus === 'fout' && <span className={styles.sub}>Opslaan mislukt</span>}
-          {bewerkrechtenOnzeker && (
+          {!state.handmatigScenario && (
             <>
-              <span className={styles.sub} title='Probeer eerst de pagina te verversen — dat lost het meestal op als het een tijdelijke hapering was.'>
-                Bewerkrechten konden niet bevestigd worden
-              </span>
-              <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`} disabled={!pand || dealOpslaanStatus === 'bezig'} onClick={forceerKopieOpslaan}>
-                Toch opslaan als nieuwe kopie →
+              {dealOpslaanStatus === 'gelukt' && <span className={headerKnop.status}>Opgeslagen ✓</span>}
+              {dealOpslaanStatus === 'fout' && <span className={headerKnop.fout}>Opslaan mislukt</span>}
+              {bewerkrechtenOnzeker && (
+                <>
+                  <span className={headerKnop.fout} title='Probeer eerst de pagina te verversen — dat lost het meestal op als het een tijdelijke hapering was.'>
+                    Bewerkrechten konden niet bevestigd worden
+                  </span>
+                  <button type="button" className={headerKnop.secundair} disabled={!pand || dealOpslaanStatus === 'bezig'} onClick={forceerKopieOpslaan}>
+                    Toch opslaan als nieuwe kopie →
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                className={headerKnop.secundair}
+                disabled={!pand || dealOpslaanStatus === 'bezig' || bewerkrechtenOnzeker}
+                title={
+                  bewerkrechtenOnzeker
+                    ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
+                    : !pand
+                      ? (stap ?? undefined)
+                      : !magBewerken
+                        ? 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'
+                        : undefined
+                }
+                onClick={dealVroegOpslaan}
+              >
+                {state.bewerktDeal ? 'Opslaan' : 'Woning opslaan'}
               </button>
             </>
           )}
+          <button
+            type="button"
+            className={headerKnop.primair}
+            disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig') || (!state.handmatigScenario && bewerkrechtenOnzeker)}
+            title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : stap ?? undefined}
+            onClick={doorrekenen}
+          >
+            {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}
+          </button>
+          {state.ruimtes.length > 0 && (
+            <button
+              type="button"
+              className={headerKnop.klein}
+              onClick={() => {
+                if (confirm('Alle ingevoerde gegevens wissen?')) dispatch({ soort: 'ALLES_GEWIST' });
+              }}
+            >
+              Alles wissen
+            </button>
+          )}
         </>
-      )}
-      <button
-        type="button"
-        className={`${styles.btn} ${styles.btnPrimair}`}
-        disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig') || (!state.handmatigScenario && bewerkrechtenOnzeker)}
-        title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : stap ?? undefined}
-        onClick={doorrekenen}
-      >
-        {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}
-      </button>
-      {state.ruimtes.length > 0 && (
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`}
-          onClick={() => {
-            if (confirm('Alle ingevoerde gegevens wissen?')) dispatch({ soort: 'ALLES_GEWIST' });
-          }}
-        >
-          Alles wissen
-        </button>
-      )}
-    </header>
+      }
+    />
   );
 }
 
@@ -216,17 +204,18 @@ export function WoningContext() {
 
   if (!state.bewerktDeal && !state.handmatigScenario && state.ruimtes.length === 0) return null;
 
+  // Woningnaam eerst (identiteit), daarna het kameraantal als kenmerk (feedback 2026-10-03).
   return (
-    <div className={styles.woningContext}>
-      <span className={styles.sub}>
-        {n} kamer{n === 1 ? '' : 's'}
-      </span>
-      {state.bewerktDeal && (
-        <span className={styles.sub} title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
-          · &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
-        </span>
-      )}
-      {state.handmatigScenario && <span className={styles.sub}>· scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</span>}
-    </div>
+    <WoningContextStrook
+      onderdelen={[
+        state.bewerktDeal && (
+          <span title={magBewerken ? undefined : 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'}>
+            &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
+          </span>
+        ),
+        kamersLabel(n),
+        state.handmatigScenario && <>scenario &ldquo;{state.handmatigScenario.naam}&rdquo;</>,
+      ]}
+    />
   );
 }

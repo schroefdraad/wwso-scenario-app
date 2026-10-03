@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { berekenEindtelling, pandWaarderingVan, voerControlesUit, type PandInvoer } from '@wwso/engine';
 import type { Tarievenset } from '@wwso/data';
-import { HomeLogo } from '../HomeLogo';
+import { AppHeader, WoningContextStrook, headerKnop, kamersLabel } from '../AppHeader';
 import { KamerRij } from './KamerRij';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { puntenrapportBestandsnaam } from '../../lib/pdf/bestandsnaam';
@@ -72,20 +72,21 @@ export function Resultaatscherm({
 
   return (
     <div className={styles.wrap}>
-      <header className={styles.kop}>
-        <HomeLogo />
-        <h1>{titel ?? pand.pand.adres}</h1>
-        <span className={styles.kopSub}>
-          {pand.pand.stad} · {pand.pand.aantalKamers} kamers · peildatum {formateerDatum(peildatum)}
-        </span>
-        <button type="button" className={styles.pdfKnop} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
-          {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
-        </button>
-        {pdfStatus === 'fout' && <span className={styles.pdfFout}>PDF maken mislukt, probeer opnieuw</span>}
-        <Link href={terugUrl} className={styles.vergelijkLink}>
-          Vergelijk scenario&apos;s →
-        </Link>
-      </header>
+      <AppHeader
+        titel={titel ?? pand.pand.adres}
+        acties={
+          <>
+            {pdfStatus === 'fout' && <span className={headerKnop.fout}>PDF maken mislukt, probeer opnieuw</span>}
+            <button type="button" className={headerKnop.secundair} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
+              {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
+            </button>
+            <Link href={terugUrl} className={headerKnop.primair}>
+              Vergelijk scenario&apos;s →
+            </Link>
+          </>
+        }
+      />
+      <WoningContextStrook onderdelen={[pand.pand.stad, kamersLabel(pand.pand.aantalKamers), `peildatum ${formateerDatum(peildatum)}`]} />
       <main className={styles.main}>
         <section className={styles.totalenBlok}>
           <div className={styles.totalenCel}>

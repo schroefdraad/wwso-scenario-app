@@ -7,64 +7,9 @@
   line-height: 1.45;
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  background: var(--paper-raised);
-  border-bottom: 1px solid var(--line);
-  padding: 0.6rem 1.4rem;
-  display: flex;
-  align-items: center;
-  gap: 1.4rem;
-  flex-wrap: wrap;
-  box-shadow: 0 1px 4px var(--shadow);
-}
-
-.titel {
-  font-weight: 700;
-  font-size: 0.95rem;
-  white-space: nowrap;
-}
-
-/* Niet-sticky statusstrook onder de topnavigatie (2026-10-02) — losgetrokken van `.topbar`:
- * kameraantal/woningnaam/alleen-lezen/scenario-context is info, geen navigatie. */
-.woningContext {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.4rem;
-  border-bottom: 1px solid var(--line);
-}
-
 .sub {
   color: var(--ink-dim);
   font-size: 0.82rem;
-}
-
-.sections {
-  display: flex;
-  gap: 0.3rem;
-  margin-left: 0.5rem;
-}
-
-.sectionLink {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  text-decoration: none;
-  color: var(--ink);
-  font-size: 0.82rem;
-  padding: 0.35rem 0.65rem;
-  border-radius: 6px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.sectionLink:hover {
-  background: var(--paper-sunken);
 }
 
 .badge {
@@ -84,10 +29,6 @@
 .badgeWarn {
   background: var(--amber-soft);
   color: var(--amber);
-}
-
-.spacer {
-  flex: 1;
 }
 
 .btn {
