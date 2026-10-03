@@ -1,0 +1,4144 @@
+[
+  {
+    "id": "e6e9fab8-46d0-42f9-a973-8728068e5458",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 2
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-02T16:09:40.497226+00:00",
+    "bijgewerkt": "2026-10-02T16:09:40.497226+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "c6b6a70b-5649-4595-864f-de963d8833af",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T08:19:29.814041+00:00",
+    "bijgewerkt": "2026-10-03T08:19:32.952+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "340b00f8-3392-4029-afba-23ca9632b26a",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie) (kopie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443000,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T11:09:27.279046+00:00",
+    "bijgewerkt": "2026-10-03T11:09:49.746+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "103ec2c9-de4d-4850-aacc-63f013d589c0",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-02T16:22:53.305551+00:00",
+    "bijgewerkt": "2026-10-02T16:32:03.259+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "ee5a77a7-a374-431a-be83-4ca387722e06",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443000,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T08:34:32.041154+00:00",
+    "bijgewerkt": "2026-10-03T08:34:32.041154+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "4014d35f-2ac9-44fb-898f-8603bf4a94b3",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie) (kopie) (kopie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443000,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T11:10:28.92009+00:00",
+    "bijgewerkt": "2026-10-03T11:10:28.92009+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "728b2559-a9c9-4c7b-911a-2e6913ded740",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 4,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 2
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Overige ruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            4
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 6
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-02T13:34:43.506802+00:00",
+    "bijgewerkt": "2026-10-02T13:34:47.23+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "94adb507-cc77-430b-ba60-d84270e8623c",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 4,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 2
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            4
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "ruimteNr": 6
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-02T13:36:03.546275+00:00",
+    "bijgewerkt": "2026-10-02T13:36:03.546275+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "bb717c23-4bb8-4c7d-add4-a6b7106a58a1",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-02T18:30:22.788536+00:00",
+    "bijgewerkt": "2026-10-02T18:30:22.788536+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "628bee4e-1ca1-4a07-bf05-feda509ff27c",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443000,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T10:53:47.50667+00:00",
+    "bijgewerkt": "2026-10-03T10:53:47.50667+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  },
+  {
+    "id": "962ee592-3e2a-47ca-bc93-7f3a6520e0ee",
+    "org_id": "00000000-0000-0000-0000-000000000001",
+    "naam": "Kanaalkade 49-B (juiste versie) (kopie) (kopie) (kopie) (kopie) (kopie) (kopie) (kopie)",
+    "pand_invoer": {
+      "pand": {
+        "stad": "Alkmaar",
+        "adres": "Kanaalkade 49-B",
+        "bouwjaar": 1890,
+        "monument": "Beschermd dorpsgezicht",
+        "wozWaarde": 443000,
+        "coropGebied": "Alkmaar en omgeving",
+        "aantalKamers": 3,
+        "energielabel": "E",
+        "wozOppervlak": 105,
+        "wozPeildatum": "2025-01-01",
+        "energielabelOnbekendOfVervallen": false,
+        "energielabelKostenSchattingAPlusPlusEuro": 30000
+      },
+      "keukens": [
+        {
+          "extra": {
+            "ovenGas": false,
+            "koelkast": true,
+            "magnetron": false,
+            "vrieskast": true,
+            "kookplaatGas": true,
+            "ovenElektrisch": true,
+            "vaatwasmachine": true,
+            "afzuiginstallatie": true,
+            "eenhandsmengkraan": false,
+            "kookplaatInductie": false,
+            "kokendWaterfunctie": false,
+            "kookplaatKeramisch": false,
+            "thermostatischeMengkraan": false,
+            "extraKastruimteEenhedenVan60Cm": 1
+          },
+          "ruimteNr": 2,
+          "verwarmd": false,
+          "basiseisen": {
+            "aanEnAfvoerWater": true,
+            "vastKookaansluitpunt": true,
+            "tweeInbouwkastenVan50Cm": true,
+            "waterdichteWandafwerking": true,
+            "aanrechtbladMinimaal1MeterInEenStuk": true
+          },
+          "aanrechtlengteM": 3
+        }
+      ],
+      "ruimtes": [
+        {
+          "nr": 1,
+          "naam": "Kamer 1",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 2,
+          "naam": "Woonkeuken",
+          "type": "Gemeenschappelijk vertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 28,
+          "aantalAdressenMetToegang": 1
+        },
+        {
+          "nr": 3,
+          "naam": "Kamer 2",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 18
+        },
+        {
+          "nr": 4,
+          "naam": "Kamer 3",
+          "type": "Privévertrek",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 12
+        },
+        {
+          "nr": 5,
+          "naam": "Badruimte",
+          "type": "Badruimte",
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 0,
+          "oppervlakteM2": 4
+        },
+        {
+          "nr": 6,
+          "naam": "Overloop",
+          "type": "Verkeersruimte",
+          "zolder": {
+            "vasteTrap": true,
+            "beschotenDak": true
+          },
+          "verkoeld": false,
+          "verwarmd": true,
+          "verdieping": 1,
+          "oppervlakteM2": 16
+        },
+        {
+          "nr": 7,
+          "naam": "Buitenruimte privé",
+          "type": "Buitenruimte privé",
+          "verkoeld": false,
+          "verwarmd": false,
+          "verdieping": 0,
+          "oppervlakteM2": 16
+        }
+      ],
+      "sanitair": [
+        {
+          "bad": false,
+          "extra": {
+            "kastruimte": true,
+            "bubbelfunctieBad": false,
+            "eenhandsmengkraan": 0,
+            "aantalStopcontacten": 0,
+            "thermostatischeMengkraan": 0,
+            "doucheafscheidingVolledig": false,
+            "aantalHanddoekenradiatoren": 0,
+            "ingebouwdKastjeMetWastafel": true
+          },
+          "douche": true,
+          "ruimteNr": 5,
+          "extraEisen": {
+            "waterdichteWandafwerking": true,
+            "waterdichteVloerafwerking": true,
+            "vrijeHoogte2MeterOverHelft": true,
+            "doucheOfBadMetWarmEnKoudWater": true,
+            "wastafelMetMengkraanEnSpiegel": true
+          },
+          "toiletType": "Staand in badkamer",
+          "aantalWastafels": 1,
+          "badDoucheCombinatie": false,
+          "aantalMeerpersoonswastafels": 0
+        }
+      ],
+      "toewijzing": [
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 1
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 2
+        },
+        {
+          "kamers": [
+            3
+          ],
+          "ruimteNr": 3
+        },
+        {
+          "kamers": [
+            2
+          ],
+          "ruimteNr": 4
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 5
+        },
+        {
+          "kamers": [
+            1,
+            2,
+            3
+          ],
+          "ruimteNr": 6
+        },
+        {
+          "kamers": [
+            1
+          ],
+          "ruimteNr": 7
+        }
+      ],
+      "parkeerplekken": [],
+      "handmatigePosten": {
+        "zorgwoning": false,
+        "aanbelfuncties": [],
+        "losseLaadpalen": [],
+        "aftrekSituaties": {
+          "raamkozijnTeHoog": [],
+          "verhuurderCriterium": [],
+          "ruitoppervlakteOnvoldoende": []
+        },
+        "woonvoorzieningenHandicap": []
+      }
+    },
+    "scenarios": [
+      {
+        "naam": "Scenario 1",
+        "pand": {
+          "pand": {
+            "stad": "Alkmaar",
+            "adres": "Kanaalkade 49-B",
+            "bouwjaar": 1890,
+            "monument": "Beschermd dorpsgezicht",
+            "wozWaarde": 443,
+            "coropGebied": "Alkmaar en omgeving",
+            "aantalKamers": 4,
+            "energielabel": "E",
+            "wozOppervlak": 105,
+            "wozPeildatum": "2025-01-01",
+            "energielabelOnbekendOfVervallen": false,
+            "energielabelKostenSchattingAPlusPlusEuro": 30000
+          },
+          "keukens": [
+            {
+              "extra": {
+                "ovenGas": false,
+                "koelkast": true,
+                "magnetron": false,
+                "vrieskast": true,
+                "kookplaatGas": true,
+                "ovenElektrisch": true,
+                "vaatwasmachine": true,
+                "afzuiginstallatie": true,
+                "eenhandsmengkraan": false,
+                "kookplaatInductie": false,
+                "kokendWaterfunctie": false,
+                "kookplaatKeramisch": false,
+                "thermostatischeMengkraan": false,
+                "extraKastruimteEenhedenVan60Cm": 1
+              },
+              "ruimteNr": 2,
+              "verwarmd": false,
+              "basiseisen": {
+                "aanEnAfvoerWater": true,
+                "vastKookaansluitpunt": true,
+                "tweeInbouwkastenVan50Cm": true,
+                "waterdichteWandafwerking": true,
+                "aanrechtbladMinimaal1MeterInEenStuk": true
+              },
+              "aanrechtlengteM": 3
+            }
+          ],
+          "ruimtes": [
+            {
+              "nr": 1,
+              "naam": "Kamer 1",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 2,
+              "naam": "Woonkeuken",
+              "type": "Gemeenschappelijk vertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 15,
+              "aantalAdressenMetToegang": 1
+            },
+            {
+              "nr": 3,
+              "naam": "Kamer 2",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 18
+            },
+            {
+              "nr": 4,
+              "naam": "Kamer 3",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 12
+            },
+            {
+              "nr": 5,
+              "naam": "Badruimte",
+              "type": "Badruimte",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 4
+            },
+            {
+              "nr": 6,
+              "naam": "Overloop",
+              "type": "Verkeersruimte",
+              "zolder": {
+                "vasteTrap": true,
+                "beschotenDak": true
+              },
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 1,
+              "oppervlakteM2": 16
+            },
+            {
+              "nr": 7,
+              "naam": "Privévertrek 4",
+              "type": "Privévertrek",
+              "verkoeld": false,
+              "verwarmd": true,
+              "verdieping": 0,
+              "oppervlakteM2": 13
+            }
+          ],
+          "sanitair": [
+            {
+              "bad": false,
+              "extra": {
+                "kastruimte": true,
+                "bubbelfunctieBad": false,
+                "eenhandsmengkraan": 0,
+                "aantalStopcontacten": 0,
+                "thermostatischeMengkraan": 0,
+                "doucheafscheidingVolledig": false,
+                "aantalHanddoekenradiatoren": 0,
+                "ingebouwdKastjeMetWastafel": true
+              },
+              "douche": true,
+              "ruimteNr": 5,
+              "extraEisen": {
+                "waterdichteWandafwerking": true,
+                "waterdichteVloerafwerking": true,
+                "vrijeHoogte2MeterOverHelft": true,
+                "doucheOfBadMetWarmEnKoudWater": true,
+                "wastafelMetMengkraanEnSpiegel": true
+              },
+              "toiletType": "Staand in badkamer",
+              "aantalWastafels": 1,
+              "badDoucheCombinatie": false,
+              "aantalMeerpersoonswastafels": 0
+            }
+          ],
+          "toewijzing": [
+            {
+              "kamers": [
+                1
+              ],
+              "ruimteNr": 1
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 2
+            },
+            {
+              "kamers": [
+                3
+              ],
+              "ruimteNr": 3
+            },
+            {
+              "kamers": [
+                2
+              ],
+              "ruimteNr": 4
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 5
+            },
+            {
+              "kamers": [
+                1,
+                2,
+                3
+              ],
+              "ruimteNr": 6
+            },
+            {
+              "kamers": [
+                4
+              ],
+              "ruimteNr": 7
+            }
+          ],
+          "parkeerplekken": [],
+          "handmatigePosten": {
+            "zorgwoning": false,
+            "aanbelfuncties": [],
+            "losseLaadpalen": [],
+            "aftrekSituaties": {
+              "raamkozijnTeHoog": [],
+              "verhuurderCriterium": [],
+              "ruitoppervlakteOnvoldoende": []
+            },
+            "woonvoorzieningenHandicap": []
+          }
+        },
+        "soort": "handmatig",
+        "sleutels": [
+          "K-10#keuken:2",
+          "S-05#sanitair:5",
+          "S-07#sanitair:5",
+          "K-05#keuken:2"
+        ],
+        "kamerBewerkt": true,
+        "energielabelDoel": "A++",
+        "maatregelPrijzenEuro": {},
+        "handmatigeInvesteringEuro": 5000
+      }
+    ],
+    "tarievenset_peildatum": "2026-01-01",
+    "kostencatalogus_versie": "0.1",
+    "registry_versie": "1.0",
+    "engine_versie": "0.0.0",
+    "aangemaakt": "2026-10-03T11:21:00.831451+00:00",
+    "bijgewerkt": "2026-10-03T11:21:00.831451+00:00",
+    "notitie": "",
+    "map": "",
+    "is_demo": false
+  }
+]
