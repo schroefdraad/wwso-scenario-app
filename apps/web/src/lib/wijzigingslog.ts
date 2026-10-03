@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.35';
+export const APP_VERSIE = '0.7.36';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.36',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Mijn woningen: elke woning staat nu op één regel. Lange namen, adressen en notities worden afgekapt met "…" — de volledige tekst zie je als je erop wijst.',
+      'Mijn woningen: de stad stond soms dubbel in het adres (bijv. "Cantecleerpad 12, Rotterdam · Rotterdam") — nu niet meer.',
+      'Mijn woningen: het mapicoontje staat weer op dezelfde regel als de mapnaam, en de knoppen Kopiëren/Verwijderen lopen gelijk met de rij.',
+    ],
+  },
   {
     versie: '0.7.35',
     datum: '2026-10-03',

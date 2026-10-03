@@ -109,10 +109,27 @@
   cursor: default;
 }
 
-.actiesCel {
+.acties {
   display: flex;
   gap: 0.4rem;
   align-items: center;
+  justify-content: flex-end;
+}
+
+/* Eén regel per cel, afgekapt met "…" (volledige tekst in de tooltip). */
+.eenRegel {
+  max-width: 13rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mapCel {
+  max-width: 9rem;
+}
+
+.geenAfbreking {
+  white-space: nowrap;
 }
 
 .verwijderKnop {
@@ -162,7 +179,7 @@
 
 .notitieCel {
   color: var(--ink-dim);
-  max-width: 16rem;
+  max-width: 10rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -9,8 +9,9 @@ import { testpand6Kamers } from './testpand-6kamers';
  * maatregel uit elke tier:
  *
  * - `energielabelOnbekendOfVervallen: true` (ingangsdatum onbekend/label vervallen, §2.4.3) →
- *   E-09 wordt parametervrij kandidaat (goedkoop, geen vergunning → Basis).
- * - Kamer 4 in `ruitoppervlakteOnvoldoende` → A-01 wordt kandidaat (vergunning → Comfort/Maximaal).
+ *   E-09 wordt parametervrij kandidaat (goedkoop, geen vergunning).
+ * - Kamer 4 in `ruitoppervlakteOnvoldoende` → A-01 wordt kandidaat (vergunningsplichtig — wordt
+ *   gewoon als optimalisatie aangeboden; de vergunningsklasse filtert niets, besluit 2026-10-03).
  * - Geen aanbelfunctie → X-01 wordt kandidaat.
  * - De parkeerplek heeft geen laadpaal → P-01 wordt kandidaat.
  * - Ruimte 14 (zolderberging) heeft al geen vaste trap in de basisfixture → I-04 (vorm a) is

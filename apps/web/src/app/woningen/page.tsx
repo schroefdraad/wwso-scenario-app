@@ -15,6 +15,13 @@ import styles from './styles.module.css';
  * gewoon te verdwijnen uit elk map-specifiek filter (backlog 2026-09-04: persoonlijke ordening). */
 const GEEN_MAP = '(geen map)';
 
+/** "Cantecleerpad 12, Rotterdam" + "Rotterdam" werd "Cantecleerpad 12, Rotterdam · Rotterdam" —
+ * de stad alleen toevoegen als die nog niet in het adres staat. */
+function adresMetStad(adres: string, stad: string): string {
+  if (!stad || adres.toLowerCase().includes(stad.toLowerCase())) return adres;
+  return `${adres} · ${stad}`;
+}
+
 export default function DealsOverzicht() {
   useDocumentTitle('Mijn woningen · WWSO Scenario App');
   const [deals, setDeals] = useState<Deal[] | null>(null);
@@ -139,7 +146,9 @@ export default function DealsOverzicht() {
                 <tbody>
                   {zichtbareDeals.map((deal) => (
                     <tr key={deal.id} className={styles.rij}>
-                      <td className={styles.naamCel}>
+                      {/* Eén regel per woning (feedback 2026-10-03: rijen van 3-4 regels oogden rommelig):
+                          lange tekst wordt afgekapt met "…", de volledige tekst staat in de tooltip. */}
+                      <td className={`${styles.naamCel} ${styles.eenRegel}`} title={deal.naam}>
                         <Link href={vergelijkingUrl(deal.id)} className={styles.dealLink}>
                           {deal.naam}
                         </Link>
@@ -150,17 +159,20 @@ export default function DealsOverzicht() {
                           </span>
                         )}
                       </td>
-                      <td>
-                        {deal.pandInvoer.pand.adres} · {deal.pandInvoer.pand.stad}
+                      <td className={styles.eenRegel} title={adresMetStad(deal.pandInvoer.pand.adres, deal.pandInvoer.pand.stad)}>
+                        {adresMetStad(deal.pandInvoer.pand.adres, deal.pandInvoer.pand.stad)}
                       </td>
                       <td>{deal.pandInvoer.pand.aantalKamers}</td>
                       <td className={styles.dim}>{deal.scenarios.length === 0 ? 'geen' : deal.scenarios.length}</td>
                       <td className={styles.notitieCel} title={deal.notitie || undefined}>
                         {deal.notitie || '—'}
                       </td>
-                      <td className={styles.dim}>{formateerDatumTijd(deal.bijgewerkt)}</td>
-                      <td className={styles.dim}>{deal.map ? `📁 ${deal.map}` : '—'}</td>
-                      <td className={styles.actiesCel}>
+                      <td className={`${styles.dim} ${styles.geenAfbreking}`}>{formateerDatumTijd(deal.bijgewerkt)}</td>
+                      <td className={`${styles.dim} ${styles.eenRegel} ${styles.mapCel}`} title={deal.map || undefined}>
+                        {deal.map ? `📁 ${deal.map}` : '—'}
+                      </td>
+                      <td>
+                        <div className={styles.acties}>
                         <button
                           type="button"
                           className={styles.kopieerKnop}
@@ -188,6 +200,7 @@ export default function DealsOverzicht() {
                             )}
                           </>
                         )}
+                        </div>
                       </td>
                     </tr>
                   ))}
