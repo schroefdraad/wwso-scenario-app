@@ -1,5 +1,5 @@
 import type { Tarievenset } from '@wwso/data';
-import type { PandInvoer, ParkeerplekType } from '../types/index';
+import { PARKEERPLEK_OMSCHRIJVING, type PandInvoer, type ParkeerplekType } from '../types/index';
 import { kamersPerRuimte, nulPerKamer, rondAfOpKwartpunten } from './gedeeld';
 import type { RubriekResultaat } from './types';
 
@@ -49,7 +49,7 @@ export function berekenR10(input: PandInvoer, tarievenset: Tarievenset): Rubriek
       ? ` + laadpaal ${tarievenset.parkeren.laadpaalPunten} ÷ ${adressen} adressen = ${laadpaalPerKamer.toFixed(4)} pt (niet gedeeld door kamers, §2.10.5)`
       : '';
     toelichting.push(
-      `R10 parkeerplek type ${plek.type} (ruimte ${plek.ruimteNr}): ${basisPunten} pt ÷ ${adressen} adressen ÷ ${n} kamers = ${basisPerKamer.toFixed(4)} pt${laadpaalRegel} = ${totaalPerKamer.toFixed(4)} pt per kamer`,
+      `R10 parkeerplek ${PARKEERPLEK_OMSCHRIJVING[plek.type].kort.toLowerCase()} (type ${plek.type}, ruimte ${plek.ruimteNr}): ${basisPunten} pt ÷ ${adressen} adressen ÷ ${n} kamers = ${basisPerKamer.toFixed(4)} pt${laadpaalRegel} = ${totaalPerKamer.toFixed(4)} pt per kamer`,
     );
   }
 

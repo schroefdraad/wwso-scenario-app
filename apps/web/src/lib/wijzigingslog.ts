@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.25';
+export const APP_VERSIE = '0.7.26';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.26',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Parkeerplek: de soort kies je nu in gewone woorden — Garage (9 pt), Buiten, overdekt (6 pt) of Buiten, open (4 pt) — met de beleidscode type I/II/III klein erbij. Het paneel laat ook zien wat de plek per kamer werkelijk oplevert, en wanneer een plek volgens het beleid meetelt.',
+      'Parkeerplek: het dubbele schuifje "Parkeerplek aanwezig" is weg — een ruimte van het type "Parkeerplek gemeenschappelijk" ís al een parkeerplek. Er wordt ook niet meer stilzwijgend een soort voor je gekozen: zolang je die niet kiest, meldt "Doorrekenen" wat er nog ontbreekt (voorheen telde zo\'n plek ongemerkt als 0 punten).',
+      'Toelichting en PDF noemen de parkeerplek nu ook bij naam (bijv. "parkeerplek buiten, overdekt (type II)").',
+      'Schuifjes in het zijpaneel werden onbedoeld breed uitgerekt — staan weer op normale grootte.',
+    ],
+  },
   {
     versie: '0.7.25',
     datum: '2026-10-03',

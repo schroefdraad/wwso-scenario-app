@@ -847,7 +847,8 @@
   margin-bottom: 0.6rem;
 }
 
-.veldrij label {
+/* `:not(.toggle)`: `Toggle` rendert zelf ook een <label>, en werd anders 9rem breed uitgerekt. */
+.veldrij label:not(.toggle) {
   font-size: 0.84rem;
   min-width: 9rem;
 }
@@ -904,4 +905,77 @@
   .pandGrid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Parkeerplek-paneel (R10) — soort als drie keuzekaarten i.p.v. een "type I/II/III"-select. */
+.parkeerSoortKop {
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.parkeerSoorten {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.parkeerSoort {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--paper-raised);
+  cursor: pointer;
+}
+
+.parkeerSoort:hover {
+  background: var(--paper-sunken);
+}
+
+.parkeerSoortActief {
+  border-color: var(--accent);
+  background: var(--paper-sunken);
+}
+
+.parkeerSoortTekst {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 0.84rem;
+}
+
+.parkeerSoortTekst span {
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+}
+
+.parkeerSoortPunten {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.parkeerSoortPunten small {
+  color: var(--ink-dim);
+  font-weight: 400;
+  font-size: 0.7rem;
+}
+
+.parkeerHint {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  margin: 0 0 0.7rem;
+}
+
+.parkeerVoorwaarden {
+  font-size: 0.74rem;
+  color: var(--ink-dim);
+  margin: 0.4rem 0 0;
 }

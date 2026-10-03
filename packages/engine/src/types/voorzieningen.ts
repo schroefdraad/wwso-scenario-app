@@ -175,6 +175,17 @@ export const ParkeerplekType = z.enum(['I', 'II', 'III']);
 export type ParkeerplekType = z.infer<typeof ParkeerplekType>;
 
 /**
+ * Leesbare omschrijving per soort (§2.10.3), voor invoerscherm, toelichting en PDF — de kale
+ * beleidscode "type I/II/III" zei gebruikers niets (feedback 2026-10-03). `kort` is de naam,
+ * `uitleg` de beleidsomschrijving in gewone woorden.
+ */
+export const PARKEERPLEK_OMSCHRIJVING: Record<ParkeerplekType, { kort: string; uitleg: string }> = {
+  I: { kort: 'Garage', uitleg: 'afgesloten parkeergarage van het complex' },
+  II: { kort: 'Buiten, overdekt', uitleg: 'buiten, met dak — bijv. een carport' },
+  III: { kort: 'Buiten, open', uitleg: 'buiten, zonder dak' },
+};
+
+/**
  * Eén gemeenschappelijke parkeerplek (R10, §2.10). Verwijst naar een Ruimte van het type
  * 'Parkeerplek gemeenschappelijk', die `aantalAdressenMetToegang` levert voor de eerste
  * deling; de tweede deling (door het aantal wooneenheden met toegang) komt uit de

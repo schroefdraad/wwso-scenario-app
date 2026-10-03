@@ -145,5 +145,9 @@ export function ontbrekendeStap(state: InvoerState): string | null {
   if (naarGetal(state.pand.bouwjaar) === undefined) return 'Vul het bouwjaar in';
   const onvolledigeRuimte = state.ruimtes.find((r) => !r.naam || naarGetal(r.oppervlakteM2) === undefined);
   if (onvolledigeRuimte) return `Ruimte ${onvolledigeRuimte.nr}: vul naam en oppervlakte in`;
+  // Een parkeerruimte zonder gekozen soort telde vroeger stil als 0 punten (de aparte schakelaar
+  // "Parkeerplek aanwezig" vergeten) — nu zichtbaar als ontbrekende stap (feedback 2026-10-03).
+  const parkeerZonderSoort = state.ruimtes.find((r) => r.type === 'Parkeerplek gemeenschappelijk' && !r.parkeerplek);
+  if (parkeerZonderSoort) return `Ruimte ${parkeerZonderSoort.nr}: kies de soort parkeerplek (🅿️)`;
   return pandInvoerValidatiefout(state);
 }

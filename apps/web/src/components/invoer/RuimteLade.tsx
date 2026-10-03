@@ -1,6 +1,14 @@
 'use client';
 
-import { KITCHENETTE_122_PRESET, KITCHENETTE_240_PRESET, toegestaneToiletTypes, type Keuken, type SanitairVoorziening } from '@wwso/engine';
+import {
+  KITCHENETTE_122_PRESET,
+  KITCHENETTE_240_PRESET,
+  PARKEERPLEK_OMSCHRIJVING,
+  ParkeerplekType,
+  toegestaneToiletTypes,
+  type Keuken,
+  type SanitairVoorziening,
+} from '@wwso/engine';
 import { alleTarievensets, type Tarievenset } from '@wwso/data';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
@@ -535,49 +543,90 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   );
 }
 
+/**
+ * Parkeerplek (R10, §2.10) — herzien 2026-10-03 (feedback: "onduidelijk wat type I, II en III
+ * zijn", "schuifje parkeerplek aanwezig is dubbelop"). Het ruimtetype 'Parkeerplek
+ * gemeenschappelijk' zegt al dát er een plek is; hier kies je alleen nog de soort (in gewone
+ * woorden, met de beleidscode klein erbij) en of er een laadpaal is. Geen stille standaardkeuze
+ * meer: zonder soort telt de plek niet mee en blokkeert `ontbrekendeStap` het doorrekenen.
+ */
 function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
   const parkeerplek = rij.parkeerplek;
+  const tarieven = alleTarievensets().at(-1)!.parkeren;
+  const puntenPerSoort: Record<ParkeerplekType, number> = { I: tarieven.typeIPunten, II: tarieven.typeIIPunten, III: tarieven.typeIIIPunten };
 
-  if (!parkeerplek) {
+  // Ruimtetype is ondertussen gewijzigd: de oude plek blijft zichtbaar (nooit stil data
+  // weggooien), maar is hier alleen nog te verwijderen.
+  if (rij.type !== 'Parkeerplek gemeenschappelijk') {
     return (
-      <div className={styles.veldrij}>
-        <label>Parkeerplek aanwezig</label>
-        <Toggle
-          checked={false}
-          label="Parkeerplek aanwezig"
-          onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: v ? { type: 'II', laadpaal: false } : undefined } })}
-        />
+      <div>
+        <p className={styles.parkeerHint}>
+          Deze ruimte is geen parkeerruimte meer, maar heeft nog een parkeerplek ({parkeerplek ? PARKEERPLEK_OMSCHRIJVING[parkeerplek.type].kort.toLowerCase() : '—'}). Een parkeerplek telt alleen
+          bij een ruimte van het type &lsquo;Parkeerplek gemeenschappelijk&rsquo;.
+        </p>
+        <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`} onClick={() => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: undefined } })}>
+          Parkeerplek verwijderen
+        </button>
       </div>
     );
   }
+
+  const zetSoort = (type: ParkeerplekType) =>
+    dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { type, laadpaal: parkeerplek?.laadpaal ?? false } } });
+
+  const adressen = Number(rij.aantalAdressenMetToegang) || 1;
+  const kamers = rij.kamers.length;
+  const basis = parkeerplek ? puntenPerSoort[parkeerplek.type] : 0;
+  const perKamer = kamers > 0 ? basis / adressen / kamers : 0;
+  const laadpaalPerKamer = parkeerplek?.laadpaal ? tarieven.laadpaalPunten / adressen : 0;
+  const fmt = (n: number) => n.toLocaleString('nl-NL', { maximumFractionDigits: 2 });
+
   return (
     <div>
-      <div className={styles.veldrij}>
-        <label>Parkeerplek aanwezig</label>
-        <Toggle checked label="Parkeerplek aanwezig" onChange={(v) => !v && dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: undefined } })} />
+      <div className={styles.parkeerSoortKop}>Soort parkeerplek</div>
+      <div className={styles.parkeerSoorten} role="radiogroup" aria-label="Soort parkeerplek">
+        {ParkeerplekType.options.map((type) => (
+          <label key={type} className={`${styles.parkeerSoort} ${parkeerplek?.type === type ? styles.parkeerSoortActief : ''}`}>
+            <input type="radio" name={`pk-soort-${rij.id}`} checked={parkeerplek?.type === type} onChange={() => zetSoort(type)} />
+            <span className={styles.parkeerSoortTekst}>
+              <strong>{PARKEERPLEK_OMSCHRIJVING[type].kort}</strong>
+              <span>{PARKEERPLEK_OMSCHRIJVING[type].uitleg}</span>
+            </span>
+            <span className={styles.parkeerSoortPunten}>
+              {puntenPerSoort[type]} pt
+              <small>type {type}</small>
+            </span>
+          </label>
+        ))}
       </div>
-      <div className={styles.veldrij}>
-        <label htmlFor="pk-type">Type</label>
-        <select
-          id="pk-type"
-          value={parkeerplek.type}
-          onChange={(e) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, type: e.target.value as 'I' | 'II' | 'III' } } })}
-        >
-          <option value="I">I — 9 punten</option>
-          <option value="II">II — 6 punten</option>
-          <option value="III">III — 4 punten</option>
-        </select>
-      </div>
-      <div className={styles.veldrij}>
-        <label>Laadpaal</label>
-        <Toggle
-          checked={parkeerplek.laadpaal}
-          label="Laadpaal"
-          onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, laadpaal: v } } })}
-        />
-        <InfoBadge>+2 pt, alleen gedeeld door adressen (§2.10.5)</InfoBadge>
-      </div>
+      {!parkeerplek && <p className={styles.parkeerHint}>Kies de soort — zonder keuze telt deze parkeerplek niet mee.</p>}
+      {parkeerplek && (
+        <p className={styles.parkeerHint}>
+          {kamers === 0 ? (
+            <>Nog geen kamers met toegang gekozen — dan levert de plek geen punten op.</>
+          ) : (
+            <>
+              Levert per kamer ≈ <strong>{fmt(perKamer + laadpaalPerKamer)} pt</strong> op ({basis} ÷ {adressen} adres{adressen === 1 ? '' : 'sen'} ÷ {kamers} kamer{kamers === 1 ? '' : 's'}
+              {parkeerplek.laadpaal && <> + laadpaal {tarieven.laadpaalPunten} ÷ {adressen}</>}).
+            </>
+          )}
+        </p>
+      )}
+      {parkeerplek && (
+        <div className={styles.veldrij}>
+          <label>Laadpaal</label>
+          <Toggle
+            checked={parkeerplek.laadpaal}
+            label="Laadpaal"
+            onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, laadpaal: v } } })}
+          />
+          <InfoBadge>Alleen als de laadpaal exclusief voor bewoners is: +{tarieven.laadpaalPunten} pt, gedeeld door het aantal adressen (§2.10.5).</InfoBadge>
+        </div>
+      )}
+      <p className={styles.parkeerVoorwaarden}>
+        Telt alleen mee als de plek gedeeld wordt door bewoners van minimaal 2 adressen, niet openbaar is, en een afgebakend vak van minimaal 12 m² is (§2.10).
+      </p>
     </div>
   );
 }
