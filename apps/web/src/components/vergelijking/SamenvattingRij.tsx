@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import type { Energielabel, Pakket, PandWaardering } from '@wwso/engine';
 import type { EnergielabelScenarioDoel } from '../../lib/vergelijking/scenario-bouw';
 import { formateerEuro, formateerEuroBand, formateerJarenBand, formateerPctBand } from '../../lib/vergelijking/formatteren';
@@ -29,6 +28,7 @@ export function SamenvattingRij({
   onBekijkResultaat,
   onBekijkAsIsResultaat,
   onBewerkHandmatig,
+  onBewerkAsIs,
   heeftVerwervingswaarde,
 }: {
   asIsWaardering: PandWaardering;
@@ -46,6 +46,8 @@ export function SamenvattingRij({
   onBekijkResultaat: (index: number) => void;
   onBekijkAsIsResultaat: () => void;
   onBewerkHandmatig: (index: number) => void;
+  /** Slaat eerst op en navigeert dan naar het invoerscherm (staat-navigatie-audit 2026-10-03). */
+  onBewerkAsIs: () => void;
   heeftVerwervingswaarde: boolean;
 }) {
   return (
@@ -154,9 +156,9 @@ export function SamenvattingRij({
           </button>
           {asIsDealId && (
             <span className={styles.kamersBewerkenRij}>
-              <Link href={`/woning/nieuw?deal=${asIsDealId}`} className={styles.btnLink}>
+              <button type="button" className={styles.btnLink} onClick={onBewerkAsIs}>
                 Woning bewerken →
-              </Link>
+              </button>
             </span>
           )}
         </div>

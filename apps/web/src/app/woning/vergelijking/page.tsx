@@ -2,12 +2,13 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { stelSuggestiesOp, type PandInvoer } from '@wwso/engine';
 import { Vergelijking, type GeladenDeal } from '../../../components/vergelijking/Vergelijking';
 import { haalPandOp } from '../../../lib/resultaat/opslag';
 import { bepaalTarievenset, bepaalKostencatalogus } from '../../../lib/versiestempel/resolutie';
 import { haalDealOp } from '../../../lib/deals/opslag';
+import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
 
 interface Geladen {
   pand: PandInvoer;
@@ -18,6 +19,7 @@ interface Geladen {
 
 function VergelijkingContent() {
   const dealParam = useSearchParams().get('deal');
+  const router = useRouter();
   const [geladen, setGeladen] = useState<Geladen | null | undefined>(undefined);
 
   // Een opgeslagen deal komt uit Supabase (async, ná hydratie); zonder `?deal=` valt dit terug
@@ -26,8 +28,17 @@ function VergelijkingContent() {
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (dealParam) {
-      haalDealOp(dealParam)
-        .then((deal) => {
+      // Bewerkrechten hier net zo bepalen als op /woning/nieuw (staat-navigatie-audit 2026-10-03:
+      // deze pagina kende ze niet, waardoor "Opslaan" op de demo-woning of een woning van een
+      // andere org gewoon aanstond en pas bij de database op een rauwe RLS-fout strandde).
+      Promise.all([
+        haalDealOp(dealParam),
+        haalEigenProfielOp().then(
+          (profiel) => ({ profiel, onzeker: false }),
+          () => ({ profiel: null, onzeker: true }),
+        ),
+      ])
+        .then(([deal, { profiel, onzeker }]) => {
           if (!deal) {
             setGeladen(null);
             return;
@@ -36,35 +47,38 @@ function VergelijkingContent() {
             pand: deal.pandInvoer,
             tarievensetPeildatum: deal.versiestempel.tarievensetPeildatum,
             kostencatalogusVersie: deal.versiestempel.kostencatalogusVersie,
-            deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios },
+            deal: {
+              id: deal.id,
+              naam: deal.naam,
+              notitie: deal.notitie,
+              map: deal.map,
+              scenarios: deal.scenarios,
+              magBewerken: magDealBewerken(deal, profiel),
+              bewerkrechtenOnzeker: onzeker,
+            },
           });
         })
         .catch(() => setGeladen(null));
       return;
     }
     const context = haalPandOp();
+    // Een opgeslagen woning hoort altijd via `?deal=` geladen te worden (Supabase is de bron, en
+    // alleen dan zijn de bewerkrechten bekend) — niet via het sessionStorage-restje, dat bovendien
+    // het laatst bekeken SCENARIO-pand kan bevatten i.p.v. de as-is (zie `Resultaatscherm`).
+    if (context?.dealId) {
+      router.replace(`/woning/vergelijking?deal=${context.dealId}`);
+      return;
+    }
     setGeladen(
       context
         ? {
             pand: context.pand,
             tarievensetPeildatum: context.tarievensetPeildatum,
             kostencatalogusVersie: context.kostencatalogusVersie,
-            // Draagt de deal-identiteit door vanuit /woning/nieuw?deal=<id> (backlog: as-is
-            // bewerken) — zonder dit zou "Woning opslaan" hier een DUPLICAAT aanmaken in plaats
-            // van de bestaande deal bij te werken.
-            deal: context.dealId
-              ? {
-                  id: context.dealId,
-                  naam: context.dealNaam ?? context.pand.pand.adres,
-                  notitie: context.dealNotitie ?? '',
-                  map: context.dealMap ?? '',
-                  scenarios: context.dealScenarios ?? [],
-                }
-              : undefined,
           }
         : null,
     );
-  }, [dealParam]);
+  }, [dealParam, router]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const tarievenset = useMemo(() => bepaalTarievenset(geladen?.tarievensetPeildatum), [geladen?.tarievensetPeildatum]);

@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.23';
+export const APP_VERSIE = '0.7.24';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,17 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.24',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Bugfix: na "Bekijk volledig resultaat" of "Woning bewerken" bij een scenario en daarna via Mijn woningen een andere woning openen, kreeg die andere woning de naam, scenario\'s en koppeling van de vorige — één klik op "Opslaan" overschreef dan de vorige woning. Een tussenstand wordt nu alleen nog teruggezet bij dezelfde woning.',
+      'Bugfix: na het bewerken van een scenario opende "+ Nieuwe woning" dat oude scenario i.p.v. een leeg formulier.',
+      'Elke stap vanaf de vergelijking ("Bekijk volledig resultaat", "Woning bewerken", een scenario bewerken) slaat nu eerst automatisch op en gaat alleen verder als opslaan gelukt is. Niet-opgeslagen scenariowijzigingen kunnen zo niet meer stil verdwijnen.',
+      'De vergelijkingspagina kent nu ook de bewerkrechten: bij een alleen-lezen woning (bijv. de demowoning) maakt "Opslaan" een eigen kopie i.p.v. een foutmelding, en bij onzekere rechten staat opslaan uit.',
+      'Het resultaatscherm na "Doorrekenen →" heeft nu de woning in de link, zodat het ook in een nieuw tabblad of als bladwijzer werkt.',
+    ],
+  },
   {
     versie: '0.7.23',
     datum: '2026-10-03',

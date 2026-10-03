@@ -25,6 +25,10 @@ const ScenarioBewerkStart = z.object({
   /** Waar /woning/nieuw naar terugkeert — inclusief `?deal=<id>` als dat er was, anders de
    * as-is/deal-koppeling van de vergelijkingspagina zelf verliest bij terugkomst. */
   terugUrl: z.string(),
+  /** De woning waar dit scenario bij hoort (staat-navigatie-audit 2026-10-03) — gaat mee naar het
+   * terugkerende `ScenarioBewerkResultaat`, zodat dat resultaat nooit op de vergelijking van een
+   * ándere woning terechtkomt. `undefined` = nog niet opgeslagen woning. */
+  dealId: z.string().optional(),
   tarievensetPeildatum: z.string().optional(),
   kostencatalogusVersie: z.string().optional(),
 });
@@ -48,6 +52,8 @@ export function haalScenarioBewerkStartOp(): ScenarioBewerkStart | null {
 
 const ScenarioBewerkResultaat = z.object({
   slotIndex: z.number().int().min(0).max(2),
+  /** Zie `ScenarioBewerkStart.dealId`. */
+  dealId: z.string().optional(),
   bewerktPand: PandInvoer,
 });
 export type ScenarioBewerkResultaat = z.infer<typeof ScenarioBewerkResultaat>;
@@ -125,4 +131,24 @@ export function haalEnWisVergelijkingSnapshotOp(): VergelijkingSnapshot | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Welke tussenstand mag de vergelijkingspagina bij het mounten terugzetten? (staat-navigatie-audit
+ * 2026-10-03, bevestigd in de browser: vergelijking van woning A → "Bekijk volledig resultaat" →
+ * Mijn woningen → woning B openen zette de snapshot van A op de pagina van B, inclusief A's
+ * deal-koppeling — één klik op "Opslaan" overschreef A met B's as-is.) Een snapshot of
+ * scenario-resultaat hoort alleen bij de woning waarvoor hij gemaakt is; bij elke andere woning
+ * wordt hij genegeerd. Beide zijn al uit sessionStorage gewist door de `haalEnWis…`-functies,
+ * dus een genegeerde rest blijft ook niet hangen.
+ */
+export function bepaalVergelijkingHerstel(
+  snapshot: VergelijkingSnapshot | null,
+  resultaat: ScenarioBewerkResultaat | null,
+  huidigeDealId: string | undefined,
+): { snapshot: VergelijkingSnapshot | null; resultaat: ScenarioBewerkResultaat | null } {
+  return {
+    snapshot: snapshot && snapshot.dealId === huidigeDealId ? snapshot : null,
+    resultaat: resultaat && resultaat.dealId === huidigeDealId ? resultaat : null,
+  };
 }

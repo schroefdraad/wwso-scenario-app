@@ -114,7 +114,7 @@ export interface InvoerState {
    * naar terug te navigeren — een hardgecodeerd `/woning/vergelijking` verliest anders de
    * deal-koppeling van een reeds opgeslagen deal bij terugkeer.
    */
-  handmatigScenario?: { slotIndex: number; naam: string; terugUrl: string };
+  handmatigScenario?: { slotIndex: number; naam: string; terugUrl: string; dealId?: string };
 }
 
 export const NIEUW_PAND_VELDEN: PandVeldenState = {

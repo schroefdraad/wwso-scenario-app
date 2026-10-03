@@ -5,7 +5,7 @@ import type { PandInvoer } from '@wwso/engine';
 import { invoerReducer, type InvoerActie } from '../../lib/invoer/reducer';
 import { NIEUWE_INVOERSTATE, type InvoerState } from '../../lib/invoer/types';
 import { pandInvoerNaarState } from '../../lib/invoer/vanPandInvoer';
-import { haalConceptOp, slaConceptOp, wisConceptOp } from '../../lib/invoer/opslag';
+import { haalConceptOp, isLosConcept, slaConceptOp, wisConceptOp } from '../../lib/invoer/opslag';
 import type { ScenarioSelectie } from '../../lib/deals/types';
 
 interface InvoerContextWaarde {
@@ -39,6 +39,7 @@ export interface InitieelScenario {
   slotIndex: number;
   naam: string;
   terugUrl: string;
+  dealId?: string;
 }
 
 export function InvoerProvider({
@@ -66,6 +67,7 @@ export function InvoerProvider({
             slotIndex: initieelScenario.slotIndex,
             naam: initieelScenario.naam,
             terugUrl: initieelScenario.terugUrl,
+            dealId: initieelScenario.dealId,
           },
         },
       });
@@ -90,7 +92,7 @@ export function InvoerProvider({
       });
       return;
     }
-    // Een concept met een `bewerktDeal`-koppeling is het achtergebleven restant van een EERDERE
+    // Een concept met een `bewerktDeal`- of `handmatigScenario`-koppeling is het restant van een EERDERE
     // bewerksessie van een al bestaande woning (bijv. via /woning/nieuw?deal=<id>), niet een
     // onafgemaakte, nooit opgeslagen nieuwe invoer — dat onderscheid maakt de state zelf niet meer
     // zodra hij eenmaal in sessionStorage staat. Zo'n concept hier terugladen zou een verse
@@ -101,7 +103,7 @@ export function InvoerProvider({
     // wat toevallig de enige uitweg was). Zo'n concept is hier dus nooit bruikbaar — expliciet
     // wissen i.p.v. laten staan, anders blijft dezelfde valkuil bij de volgende "Nieuwe woning" terug.
     const concept = haalConceptOp();
-    if (concept?.bewerktDeal) {
+    if (concept && !isLosConcept(concept)) {
       wisConceptOp();
     } else if (concept) {
       dispatch({ soort: 'CONCEPT_GELADEN', state: concept });
@@ -117,7 +119,8 @@ export function InvoerProvider({
       eersteRenderKlaar.current = true;
       return;
     }
-    slaConceptOp(state);
+    if (isLosConcept(state)) slaConceptOp(state);
+    else wisConceptOp();
   }, [state]);
 
   return <InvoerContext.Provider value={{ state, dispatch }}>{children}</InvoerContext.Provider>;

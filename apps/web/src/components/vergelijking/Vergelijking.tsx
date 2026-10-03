@@ -11,6 +11,7 @@ import { maakDealAan, werkDealBij, haalMappen } from '../../lib/deals/opslag';
 import {
   haalEnWisScenarioBewerkResultaatOp,
   haalEnWisVergelijkingSnapshotOp,
+  bepaalVergelijkingHerstel,
   slaScenarioBewerkStartOp,
   slaVergelijkingSnapshotOp,
   type VergelijkingSnapshot,
@@ -107,6 +108,9 @@ export interface GeladenDeal {
   notitie: string;
   map: string;
   scenarios: ScenarioSelectie[];
+  /** Zie `bewerktDeal` in `lib/invoer/types.ts` — zelfde betekenis, zelfde bron (`magDealBewerken`). */
+  magBewerken: boolean;
+  bewerkrechtenOnzeker: boolean;
 }
 
 /**
@@ -141,6 +145,9 @@ export function Vergelijking({
   const [dealNaam, setDealNaam] = useState(geladenDeal?.naam ?? pand.pand.adres);
   const [dealNotitie, setDealNotitie] = useState(geladenDeal?.notitie ?? '');
   const [dealMap, setDealMap] = useState(geladenDeal?.map ?? '');
+  // Een nog niet opgeslagen woning is altijd van jezelf; na een kopie (zie `bewaar`) ook.
+  const [magBewerken, setMagBewerken] = useState(geladenDeal?.magBewerken ?? true);
+  const bewerkrechtenOnzeker = geladenDeal?.bewerkrechtenOnzeker ?? false;
   const [mappen, setMappen] = useState<string[]>([]);
   const [nieuweMapModus, setNieuweMapModus] = useState(false);
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
@@ -167,8 +174,7 @@ export function Vergelijking({
   // is de snapshot precies de staat van vóór vertrek en dus veilig om toe te passen.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const resultaat = haalEnWisScenarioBewerkResultaatOp();
-    const snapshot = haalEnWisVergelijkingSnapshotOp();
+    const { snapshot, resultaat } = bepaalVergelijkingHerstel(haalEnWisVergelijkingSnapshotOp(), haalEnWisScenarioBewerkResultaatOp(), geladenDeal?.id);
     if (!snapshot && !resultaat) return;
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
     setSlots(
@@ -252,9 +258,9 @@ export function Vergelijking({
 
   /** Slaat de huidige (mogelijk nog niet opgeslagen) slots-state op, te herstellen door de
    * useEffect hierboven zodra deze pagina na een volledige navigatie weg opnieuw mount. */
-  function slaSnapshotOp() {
+  function slaSnapshotOp(idVoorSnapshot: string | undefined) {
     slaVergelijkingSnapshotOp({
-      dealId,
+      dealId: idVoorSnapshot,
       dealNaam,
       dealNotitie,
       dealMap,
@@ -270,9 +276,12 @@ export function Vergelijking({
     });
   }
 
-  function bewerkHandmatig(index: number) {
-    const terugUrl = dealId ? `/woning/vergelijking?deal=${dealId}` : '/woning/vergelijking';
-    slaSnapshotOp();
+  async function bewerkHandmatig(index: number) {
+    const vertrek = await bewaarVoorVertrek();
+    if (!vertrek.gelukt) return;
+    const id = vertrek.dealId;
+    const terugUrl = id ? `/woning/vergelijking?deal=${id}` : '/woning/vergelijking';
+    slaSnapshotOp(id);
     // `slots[index].pand`, niet het top-level AS-IS `pand` (2026-10-02, gemeld tijdens testen):
     // voor een al eerder handmatig bewerkt scenario IS slots[index].pand al het bewerkte TO-BE
     // (zie regel ~181, `kamerBewerkt: true` zet 'm daarop) — een tweede keer "Bewerk handmatig"
@@ -285,6 +294,7 @@ export function Vergelijking({
       slotIndex: index,
       naam: slots[index].naam,
       terugUrl,
+      dealId: id,
       tarievensetPeildatum: tarievenset.peildatum,
       kostencatalogusVersie: kostencatalogus.versie,
     });
@@ -316,18 +326,20 @@ export function Vergelijking({
     });
   }
 
-  function bekijkResultaat(index: number) {
+  async function bekijkResultaat(index: number) {
     const pakket = berekendePakketten[index];
     if (!pakket) return;
+    const vertrek = await bewaarVoorVertrek();
+    if (!vertrek.gelukt) return;
     const scenarioPand = pasScenarioToe(pand, pakket.scenario.mutaties);
-    slaSnapshotOp();
+    slaSnapshotOp(vertrek.dealId);
     slaPandOp({
       pand: scenarioPand,
       tarievensetPeildatum: tarievenset.peildatum,
       kostencatalogusVersie: kostencatalogus.versie,
       // Behoudt de deal-koppeling op de heen-en-terug-reis naar het resultaatscherm (backlog:
       // as-is bewerken) — anders verschijnt deze deal bij terugkeer hier als een nieuwe.
-      dealId,
+      dealId: vertrek.dealId,
       dealNaam,
       dealNotitie,
       dealMap,
@@ -338,13 +350,15 @@ export function Vergelijking({
 
   /** Zelfde reis als `bekijkResultaat`, maar dan voor de as-is kolom zelf — voorheen alleen
    * bereikbaar via de browser-terugknop (feedback tijdens het testen, 2026-08-24). */
-  function bekijkAsIsResultaat() {
-    slaSnapshotOp();
+  async function bekijkAsIsResultaat() {
+    const vertrek = await bewaarVoorVertrek();
+    if (!vertrek.gelukt) return;
+    slaSnapshotOp(vertrek.dealId);
     slaPandOp({
       pand,
       tarievensetPeildatum: tarievenset.peildatum,
       kostencatalogusVersie: kostencatalogus.versie,
-      dealId,
+      dealId: vertrek.dealId,
       dealNaam,
       dealNotitie,
       dealMap,
@@ -353,24 +367,41 @@ export function Vergelijking({
     // Met een opgeslagen deal is /woning/resultaat?deal=<id> bruikbaar (bookmark, nieuwe tab,
     // gedeelde link) — navigatie-audit 2026-09-04. Zonder dealId (nog niet opgeslagen pand)
     // bestaat er niets om naar te verwijzen; dan blijft de sessionStorage-brug de enige route.
-    router.push(dealId ? `/woning/resultaat?deal=${dealId}` : '/woning/resultaat');
+    router.push(vertrek.dealId ? `/woning/resultaat?deal=${vertrek.dealId}` : '/woning/resultaat');
   }
 
-  async function dealOpslaan() {
+  /** "Woning bewerken →" bij de as-is — was een gewone link zonder opslaan of snapshot, waardoor
+   * niet-opgeslagen scenariowijzigingen stil verdwenen (staat-navigatie-audit 2026-10-03). */
+  async function bewerkAsIs() {
+    const vertrek = await bewaarVoorVertrek();
+    if (!vertrek.gelukt || !vertrek.dealId) return;
+    slaSnapshotOp(vertrek.dealId);
+    router.push(`/woning/nieuw?deal=${vertrek.dealId}`);
+  }
+
+  /**
+   * Slaat de woning op en geeft het (eventueel nieuwe) id terug, of `null` bij een fout — de
+   * foutmelding staat dan al in beeld. Bij een woning die je niet mag bewerken (demo-woning, andere
+   * org) wordt een eigen kopie gemaakt, zelfde gedrag als "Opslaan" op het invoerscherm; daarna is
+   * de pagina aan die kopie gekoppeld.
+   */
+  async function bewaar(): Promise<string | null> {
     setOpslaanStatus('bezig');
     setOpslaanFoutmelding(undefined);
     try {
-      const scenarios = opslaanbareScenarios();
+      const kopie = !!dealId && !magBewerken;
       const invoer = {
-        naam: dealNaam,
+        naam: kopie ? `${dealNaam} (kopie)` : dealNaam,
         notitie: dealNotitie,
         map: dealMap,
         pandInvoer: pand,
-        scenarios,
+        scenarios: opslaanbareScenarios(),
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
+      const deal = dealId && !kopie ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
       setDealId(deal.id);
+      setDealNaam(deal.naam);
+      setMagBewerken(true);
       setOpslaanStatus('gelukt');
       // Een net getypte nieuwe mapnaam is nu echt opgeslagen — terug naar de dropdown en die
       // meteen als keuzeoptie tonen, anders lijkt het net alsof er niets is gebeurd (feedback
@@ -379,11 +410,31 @@ export function Vergelijking({
         setNieuweMapModus(false);
         setMappen((huidig) => (dealMap && !huidig.includes(dealMap) ? [...huidig, dealMap].sort((a, b) => a.localeCompare(b)) : huidig));
       }
-      router.replace(`/woning/vergelijking?deal=${deal.id}`);
+      return deal.id;
     } catch (err) {
       setOpslaanFoutmelding(err instanceof Error ? err.message : String(err));
       setOpslaanStatus('fout');
+      return null;
     }
+  }
+
+  async function dealOpslaan() {
+    const id = await bewaar();
+    if (id) router.replace(`/woning/vergelijking?deal=${id}`);
+  }
+
+  /**
+   * Elke stap naar een volgend scherm slaat eerst op en gaat alleen door als dat gelukt is
+   * (besluit gebruiker 2026-10-03: "automatisch opslaan en altijd checken dat er is opgeslagen als
+   * je naar een volgende stap gaat"). Uitzondering: een woning die je niet mag bewerken of waarvan
+   * de rechten niet bevestigd konden worden — daar wordt níet stilzwijgend een kopie gemaakt (dat
+   * liet het aantal kopieën eerder uit de hand lopen); de snapshot dekt de terugweg dan af.
+   */
+  async function bewaarVoorVertrek(): Promise<{ gelukt: true; dealId: string | undefined } | { gelukt: false }> {
+    if (opslaanStatus === 'bezig') return { gelukt: false };
+    if (bewerkrechtenOnzeker || !magBewerken) return { gelukt: true, dealId };
+    const id = await bewaar();
+    return id ? { gelukt: true, dealId: id } : { gelukt: false };
   }
 
   return (
@@ -460,9 +511,22 @@ export function Vergelijking({
               <option value={NIEUWE_MAP_OPTIE}>+ Nieuwe map…</option>
             </select>
           )}
-          <button type="button" className={`${styles.btn} ${styles.btnPrimair}`} onClick={dealOpslaan} disabled={opslaanStatus === 'bezig'}>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnPrimair}`}
+            onClick={dealOpslaan}
+            disabled={opslaanStatus === 'bezig' || bewerkrechtenOnzeker}
+            title={
+              bewerkrechtenOnzeker
+                ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
+                : !magBewerken
+                  ? 'Deze woning is alleen-lezen — opslaan maakt een nieuwe, eigen kopie.'
+                  : undefined
+            }
+          >
             {dealId ? 'Opslaan' : 'Woning opslaan'}
           </button>
+          {bewerkrechtenOnzeker && <span className={styles.opslaanFout}>Bewerkrechten konden niet bevestigd worden — ververs de pagina</span>}
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
@@ -490,6 +554,7 @@ export function Vergelijking({
           onBekijkResultaat={bekijkResultaat}
           onBekijkAsIsResultaat={bekijkAsIsResultaat}
           onBewerkHandmatig={bewerkHandmatig}
+          onBewerkAsIs={bewerkAsIs}
           heeftVerwervingswaarde={verwervingswaardeEuro !== undefined}
         />
         <h2 className={styles.optimalisatiesTitel}>Optimalisaties</h2>

@@ -105,7 +105,7 @@ export function Topbar() {
   async function doorrekenen() {
     if (!pand) return;
     if (state.handmatigScenario) {
-      slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, bewerktPand: pand });
+      slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, dealId: state.handmatigScenario.dealId, bewerktPand: pand });
       router.push(state.handmatigScenario.terugUrl);
       return;
     }
@@ -119,7 +119,10 @@ export function Topbar() {
       dealMap: deal.map,
       dealScenarios: deal.scenarios,
     });
-    router.push('/woning/resultaat');
+    // `?deal=` in de URL (staat-navigatie-audit 2026-10-03): de woning is op dit punt altijd al
+    // opgeslagen, dus het resultaat hoort ook in een nieuwe tab/bladwijzer te werken i.p.v. alleen
+    // via de sessionStorage-brug van dit tabblad.
+    router.push(`/woning/resultaat?deal=${deal.id}`);
   }
 
   // De topnavigatie is zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor navigatie").

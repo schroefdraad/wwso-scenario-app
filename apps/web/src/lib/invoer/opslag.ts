@@ -38,3 +38,16 @@ export function haalConceptOp(): InvoerState | null {
 export function wisConceptOp(): void {
   sessionStorage.removeItem(INVOER_CONCEPT_SESSIONSTORAGE_KEY);
 }
+
+/**
+ * Hoort deze werkstate als concept bewaard te worden? Alleen een verse, nog niet aan een woning of
+ * scenario gekoppelde invoer (staat-navigatie-audit 2026-10-03, bevestigd in de browser: na een
+ * scenario bewerken opende "+ Nieuwe woning" het oude scenario, mét "Gebruik als scenario →" naar
+ * de vergelijking van die andere woning). Een gekoppelde state heeft het concept niet nodig: een
+ * woning laadt bij een refresh opnieuw uit Supabase via `?deal=`, een scenario via de
+ * scenario-bewerk-brug via `?scenario=`. Zo'n state als concept laten staan is precies wat later
+ * een verse "+ Nieuwe woning"-sessie vervuilt — dus wissen i.p.v. bewaren.
+ */
+export function isLosConcept(state: Pick<InvoerState, 'bewerktDeal' | 'handmatigScenario'>): boolean {
+  return !state.bewerktDeal && !state.handmatigScenario;
+}
