@@ -179,7 +179,7 @@ export function SamenvattingRij({
             </button>
             <span className={styles.kamersBewerkenRij}>
               <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
-                Woning bewerken →
+                Scenario bewerken →
               </button>
             </span>
             {kolom.pakket && (

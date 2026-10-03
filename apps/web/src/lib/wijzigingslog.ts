@@ -22,6 +22,7 @@ export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
       'Parkeerplek: het dubbele schuifje "Parkeerplek aanwezig" is weg — een ruimte van het type "Parkeerplek gemeenschappelijk" ís al een parkeerplek. Er wordt ook niet meer stilzwijgend een soort voor je gekozen: zolang je die niet kiest, meldt "Doorrekenen" wat er nog ontbreekt (voorheen telde zo\'n plek ongemerkt als 0 punten).',
       'Toelichting en PDF noemen de parkeerplek nu ook bij naam (bijv. "parkeerplek buiten, overdekt (type II)").',
       'Schuifjes in het zijpaneel werden onbedoeld breed uitgerekt — staan weer op normale grootte.',
+      'Vergelijking: de link onder een scenario heet nu "Scenario bewerken" (was "Woning bewerken", net als bij de as-is).',
     ],
   },
   {
