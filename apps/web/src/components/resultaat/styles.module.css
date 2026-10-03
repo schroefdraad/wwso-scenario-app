@@ -12,6 +12,13 @@
   padding: 1.4rem;
 }
 
+.pdfRij {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem;
+}
+
 .blok {
   background: var(--paper-raised);
   border: 1px solid var(--line);

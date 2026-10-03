@@ -177,7 +177,9 @@ export function Topbar() {
           >
             {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}
           </button>
-          {state.ruimtes.length > 0 && (
+          {/* Alleen bij een nieuwe woning — bij het bewerken van een bestaande woning of scenario is
+              alles wissen geen zinnige actie (feedback 2026-10-03). */}
+          {!state.bewerktDeal && !state.handmatigScenario && state.ruimtes.length > 0 && (
             <button
               type="button"
               className={headerKnop.klein}

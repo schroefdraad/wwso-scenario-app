@@ -166,11 +166,17 @@ export function SamenvattingRij({
       {kolommen.map((kolom, i) => (
         <div key={i} className={styles.samenvattingCel}>
           <div className={styles.linkStapel}>
-            {kolom.pakket && (
-              <button type="button" className={styles.btnLink} onClick={() => onBekijkResultaat(i)}>
-                Bekijk volledig resultaat →
-              </button>
-            )}
+            {/* Altijd tonen, uitgegrijsd zolang er niets door te rekenen is — anders hing het
+                streepje boven "Woning bewerken" los in de cel (feedback 2026-10-03). */}
+            <button
+              type="button"
+              className={styles.btnLink}
+              disabled={!kolom.pakket}
+              title={kolom.pakket ? undefined : 'Nog niet beschikbaar — kies eerst een energielabel, een maatregel of bewerk de woning'}
+              onClick={() => onBekijkResultaat(i)}
+            >
+              Bekijk volledig resultaat →
+            </button>
             <span className={styles.kamersBewerkenRij}>
               <button type="button" className={styles.btnLink} onClick={() => onBewerkHandmatig(i)}>
                 Woning bewerken →

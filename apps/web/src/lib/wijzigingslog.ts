@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.24';
+export const APP_VERSIE = '0.7.25';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,18 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.25',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Resultaat: "PDF downloaden" staat nu onder de tabel i.p.v. in de topnavigatie.',
+      '"Mijn woningen" in de topnavigatie is nu een knop (omlijnd), net als de andere acties.',
+      'Vergelijking: investering, terugverdientijd en rendement tonen alleen nog de verwachte waarde, zonder bandbreedte.',
+      'Vergelijking: naam en map van de woning (met de opslaan-knop) staan nu rechts in de regel onder de topnavigatie; het notitieveld staat alleen nog op het invoerscherm.',
+      'Vergelijking: "Bekijk volledig resultaat" staat er bij elk scenario, uitgegrijsd zolang er nog niets door te rekenen is (het losse streepje bij een leeg scenario is weg). De uitlegtekst over de energielabel-wisseling onder Optimalisaties is weg.',
+      'Woning bewerken: geen "Alles wissen"-knop meer — die staat alleen nog bij een nieuwe woning.',
+    ],
+  },
   {
     versie: '0.7.24',
     datum: '2026-10-03',

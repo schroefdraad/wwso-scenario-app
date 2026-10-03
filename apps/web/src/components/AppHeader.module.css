@@ -29,18 +29,6 @@
   flex: 1;
 }
 
-.navLink {
-  color: var(--ink);
-  font-size: 0.84rem;
-  text-decoration: none;
-  padding: 0.35rem 0.65rem;
-  border-radius: 6px;
-}
-
-.navLink:hover {
-  background: var(--paper-sunken);
-}
-
 .knop {
   border: 1px solid var(--line-strong);
   background: var(--paper-raised);
@@ -100,4 +88,20 @@
   border-bottom: 1px solid var(--line);
   color: var(--ink-dim);
   font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  min-height: 2.4rem;
+  box-sizing: border-box;
+}
+
+/* Bewerkbare woninggegevens (naam/map/opslaan) rechts in de strook — sinds 2026-10-03. */
+.contextRechts {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: var(--ink);
 }

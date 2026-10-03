@@ -440,11 +440,11 @@ export function Vergelijking({
   return (
     <div className={styles.wrap}>
       <AppHeader titel="Scenariovergelijking" />
-      <WoningContextStrook onderdelen={[pand.pand.adres, pand.pand.stad, kamersLabel(pand.pand.aantalKamers)]} />
-      <main className={styles.main}>
-        {/* Naam/map/notitie/opslaan stonden tot 2026-10-03 in de topnavigatie — formuliervelden,
-            geen navigatie, dus een eigen blok bovenaan de pagina (topnav-audit, punt 1). */}
-        <section className={styles.woningGegevens} aria-label="Woninggegevens">
+      <WoningContextStrook
+        onderdelen={[pand.pand.adres, pand.pand.stad, kamersLabel(pand.pand.aantalKamers)]}
+        rechts={
+          // Naam/map/opslaan rechts in de strook (feedback 2026-10-03); het notitieveld staat
+          // alleen nog op het invoerscherm — `dealNotitie` gaat ongewijzigd mee bij opslaan.
         <div className={styles.dealOpslaan}>
           <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de woning" className={styles.dealNaamVeld} />
           {nieuweMapModus ? (
@@ -530,15 +530,9 @@ export function Vergelijking({
           {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
           {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
         </div>
-        <textarea
-          value={dealNotitie}
-          onChange={(e) => setDealNotitie(e.target.value)}
-          aria-label="Notitie bij deze woning"
-          placeholder="Notitie bij deze woning (optioneel, zichtbaar in het woningen-overzicht)…"
-          className={styles.dealNotitieVeld}
-          rows={2}
-        />
-        </section>
+        }
+      />
+      <main className={styles.main}>
         <SamenvattingRij
           asIsWaardering={asIsWaardering}
           asIsDealId={dealId}
@@ -578,12 +572,6 @@ export function Vergelijking({
             const resultaat = handmatigeKandidatenPerSlot[i];
             return (
               <div key={i}>
-                {slot.energielabelDoel && (
-                  <p className={styles.hint} style={{ padding: '0.9rem 1.2rem 0' }}>
-                    Dit scenario wisselt eerst naar label {slot.energielabelDoel}; de standaardmaatregelen hieronder (en een eventuele kamerbewerking)
-                    tellen daar bovenop. Kies &quot;Geen energielabel-scenario&quot; in de kolomkop hierboven om de labelwisseling weer los te maken.
-                  </p>
-                )}
                 <HandmatigMaatregelen
                   slotNaam={slot.naam}
                   kandidaten={resultaat?.kandidaten ?? []}

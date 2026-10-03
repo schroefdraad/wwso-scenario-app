@@ -75,15 +75,9 @@ export function Resultaatscherm({
       <AppHeader
         titel={titel ?? pand.pand.adres}
         acties={
-          <>
-            {pdfStatus === 'fout' && <span className={headerKnop.fout}>PDF maken mislukt, probeer opnieuw</span>}
-            <button type="button" className={headerKnop.secundair} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
-              {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
-            </button>
-            <Link href={terugUrl} className={headerKnop.primair}>
-              Vergelijk scenario&apos;s →
-            </Link>
-          </>
+          <Link href={terugUrl} className={headerKnop.primair}>
+            Vergelijk scenario&apos;s →
+          </Link>
         }
       />
       <WoningContextStrook onderdelen={[pand.pand.stad, kamersLabel(pand.pand.aantalKamers), `peildatum ${formateerDatum(peildatum)}`]} />
@@ -114,6 +108,14 @@ export function Resultaatscherm({
             ))}
           </div>
         </section>
+        {/* Onder de tabel i.p.v. in de topnavigatie (feedback 2026-10-03): een export van wat je
+            net bekeken hebt, geen navigatie. */}
+        <div className={styles.pdfRij}>
+          {pdfStatus === 'fout' && <span className={headerKnop.fout}>PDF maken mislukt, probeer opnieuw</span>}
+          <button type="button" className={headerKnop.secundair} onClick={downloadPdf} disabled={pdfStatus === 'bezig'}>
+            {pdfStatus === 'bezig' ? 'PDF maken…' : 'PDF downloaden'}
+          </button>
+        </div>
       </main>
     </div>
   );

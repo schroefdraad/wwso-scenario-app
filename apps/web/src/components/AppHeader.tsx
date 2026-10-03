@@ -32,7 +32,7 @@ export function AppHeader({
       <h1 className={styles.titel}>{titel}</h1>
       <div className={styles.spacer} />
       {toonMijnWoningen && (
-        <Link href="/woningen" className={styles.navLink}>
+        <Link href="/woningen" className={styles.knop}>
           Mijn woningen
         </Link>
       )}
@@ -45,17 +45,20 @@ export function AppHeader({
  * Gedeelde, niet-sticky statusstrook direct onder de `AppHeader`: woningnaam/adres, kamers en
  * andere context. Lege of `false`-onderdelen vallen weg; de rest wordt met " · " gescheiden.
  */
-export function WoningContextStrook({ onderdelen }: { onderdelen: Array<ReactNode | false | null | undefined> }) {
+export function WoningContextStrook({ onderdelen, rechts }: { onderdelen: Array<ReactNode | false | null | undefined>; rechts?: ReactNode }) {
   const zichtbaar = onderdelen.filter((o): o is ReactNode => o !== false && o !== null && o !== undefined && o !== '');
-  if (zichtbaar.length === 0) return null;
+  if (zichtbaar.length === 0 && !rechts) return null;
   return (
     <div className={styles.context}>
-      {zichtbaar.map((onderdeel, i) => (
-        <span key={i}>
-          {i > 0 && ' · '}
-          {onderdeel}
-        </span>
-      ))}
+      <span>
+        {zichtbaar.map((onderdeel, i) => (
+          <span key={i}>
+            {i > 0 && ' · '}
+            {onderdeel}
+          </span>
+        ))}
+      </span>
+      {rechts && <div className={styles.contextRechts}>{rechts}</div>}
     </div>
   );
 }
