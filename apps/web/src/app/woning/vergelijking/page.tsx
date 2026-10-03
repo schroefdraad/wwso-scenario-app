@@ -10,6 +10,7 @@ import { bepaalTarievenset, bepaalKostencatalogus } from '../../../lib/versieste
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
 import { bepaalVergelijkingBron } from '../../../lib/navigatie';
+import { ruimOpVoorWoning } from '../../../lib/sessie/brug';
 
 interface Geladen {
   pand: PandInvoer;
@@ -29,6 +30,8 @@ function VergelijkingContent() {
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (dealParam) {
+      // Opent een opgeslagen woning: elk sessie-restje van een andere woning verdwijnt (zie `lib/sessie/brug.ts`).
+      ruimOpVoorWoning(dealParam);
       // (zie `bepaalVergelijkingBron`: met `?deal=` altijd uit Supabase.)
       // Bewerkrechten hier net zo bepalen als op /woning/nieuw (staat-navigatie-audit 2026-10-03:
       // deze pagina kende ze niet, waardoor "Opslaan" op de demo-woning of een woning van een

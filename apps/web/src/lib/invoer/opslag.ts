@@ -1,4 +1,5 @@
 import type { InvoerState } from './types';
+import { maakBrug, SESSIE_SLEUTELS } from '../sessie/brug';
 
 /**
  * Concept-autosave voor /woning/nieuw. Losstaand van `lib/resultaat/opslag.ts` (dat draagt de
@@ -6,23 +7,21 @@ import type { InvoerState } from './types';
  * mogelijk onvolledige werkstate zelf, weggeschreven tijdens het typen zodat een refresh/terug-
  * navigatie/tabblad-sluiten vóór "Doorrekenen" het werk niet verliest.
  */
-export const INVOER_CONCEPT_SESSIONSTORAGE_KEY = 'wwso:invoer-concept';
+export const INVOER_CONCEPT_SESSIONSTORAGE_KEY = SESSIE_SLEUTELS.invoerConcept;
+
+/** Geen Zod-schema hier: dit is geen officieel gevalideerd model, alleen een ruwe werkstate. */
+const brug = maakBrug(SESSIE_SLEUTELS.invoerConcept, (ruw) => {
+  const r = ruw as Partial<InvoerState> | null;
+  return r && typeof r === 'object' && r.pand && Array.isArray(r.ruimtes) ? (r as InvoerState) : null;
+});
 
 export function slaConceptOp(state: InvoerState): void {
-  sessionStorage.setItem(INVOER_CONCEPT_SESSIONSTORAGE_KEY, JSON.stringify(state));
+  brug.zet(state);
 }
 
-/** `null` als er niets (geldigs) staat opgeslagen — geen Zod-schema hier, dit is geen officieel gevalideerd model, alleen een ruwe werkstate. */
+/** `null` als er niets (geldigs) staat opgeslagen. */
 export function haalConceptOp(): InvoerState | null {
-  const ruw = sessionStorage.getItem(INVOER_CONCEPT_SESSIONSTORAGE_KEY);
-  if (!ruw) return null;
-  try {
-    const parsed = JSON.parse(ruw);
-    if (!parsed || typeof parsed !== 'object' || !parsed.pand || !Array.isArray(parsed.ruimtes)) return null;
-    return parsed as InvoerState;
-  } catch {
-    return null;
-  }
+  return brug.haal();
 }
 
 /**
@@ -36,7 +35,7 @@ export function haalConceptOp(): InvoerState | null {
  * hoort (een verse, dealloze `/woning/nieuw`-sessie).
  */
 export function wisConceptOp(): void {
-  sessionStorage.removeItem(INVOER_CONCEPT_SESSIONSTORAGE_KEY);
+  brug.wis();
 }
 
 /**

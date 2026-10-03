@@ -16,6 +16,7 @@ import { haalDealOp } from '../../../lib/deals/opslag';
 import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
 import { haalScenarioBewerkStartOp } from '../../../lib/vergelijking/scenarioBewerkBrug';
 import { isZojuistGekoppeld } from '../../../lib/invoer/koppeling';
+import { ruimOpVoorWoning } from '../../../lib/sessie/brug';
 import styles from '../../../components/invoer/styles.module.css';
 
 function NieuwPandContent() {
@@ -53,6 +54,8 @@ function NieuwPandContent() {
       setInitieelDeal(undefined);
       return;
     }
+    // Opent een opgeslagen woning: elk sessie-restje van een andere woning verdwijnt (zie `lib/sessie/brug.ts`).
+    ruimOpVoorWoning(dealParam);
     setStatus('laden');
     // Profiel + deal parallel ophalen: het profiel bepaalt alleen `magBewerken` (UI-gedrag), de
     // deal zelf blijft leidend voor of de pagina laadt — een profiel-ophaalfout mag het laden van

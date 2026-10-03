@@ -8,6 +8,7 @@ import { haalPandOp, type OpgeslagenPandContext } from '../../../lib/resultaat/o
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { bepaalTarievenset } from '../../../lib/versiestempel/resolutie';
 import { vergelijkingUrl } from '../../../lib/navigatie';
+import { ruimOpVoorWoning } from '../../../lib/sessie/brug';
 
 function ResultaatContent() {
   const dealParam = useSearchParams().get('deal');
@@ -22,6 +23,8 @@ function ResultaatContent() {
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (dealParam) {
+      // Opent een opgeslagen woning: elk sessie-restje van een andere woning verdwijnt (zie `lib/sessie/brug.ts`).
+      ruimOpVoorWoning(dealParam);
       haalDealOp(dealParam)
         .then((deal) => {
           if (!deal) {

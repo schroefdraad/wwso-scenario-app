@@ -1,5 +1,6 @@
 import { Energielabel, PandInvoer } from '@wwso/engine';
 import { z } from 'zod';
+import { maakBrug, SESSIE_SLEUTELS } from '../sessie/brug';
 
 /**
  * SessionStorage-brug voor "AS-IS kopiëren naar een handmatig TO-BE-scenario" (backlog, feedback
@@ -14,9 +15,6 @@ import { z } from 'zod';
  * de deal-koppeling die niet al opgeslagen was, verloren gaan zodra je één slot handmatig
  * bewerkt — precies de bug die deze snapshot voorkomt.
  */
-const START_KEY = 'wwso:scenario-bewerk-start';
-const RESULTAAT_KEY = 'wwso:scenario-bewerk-resultaat';
-const SNAPSHOT_KEY = 'wwso:vergelijking-snapshot';
 
 const ScenarioBewerkStart = z.object({
   asIsPand: PandInvoer,
@@ -34,20 +32,18 @@ const ScenarioBewerkStart = z.object({
 });
 export type ScenarioBewerkStart = z.infer<typeof ScenarioBewerkStart>;
 
+const startBrug = maakBrug(SESSIE_SLEUTELS.scenarioBewerkStart, (ruw) => {
+  const r = ScenarioBewerkStart.safeParse(ruw);
+  return r.success ? r.data : null;
+});
+
 export function slaScenarioBewerkStartOp(context: ScenarioBewerkStart): void {
-  sessionStorage.setItem(START_KEY, JSON.stringify(context));
+  startBrug.zet(context);
 }
 
 /** `null` als er niets (geldigs) staat opgeslagen. */
 export function haalScenarioBewerkStartOp(): ScenarioBewerkStart | null {
-  const ruw = sessionStorage.getItem(START_KEY);
-  if (!ruw) return null;
-  try {
-    const resultaat = ScenarioBewerkStart.safeParse(JSON.parse(ruw));
-    return resultaat.success ? resultaat.data : null;
-  } catch {
-    return null;
-  }
+  return startBrug.haal();
 }
 
 const ScenarioBewerkResultaat = z.object({
@@ -58,21 +54,18 @@ const ScenarioBewerkResultaat = z.object({
 });
 export type ScenarioBewerkResultaat = z.infer<typeof ScenarioBewerkResultaat>;
 
+const resultaatBrug = maakBrug(SESSIE_SLEUTELS.scenarioBewerkResultaat, (ruw) => {
+  const r = ScenarioBewerkResultaat.safeParse(ruw);
+  return r.success ? r.data : null;
+});
+
 export function slaScenarioBewerkResultaatOp(resultaat: ScenarioBewerkResultaat): void {
-  sessionStorage.setItem(RESULTAAT_KEY, JSON.stringify(resultaat));
+  resultaatBrug.zet(resultaat);
 }
 
 /** `null` als er niets (geldigs) staat opgeslagen. Verwijdert de sleutel na het lezen — eenmalig af te halen. */
 export function haalEnWisScenarioBewerkResultaatOp(): ScenarioBewerkResultaat | null {
-  const ruw = sessionStorage.getItem(RESULTAAT_KEY);
-  sessionStorage.removeItem(RESULTAAT_KEY);
-  if (!ruw) return null;
-  try {
-    const resultaat = ScenarioBewerkResultaat.safeParse(JSON.parse(ruw));
-    return resultaat.success ? resultaat.data : null;
-  } catch {
-    return null;
-  }
+  return resultaatBrug.haalEnWis();
 }
 
 /** Eén uniforme slotvorm sinds 2026-09-07 (feedback Emma Morrison: een energielabel-wisseling mag
@@ -107,8 +100,13 @@ const VergelijkingSnapshot = z.object({
 });
 export type VergelijkingSnapshot = z.infer<typeof VergelijkingSnapshot>;
 
+const snapshotBrug = maakBrug(SESSIE_SLEUTELS.vergelijkingSnapshot, (ruw) => {
+  const r = VergelijkingSnapshot.safeParse(ruw);
+  return r.success ? r.data : null;
+});
+
 export function slaVergelijkingSnapshotOp(snapshot: VergelijkingSnapshot): void {
-  sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot));
+  snapshotBrug.zet(snapshot);
 }
 
 /**
@@ -122,15 +120,7 @@ export function slaVergelijkingSnapshotOp(snapshot: VergelijkingSnapshot): void 
  * de staat van vóór vertrek en dus veilig om altijd toe te passen (zie `Vergelijking.tsx`).
  */
 export function haalEnWisVergelijkingSnapshotOp(): VergelijkingSnapshot | null {
-  const ruw = sessionStorage.getItem(SNAPSHOT_KEY);
-  sessionStorage.removeItem(SNAPSHOT_KEY);
-  if (!ruw) return null;
-  try {
-    const resultaat = VergelijkingSnapshot.safeParse(JSON.parse(ruw));
-    return resultaat.success ? resultaat.data : null;
-  } catch {
-    return null;
-  }
+  return snapshotBrug.haalEnWis();
 }
 
 /**

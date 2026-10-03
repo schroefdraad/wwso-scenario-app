@@ -1,6 +1,7 @@
 import { PandInvoer } from '@wwso/engine';
 import { z } from 'zod';
 import { ScenarioSelectie } from '../deals/types';
+import { maakBrug, SESSIE_SLEUTELS } from '../sessie/brug';
 
 /**
  * Overdracht tussen pagina's binnen hetzelfde tabblad (taak 12 → 13 → 14 → 15). Er is nog geen
@@ -18,7 +19,7 @@ import { ScenarioSelectie } from '../deals/types';
  * op het vergelijkingsscherm als een NIEUWE deal verschijnen — "Woning opslaan" zou dan dupliceren
  * in plaats van de bestaande deal bij te werken.
  */
-export const HUIDIG_PAND_SESSIONSTORAGE_KEY = 'wwso:huidig-pand';
+export const HUIDIG_PAND_SESSIONSTORAGE_KEY = SESSIE_SLEUTELS.huidigPand;
 
 const OpgeslagenPandContext = z.object({
   pand: PandInvoer,
@@ -35,18 +36,16 @@ const OpgeslagenPandContext = z.object({
 });
 export type OpgeslagenPandContext = z.infer<typeof OpgeslagenPandContext>;
 
+const brug = maakBrug(SESSIE_SLEUTELS.huidigPand, (ruw) => {
+  const resultaat = OpgeslagenPandContext.safeParse(ruw);
+  return resultaat.success ? resultaat.data : null;
+});
+
 export function slaPandOp(context: OpgeslagenPandContext): void {
-  sessionStorage.setItem(HUIDIG_PAND_SESSIONSTORAGE_KEY, JSON.stringify(context));
+  brug.zet(context);
 }
 
 /** `null` als er niets (geldigs) staat opgeslagen. */
 export function haalPandOp(): OpgeslagenPandContext | null {
-  const ruw = sessionStorage.getItem(HUIDIG_PAND_SESSIONSTORAGE_KEY);
-  if (!ruw) return null;
-  try {
-    const resultaat = OpgeslagenPandContext.safeParse(JSON.parse(ruw));
-    return resultaat.success ? resultaat.data : null;
-  } catch {
-    return null;
-  }
+  return brug.haal();
 }

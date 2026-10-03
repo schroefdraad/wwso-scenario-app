@@ -153,6 +153,26 @@ geautomatiseerde test die het vangt. Zie de analyse en het voorstel in de sessie
 dit gesprek; vervolgstappen (consolidatie van de drie sessionStorage-bruggen, regressietests per
 incident) volgen na de audit.
 
+**Staat-navigatie-audit afgerond (2026-10-03, v0.7.24 → v0.7.33, alles gedeployed).**
+- Twee nieuwe incidenten in de browser bevestigd en gefixt: vergelijking-snapshot van woning A
+  belandde op woning B (Opslaan overschreef dan A), en een scenario-concept lekte naar
+  "+ Nieuwe woning".
+- Besluit gebruiker: elke stap naar een volgend scherm slaat eerst op en gaat alleen door als dat
+  lukt. Op productie bewezen (Kanaalkade 49-B, daarna exact teruggezet) — werkt pas sinds v0.7.30,
+  zie het kopie-probleem hieronder.
+- Regressietests voor alle 8 bekende incidenten (22-08, 01-09 2x, 08-09, 02-10 2x, 03-10 2x).
+  Beslissingen daarvoor uit de componenten getild: `lib/navigatie.ts` (alle /woning/-URL's),
+  `bepaalOpslaanActie`, `maakScenarioBewerkStart`/`pasScenarioResultaatToe`.
+- Randgevallen: woning in de URL na de eerste opslag (`lib/invoer/koppeling.ts`), formulier per
+  woning (`key` op `InvoerProvider`).
+- Structureel (stap 3): alle vijf sessionStorage-bruggen in `lib/sessie/brug.ts`, plus
+  `ruimOpVoorWoning(id)` op elk scherm dat een opgeslagen woning laadt — restjes van een andere
+  woning kunnen daardoor niet meer op het verkeerde scherm komen, ook niet bij een toekomstige
+  nieuwe brug. Geen `sessionStorage`-aanroepen meer buiten die module.
+- Kopie-probleem (v0.7.30): zonder inlog gold elke woning als alleen-lezen → elke opslag maakte
+  een "(kopie)". Tijdelijke `ANONIEM`-regel; structurele aanpak staat in `plan/plan.md` onder
+  "Toegang & rollen voor de bèta". 11 Kanaalkade-kopieën opgeruimd (back-up in `outputs/`).
+
 **Let op — lokale testinstelling nog actief, bewust door de gebruiker zelf terug te zetten:**
 tijdens het testen stonden `AUTH_VEREIST=false` (lokaal `.env.local`/`apps/web/.env.local`) en de
 open RLS-policy (`supabase/toggle-auth-uit.sql`) aan — geen van beide is onderdeel van de
