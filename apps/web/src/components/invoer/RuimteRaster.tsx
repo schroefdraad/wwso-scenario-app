@@ -38,7 +38,7 @@ export function RuimteRaster() {
                 <th className={styles.colBool}>Verk.</th>
                 <th className={styles.colAdr}>Adress.</th>
                 <th className={styles.colToegang}>Toegang</th>
-                <th className={styles.colVoorz}>Voorz.</th>
+                <th className={styles.colVoorz}>Voorzieningen</th>
                 <th className={styles.colActies} />
               </tr>
             </thead>

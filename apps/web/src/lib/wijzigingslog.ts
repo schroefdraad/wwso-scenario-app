@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.21';
+export const APP_VERSIE = '0.7.22';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.22',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Parkeerplek kon worden geselecteerd bij elk ruimtetype, ook bijv. een badkamer — klopte niet met het beleid (§2.10: alleen bij een ruimte van het type \'Parkeerplek gemeenschappelijk\'). Zolder had hetzelfde soort probleem (hoort alleen bij een vertrek/overige ruimte, §2.2.1.3/§2.2.2.3). Beide iconen tonen nu alleen nog bij een passend ruimtetype — Keuken en Sanitair blijven bewust overal beschikbaar, dat is conform beleid (bijv. een douche in een slaapkamer is expliciet toegestaan).',
+      'Kolomkop "Voorz." voluit naar "Voorzieningen".',
+    ],
+  },
   {
     versie: '0.7.21',
     datum: '2026-10-03',

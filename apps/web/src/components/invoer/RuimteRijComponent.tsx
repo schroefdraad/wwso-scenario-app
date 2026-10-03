@@ -7,7 +7,7 @@ import { useInvoer } from './InvoerContext';
 import { useLade } from './LadeContext';
 import { useToast } from './ToastContext';
 import { InfoBadge } from '../InfoBadge';
-import { DUBBEL_GEDEELDE_RUIMTE_TYPES } from '@wwso/engine';
+import { DUBBEL_GEDEELDE_RUIMTE_TYPES, VERTREK_TYPES, OVERIGE_RUIMTE_TYPES } from '@wwso/engine';
 import { KOUD_TYPES } from '../../lib/invoer/reducer';
 import { TYPE_GROEPEN } from './typeGroepen';
 import styles from './styles.module.css';
@@ -15,6 +15,12 @@ import type { RuimteRij } from '../../lib/invoer/types';
 
 function isDubbelGedeeld(type: RuimteType): boolean {
   return (DUBBEL_GEDEELDE_RUIMTE_TYPES as readonly string[]).includes(type);
+}
+
+/** §2.2.1.3/§2.2.2.3: een zolderruimte is alleen een zinvol begrip bij een vertrek of overige
+ * ruimte (R1/R2) — niet bij bijv. Verkeersruimte, Buitenruimte of Parkeerplek. */
+function kanZolderZijn(type: RuimteType): boolean {
+  return (VERTREK_TYPES as readonly string[]).includes(type) || (OVERIGE_RUIMTE_TYPES as readonly string[]).includes(type);
 }
 
 export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeRijId?: string }) {
@@ -25,6 +31,8 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
   const leeg = rij.kamers.length === 0;
   const dubbel = isDubbelGedeeld(rij.type);
   const koud = KOUD_TYPES.has(rij.type);
+  const zolderMogelijk = kanZolderZijn(rij.type);
+  const parkeerplekMogelijk = rij.type === 'Parkeerplek gemeenschappelijk';
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTableRowElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
@@ -173,22 +181,30 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
           >
             🚿
           </button>
-          <button
-            type="button"
-            className={`${styles.voorzBadgeBtn} ${rij.zolder ? styles.voorzBadgeBtnActief : ''}`}
-            title="Zolder"
-            onClick={() => open(rij.id, 'zolder')}
-          >
-            🪜
-          </button>
-          <button
-            type="button"
-            className={`${styles.voorzBadgeBtn} ${rij.parkeerplek ? styles.voorzBadgeBtnActief : ''}`}
-            title="Parkeerplek"
-            onClick={() => open(rij.id, 'parkeerplek')}
-          >
-            🅿️
-          </button>
+          {/* §2.2.1.3/§2.2.2.3 resp. §2.10: Zolder hoort alleen bij een vertrek/overige ruimte,
+           * Parkeerplek alleen bij het type 'Parkeerplek gemeenschappelijk' — een al bestaande
+           * (stale) waarde blijft zichtbaar/bereikbaar als het ruimtetype ondertussen wijzigde
+           * (data nooit stilzwijgend wijzigen), maar is dan niet meer opnieuw te kiezen. */}
+          {(zolderMogelijk || rij.zolder) && (
+            <button
+              type="button"
+              className={`${styles.voorzBadgeBtn} ${rij.zolder ? styles.voorzBadgeBtnActief : ''}`}
+              title="Zolder"
+              onClick={() => open(rij.id, 'zolder')}
+            >
+              🪜
+            </button>
+          )}
+          {(parkeerplekMogelijk || rij.parkeerplek) && (
+            <button
+              type="button"
+              className={`${styles.voorzBadgeBtn} ${rij.parkeerplek ? styles.voorzBadgeBtnActief : ''}`}
+              title="Parkeerplek"
+              onClick={() => open(rij.id, 'parkeerplek')}
+            >
+              🅿️
+            </button>
+          )}
         </div>
       </td>
       <td className={styles.colActies}>
