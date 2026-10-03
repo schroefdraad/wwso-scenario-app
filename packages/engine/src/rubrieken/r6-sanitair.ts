@@ -1,6 +1,6 @@
 import type { Tarievenset } from '@wwso/data';
 import type { PandInvoer, Ruimte, SanitairVoorziening } from '../types/index';
-import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld';
+import { kamersPerRuimte, rondAfOpKwartpunten, waardeertVoorzieningen } from './gedeeld';
 import type { RubriekResultaat } from './types';
 
 /** Alle vijf eisen van §2.6.2 moeten aanwezig zijn, anders vervallen álle extra punten. */
@@ -145,6 +145,11 @@ export function berekenR6(input: PandInvoer, tarievenset: Tarievenset): RubriekR
   }
 
   for (const post of input.sanitair) {
+    const ruimte = ruimteBijNr.get(post.ruimteNr);
+    if (ruimte && !waardeertVoorzieningen(ruimte.type)) {
+      toelichting.push(`R6 ruimte ${post.ruimteNr}: ligt in een ${ruimte.type.toLowerCase()} — sanitair telt alleen in een vertrek of overige ruimte (§2.6.1) → 0 pt`);
+      continue;
+    }
     const kamers = kamersBijRuimte.get(post.ruimteNr) ?? [];
     const berekening = berekenSanitair(
       post,

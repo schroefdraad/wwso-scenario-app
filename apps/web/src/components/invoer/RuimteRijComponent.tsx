@@ -7,7 +7,7 @@ import { useInvoer } from './InvoerContext';
 import { useLade } from './LadeContext';
 import { useToast } from './ToastContext';
 import { InfoBadge } from '../InfoBadge';
-import { DUBBEL_GEDEELDE_RUIMTE_TYPES, VERTREK_TYPES, OVERIGE_RUIMTE_TYPES } from '@wwso/engine';
+import { DUBBEL_GEDEELDE_RUIMTE_TYPES, ZOLDER_RUIMTE_TYPES, waardeertVoorzieningen } from '@wwso/engine';
 import { KOUD_TYPES } from '../../lib/invoer/reducer';
 import { TYPE_GROEPEN } from './typeGroepen';
 import styles from './styles.module.css';
@@ -17,10 +17,9 @@ function isDubbelGedeeld(type: RuimteType): boolean {
   return (DUBBEL_GEDEELDE_RUIMTE_TYPES as readonly string[]).includes(type);
 }
 
-/** §2.2.1.3/§2.2.2.3: een zolderruimte is alleen een zinvol begrip bij een vertrek of overige
- * ruimte (R1/R2) — niet bij bijv. Verkeersruimte, Buitenruimte of Parkeerplek. */
+/** Zie `ZOLDER_RUIMTE_TYPES` in de engine (voorzieningen-audit 2026-10-03). */
 function kanZolderZijn(type: RuimteType): boolean {
-  return (VERTREK_TYPES as readonly string[]).includes(type) || (OVERIGE_RUIMTE_TYPES as readonly string[]).includes(type);
+  return ZOLDER_RUIMTE_TYPES.includes(type);
 }
 
 export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeRijId?: string }) {
@@ -32,6 +31,7 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
   const dubbel = isDubbelGedeeld(rij.type);
   const koud = KOUD_TYPES.has(rij.type);
   const zolderMogelijk = kanZolderZijn(rij.type);
+  const voorzieningenMogelijk = waardeertVoorzieningen(rij.type);
   const parkeerplekMogelijk = rij.type === 'Parkeerplek gemeenschappelijk';
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTableRowElement>) => {
@@ -165,22 +165,30 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
       </td>
       <td className={styles.colVoorz}>
         <div className={styles.voorzBadges}>
-          <button
-            type="button"
-            className={`${styles.voorzBadgeBtn} ${rij.keuken ? styles.voorzBadgeBtnActief : ''}`}
-            title="Keuken"
-            onClick={() => open(rij.id, 'keuken')}
-          >
-            🍳
-          </button>
-          <button
-            type="button"
-            className={`${styles.voorzBadgeBtn} ${rij.sanitair ? styles.voorzBadgeBtnActief : ''}`}
-            title="Sanitair"
-            onClick={() => open(rij.id, 'sanitair')}
-          >
-            🚿
-          </button>
+          {/* Keuken en sanitair alleen in een vertrek of overige ruimte (privé of
+           * gemeenschappelijk) — niet bij buitenruimte, verkeersruimte of parkeerplek
+           * (`VOORZIENING_RUIMTE_TYPES`, voorzieningen-audit 2026-10-03). Bestaande data bij een
+           * ondertussen gewijzigd type blijft zichtbaar, zodat hij verwijderd kan worden. */}
+          {(voorzieningenMogelijk || rij.keuken) && (
+            <button
+              type="button"
+              className={`${styles.voorzBadgeBtn} ${rij.keuken ? styles.voorzBadgeBtnActief : ''}`}
+              title="Keuken"
+              onClick={() => open(rij.id, 'keuken')}
+            >
+              🍳
+            </button>
+          )}
+          {(voorzieningenMogelijk || rij.sanitair) && (
+            <button
+              type="button"
+              className={`${styles.voorzBadgeBtn} ${rij.sanitair ? styles.voorzBadgeBtnActief : ''}`}
+              title="Sanitair"
+              onClick={() => open(rij.id, 'sanitair')}
+            >
+              🚿
+            </button>
+          )}
           {/* §2.2.1.3/§2.2.2.3 resp. §2.10: Zolder hoort alleen bij een vertrek/overige ruimte,
            * Parkeerplek alleen bij het type 'Parkeerplek gemeenschappelijk' — een al bestaande
            * (stale) waarde blijft zichtbaar/bereikbaar als het ruimtetype ondertussen wijzigde

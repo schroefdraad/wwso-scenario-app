@@ -1,6 +1,6 @@
 import type { KeukenAanrechtBand, Tarievenset } from '@wwso/data';
 import type { Keuken, PandInvoer } from '../types/index';
-import { kamersPerRuimte, rondAfOpKwartpunten } from './gedeeld';
+import { kamersPerRuimte, rondAfOpKwartpunten, waardeertVoorzieningen } from './gedeeld';
 import type { RubriekResultaat } from './types';
 
 /** Alle vijf basiseisen van §2.5.1 moeten aanwezig zijn, anders vervalt de hele rubriek voor deze keuken. */
@@ -136,7 +136,13 @@ export function berekenR5(input: PandInvoer, tarievenset: Tarievenset): RubriekR
     ruwPerKamer.set(kamer, 0);
   }
 
+  const ruimteBijNr = new Map(input.ruimtes.map((r) => [r.nr, r] as const));
   for (const keuken of input.keukens) {
+    const ruimte = ruimteBijNr.get(keuken.ruimteNr);
+    if (ruimte && !waardeertVoorzieningen(ruimte.type)) {
+      toelichting.push(`R5 keuken (ruimte ${keuken.ruimteNr}): ligt in een ${ruimte.type.toLowerCase()} — een keuken telt alleen in een vertrek of overige ruimte → 0 pt`);
+      continue;
+    }
     const kamers = kamersBijRuimte.get(keuken.ruimteNr) ?? [];
     const berekening = berekenKeuken(keuken, kamers.length, tarievenset);
 

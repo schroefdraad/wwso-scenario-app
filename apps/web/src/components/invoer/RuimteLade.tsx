@@ -5,6 +5,8 @@ import {
   KITCHENETTE_240_PRESET,
   PARKEERPLEK_OMSCHRIJVING,
   ParkeerplekType,
+  ZOLDER_RUIMTE_TYPES,
+  waardeertVoorzieningen,
   toegestaneToiletTypes,
   type Keuken,
   type SanitairVoorziening,
@@ -106,10 +108,10 @@ export function RuimteLade() {
           </button>
         </div>
         <div className={styles.drawerBody}>
-          {lade.segment === 'keuken' && <KeukenPanel rij={rij} />}
-          {lade.segment === 'sanitair' && <SanitairPanel rij={rij} />}
+          {lade.segment === 'keuken' && (waardeertVoorzieningen(rij.type) ? <KeukenPanel rij={rij} /> : <NietPassendPanel rij={rij} soort="keuken" />)}
+          {lade.segment === 'sanitair' && (waardeertVoorzieningen(rij.type) ? <SanitairPanel rij={rij} /> : <NietPassendPanel rij={rij} soort="sanitair" />)}
           {lade.segment === 'parkeerplek' && <ParkeerplekPanel rij={rij} />}
-          {lade.segment === 'zolder' && <ZolderPanel rij={rij} />}
+          {lade.segment === 'zolder' && (ZOLDER_RUIMTE_TYPES.includes(rij.type) ? <ZolderPanel rij={rij} /> : <NietPassendPanel rij={rij} soort="zolder" />)}
         </div>
         <div className={styles.drawerFooter}>
           <button type="button" className={`${styles.btn} ${styles.btnPrimair}`} onClick={sluit}>
@@ -550,6 +552,33 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
  * woorden, met de beleidscode klein erbij) en of er een laadpaal is. Geen stille standaardkeuze
  * meer: zonder soort telt de plek niet mee en blokkeert `ontbrekendeStap` het doorrekenen.
  */
+const NIET_PASSEND_TEKST: Record<'keuken' | 'sanitair' | 'zolder', { naam: string; regel: string }> = {
+  keuken: { naam: 'een keuken', regel: 'Een keuken telt alleen in een vertrek of overige ruimte (§2.3.2, §2.9.2) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
+  sanitair: { naam: 'sanitair', regel: 'Sanitair telt alleen in een vertrek of overige ruimte (§2.6.1) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
+  zolder: { naam: 'zolderkenmerken', regel: 'Een zolderruimte is een privévertrek, berging of overige ruimte (§2.2.1.3, §2.2.2.3).' },
+};
+
+/**
+ * Een voorziening die al ingevuld was, maar bij het huidige ruimtetype niet (meer) telt — bijv.
+ * omdat het type later gewijzigd is. Niet stil weggooien (de gebruiker moet het zien), wel
+ * verwijderbaar; de rekenkern telt hem voor keuken/sanitair al niet mee (voorzieningen-audit
+ * 2026-10-03).
+ */
+function NietPassendPanel({ rij, soort }: { rij: RuimteRij; soort: 'keuken' | 'sanitair' | 'zolder' }) {
+  const { dispatch } = useInvoer();
+  const tekst = NIET_PASSEND_TEKST[soort];
+  return (
+    <div>
+      <p className={styles.parkeerHint}>
+        Deze {rij.type.toLowerCase()} heeft {tekst.naam}, maar dat telt hier niet mee. {tekst.regel}
+      </p>
+      <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnKlein}`} onClick={() => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { [soort]: undefined } })}>
+        Verwijderen
+      </button>
+    </div>
+  );
+}
+
 function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
   const parkeerplek = rij.parkeerplek;

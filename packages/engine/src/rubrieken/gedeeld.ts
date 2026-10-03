@@ -24,6 +24,37 @@ export const OVERIGE_RUIMTE_TYPES: readonly RuimteType[] = [
 export const VERKEERSRUIMTE_TYPES: readonly RuimteType[] = ['Verkeersruimte'];
 
 /**
+ * Ruimtetypen waarin een keuken (R5) of sanitaire voorziening (R6) gewaardeerd wordt
+ * (voorzieningen-audit 2026-10-03). Het beleid plaatst voorzieningen steeds in een vertrek of
+ * overige ruimte: "wastafel in vertrek/overige ruimte", "douchecabine die in een ander vertrek of
+ * overige ruimte staat" (§2.6.1), "open keuken in een vertrek of overige ruimte" (§2.3.2), en
+ * voorzieningen "die zich bevinden in gemeenschappelijke vertrekken en overige ruimten" (§2.9.2).
+ * Niet in: buitenruimte (R8, alleen m²), parkeerplek (R10) en verkeersruimte — die laatste is per
+ * definitie niet bestemd om er duurzaam te verblijven (§2.2.3); een gang mét keuken is in de
+ * praktijk een vertrek of overige ruimte en hoort dan ook zo ingevoerd te worden (INTERPRETATIE,
+ * het beleid sluit verkeersruimte niet letterlijk uit).
+ */
+export const VOORZIENING_RUIMTE_TYPES: readonly RuimteType[] = [
+  ...VERTREK_TYPES,
+  ...OVERIGE_RUIMTE_TYPES,
+  'Gemeenschappelijk vertrek',
+  'Gemeenschappelijke overige ruimte',
+];
+
+/**
+ * Ruimtetypen die een zolderruimte kunnen zijn (§2.2.1.3/§2.2.2.3): een zolder wordt
+ * gewaardeerd als vertrek of als overige ruimte — in deze app dus een privévertrek, berging of
+ * overige ruimte. Niet bij typen met een vaste functie (keuken, badruimte, toiletruimte,
+ * bijkeuken, wasruimte): een badkamer op zolder is een badkamer, geen zolderruimte.
+ * Gemeenschappelijke zolders staan nog open (rubriek 9 kent nog geen zolderregels).
+ */
+export const ZOLDER_RUIMTE_TYPES: readonly RuimteType[] = ['Privévertrek', 'Berging', 'Overige ruimte'];
+
+export function waardeertVoorzieningen(type: RuimteType): boolean {
+  return VOORZIENING_RUIMTE_TYPES.includes(type);
+}
+
+/**
  * Afronding per rubriek op kwartpunten (§2.1.6): "vanaf een achtste (1/8) punt naar boven",
  * ofwel FLOOR(x + 0,125; 0,25). Het beleidsboek geeft 4,81 → 4,75 als voorbeeld.
  * Geldt voor élke rubriek — ook R1, anders dan de taakomschrijving suggereerde.

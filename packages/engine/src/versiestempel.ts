@@ -6,7 +6,7 @@ import { REGISTRY_VERSIE } from './suggesties/types';
  * handmatig opgehoogd bij een inhoudelijke wijziging aan een rekenregel, niet gekoppeld aan
  * `package.json` (dat zou build-/publicatieversie vermengen met "welke rekenlogica gebruikt is").
  */
-export const ENGINE_VERSIE = '0.0.0';
+export const ENGINE_VERSIE = '0.1.0';
 
 /**
  * Harde regel 6: elke opgeslagen berekening krijgt een stempel — peildatum tarieven + versie

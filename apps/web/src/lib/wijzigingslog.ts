@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.27';
+export const APP_VERSIE = '0.7.28';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.28',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Voorzieningen per ruimtetype nagelopen tegen het beleid: keuken en sanitair kun je alleen nog toevoegen bij een vertrek of overige ruimte (privé of gemeenschappelijk) — niet meer bij een buitenruimte, verkeersruimte of parkeerplek (§2.6.1, §2.3.2, §2.9.2).',
+      'Zolder kan alleen nog bij een privévertrek, berging of overige ruimte (§2.2.1.3, §2.2.2.3) — niet meer bij bijv. een keuken, badruimte of toiletruimte.',
+      'Rekenregel: een keuken of sanitaire voorziening in een buitenruimte, verkeersruimte of parkeerplek telt niet meer mee voor de punten; de toelichting legt uit waarom. Van de opgeslagen woningen had geen enkele zo\'n voorziening, dus er veranderen geen bestaande uitkomsten.',
+      'Een al ingevulde voorziening bij een ruimtetype waar hij niet (meer) telt, blijft zichtbaar en kun je verwijderen.',
+    ],
+  },
   {
     versie: '0.7.27',
     datum: '2026-10-03',
