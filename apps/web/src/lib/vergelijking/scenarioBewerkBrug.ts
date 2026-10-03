@@ -152,3 +152,29 @@ export function bepaalVergelijkingHerstel(
     resultaat: resultaat && resultaat.dealId === huidigeDealId ? resultaat : null,
   };
 }
+
+/**
+ * Bouwt de start voor "Scenario bewerken". `asIsPand` is het pand van het SLOT, niet de as-is van
+ * de woning (incident 2026-10-02): voor een al eerder handmatig bewerkt scenario is dat het
+ * bewerkte TO-BE-pand — een tweede bewerking moet daarop verder bouwen, niet terugvallen naar de
+ * as-is en alle eerdere kamerwijzigingen van dit scenario kwijtraken.
+ */
+export function maakScenarioBewerkStart(
+  slot: { naam: string; pand: PandInvoer },
+  slotIndex: number,
+  dealId: string | undefined,
+  terugUrl: string,
+  versies: { tarievensetPeildatum: string; kostencatalogusVersie: string },
+): ScenarioBewerkStart {
+  return { asIsPand: slot.pand, slotIndex, naam: slot.naam, terugUrl, dealId, ...versies };
+}
+
+/**
+ * Zet een teruggekomen scenario-bewerking in het juiste slot. Alleen het pand wordt vervangen;
+ * een eerder gekozen labelwisseling, maatregelen, investering en prijzen blijven staan
+ * (feedback 2026-09-07: een energielabel-wissel mocht een kamerbewerking niet meer uitsluiten).
+ */
+export function pasScenarioResultaatToe<S extends { pand: PandInvoer; kamerBewerkt: boolean }>(slots: S[], resultaat: ScenarioBewerkResultaat | null): S[] {
+  if (!resultaat) return slots;
+  return slots.map((s, i) => (i === resultaat.slotIndex ? { ...s, pand: resultaat.bewerktPand, kamerBewerkt: true } : s));
+}

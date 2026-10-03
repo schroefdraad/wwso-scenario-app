@@ -9,6 +9,7 @@ import { haalPandOp } from '../../../lib/resultaat/opslag';
 import { bepaalTarievenset, bepaalKostencatalogus } from '../../../lib/versiestempel/resolutie';
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { haalEigenProfielOp, magDealBewerken } from '../../../lib/deals/profiel';
+import { bepaalVergelijkingBron } from '../../../lib/navigatie';
 
 interface Geladen {
   pand: PandInvoer;
@@ -28,6 +29,7 @@ function VergelijkingContent() {
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (dealParam) {
+      // (zie `bepaalVergelijkingBron`: met `?deal=` altijd uit Supabase.)
       // Bewerkrechten hier net zo bepalen als op /woning/nieuw (staat-navigatie-audit 2026-10-03:
       // deze pagina kende ze niet, waardoor "Opslaan" op de demo-woning of een woning van een
       // andere org gewoon aanstond en pas bij de database op een rauwe RLS-fout strandde).
@@ -61,20 +63,17 @@ function VergelijkingContent() {
         .catch(() => setGeladen(null));
       return;
     }
-    const context = haalPandOp();
-    // Een opgeslagen woning hoort altijd via `?deal=` geladen te worden (Supabase is de bron, en
-    // alleen dan zijn de bewerkrechten bekend) — niet via het sessionStorage-restje, dat bovendien
-    // het laatst bekeken SCENARIO-pand kan bevatten i.p.v. de as-is (zie `Resultaatscherm`).
-    if (context?.dealId) {
-      router.replace(`/woning/vergelijking?deal=${context.dealId}`);
+    const bron = bepaalVergelijkingBron(dealParam, haalPandOp());
+    if (bron.soort === 'doorsturen') {
+      router.replace(bron.url);
       return;
     }
     setGeladen(
-      context
+      bron.soort === 'sessie'
         ? {
-            pand: context.pand,
-            tarievensetPeildatum: context.tarievensetPeildatum,
-            kostencatalogusVersie: context.kostencatalogusVersie,
+            pand: bron.context.pand,
+            tarievensetPeildatum: bron.context.tarievensetPeildatum,
+            kostencatalogusVersie: bron.context.kostencatalogusVersie,
           }
         : null,
     );

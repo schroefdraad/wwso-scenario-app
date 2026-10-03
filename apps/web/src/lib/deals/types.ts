@@ -195,3 +195,21 @@ export function parseDealRij(ruw: unknown): Deal {
     bijgewerkt: rij.bijgewerkt,
   };
 }
+
+/**
+ * Wat doet "Opslaan" met deze woning? Eén beslissing voor het invoerscherm (`Topbar.tsx`) en de
+ * vergelijking (`Vergelijking.tsx`), die elk hun eigen variant hadden.
+ * - nog geen woning → `nieuw`;
+ * - bewerkrechten konden niet bevestigd worden → `geblokkeerd`, tenzij de gebruiker bewust voor
+ *   een kopie kiest (incident 2026-10-02: een haperende profiel-call maakte ongemerkt kopieën);
+ * - niet van jou (demo-woning, andere org) → `kopie`;
+ * - anders → `bijwerken`.
+ */
+export type OpslaanActie = 'nieuw' | 'bijwerken' | 'kopie' | 'geblokkeerd';
+
+export function bepaalOpslaanActie(opts: { dealId: string | undefined; magBewerken: boolean; bewerkrechtenOnzeker: boolean; forceerKopie?: boolean }): OpslaanActie {
+  if (!opts.dealId) return 'nieuw';
+  if (opts.forceerKopie) return 'kopie';
+  if (opts.bewerkrechtenOnzeker) return 'geblokkeerd';
+  return opts.magBewerken ? 'bijwerken' : 'kopie';
+}

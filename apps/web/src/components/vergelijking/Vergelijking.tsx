@@ -12,6 +12,8 @@ import {
   haalEnWisScenarioBewerkResultaatOp,
   haalEnWisVergelijkingSnapshotOp,
   bepaalVergelijkingHerstel,
+  maakScenarioBewerkStart,
+  pasScenarioResultaatToe,
   slaScenarioBewerkStartOp,
   slaVergelijkingSnapshotOp,
   type VergelijkingSnapshot,
@@ -19,6 +21,8 @@ import {
 import type { ScenarioSelectie } from '../../lib/deals/types';
 import { AppHeader, WoningContextStrook, kamersLabel } from '../AppHeader';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import { bepaalOpslaanActie } from '../../lib/deals/types';
+import { resultaatUrl, scenarioBewerkenUrl, vergelijkingUrl, woningBewerkenUrl } from '../../lib/navigatie';
 import { SamenvattingRij } from './SamenvattingRij';
 import { HandmatigMaatregelen } from './HandmatigMaatregelen';
 import styles from './styles.module.css';
@@ -177,17 +181,7 @@ export function Vergelijking({
     const { snapshot, resultaat } = bepaalVergelijkingHerstel(haalEnWisVergelijkingSnapshotOp(), haalEnWisScenarioBewerkResultaatOp(), geladenDeal?.id);
     if (!snapshot && !resultaat) return;
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
-    setSlots(
-      resultaat
-        ? basisSlots.map((s, i) =>
-            i === resultaat.slotIndex
-              ? // Eerder gekozen labelwisseling/maatregelen/investering/prijzen blijven behouden —
-                // alleen het pand zelf wordt vervangen door de kamer-bewerking.
-                { ...s, pand: resultaat.bewerktPand, kamerBewerkt: true }
-              : s,
-          )
-        : basisSlots,
-    );
+    setSlots(pasScenarioResultaatToe(basisSlots, resultaat));
     if (snapshot) {
       setDealId(snapshot.dealId);
       setDealNaam(snapshot.dealNaam);
@@ -280,7 +274,7 @@ export function Vergelijking({
     const vertrek = await bewaarVoorVertrek();
     if (!vertrek.gelukt) return;
     const id = vertrek.dealId;
-    const terugUrl = id ? `/woning/vergelijking?deal=${id}` : '/woning/vergelijking';
+    const terugUrl = vergelijkingUrl(id);
     slaSnapshotOp(id);
     // `slots[index].pand`, niet het top-level AS-IS `pand` (2026-10-02, gemeld tijdens testen):
     // voor een al eerder handmatig bewerkt scenario IS slots[index].pand al het bewerkte TO-BE
@@ -289,16 +283,10 @@ export function Vergelijking({
     // verliezen. Voor een nog onaangeraakt slot is `slots[index].pand` toch al gelijk aan AS-IS
     // (zie `standaardSlots`/`leegScenario`), dus dit verandert niets aan het bestaande gedrag
     // voor een vers scenario.
-    slaScenarioBewerkStartOp({
-      asIsPand: slots[index].pand,
-      slotIndex: index,
-      naam: slots[index].naam,
-      terugUrl,
-      dealId: id,
-      tarievensetPeildatum: tarievenset.peildatum,
-      kostencatalogusVersie: kostencatalogus.versie,
-    });
-    router.push(`/woning/nieuw?scenario=${index}`);
+    slaScenarioBewerkStartOp(
+      maakScenarioBewerkStart(slots[index], index, id, terugUrl, { tarievensetPeildatum: tarievenset.peildatum, kostencatalogusVersie: kostencatalogus.versie }),
+    );
+    router.push(scenarioBewerkenUrl(index));
   }
 
   /** Een onaangeraakt scenario (geen kamers bewerkt, geen energielabel-wisseling, geen
@@ -345,7 +333,8 @@ export function Vergelijking({
       dealMap,
       dealScenarios: opslaanbareScenarios(),
     });
-    router.push('/woning/resultaat');
+    // Scenario-resultaat: bewust zonder `?deal=` (zie `resultaatUrl`) — loopt via `slaPandOp`.
+    router.push(resultaatUrl(undefined));
   }
 
   /** Zelfde reis als `bekijkResultaat`, maar dan voor de as-is kolom zelf — voorheen alleen
@@ -367,7 +356,7 @@ export function Vergelijking({
     // Met een opgeslagen deal is /woning/resultaat?deal=<id> bruikbaar (bookmark, nieuwe tab,
     // gedeelde link) — navigatie-audit 2026-09-04. Zonder dealId (nog niet opgeslagen pand)
     // bestaat er niets om naar te verwijzen; dan blijft de sessionStorage-brug de enige route.
-    router.push(vertrek.dealId ? `/woning/resultaat?deal=${vertrek.dealId}` : '/woning/resultaat');
+    router.push(resultaatUrl(vertrek.dealId));
   }
 
   /** "Woning bewerken →" bij de as-is — was een gewone link zonder opslaan of snapshot, waardoor
@@ -376,7 +365,7 @@ export function Vergelijking({
     const vertrek = await bewaarVoorVertrek();
     if (!vertrek.gelukt || !vertrek.dealId) return;
     slaSnapshotOp(vertrek.dealId);
-    router.push(`/woning/nieuw?deal=${vertrek.dealId}`);
+    router.push(woningBewerkenUrl(vertrek.dealId));
   }
 
   /**
@@ -389,7 +378,9 @@ export function Vergelijking({
     setOpslaanStatus('bezig');
     setOpslaanFoutmelding(undefined);
     try {
-      const kopie = !!dealId && !magBewerken;
+      const actie = bepaalOpslaanActie({ dealId, magBewerken, bewerkrechtenOnzeker });
+      if (actie === 'geblokkeerd') throw new Error('Bewerkrechten konden niet bevestigd worden — ververs de pagina');
+      const kopie = actie === 'kopie';
       const invoer = {
         naam: kopie ? `${dealNaam} (kopie)` : dealNaam,
         notitie: dealNotitie,
@@ -398,7 +389,7 @@ export function Vergelijking({
         scenarios: opslaanbareScenarios(),
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = dealId && !kopie ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
+      const deal = actie === 'bijwerken' && dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
       setDealId(deal.id);
       setDealNaam(deal.naam);
       setMagBewerken(true);
@@ -420,7 +411,7 @@ export function Vergelijking({
 
   async function dealOpslaan() {
     const id = await bewaar();
-    if (id) router.replace(`/woning/vergelijking?deal=${id}`);
+    if (id) router.replace(vergelijkingUrl(id));
   }
 
   /**

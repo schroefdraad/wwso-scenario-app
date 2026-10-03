@@ -7,6 +7,7 @@ import { haalEigenProfielOp, profielVan, type Toegang } from '../../lib/deals/pr
 import { magDealBewerken, type Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { AppHeader, headerKnop } from '../../components/AppHeader';
+import { vergelijkingUrl } from '../../lib/navigatie';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import styles from './styles.module.css';
 
@@ -139,7 +140,7 @@ export default function DealsOverzicht() {
                   {zichtbareDeals.map((deal) => (
                     <tr key={deal.id} className={styles.rij}>
                       <td className={styles.naamCel}>
-                        <Link href={`/woning/vergelijking?deal=${deal.id}`} className={styles.dealLink}>
+                        <Link href={vergelijkingUrl(deal.id)} className={styles.dealLink}>
                           {deal.naam}
                         </Link>
                         {deal.isDemo && (

@@ -11,6 +11,8 @@ import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
 import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import { bepaalOpslaanActie } from '../../lib/deals/types';
+import { resultaatUrl } from '../../lib/navigatie';
 
 export function Topbar() {
   const { state, dispatch } = useInvoer();
@@ -53,7 +55,8 @@ export function Topbar() {
    */
   async function slaWoningOp(forceerKopie = false) {
     if (!pand) return null;
-    if (bewerkrechtenOnzeker && !forceerKopie) {
+    const actie = bepaalOpslaanActie({ dealId: state.bewerktDeal?.id, magBewerken, bewerkrechtenOnzeker, forceerKopie });
+    if (actie === 'geblokkeerd') {
       setDealOpslaanStatus('onzeker');
       return null;
     }
@@ -62,9 +65,9 @@ export function Topbar() {
       const tarievenset = alleTarievensets().at(-1)!;
       const kostencatalogus = nieuwsteKostencatalogus();
       const naam = state.bewerktDeal
-        ? magBewerken
-          ? state.bewerktDeal.naam
-          : `${state.bewerktDeal.naam} (kopie)`
+        ? actie === 'kopie'
+          ? `${state.bewerktDeal.naam} (kopie)`
+          : state.bewerktDeal.naam
         : pand.pand.adres || 'Naamloze woning';
       const invoer = {
         naam,
@@ -74,7 +77,7 @@ export function Topbar() {
         scenarios: state.bewerktDeal?.scenarios ?? [],
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = state.bewerktDeal && magBewerken ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
+      const deal = actie === 'bijwerken' && state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
       // Na een kopie is de sessie voortaan aan de NIEUWE, eigen woning gekoppeld — magBewerken
       // is dan altijd true, ongeacht wat de bron was.
       dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, magBewerken: true, bewerkrechtenOnzeker: false } });
@@ -122,7 +125,7 @@ export function Topbar() {
     // `?deal=` in de URL (staat-navigatie-audit 2026-10-03): de woning is op dit punt altijd al
     // opgeslagen, dus het resultaat hoort ook in een nieuwe tab/bladwijzer te werken i.p.v. alleen
     // via de sessionStorage-brug van dit tabblad.
-    router.push(`/woning/resultaat?deal=${deal.id}`);
+    router.push(resultaatUrl(deal.id));
   }
 
   // De topnavigatie is zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor navigatie").

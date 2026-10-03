@@ -7,6 +7,7 @@ import { Resultaatscherm } from '../../../components/resultaat/Resultaatscherm';
 import { haalPandOp, type OpgeslagenPandContext } from '../../../lib/resultaat/opslag';
 import { haalDealOp } from '../../../lib/deals/opslag';
 import { bepaalTarievenset } from '../../../lib/versiestempel/resolutie';
+import { vergelijkingUrl } from '../../../lib/navigatie';
 
 function ResultaatContent() {
   const dealParam = useSearchParams().get('deal');
@@ -62,7 +63,7 @@ function ResultaatContent() {
   }
 
   const tarievenset = bepaalTarievenset(context.tarievensetPeildatum);
-  const terugUrl = context.dealId ? `/woning/vergelijking?deal=${context.dealId}` : '/woning/vergelijking';
+  const terugUrl = vergelijkingUrl(context.dealId);
 
   return <Resultaatscherm pand={context.pand} tarievenset={tarievenset} peildatum={tarievenset.peildatum} terugUrl={terugUrl} />;
 }
