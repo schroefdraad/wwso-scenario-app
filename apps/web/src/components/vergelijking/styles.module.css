@@ -285,9 +285,9 @@
   align-items: flex-start;
 }
 
-/** "Woning bewerken" is een ander soort actie dan "Bekijk volledig resultaat"/"Leegmaken" (gaat
- * naar de kamer-editor i.p.v. een lokale actie) — een dun streepje erboven maakt dat visueel
- * duidelijk i.p.v. dat hij in hetzelfde rijtje wegvalt. */
+/** Dun streepje + gelijke marge tussen de acties onder een kolom ("Bekijk volledig resultaat",
+ * "Woning/Scenario bewerken", "Leegmaken") — sinds 2026-10-03 ook boven "Leegmaken", zodat alle
+ * acties er hetzelfde uitzien. */
 .kamersBewerkenRij {
   display: flex;
   align-items: center;

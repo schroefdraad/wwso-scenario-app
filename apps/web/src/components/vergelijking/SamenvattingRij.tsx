@@ -184,15 +184,17 @@ export function SamenvattingRij({
             </span>
             {/* Zelfde logica als "Bekijk volledig resultaat": altijd zichtbaar, uitgegrijsd zolang
                 het scenario nog leeg is (feedback 2026-10-03). Bij de as-is bestaat deze knop niet. */}
-            <button
-              type="button"
-              className={styles.btnLink}
-              disabled={!kolom.pakket}
-              title={kolom.pakket ? undefined : 'Dit scenario is al leeg'}
-              onClick={() => onLeegmaken(i)}
-            >
-              Leegmaken
-            </button>
+            <span className={styles.kamersBewerkenRij}>
+              <button
+                type="button"
+                className={styles.btnLink}
+                disabled={!kolom.pakket}
+                title={kolom.pakket ? undefined : 'Dit scenario is al leeg'}
+                onClick={() => onLeegmaken(i)}
+              >
+                Leegmaken
+              </button>
+            </span>
           </div>
         </div>
       ))}
