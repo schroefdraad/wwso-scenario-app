@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.33';
+export const APP_VERSIE = '0.7.34';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.34',
+    datum: '2026-10-03',
+    wijzigingen: [
+      'Keuken en sanitair: achter elke voorziening staat nu de vaste waarde uit het beleid (bijv. inductie 1,75 pt, douche 3 pt, handdoekenradiator 0,75 pt per stuk). Die verandert niet meer zodra je iets anders aanvinkt.',
+      'Nieuw: een balk "x van max. y pt" boven de extra voorzieningen. Die laat zien dat de extra voorzieningen samen nooit meer opleveren dan de punten voor het aanrecht (keuken, §2.5.3) of voor douche en bad (sanitair, §2.6.2), en meldt het als het maximum bereikt is. Met één regel wat het per kamer oplevert.',
+      'Het zijpaneel voor sanitair kreeg geen horizontale scrollbalk meer.',
+    ],
+  },
   {
     versie: '0.7.33',
     datum: '2026-10-03',

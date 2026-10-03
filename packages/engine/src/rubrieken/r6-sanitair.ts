@@ -49,8 +49,9 @@ function doucheBadPunten(post: SanitairVoorziening, tarievenset: Tarievenset): n
   return (post.douche ? douche : 0) + (post.bad ? bad : 0);
 }
 
-/** Ruwe som van de extra sanitaire voorzieningen (§2.6.2), vóór aftopping. */
-function extraPuntenRuw(post: SanitairVoorziening, tarievenset: Tarievenset): number {
+/** Ruwe som van de extra sanitaire voorzieningen (§2.6.2), vóór aftopping. Geëxporteerd voor de
+ * plafondmeter in het invoerscherm. */
+export function sanitairExtraPuntenRuw(post: SanitairVoorziening, tarievenset: Tarievenset): number {
   const t = tarievenset.sanitairExtraPunten;
   const max = tarievenset.sanitairMaxima;
   const e = post.extra;
@@ -105,7 +106,7 @@ export function berekenSanitair(
   const doucheBad = doucheBadPunten(post, tarievenset);
 
   const eisenGehaald = voldoetAanExtraEisen(post);
-  const extraRuw = eisenGehaald ? extraPuntenRuw(post, tarievenset) : 0;
+  const extraRuw = eisenGehaald ? sanitairExtraPuntenRuw(post, tarievenset) : 0;
   // §2.6.2: extra punten "kan niet meer zijn dan het totaalaantal punten voor de douche,
   // het bad en/of bad/douche gezamenlijk" — dus niet op toilet en wastafel.
   const extraGecapt = Math.min(extraRuw, doucheBad);

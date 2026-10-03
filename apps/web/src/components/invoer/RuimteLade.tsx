@@ -7,49 +7,80 @@ import {
   ParkeerplekType,
   ZOLDER_RUIMTE_TYPES,
   waardeertVoorzieningen,
+  bepaalAanrechtBasispunten,
+  berekenSanitair,
+  keukenExtraPuntenRuw,
+  sanitairExtraPuntenRuw,
   toegestaneToiletTypes,
   type Keuken,
   type SanitairVoorziening,
 } from '@wwso/engine';
-import { alleTarievensets, type Tarievenset } from '@wwso/data';
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { alleTarievensets } from '@wwso/data';
+import { useEffect, type ReactNode } from 'react';
 import { useInvoer } from './InvoerContext';
 import { useLade, type LadeSegment } from './LadeContext';
 import { Toggle } from './Toggle';
 import { InfoBadge } from '../InfoBadge';
 import { nieuweKeuken, nieuwSanitair } from '../../lib/invoer/ladeDefaults';
-import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
-import {
-  marginaalKeukenBoolean,
-  marginaalKeukenVolgendeKastruimte,
-  marginaalSanitairDoucheBad,
-  marginaalSanitairExtraBoolean,
-  marginaalSanitairVolgendeEenheid,
-  puntenHuidigeWastafels,
-  puntenToiletType,
-} from '../../lib/invoer/marginalePunten';
 import styles from './styles.module.css';
 import type { RuimteRij } from '../../lib/invoer/types';
 
 /**
- * Pand + tarievenset voor de "punten per faciliteit"-badges (feedback Emma Morrison,
- * 2026-08-21). `null` zolang de invoer nog niet compleet genoeg is om door te rekenen — de
- * badges verdwijnen dan gewoon, net als de puntenstrip bovenin.
+ * Vaste beleidswaarde van één extra voorziening (feedback 2026-10-03: de vroegere badges toonden
+ * de *marginale* waarde — het verschil mét/zonder, gegeven al het andere — en die veranderde
+ * zodra je iets anders aanvinkte, wat niet uit te leggen was). Dit getal verandert nooit; het
+ * plafond staat los zichtbaar in `PlafondMeter`.
  */
-function useRekencontext() {
-  const { state } = useInvoer();
-  return useMemo(() => {
-    const pand = projecteerNaarPandInvoer(state);
-    const tarievenset: Tarievenset | undefined = alleTarievensets().at(-1);
-    return { pand, tarievenset: tarievenset ?? null, peildatum: tarievenset?.peildatum ?? null };
-  }, [state]);
+function TariefBadge({ punten, toevoeging }: { punten: number; toevoeging?: string }) {
+  return (
+    <span className={styles.puntBadge}>
+      {punten.toLocaleString('nl-NL', { maximumFractionDigits: 2 })} pt{toevoeging ? ` ${toevoeging}` : ''}
+    </span>
+  );
 }
 
-function PuntBadge({ waarde }: { waarde: number | null }) {
-  if (waarde === null) return null;
-  const afgerond = Math.round(waarde * 100) / 100;
-  const tekst = afgerond === 0 ? '0 pt' : `${afgerond > 0 ? '+' : ''}${afgerond.toLocaleString('nl-NL', { maximumFractionDigits: 2 })} pt`;
-  return <span className={`${styles.puntBadge} ${afgerond === 0 ? styles.puntBadgeNul : ''}`}>{tekst}</span>;
+const fmtPunten = (n: number) => n.toLocaleString('nl-NL', { maximumFractionDigits: 2 });
+
+/**
+ * Maakt de aftopping zichtbaar die de badges vroeger alleen indirect lieten zien: de extra
+ * voorzieningen leveren samen nooit meer op dan `plafond` (keuken: de aanrecht-basispunten,
+ * §2.5.3; sanitair: de douche/bad-punten, §2.6.2). Plus één regel "per kamer", net als bij de
+ * parkeerplek, zodat altijd duidelijk is of een getal over de hele voorziening of één kamer gaat.
+ */
+function PlafondMeter({ ruw, plafond, kamers, uitleg, poortOk }: { ruw: number; plafond: number; kamers: number; uitleg: string; poortOk: boolean }) {
+  const telt = poortOk ? Math.min(ruw, plafond) : 0;
+  const vol = poortOk && plafond > 0 && ruw >= plafond;
+  const breedte = plafond > 0 ? Math.min(100, (Math.min(ruw, plafond) / plafond) * 100) : 0;
+  return (
+    <div className={styles.plafond}>
+      <div className={styles.plafondKop}>
+        <strong>Extra voorzieningen</strong>
+        <span>
+          {fmtPunten(telt)} van max. {fmtPunten(plafond)} pt
+        </span>
+      </div>
+      <div className={styles.plafondBalk} aria-hidden>
+        <div className={`${styles.plafondVulling} ${vol ? styles.plafondVullingVol : ''}`} style={{ width: `${breedte}%` }} />
+      </div>
+      <p className={styles.plafondTekst}>{uitleg}</p>
+      {!poortOk ? (
+        <p className={styles.plafondTekst}>Telt pas mee als aan alle eisen hierboven is voldaan.</p>
+      ) : plafond === 0 ? (
+        <p className={styles.plafondTekst}>Het maximum is nu 0 — extra voorzieningen leveren hier dus niets op.</p>
+      ) : ruw > plafond ? (
+        <p className={`${styles.plafondTekst} ${styles.plafondTekstVol}`}>
+          Maximum bereikt — {fmtPunten(ruw - plafond)} pt aangevinkt boven het maximum telt niet mee.
+        </p>
+      ) : ruw === plafond ? (
+        <p className={`${styles.plafondTekst} ${styles.plafondTekstVol}`}>Maximum bereikt — meer aanvinken levert niets meer op.</p>
+      ) : null}
+      {poortOk && telt > 0 && kamers > 1 && (
+        <p className={styles.plafondTekst}>
+          Gedeeld door {kamers} kamers → ≈ {fmtPunten(telt / kamers)} pt per kamer.
+        </p>
+      )}
+    </div>
+  );
 }
 
 const KEUKEN_BASISEISEN: [keyof Keuken['basiseisen'], string][] = [
@@ -125,15 +156,13 @@ export function RuimteLade() {
 
 function KeukenPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
-  const { pand, tarievenset, peildatum } = useRekencontext();
   const keuken = rij.keuken;
+  const tarievenset = alleTarievensets().at(-1)!;
+  const keukenTarief = tarievenset.keukenExtraPunten;
   const zetKeuken = (patch: Partial<Omit<Keuken, 'ruimteNr'>>) =>
     dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: keuken ? { ...keuken, ...patch } : undefined } });
 
-  const puntVoor = (veld: keyof Omit<Keuken['extra'], 'extraKastruimteEenhedenVan60Cm'>): number | null =>
-    pand && tarievenset && peildatum ? marginaalKeukenBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null;
-  const puntVoorVolgendeKastruimte = (huidig: number): number | null =>
-    pand && tarievenset && peildatum ? marginaalKeukenVolgendeKastruimte(pand, tarievenset, peildatum, rij.nr, huidig) : null;
+  const puntVoor = (veld: keyof Omit<Keuken['extra'], 'extraKastruimteEenhedenVan60Cm'>): number => keukenTarief[veld];
 
   const vulKitchenetteIn = (preset: Omit<Keuken, 'ruimteNr'>) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { keuken: { ...preset } } });
 
@@ -242,6 +271,15 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
       </div>
 
       <div className={alleEisen ? undefined : styles.extraBlokDim}>
+        <PlafondMeter
+          ruw={keukenExtraPuntenRuw({ ...keuken, ruimteNr: rij.nr }, keukenTarief)}
+          plafond={bepaalAanrechtBasispunten(keuken.aanrechtlengteM, rij.kamers.length, tarievenset.keukenAanrechtBasispunten)}
+          kamers={rij.kamers.length}
+          poortOk={alleEisen}
+          uitleg={`Samen nooit meer dan de punten voor het aanrecht (${fmtPunten(keuken.aanrechtlengteM)} m → ${fmtPunten(
+            bepaalAanrechtBasispunten(keuken.aanrechtlengteM, rij.kamers.length, tarievenset.keukenAanrechtBasispunten),
+          )} pt, §2.5.3).`}
+        />
         <ExtraGroep titel="Kookplaat">
           <ExtraCheck label="Inductie" checked={keuken.extra.kookplaatInductie} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatInductie: v } })} punten={puntVoor('kookplaatInductie')} />
           <ExtraCheck label="Keramisch" checked={keuken.extra.kookplaatKeramisch} onChange={(v) => zetKeuken({ extra: { ...keuken.extra, kookplaatKeramisch: v } })} punten={puntVoor('kookplaatKeramisch')} />
@@ -275,7 +313,7 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
               value={keuken.extra.extraKastruimteEenhedenVan60Cm}
               onChange={(e) => zetKeuken({ extra: { ...keuken.extra, extraKastruimteEenhedenVan60Cm: Number(e.target.value) || 0 } })}
             />
-            <PuntBadge waarde={puntVoorVolgendeKastruimte(keuken.extra.extraKastruimteEenhedenVan60Cm)} />
+            <TariefBadge punten={keukenTarief.extraKastruimtePer60Cm} toevoeging="per 60 cm" />
           </div>
         </ExtraGroep>
         <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
@@ -286,24 +324,25 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
 
 function SanitairPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
-  const { pand, tarievenset, peildatum } = useRekencontext();
   const sanitair = rij.sanitair;
   const zetSanitair = (patch: Partial<Omit<SanitairVoorziening, 'ruimteNr'>>) =>
     dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { sanitair: sanitair ? { ...sanitair, ...patch } : undefined } });
 
-  const puntVoorExtra = (
-    veld: keyof Omit<SanitairVoorziening['extra'], 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan'>,
-  ): number | null => (pand && tarievenset && peildatum ? marginaalSanitairExtraBoolean(pand, tarievenset, peildatum, rij.nr, veld) : null);
-  const puntVoorVolgendeEenheid = (
-    veld: 'aantalHanddoekenradiatoren' | 'aantalStopcontacten' | 'eenhandsmengkraan' | 'thermostatischeMengkraan',
-    huidig: number,
-  ): number | null => (pand && tarievenset && peildatum ? marginaalSanitairVolgendeEenheid(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null);
-  const puntVoorDoucheBad = (veld: 'douche' | 'bad' | 'badDoucheCombinatie'): number | null =>
-    pand && tarievenset && peildatum ? marginaalSanitairDoucheBad(pand, tarievenset, peildatum, rij.nr, veld) : null;
-  const puntVoorToiletType = (type: SanitairVoorziening['toiletType']): number | null =>
-    pand && tarievenset && peildatum ? puntenToiletType(pand, tarievenset, peildatum, rij.nr, type) : null;
-  const puntVoorHuidigeWastafels = (veld: 'aantalWastafels' | 'aantalMeerpersoonswastafels', huidig: number): number | null =>
-    pand && tarievenset && peildatum ? puntenHuidigeWastafels(pand, tarievenset, peildatum, rij.nr, veld, huidig) : null;
+  const actueleTarieven = alleTarievensets().at(-1)!;
+  const sanitairTarief = actueleTarieven.sanitairExtraPunten;
+  const puntVoorExtra = (veld: 'bubbelfunctieBad' | 'doucheafscheidingVolledig' | 'ingebouwdKastjeMetWastafel' | 'kastruimte'): number =>
+    veld === 'kastruimte' ? Math.min(sanitairTarief.kastruimte, actueleTarieven.sanitairMaxima.kastruimtePunten) : sanitairTarief[veld];
+  /** §2.6.1: in een badkamer telt elke wastafel; daarbuiten maximaal één per vertrek/overige ruimte. */
+  const wastafelTarief = (soort: 'wastafel' | 'meerpersoonswastafel'): { punten: number; toevoeging: string } =>
+    rij.type === 'Badruimte'
+      ? { punten: actueleTarieven.sanitairBasisPunten[soort], toevoeging: 'per stuk' }
+      : {
+          punten:
+            soort === 'wastafel'
+              ? actueleTarieven.sanitairMaxima.wastafelPuntenPerVertrekBuitenBadkamer
+              : actueleTarieven.sanitairMaxima.meerpersoonswastafelPuntenPerVertrekBuitenBadkamer,
+          toevoeging: 'max. per ruimte',
+        };
 
   if (!sanitair) {
     return (
@@ -359,7 +398,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             </option>
           ))}
         </select>
-        <PuntBadge waarde={puntVoorToiletType(sanitair.toiletType)} />
+        <TariefBadge punten={actueleTarieven.sanitairToiletPunten[sanitair.toiletType]} />
       </div>
       <div className={styles.veldrij}>
         <label htmlFor="s-wastafels">{isToiletruimte ? 'Aantal fonteintjes' : 'Aantal wastafels'}</label>
@@ -374,7 +413,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             zetSanitair({ aantalWastafels: isToiletruimte ? Math.min(1, Math.max(0, waarde)) : waarde });
           }}
         />
-        <PuntBadge waarde={puntVoorHuidigeWastafels('aantalWastafels', sanitair.aantalWastafels)} />
+        <TariefBadge {...wastafelTarief('wastafel')} />
       </div>
       {!isToiletruimte && (
         <div className={styles.veldrij}>
@@ -386,20 +425,23 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             value={sanitair.aantalMeerpersoonswastafels}
             onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
           />
-          <PuntBadge waarde={puntVoorHuidigeWastafels('aantalMeerpersoonswastafels', sanitair.aantalMeerpersoonswastafels)} />
+          <TariefBadge {...wastafelTarief('meerpersoonswastafel')} />
         </div>
       )}
       {!isToiletruimte && (
         <div className={styles.veldrij}>
           <label>Douche / bad</label>
-          <span style={{ display: 'flex', gap: '1rem' }}>
+          {/* Vaste beleidswaarden (§2.6.1), net als de extra's: de vroegere marginale waarde telde ook de
+              extra's mee die een douche/bad via het plafond (§2.6.2) vrijspeelt — "Douche +5,5 pt" voor
+              een voorziening van 3 punten (feedback 2026-10-03). */}
+          <span style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1rem' }}>
             <label>
               <input type="checkbox" checked={sanitair.douche} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ douche: e.target.checked })} /> Douche{' '}
-              <PuntBadge waarde={puntVoorDoucheBad('douche')} />
+              <TariefBadge punten={actueleTarieven.sanitairBasisPunten.douche} />
             </label>
             <label>
               <input type="checkbox" checked={sanitair.bad} disabled={sanitair.badDoucheCombinatie} onChange={(e) => zetSanitair({ bad: e.target.checked })} /> Bad{' '}
-              <PuntBadge waarde={puntVoorDoucheBad('bad')} />
+              <TariefBadge punten={actueleTarieven.sanitairBasisPunten.bad} />
             </label>
             <label>
               <input
@@ -407,7 +449,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                 checked={sanitair.badDoucheCombinatie}
                 onChange={(e) => zetSanitair({ badDoucheCombinatie: e.target.checked, ...(e.target.checked ? { douche: false, bad: false } : {}) })}
               />{' '}
-              Combinatie <PuntBadge waarde={puntVoorDoucheBad('badDoucheCombinatie')} />
+              Combinatie <TariefBadge punten={actueleTarieven.sanitairBasisPunten.badDoucheCombinatie} />
             </label>
           </span>
         </div>
@@ -458,6 +500,19 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
           </div>
 
           <div className={alleEisen ? undefined : styles.extraBlokDim}>
+            {(() => {
+              const post = { ...sanitair, ruimteNr: rij.nr };
+              const plafond = berekenSanitair(post, undefined, rij.kamers.length, actueleTarieven).doucheBadPunten;
+              return (
+                <PlafondMeter
+                  ruw={sanitairExtraPuntenRuw(post, actueleTarieven)}
+                  plafond={plafond}
+                  kamers={rij.kamers.length}
+                  poortOk={alleEisen}
+                  uitleg={`Samen nooit meer dan de punten voor douche en bad in deze ruimte (${fmtPunten(plafond)} pt, §2.6.2).`}
+                />
+              );
+            })()}
             <ExtraGroep titel="Douche en bad">
               <ExtraCheck
                 label="Volledige doucheafscheiding"
@@ -482,7 +537,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.aantalHanddoekenradiatoren}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalHanddoekenradiatoren: Number(e.target.value) || 0 } })}
                 />
-                <PuntBadge waarde={puntVoorVolgendeEenheid('aantalHanddoekenradiatoren', sanitair.extra.aantalHanddoekenradiatoren)} />
+                <TariefBadge punten={sanitairTarief.handdoekenradiator} toevoeging="per stuk" />
               </div>
               <div className={styles.extraRij}>
                 <label>Stopcontacten (max. 2 per wastafel)</label>
@@ -493,7 +548,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.aantalStopcontacten}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, aantalStopcontacten: Number(e.target.value) || 0 } })}
                 />
-                <PuntBadge waarde={puntVoorVolgendeEenheid('aantalStopcontacten', sanitair.extra.aantalStopcontacten)} />
+                <TariefBadge punten={sanitairTarief.stopcontact} toevoeging="per stuk" />
               </div>
               <ExtraCheck
                 label="Ingebouwd kastje bij wastafel"
@@ -511,6 +566,11 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             <ExtraGroep titel="Kranen">
               <div className={styles.extraRij}>
                 <label>Eenhandsmengkranen</label>
+                {/* (i) direct naast de naam: rechts in de rij opende de popover buiten het paneel. */}
+                <InfoBadge>
+                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2) — een tweede eenhandsmengkraan hier voegt niks meer toe, maar mag je wel
+                  vastleggen (bijv. bij een meerpersoonswastafel).
+                </InfoBadge>
                 <input
                   type="number"
                   min={0}
@@ -518,14 +578,11 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.eenhandsmengkraan}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, eenhandsmengkraan: Number(e.target.value) || 0 } })}
                 />
-                <PuntBadge waarde={puntVoorVolgendeEenheid('eenhandsmengkraan', sanitair.extra.eenhandsmengkraan)} />
-                <InfoBadge>
-                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2) — een tweede eenhandsmengkraan hier voegt niks meer toe, maar mag je wel
-                  vastleggen (bijv. bij een meerpersoonswastafel).
-                </InfoBadge>
+                <TariefBadge punten={sanitairTarief.eenhandsmengkraan} toevoeging="eenmalig" />
               </div>
               <div className={styles.extraRij}>
                 <label>Thermostatische mengkranen</label>
+                <InfoBadge>Levert maar één keer punten op, ongeacht het aantal (§2.6.2).</InfoBadge>
                 <input
                   type="number"
                   min={0}
@@ -533,8 +590,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   value={sanitair.extra.thermostatischeMengkraan}
                   onChange={(e) => zetSanitair({ extra: { ...sanitair.extra, thermostatischeMengkraan: Number(e.target.value) || 0 } })}
                 />
-                <PuntBadge waarde={puntVoorVolgendeEenheid('thermostatischeMengkraan', sanitair.extra.thermostatischeMengkraan)} />
-                <InfoBadge>Levert maar één keer punten op, ongeacht het aantal (§2.6.2).</InfoBadge>
+                <TariefBadge punten={sanitairTarief.thermostatischeMengkraan} toevoeging="eenmalig" />
               </div>
             </ExtraGroep>
             <div className={styles.extraCount}>{extraAantal} extra voorziening(en) geselecteerd</div>
@@ -545,13 +601,6 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
   );
 }
 
-/**
- * Parkeerplek (R10, §2.10) — herzien 2026-10-03 (feedback: "onduidelijk wat type I, II en III
- * zijn", "schuifje parkeerplek aanwezig is dubbelop"). Het ruimtetype 'Parkeerplek
- * gemeenschappelijk' zegt al dát er een plek is; hier kies je alleen nog de soort (in gewone
- * woorden, met de beleidscode klein erbij) en of er een laadpaal is. Geen stille standaardkeuze
- * meer: zonder soort telt de plek niet mee en blokkeert `ontbrekendeStap` het doorrekenen.
- */
 const NIET_PASSEND_TEKST: Record<'keuken' | 'sanitair' | 'zolder', { naam: string; regel: string }> = {
   keuken: { naam: 'een keuken', regel: 'Een keuken telt alleen in een vertrek of overige ruimte (§2.3.2, §2.9.2) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
   sanitair: { naam: 'sanitair', regel: 'Sanitair telt alleen in een vertrek of overige ruimte (§2.6.1) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
@@ -579,6 +628,13 @@ function NietPassendPanel({ rij, soort }: { rij: RuimteRij; soort: 'keuken' | 's
   );
 }
 
+/**
+ * Parkeerplek (R10, §2.10) — herzien 2026-10-03 (feedback: "onduidelijk wat type I, II en III
+ * zijn", "schuifje parkeerplek aanwezig is dubbelop"). Het ruimtetype 'Parkeerplek
+ * gemeenschappelijk' zegt al dát er een plek is; hier kies je alleen nog de soort (in gewone
+ * woorden, met de beleidscode klein erbij) en of er een laadpaal is. Geen stille standaardkeuze
+ * meer: zonder soort telt de plek niet mee en blokkeert `ontbrekendeStap` het doorrekenen.
+ */
 function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
   const { dispatch } = useInvoer();
   const parkeerplek = rij.parkeerplek;
@@ -711,12 +767,12 @@ function ExtraGroep({ titel, children }: { titel: string; children: ReactNode })
   );
 }
 
-function ExtraCheck({ label, checked, onChange, punten }: { label: string; checked: boolean; onChange: (v: boolean) => void; punten?: number | null }) {
+function ExtraCheck({ label, checked, onChange, punten }: { label: string; checked: boolean; onChange: (v: boolean) => void; punten?: number }) {
   return (
     <div className={styles.extraRij}>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} id={`chk-${label}`} />
       <label htmlFor={`chk-${label}`}>{label}</label>
-      {punten !== undefined && <PuntBadge waarde={punten} />}
+      {punten !== undefined && <TariefBadge punten={punten} />}
     </div>
   );
 }

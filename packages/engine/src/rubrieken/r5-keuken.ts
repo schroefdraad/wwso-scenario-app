@@ -39,8 +39,9 @@ export function bepaalAanrechtBasispunten(
   return banden[index].punten;
 }
 
-/** Ruwe som van de extra voorzieningen (§2.5.3), vóór de aftopping op de basispunten. */
-function extraPuntenRuw(keuken: Keuken, tarieven: Tarievenset['keukenExtraPunten']): number {
+/** Ruwe som van de extra voorzieningen (§2.5.3), vóór de aftopping op de basispunten. Geëxporteerd
+ * voor de plafondmeter in het invoerscherm (zelfde som, geen tweede kopie van de regel). */
+export function keukenExtraPuntenRuw(keuken: Keuken, tarieven: Tarievenset['keukenExtraPunten']): number {
   const e = keuken.extra;
   let som = 0;
   if (e.afzuiginstallatie) som += tarieven.afzuiginstallatie;
@@ -100,7 +101,7 @@ export function berekenKeuken(
     nKamersMetToegang,
     tarievenset.keukenAanrechtBasispunten,
   );
-  const extraRuw = extraPuntenRuw(keuken, tarievenset.keukenExtraPunten);
+  const extraRuw = keukenExtraPuntenRuw(keuken, tarievenset.keukenExtraPunten);
   const extraGecapt = Math.min(extraRuw, basispunten);
   const totaal = basispunten + extraGecapt;
 
