@@ -61,7 +61,8 @@ git push origin test
 1. Wacht tot Vercel de preview heeft gebouwd (`vercel ls web --scope skael`, status Ready voor
    `web-git-test-skael.vercel.app`).
 2. Controleer dat de testomgeving de nieuwe versie toont:
-   `curl -s https://web-git-test-skael.vercel.app/woningen | grep -o "v<versie>"`.
+   `curl -s https://web-git-test-skael.vercel.app/woningen | sed 's/<!-- -->//g' | grep -o "v<versie>"`.
+   (React zet een `<!-- -->` tussen "v" en het versienummer; die moet eerst weg.)
    Ook de TEST-balk moet er staan.
 3. Vraag de gebruiker de wijziging in de browser op de testomgeving te controleren. Dit is het
    **eerste stopmoment**: wacht op een expliciet akkoord ("ja, naar productie").
@@ -86,7 +87,7 @@ vraag wat er aan de hand is. Forceer nooit.
 
 1. Wacht tot de productiedeploy Ready is (`vercel ls web --scope skael`, Production, status Ready).
 2. Controleer het nieuwe versienummer en dat er geen TEST-balk staat:
-   `curl -s https://web-skael.vercel.app/woningen | grep -o "v<versie>"` en
+   `curl -s https://web-skael.vercel.app/woningen | sed 's/<!-- -->//g' | grep -o "v<versie>"` en
    `curl -s https://web-skael.vercel.app/woningen | grep -c "TEST</strong>"` (moet `0` zijn).
 3. Meld de uitkomst eerlijk. Staat de nieuwe versie er niet, dan is de release niet geslaagd, en
    zeg dat meteen.
