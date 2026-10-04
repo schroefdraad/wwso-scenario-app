@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-04 · Versie app **v0.7.37** · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-04 · Versie app op productie **v0.7.37** · op `test`: tekstreview (niet gereleased) · Historie: `plan/archief/`
 
 ## Omgevingen
 
@@ -35,7 +35,11 @@ inloggen aanzetten **op test** en daar de rollen testen; pas daarna productie (b
 - Multi-tenant (migraties 0005–0007), demo-woning, notities + mappen, feedbackknop, Sentry,
   disclaimer, custom SMTP via Resend (`puntum.nl`).
 - Staat-navigatie-audit afgerond (v0.7.24–v0.7.33): regressietests voor alle 8 bekende incidenten.
-- 282+ tests (laatst geteld 2026-10-02; sindsdien regressietests van de audit erbij).
+- Testomgeving (`test`-branch + `puntum-test`), gele TEST-balk, `[TEST]` in feedbackmails.
+- Hooks (Prettier na bewerken, typecheck + tests vóór "klaar") en CI (`.github/workflows/ci.yml`).
+- Release-skill `/release` (`.claude/skills/release/`): nog niet op een echte release getest.
+- Tekstreview van Puntum verwerkt op `test`: teksten, Beleidsboek-verwijzingen, verhuurder-criterium naar §2.13.
+- 321 tests groen.
 
 ## Fase
 

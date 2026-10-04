@@ -6,17 +6,14 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 
 ## Nu — werkwijze op orde (2026-10-04)
 
-- [x] **Testomgeving** — staat (2026-10-04). Myle, Emma en Steven gemaild met de test-URL.
-- [ ] **Werkwijze: eerst testen, pas daarna naar `master`.** Alles gaat eerst naar branch `test`;
+- [ ] **Werkwijze: eerst testen, pas daarna naar `master`.** (Tekstreview staat op `test`, nog niet live.) Alles gaat eerst naar branch `test`;
       pushen naar `master` (= productie) pas als het op test werkt.
 - [ ] **Master opschonen** — productie-database: dubbele "(kopie)"-woningen en testwoningen
       verwijderen, en Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
 - [ ] **Inloggen aan op test** — `toggle-auth-aan.sql` op `puntum-test`, `AUTH_VEREIST` weg uit
       Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
-- [x] **Hooks + CI** — Prettier na elke bewerking; typecheck + tests vóór Claude "klaar" meldt
-      (`.claude/settings.json`); GitHub Action bij elke push/PR (`.github/workflows/ci.yml`).
-- [x] **`/release`-skill** — `.claude/skills/release/`: checklist met twee stopmomenten (test-akkoord, dan productie). Nog niet op een echte release getest.
+- [ ] **Eerste echte release via `/release`** — nog niet getest. Pas afvinken na een geslaagde release.
 
 ## Vóór de bèta-livegang
 
