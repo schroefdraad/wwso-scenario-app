@@ -6,8 +6,12 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 
 ## Nu — werkwijze op orde (2026-10-04)
 
-- [ ] **Testomgeving afronden** — basis staat (2026-10-04). Nog: testers de test-URL geven;
-      `test` → `master` mergen zodat productie ook via GitHub deployt (eerste keer samen controleren).
+- [x] **Testomgeving** — staat (2026-10-04). Myle, Emma en Steven gemaild met de test-URL.
+- [ ] **Werkwijze: eerst testen, pas daarna naar `master`.** Alles gaat eerst naar branch `test`;
+      pushen naar `master` (= productie) pas als het op test werkt.
+- [ ] **Master opschonen** — productie-database: dubbele "(kopie)"-woningen en testwoningen
+      verwijderen, en Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
+      Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
 - [ ] **Inloggen aan op test** — `toggle-auth-aan.sql` op `puntum-test`, `AUTH_VEREIST` weg uit
       Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
 - [ ] **Hooks + CI** — `typecheck`-script, hooks in `.claude/settings.json` (opmaak/lint na
