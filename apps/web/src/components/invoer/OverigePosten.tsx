@@ -11,7 +11,7 @@ import type { InvoerState } from '../../lib/invoer/types';
 import { projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 
 const AFTREK_KOLOMMEN: { key: keyof InvoerState['aftrekSituaties']; label: string; titel: string }[] = [
-  { key: 'verhuurderCriterium', label: 'Verhuurder-criterium', titel: 'Hoofdverblijf verhuurder + woonruimte/sanitair alleen via diens vertrek bereikbaar' },
+  { key: 'verhuurderCriterium', label: 'Verhuurder-criterium', titel: 'De verhuurder woont in de woning, en de huurder kan de woonruimte of het sanitair alleen bereiken via een woon- of slaapvertrek van de verhuurder (Beleidsboek §2.13).' },
   { key: 'ruitoppervlakteOnvoldoende', label: 'Ruit < 0,75 m²', titel: 'Ruitoppervlakte hoofdwoonvertrek < 0,75 m²' },
   { key: 'raamkozijnTeHoog', label: 'Raamkozijn > 1,60 m', titel: 'Laagste raamkozijn hoofdwoonvertrek > 1,60 m boven de vloer' },
 ];
