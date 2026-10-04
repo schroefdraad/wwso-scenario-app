@@ -11,8 +11,10 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 - [ ] **Master opschonen** — productie-database: dubbele "(kopie)"-woningen en testwoningen
       verwijderen, en Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
-- [ ] **Inloggen aan op test** — `toggle-auth-aan.sql` op `puntum-test`, `AUTH_VEREIST` weg uit
-      Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
+- [ ] **Inloggen aan op test** — eerst eigen SMTP instellen op `puntum-test` (zelfde Resend-relay
+      als productie; anders max. 2 inlogmails per uur). Dan `toggle-auth-aan.sql` op `puntum-test`,
+      `AUTH_VEREIST` weg uit Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest
+      (zie hieronder) op test. Auth-mail-limiet controleren onder Authentication → Rate Limits.
 - [ ] **Eerste echte release via `/release`** — nog niet getest. Pas afvinken na een geslaagde release.
 
 ## Vóór de bèta-livegang
