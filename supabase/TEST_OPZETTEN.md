@@ -43,8 +43,7 @@ Draaiboek bij het plan van 2026-10-04. 👤 = doe jij, 🤖 = doet Claude.
    | `RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN` | ✓ | ✓ | ✓ |
 
 3. 🤖 Branch `test` aanmaken en pushen. Vercel bouwt automatisch.
-4. 👤 Settings → Domains → Add `puntum-test.vercel.app` → koppelen aan Git-branch `test`.
-   (Bezet? Dan de automatische branch-URL `web-git-test-skael.vercel.app` gebruiken.)
+4. Test-URL: de vaste branch-URL **`https://web-git-test-skael.vercel.app`** (automatisch).
 5. 👤 Settings → Deployment Protection → Vercel Authentication **uit**, anders kunnen testers
    zonder Vercel-account de test-URL niet openen.
 

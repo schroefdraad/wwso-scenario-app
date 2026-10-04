@@ -77,6 +77,9 @@ Past een afspraak niet meer, stel dan een aanpassing van dit bestand voor.
 - Backend: Supabase (auth via magic link, RLS per org). Migraties in `supabase/migrations/`
   draait de gebruiker zelf in de SQL-editor; geen Supabase CLI-koppeling.
 - Hosting: Vercel, project `skael/web`. Foutregistratie: Sentry. Mail: Resend op `puntum.nl`.
+- **Omgevingen:** `master` = productie, `test` = testomgeving (`web-git-test-skael.vercel.app`,
+  Supabase-project `puntum-test`), lokaal = testdatabase. Werk gaat eerst naar `test`.
+  Nieuwe migratie altijd **eerst op `puntum-test`**, dan pas op productie.
 - Commando's: `pnpm test`, `pnpm lint`, `pnpm build`, `pnpm dev`.
 - Kostencatalogus bijwerken: zie `docs/kostencatalogus-bijwerken.md`.
 

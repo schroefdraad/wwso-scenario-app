@@ -6,9 +6,10 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 
 ## Nu — werkwijze op orde (2026-10-04)
 
-- [ ] **Testomgeving inrichten** — tweede Supabase-project, Vercel aan GitHub koppelen (`master` →
-      productie, branches → preview op testdatabase), vaste test-URL voor testers. Eerst plan mode.
-      Maakt het mogelijk om inloggen op productie weer aan te zetten.
+- [ ] **Testomgeving afronden** — basis staat (2026-10-04). Nog: testers de test-URL geven;
+      `test` → `master` mergen zodat productie ook via GitHub deployt (eerste keer samen controleren).
+- [ ] **Inloggen aan op test** — `toggle-auth-aan.sql` op `puntum-test`, `AUTH_VEREIST` weg uit
+      Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
 - [ ] **Hooks + CI** — `typecheck`-script, hooks in `.claude/settings.json` (opmaak/lint na
       bewerking, tests vóór "klaar"), GitHub Action op elke push.
 - [ ] **`/release`-skill** — de releasechecklist uit `CLAUDE.md` als één commando.

@@ -4,17 +4,19 @@ Laatst bijgewerkt: 2026-10-04 · Versie app **v0.7.37** · Historie: `plan/archi
 
 ## Omgevingen
 
-| | Productie | Test |
-|---|---|---|
-| App | `web-skael.vercel.app` (Vercel `skael/web`) | **Bestaat nog niet** (zie plan.md, "Nu") |
-| Database | Eén Supabase-project, gedeeld door iedereen | — |
-| Deployen | Handmatig: `vercel --prod` | — |
-| Inloggen | ⚠ **Uit** (`AUTH_VEREIST=false` + `toggle-auth-uit.sql`) | — |
+| | Productie | Test | Lokaal |
+|---|---|---|---|
+| URL | `web-skael.vercel.app` | `web-git-test-skael.vercel.app` (branch `test`) | `localhost:3000` |
+| Supabase | productieproject | `puntum-test` (`phjaooawljkmrweyqroh`) | `puntum-test` |
+| Deployen | nog handmatig (`vercel --prod`); straks merge naar `master` | automatisch bij push naar `test` | — |
+| Inloggen | ⚠ **uit** | uit (fase "vrij testen") | uit |
 
-**Let op:** zolang inloggen op productie uit staat, is er geen toegangscontrole op `deals` en
-gelden testers als anoniem (tijdelijke `ANONIEM`-regel in `magDealBewerken`). Bewust zo gelaten tot
-het testen door Steven klaar is (besluit 2026-09-01, bevestigd 2026-09-04 en 2026-09-30).
-Testdata en echte data staan in dezelfde database.
+Testdata op `puntum-test`: demo-woning + Pettersonstraat 15 + Stevens map (5 woningen), gekopieerd
+2026-10-04 via `supabase/seed/export_testwoningen_uit_productie.sql`. Draaiboek:
+`supabase/TEST_OPZETTEN.md`.
+
+**Let op:** op productie staat inloggen nog uit (geen toegangscontrole op `deals`). Volgende stap is
+inloggen aanzetten **op test** en daar de rollen testen; pas daarna productie (besluit 2026-10-04).
 
 ## Testteam
 
