@@ -27,3 +27,11 @@
 - Inloggen aanzetten op de testomgeving, en daarna de rollentest.
 - Kosten per doellabel: de zin "Leeg = niet haalbaar of niet relevant" is weggehaald; nog te beslissen of hij terugkomt.
 - Verhuurder-criterium: of een toegang via het vertrek van een andere huurder ook onder deze aftrek valt, is niet nagekeken.
+
+## Later op de dag: inloggen op test
+- Eigen SMTP ingesteld op `puntum-test` (Resend-relay, zelfde als productie).
+- Redirect-URL's en Site URL ingesteld voor de testomgeving.
+- `supabase/toggle-auth-aan.sql` gedraaid op `puntum-test`; `AUTH_VEREIST` verwijderd uit Preview.
+- Testomgeving stuurt nu naar de inlogpagina. Eigenaar (gmail, kernteam) en bètatester (studio-adres)
+  ingelogd getest.
+- Nog open: rollentest voor de overige rollen, en de `ANONIEM`-regel (samen met de productie-switch).

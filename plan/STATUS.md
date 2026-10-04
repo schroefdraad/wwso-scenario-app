@@ -9,14 +9,15 @@ Laatst bijgewerkt: 2026-10-04 · Versie app op productie **v0.7.37** · op `test
 | URL | `web-skael.vercel.app` | `web-git-test-skael.vercel.app` (branch `test`) | `localhost:3000` |
 | Supabase | productieproject | `puntum-test` (`phjaooawljkmrweyqroh`) | `puntum-test` |
 | Deployen | nog handmatig (`vercel --prod`); straks merge naar `master` | automatisch bij push naar `test` | — |
-| Inloggen | ⚠ **uit** | uit (fase "vrij testen") | uit |
+| Inloggen | ⚠ **uit** | **aan** (sinds 2026-10-04, magic link via eigen SMTP) | uit |
 
 Testdata op `puntum-test`: demo-woning + Pettersonstraat 15 + Stevens map (5 woningen), gekopieerd
 2026-10-04 via `supabase/seed/export_testwoningen_uit_productie.sql`. Draaiboek:
 `supabase/TEST_OPZETTEN.md`.
 
-**Let op:** op productie staat inloggen nog uit (geen toegangscontrole op `deals`). Volgende stap is
-inloggen aanzetten **op test** en daar de rollen testen; pas daarna productie (besluit 2026-10-04).
+**Let op:** op productie staat inloggen nog uit (geen toegangscontrole op `deals`). Op test staat
+inloggen sinds 2026-10-04 aan. Eigenaar (gmail) en bètatester (studio-adres) zijn ingelogd getest;
+de rest van de rollentest volgt. Pas daarna productie (besluit 2026-10-04).
 
 ## Testteam
 

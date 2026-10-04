@@ -11,10 +11,12 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 - [ ] **Master opschonen** — productie-database: dubbele "(kopie)"-woningen en testwoningen
       verwijderen, en Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
-- [ ] **Inloggen aan op test** — eerst eigen SMTP instellen op `puntum-test` (zelfde Resend-relay
-      als productie; anders max. 2 inlogmails per uur). Dan `toggle-auth-aan.sql` op `puntum-test`,
-      `AUTH_VEREIST` weg uit Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest
-      (zie hieronder) op test. Auth-mail-limiet controleren onder Authentication → Rate Limits.
+- [x] **Inloggen aan op test** (2026-10-04): eigen SMTP op `puntum-test`, redirect-URL's, SQL
+      toggle-aan, `AUTH_VEREIST` weg uit Preview. Eigenaar en bètatester ingelogd getest.
+- [ ] **Rollentest op test:** nog open: lid, andere organisatie, niet-toegelaten gebruiker. Per rol:
+      opslaan, doorrekenen, kopiëren, verwijderen. Emma en Steven inloggen op test.
+- [ ] **`ANONIEM`-regel** (`lib/deals/profiel.ts`) aanpassen, samen met de productie-switch. Eerst
+      `NEXT_PUBLIC_AUTH_VEREIST` op productie zetten, anders krijgt productie het kopie-probleem.
 - [ ] **Eerste echte release via `/release`** — nog niet getest. Pas afvinken na een geslaagde release.
 
 ## Vóór de bèta-livegang
