@@ -71,7 +71,7 @@ export function OverigePosten() {
           <div className={styles.postKop}>
             <Toggle checked={state.losseLaadpaalAan} label="Losse laadpaal" onChange={(v) => dispatch({ soort: 'LAADPAAL_GEWIJZIGD', aan: v })} />
             <strong>Losse laadpaal aanwezig (R12.3)</strong>
-            <InfoBadge>Hoort de laadpaal bij een gedeelde parkeerplek? Vul hem dan in bij die parkeerplek onder ② Ruimten, niet hier (R10).</InfoBadge>
+            <InfoBadge>Een laadpaal bij een gemeenschappelijke parkeerplek hoort bij die parkeerplek. Vul hem in via ② Ruimten (R10).</InfoBadge>
           </div>
           {state.losseLaadpaalAan && (
             <div className={styles.postDetail}>
@@ -90,7 +90,7 @@ export function OverigePosten() {
 
         <div className={styles.postBlok}>
           <span className={styles.labelRij}>
-            <strong>Aftrekpunten (§2.13)</strong>
+            <strong>Aftrekpunten (Beleidsboek §2.13)</strong>
             <InfoBadge>Elke situatie kost 4 punten per kamer; een kamer die in twee kolommen staat verliest 8 punten.</InfoBadge>
           </span>
           <div style={{ overflowX: 'auto' }}>
@@ -98,7 +98,7 @@ export function OverigePosten() {
               <thead>
                 <tr>
                   <th style={{ textAlign: 'left' }}>Kamer</th>
-                  <th title={`Automatisch bepaald uit de ruimte-invoer, niet handmatig aan te vinken: geldt zodra de oppervlakte van het vertrek (§2.1-grondslag) onder ${MIN_OPPERVLAKTE_M2} m² komt.`}>
+                  <th title={`Deze aftrek geldt zodra de oppervlakte van het vertrek (Beleidsboek §2.1-grondslag) onder ${MIN_OPPERVLAKTE_M2} m² komt, en wordt automatisch bepaald.`}>
                     Oppervlakte &lt; {MIN_OPPERVLAKTE_M2} m²
                   </th>
                   {AFTREK_KOLOMMEN.map((k) => (

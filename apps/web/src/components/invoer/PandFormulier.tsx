@@ -158,7 +158,7 @@ export function PandFormulier() {
               <span className={styles.wozTaxatieRij}>
                 <Toggle checked={gebruikTaxatie} onChange={wisselWaardeModus} label="Geen WOZ-waarde bekend, alleen taxatiewaarde" />
                 Geen WOZ-waarde bekend, alleen taxatiewaarde
-                <InfoBadge>Zonder WOZ-waarde rekent de motor met 85% van de taxatiewaarde (§2.11.1).</InfoBadge>
+                <InfoBadge>Zonder WOZ-waarde wordt er gerekend met 85% van de taxatiewaarde (Beleidsboek §2.11.1).</InfoBadge>
               </span>
             </div>
             <div className={styles.veld}>
@@ -194,7 +194,7 @@ export function PandFormulier() {
             <div className={styles.veld}>
               <span className={styles.labelRij}>
                 <label htmlFor="p-label">Energielabel</label>
-                {pand.energielabel === 'Bouwjaar' && <InfoBadge>De motor valt terug op de bouwjaargrenzen (R4).</InfoBadge>}
+                {pand.energielabel === 'Bouwjaar' && <InfoBadge>Alleen als er geen label bekend is, rekent de berekening met de bouwjaargrenzen (R4).</InfoBadge>}
               </span>
               <select id="p-label" value={pand.energielabel} onChange={(e) => zet('energielabel', e.target.value as PandVeldenState['energielabel'])}>
                 {ENERGIELABELS.map((l) => (
@@ -211,7 +211,7 @@ export function PandFormulier() {
                     label="Ingangsdatum onbekend of ouder dan 10 jaar"
                   />
                   Ingangsdatum onbekend of ouder dan 10 jaar
-                  <InfoBadge>Aangevinkt valt de motor terug op de bouwjaargrenzen net als bij &quot;geen label bekend&quot;.</InfoBadge>
+                  <InfoBadge>Aangevinkt valt de berekening terug op de bouwjaargrenzen net als bij &quot;geen label bekend&quot;.</InfoBadge>
                 </span>
               )}
             </div>
@@ -235,7 +235,7 @@ export function PandFormulier() {
               <div className={styles.veld}>
                 <span className={styles.labelRij}>
                   <label htmlFor="p-huurdatum">Datum huurovereenkomst</label>
-                  <InfoBadge>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (§2.14.3).</InfoBadge>
+                  <InfoBadge>Bepaalt of de opslag +35% op de huurprijs is of +10 punten (Beleidsboek §2.14.3).</InfoBadge>
                 </span>
                 <input
                   id="p-huurdatum"
@@ -248,7 +248,7 @@ export function PandFormulier() {
             <div className={styles.veld}>
               <span className={styles.labelRij}>
                 <label>Zorgwoning</label>
-                <InfoBadge>+35% op R1 t/m R11 (§2.12.1)</InfoBadge>
+                <InfoBadge>+35% op R1 t/m R11 (Beleidsboek §2.12.1)</InfoBadge>
               </span>
               <Toggle checked={pand.zorgwoning} onChange={(v) => zet('zorgwoning', v)} label="Zorgwoning" />
             </div>
@@ -257,7 +257,7 @@ export function PandFormulier() {
 
         <div className={styles.subKop}>
           <h3>Energielabel-kosteninschattingen</h3>
-          <span className={styles.hint}>Eigen inschatting per doellabel, voor de energielabel-scenariovergelijking. Leeg = niet haalbaar of niet relevant voor deze woning.</span>
+          <span className={styles.hint}>Eigen inschatting realisatie doellabel voor de scenariovergelijking (optioneel).</span>
         </div>
         <div className={styles.pandGrid}>
           <div className={styles.veldRij}>

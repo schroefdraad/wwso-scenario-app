@@ -99,8 +99,7 @@ export function RuimteRijRow({ rij, volgendeRijId }: { rij: RuimteRij; volgendeR
             ⚡
           </button>
           <InfoBadge>
-            Gas-/elektrameter aanwezig in deze ruimte of in een kast daarin — trekt 0,18 m² af van de oppervlakte vóórdat de puntentelling (rubriek 1, 2 en 9)
-            ermee rekent (§2.2.4).
+            Gas-/elektrameter aanwezig in deze ruimte of in een kast daarin. Deze bewerking trekt 0,18 m² af van de oppervlakte vóórdat de puntentelling ermee rekent (Beleidsboek §2.2.4).
           </InfoBadge>
         </div>
       </td>

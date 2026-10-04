@@ -172,7 +172,7 @@ export function SamenvattingRij({
               type="button"
               className={styles.btnLink}
               disabled={!kolom.pakket}
-              title={kolom.pakket ? undefined : 'Nog niet beschikbaar — kies eerst een energielabel, een maatregel of bewerk de woning'}
+              title={kolom.pakket ? undefined : 'Kies eerst een energielabel, een maatregel of bewerk de woning'}
               onClick={() => onBekijkResultaat(i)}
             >
               Bekijk volledig resultaat →

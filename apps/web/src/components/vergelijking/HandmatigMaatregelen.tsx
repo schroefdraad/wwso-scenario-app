@@ -69,7 +69,7 @@ export function HandmatigMaatregelen({
       </div>
       {kandidaten.length === 0 ? (
         <p className={styles.hint} style={{ padding: '0.9rem 1.2rem' }}>
-          Geen enkele standaardmaatregel is op deze bewerkte situatie van toepassing.
+          Voor deze woning zijn geen optimalisaties beschikbaar.
         </p>
       ) : (
         <div className={styles.tabelScroll}>
@@ -131,8 +131,6 @@ export function HandmatigMaatregelen({
                             title={
                               gekozenAlternatief
                                 ? `Kies eerst "${gekozenAlternatief.maatregel.id}" uit — dit zijn alternatieven voor dezelfde plek.`
-                                : alternatieven.length > 0
-                                  ? 'Alternatieven voor dezelfde plek — kies er hoogstens één.'
                                   : undefined
                             }
                           />

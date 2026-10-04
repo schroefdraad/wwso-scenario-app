@@ -233,8 +233,7 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
             onChange={(v) => zetKeuken({ verwarmd: v })}
           />
           <InfoBadge>
-            Telt bij &quot;ja&quot; voor de verwarmingspunten (R3) als een tweede verwarmd vertrek naast {rij.naam || 'deze ruimte'} zelf (§2.3.2) — niet
-            automatisch overgenomen van de verwarming-toggle van de ruimte.
+            Zet dit aan als de keuken open is naar een verwarmd vertrek. Dan krijgt de keuken ook verwarmingspunten (Beleidsboek §2.3.2).
           </InfoBadge>
         </div>
       )}
@@ -250,7 +249,7 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
               zetKeuken({ basiseisen: Object.fromEntries(KEUKEN_BASISEISEN.map(([k]) => [k, waarde])) as Keuken['basiseisen'] });
             }}
           />
-          <label htmlFor="k-master">Voldoet aan alle vijf de basiseisen (§2.5.1)</label>
+          <label htmlFor="k-master">Voldoet aan alle vijf de basiseisen (Beleidsboek §2.5.1)</label>
         </div>
         {KEUKEN_BASISEISEN.map(([key, label]) => (
           <div className={styles.poortEis} key={key}>
@@ -431,8 +430,8 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
       {!isToiletruimte && (
         <div className={styles.veldrij}>
           <label>Douche / bad</label>
-          {/* Vaste beleidswaarden (§2.6.1), net als de extra's: de vroegere marginale waarde telde ook de
-              extra's mee die een douche/bad via het plafond (§2.6.2) vrijspeelt — "Douche +5,5 pt" voor
+          {/* Vaste beleidswaarden (Beleidsboek §2.6.1), net als de extra's: de vroegere marginale waarde telde ook de
+              extra's mee die een douche/bad via het plafond (Beleidsboek §2.6.2) vrijspeelt — "Douche +5,5 pt" voor
               een voorziening van 3 punten (feedback 2026-10-03). */}
           <span style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1rem' }}>
             <label>
@@ -456,13 +455,13 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
       )}
 
       {isToiletruimte && (
-        <p className={styles.hint}>Een toiletruimte heeft geen douche/bad, dus de extra-voorzieningen daarvoor blijven hier verborgen — die leveren toch 0 punten op (§2.6.2).</p>
+        <p className={styles.hint}>Een toiletruimte heeft geen douche/bad, dus de extra-voorzieningen daarvoor blijven hier verborgen — die leveren toch 0 punten op (Beleidsboek §2.6.2).</p>
       )}
 
       {!isToiletruimte && !heeftDoucheOfBad && (
         <p className={styles.hint}>
           Deze ruimte heeft (nog) geen douche of bad aangevinkt, dus de vijf extra-eisen en de extra-voorzieningen daarvoor blijven hier verborgen — die leveren
-          toch 0 punten op zolang er geen douche/bad is (§2.6.2).
+          toch 0 punten op zolang er geen douche/bad is (Beleidsboek §2.6.2).
         </p>
       )}
 
@@ -479,7 +478,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                   zetSanitair({ extraEisen: Object.fromEntries(SANITAIR_EISEN.map(([k]) => [k, waarde])) as SanitairVoorziening['extraEisen'] });
                 }}
               />
-              <label htmlFor="s-master">Voldoet aan alle vijf de extra-eisen (§2.6.2)</label>
+              <label htmlFor="s-master">Voldoet aan alle vijf de extra-eisen (Beleidsboek §2.6.2)</label>
             </div>
             {SANITAIR_EISEN.map(([key, label]) => (
               <div className={styles.poortEis} key={key}>
@@ -568,7 +567,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
                 <label>Eenhandsmengkranen</label>
                 {/* (i) direct naast de naam: rechts in de rij opende de popover buiten het paneel. */}
                 <InfoBadge>
-                  Levert maar één keer punten op, ongeacht het aantal (§2.6.2)
+                  Levert maar één keer punten op, ongeacht het aantal (Beleidsboek §2.6.2)
                 </InfoBadge>
                 <input
                   type="number"
@@ -581,7 +580,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
               </div>
               <div className={styles.extraRij}>
                 <label>Thermostatische mengkranen</label>
-                <InfoBadge>Levert maar één keer punten op, ongeacht het aantal (§2.6.2).</InfoBadge>
+                <InfoBadge>Levert maar één keer punten op, ongeacht het aantal (Beleidsboek §2.6.2).</InfoBadge>
                 <input
                   type="number"
                   min={0}
@@ -601,9 +600,9 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
 }
 
 const NIET_PASSEND_TEKST: Record<'keuken' | 'sanitair' | 'zolder', { naam: string; regel: string }> = {
-  keuken: { naam: 'een keuken', regel: 'Een keuken telt alleen in een vertrek of overige ruimte (§2.3.2, §2.9.2) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
-  sanitair: { naam: 'sanitair', regel: 'Sanitair telt alleen in een vertrek of overige ruimte (§2.6.1) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
-  zolder: { naam: 'zolderkenmerken', regel: 'Een zolderruimte is een privévertrek, berging of overige ruimte (§2.2.1.3, §2.2.2.3).' },
+  keuken: { naam: 'een keuken', regel: 'Een keuken telt alleen in een vertrek of overige ruimte (Beleidsboek §2.3.2, §2.9.2) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
+  sanitair: { naam: 'sanitair', regel: 'Sanitair telt alleen in een vertrek of overige ruimte (Beleidsboek §2.6.1) — niet in een buitenruimte, verkeersruimte of parkeerplek.' },
+  zolder: { naam: 'zolderkenmerken', regel: 'Een zolderruimte is een privévertrek, berging of overige ruimte (Beleidsboek §2.2.1.3, §2.2.2.3).' },
 };
 
 /**
@@ -705,11 +704,11 @@ function ParkeerplekPanel({ rij }: { rij: RuimteRij }) {
             label="Laadpaal"
             onChange={(v) => dispatch({ soort: 'RUIMTE_GEWIJZIGD', id: rij.id, patch: { parkeerplek: { ...parkeerplek, laadpaal: v } } })}
           />
-          <InfoBadge>Alleen als de laadpaal exclusief voor bewoners is: punten worden gedeeld door het aantal adressen (§2.10.5).</InfoBadge>
+          <InfoBadge>Alleen als de laadpaal exclusief voor bewoners is: punten worden gedeeld door het aantal adressen (Beleidsboek §2.10.5).</InfoBadge>
         </div>
       )}
       <p className={styles.parkeerVoorwaarden}>
-        Telt alleen mee als de plek gedeeld wordt door bewoners van minimaal 2 adressen, niet openbaar is, en een afgebakend vak van minimaal 12 m² is (§2.10).
+        Telt alleen mee als de plek gedeeld wordt door bewoners van minimaal 2 adressen, niet openbaar is, en een afgebakend vak van minimaal 12 m² is (Beleidsboek §2.10).
       </p>
     </div>
   );
@@ -734,9 +733,9 @@ function ZolderPanel({ rij }: { rij: RuimteRij }) {
   const isVertrek = rij.type === 'Privévertrek';
   const hint =
     isVertrek && !(zolder.vasteTrap && zolder.beschotenDak)
-      ? "Een zolder telt alleen als vertrek bij een vaste trap én een beschoten dak (§2.2.1.3). Overweeg het type 'Overige ruimte'."
+      ? "Een zolder telt alleen als vertrek bij een vaste trap én een beschoten dak (Beleidsboek §2.2.1.3). Overweeg het type 'Overige ruimte'."
       : !isVertrek && !zolder.vasteTrap
-        ? 'Levert 5 aftrekpunten op (§2.2.2.3), begrensd op de waarde van de zolder zelf.'
+        ? 'Levert 5 aftrekpunten op (Beleidsboek §2.2.2.3), begrensd op de waarde van de zolder zelf.'
         : '';
   return (
     <div>

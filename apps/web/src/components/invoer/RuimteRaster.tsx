@@ -22,7 +22,6 @@ export function RuimteRaster() {
       <div className={styles.blokInhoud}>
         {!poortOpen && (
           <div className={styles.inertOverlay}>
-            <span>Vul eerst het aantal kamers in (sectie ①)</span>
           </div>
         )}
         <div className={styles.gridScroll}>

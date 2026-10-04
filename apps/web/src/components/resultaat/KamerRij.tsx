@@ -63,7 +63,7 @@ export function KamerRij({
           </div>
           {resultaat.monumentPunten > 0 && (
             <div className={styles.subtotaal}>
-              <span>Monumentpunten (§2.14.3)</span>
+              <span>Monumentpunten (Beleidsboek §2.14.3)</span>
               <strong>+{resultaat.monumentPunten} pt</strong>
             </div>
           )}

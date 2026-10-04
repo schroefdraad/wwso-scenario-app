@@ -188,14 +188,14 @@ export default function DealsOverzicht() {
                               type="button"
                               className={verwijderBevestigId === deal.id ? styles.verwijderKnopBevestig : styles.verwijderKnop}
                               disabled={verwijderBezigId === deal.id}
-                              title={verwijderBevestigId === deal.id ? 'Nogmaals klikken om echt te verwijderen' : 'Woning permanent verwijderen'}
+                              title={verwijderBevestigId === deal.id ? 'Weet je zeker dat je deze woning wilt verwijderen?' : 'Woning permanent verwijderen'}
                               onClick={() => verwijder(deal.id)}
                             >
-                              {verwijderBezigId === deal.id ? '…' : verwijderBevestigId === deal.id ? 'Zeker weten?' : '🗑 Verwijderen'}
+                              {verwijderBezigId === deal.id ? '…' : verwijderBevestigId === deal.id ? 'Ja, verwijderen' : '🗑 Verwijderen'}
                             </button>
                             {verwijderBevestigId === deal.id && verwijderBezigId !== deal.id && (
                               <button type="button" className={styles.annuleerKnop} onClick={() => setVerwijderBevestigId(null)}>
-                                Annuleren
+                                Nee
                               </button>
                             )}
                           </>
