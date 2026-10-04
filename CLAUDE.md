@@ -83,6 +83,13 @@ Past een afspraak niet meer, stel dan een aanpassing van dit bestand voor.
 - Commando's: `pnpm test`, `pnpm lint`, `pnpm build`, `pnpm dev`.
 - Kostencatalogus bijwerken: zie `docs/kostencatalogus-bijwerken.md`.
 
+## Automatische controles
+
+- Na elke bewerking formatteert Prettier het bestand (`.claude/hooks/format-after-edit.sh`).
+- Voordat Claude "klaar" meldt, draaien typecheck en tests als er iets is gewijzigd
+  (`.claude/hooks/verify-before-stop.sh`). Bij een fout werkt Claude door.
+- GitHub Action (`.github/workflows/ci.yml`) draait typecheck, lint en tests bij elke push.
+
 ## Elke release
 
 - [ ] Tests, typecheck en lint groen; wijziging in de browser gecontroleerd.

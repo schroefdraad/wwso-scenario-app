@@ -14,8 +14,8 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
 - [ ] **Inloggen aan op test** — `toggle-auth-aan.sql` op `puntum-test`, `AUTH_VEREIST` weg uit
       Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
-- [ ] **Hooks + CI** — `typecheck`-script, hooks in `.claude/settings.json` (opmaak/lint na
-      bewerking, tests vóór "klaar"), GitHub Action op elke push.
+- [x] **Hooks + CI** — Prettier na elke bewerking; typecheck + tests vóór Claude "klaar" meldt
+      (`.claude/settings.json`); GitHub Action bij elke push/PR (`.github/workflows/ci.yml`).
 - [ ] **`/release`-skill** — de releasechecklist uit `CLAUDE.md` als één commando.
 
 ## Vóór de bèta-livegang

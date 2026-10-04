@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck": "pnpm --filter @wwso/web typecheck && pnpm -r --filter !@wwso/web typecheck"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.15.0",
