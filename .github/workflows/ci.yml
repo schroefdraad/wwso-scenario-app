@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4   # leest de versie uit packageManager in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24           # zelfde als Vercel
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint && pnpm --filter @wwso/web lint
+
+      - name: Tests
+        run: pnpm test
