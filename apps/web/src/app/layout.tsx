@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "../components/Footer";
 import { FeedbackKnop } from "../components/FeedbackKnop";
+import { OmgevingBalk } from "../components/OmgevingBalk";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="nl" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <OmgevingBalk />
         {children}
         <Footer />
         <FeedbackKnop />

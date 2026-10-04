@@ -1,6 +1,10 @@
 import { Resend } from 'resend';
+import { OMGEVING, omgevingLabel } from '../../../lib/omgeving';
 
 export const dynamic = 'force-dynamic';
+
+/** "[TEST] " buiten productie, zodat testfeedback in de inbox herkenbaar is. */
+const ONDERWERP_VOORVOEGSEL = omgevingLabel(OMGEVING) ? `[${omgevingLabel(OMGEVING)}] ` : '';
 
 /**
  * Los stukje server-code, alleen voor het versturen van de e-mailmelding — de feedback zelf is al
@@ -14,7 +18,7 @@ export async function POST(request: Request) {
   const { error } = await resend.emails.send({
     from: `Puntum feedback <feedback@${process.env.RESEND_EMAIL_DOMAIN}>`,
     to: ['myle.hoefdraad@gmail.com'],
-    subject: 'Nieuwe feedback in Puntum',
+    subject: `${ONDERWERP_VOORVOEGSEL}Nieuwe feedback in Puntum`,
     text: `Van: ${email}\nPagina: ${url}\n\n${bericht}`,
   });
 
