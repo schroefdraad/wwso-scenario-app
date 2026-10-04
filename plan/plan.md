@@ -16,7 +16,7 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
       Preview, `ANONIEM`-regel alleen bij inlog-uit laten gelden; rollentest (zie hieronder) op test.
 - [x] **Hooks + CI** — Prettier na elke bewerking; typecheck + tests vóór Claude "klaar" meldt
       (`.claude/settings.json`); GitHub Action bij elke push/PR (`.github/workflows/ci.yml`).
-- [ ] **`/release`-skill** — de releasechecklist uit `CLAUDE.md` als één commando.
+- [x] **`/release`-skill** — `.claude/skills/release/`: checklist met twee stopmomenten (test-akkoord, dan productie). Nog niet op een echte release getest.
 
 ## Vóór de bèta-livegang
 
