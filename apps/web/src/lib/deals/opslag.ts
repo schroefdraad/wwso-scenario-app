@@ -1,5 +1,6 @@
 import type { PandInvoer, Versiestempel } from '@wwso/engine';
 import { supabase } from '../supabase/client';
+import { leesOpslagFout } from './fouten';
 import { parseDealRij, type Deal, type ScenarioSelectie } from './types';
 
 export interface DealInvoer {
@@ -28,12 +29,8 @@ function naarRij(invoer: DealInvoer) {
 }
 
 export async function maakDealAan(invoer: DealInvoer): Promise<Deal> {
-  const { data, error } = await supabase
-    .from('deals')
-    .insert(naarRij(invoer))
-    .select()
-    .single();
-  if (error) throw new Error(`Woning opslaan mislukt: ${error.message}`);
+  const { data, error } = await supabase.from('deals').insert(naarRij(invoer)).select().single();
+  if (error) throw new Error(leesOpslagFout(error.code), { cause: error });
   return parseDealRij(data);
 }
 
@@ -44,12 +41,15 @@ export async function werkDealBij(id: string, invoer: DealInvoer): Promise<Deal>
     .eq('id', id)
     .select()
     .single();
-  if (error) throw new Error(`Woning bijwerken mislukt: ${error.message}`);
+  if (error) throw new Error(leesOpslagFout(error.code), { cause: error });
   return parseDealRij(data);
 }
 
 export async function haalDealenOp(): Promise<Deal[]> {
-  const { data, error } = await supabase.from('deals').select().order('bijgewerkt', { ascending: false });
+  const { data, error } = await supabase
+    .from('deals')
+    .select()
+    .order('bijgewerkt', { ascending: false });
   if (error) throw new Error(`Woningen ophalen mislukt: ${error.message}`);
   return data.map(parseDealRij);
 }
