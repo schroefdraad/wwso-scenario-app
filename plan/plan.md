@@ -29,6 +29,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 **Audit rekenmotor (2026-10-06):** `outputs/AUDIT_rekenmotor_beleidsboek_2026-10-06.md`
 - Opgelost in v0.7.45 / engine 0.3.0: minimummaten + zolder-eisen, R4 gemeenschappelijk vertrek, wastafel 8+.
 - [ ] Na de bèta: R3-maximum vóór/na deling toetsen, hardcoded waarden naar `packages/data`.
+- [ ] R6 extra's bij een douchecabine in een privévertrek: §2.6.2 spreekt van een "bad- of doucheruimte";
+      de app telt extra's mee als de eisen zijn aangevinkt. Uitzoeken (Huurprijscheck) of dat mag. Na de bèta.
 
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
