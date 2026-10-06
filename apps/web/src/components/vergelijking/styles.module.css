@@ -1,7 +1,7 @@
 .wrap {
   background: var(--paper);
   color: var(--ink);
-  font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: ui-sans-serif, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   font-size: 14.5px;
   line-height: 1.45;
   min-height: 100vh;
@@ -128,6 +128,17 @@
   overflow: hidden;
 }
 
+.scenarioKopieren {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+}
+
 .tabBalk {
   display: flex;
   gap: 0.2rem;
@@ -226,7 +237,7 @@
 }
 
 .samenvattingWaarde {
-  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
 }
 
 .samenvattingWaardePositief {
@@ -368,15 +379,14 @@
 }
 
 .maatregelId {
-  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
   color: var(--ink-dim);
   font-size: 0.76rem;
   margin-right: 0.4rem;
 }
 
-
 .tvtCel {
-  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
   color: var(--ink-dim);
   white-space: nowrap;
 }
@@ -394,5 +404,5 @@
 .checkCelUit {
   color: var(--ink-dim);
   text-align: center;
-  font-family: ui-monospace, "SFMono-Regular", Consolas, Menlo, monospace;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
 }

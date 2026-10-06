@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.37';
+export const APP_VERSIE = '0.7.38';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,16 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.38',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Vergelijking: nieuwe knoppen "Kopiëren naar" per scenario. Kopieer bijvoorbeeld Scenario 1 naar Scenario 2 en bewerk daar verder; het origineel blijft ongewijzigd. Is het doelscenario al gevuld, dan vraagt de app eerst om bevestiging.',
+      'Scenario bewerken: "Gebruik als scenario en opslaan" slaat de woning nu meteen op. Voorheen stond een kamerbewerking alleen in beeld tot je zelf op Opslaan klikte.',
+      'Bugfix: als alleen Scenario 2 of 3 gevuld was, stond dat scenario na opnieuw openen op het eerste tabblad. Scenario\'s blijven nu op hun eigen plek.',
+      'Foutmeldingen bij opslaan in gewone taal, bijvoorbeeld "Je hebt geen bewerkrechten op deze woning" in plaats van een technische databasemelding.',
+    ],
+  },
   {
     versie: '0.7.37',
     datum: '2026-10-03',

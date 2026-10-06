@@ -2,10 +2,32 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { huidigeVersiestempel, pasScenarioToe, type Energielabel, type PandInvoer, type PandWaardering } from '@wwso/engine';
+import {
+  huidigeVersiestempel,
+  pasScenarioToe,
+  type Energielabel,
+  type PandInvoer,
+  type PandWaardering,
+} from '@wwso/engine';
 import type { Kostencatalogus, Tarievenset } from '@wwso/data';
-import { useHandmatigeKandidaten, useScenarioPakket, type ScenarioSlot } from '../../lib/vergelijking/useScenarioPakket';
-import { beschikbareEnergielabelDoelen, nieuweSelectieNaToggle } from '../../lib/vergelijking/scenario-bouw';
+import {
+  useHandmatigeKandidaten,
+  useScenarioPakket,
+  type ScenarioSlot,
+} from '../../lib/vergelijking/useScenarioPakket';
+import {
+  beschikbareEnergielabelDoelen,
+  nieuweSelectieNaToggle,
+} from '../../lib/vergelijking/scenario-bouw';
+import {
+  isOnaangeraakt,
+  kopieerSlot,
+  leegSlot,
+  moetOpslaanNaScenarioBewerking,
+  opslaanbareScenarios as naarOpslaanbareScenarios,
+  slotsUitScenarios,
+  standaardSlots,
+} from '../../lib/vergelijking/scenarioSlots';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { maakDealAan, werkDealBij, haalMappen } from '../../lib/deals/opslag';
 import {
@@ -18,76 +40,20 @@ import {
   slaVergelijkingSnapshotOp,
   type VergelijkingSnapshot,
 } from '../../lib/vergelijking/scenarioBewerkBrug';
-import type { ScenarioSelectie } from '../../lib/deals/types';
 import { AppHeader, WoningContextStrook, kamersLabel } from '../AppHeader';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
-import { bepaalOpslaanActie } from '../../lib/deals/types';
-import { resultaatUrl, scenarioBewerkenUrl, vergelijkingUrl, woningBewerkenUrl } from '../../lib/navigatie';
+import { bepaalOpslaanActie, type ScenarioSelectie } from '../../lib/deals/types';
+import {
+  resultaatUrl,
+  scenarioBewerkenUrl,
+  vergelijkingUrl,
+  woningBewerkenUrl,
+} from '../../lib/navigatie';
 import { SamenvattingRij } from './SamenvattingRij';
 import { HandmatigMaatregelen } from './HandmatigMaatregelen';
 import styles from './styles.module.css';
 
-const STANDAARD_NAMEN = ['Scenario 1', 'Scenario 2', 'Scenario 3'];
 const NIEUWE_MAP_OPTIE = '__nieuwe_map__';
-
-/** Een leeg, onaangeraakt scenario — `kamerBewerkt: false` en `energielabelDoel: null` is wat
- * `useScenarioPakket` herkent als "nog niets ingevuld" (i.p.v. een nietszeggend pakket met 0
- * overal); `pand` krijgt de as-is mee puur zodat er iets geldigs staat om kandidaten tegen te
- * berekenen. */
-function leegSlot(naam: string, asIs: PandInvoer): ScenarioSlot {
-  return { naam, pand: asIs, kamerBewerkt: false, energielabelDoel: null, sleutels: new Set<string>(), handmatigeInvesteringEuro: 0, maatregelPrijzenEuro: {} };
-}
-
-function standaardSlots(asIs: PandInvoer): ScenarioSlot[] {
-  return STANDAARD_NAMEN.map((naam) => leegSlot(naam, asIs));
-}
-
-/** Vult de drie vaste slots met de scenario's van een geladen deal (taak 15, uitgebreid
- * 2026-08-22 met handmatige scenario's); ontbrekende slots blijven leeg met een standaardnaam.
- * Een vóór 2026-09-05 opgeslagen `'kandidaten'`-scenario (de toen nog gedeelde, niet-per-scenario
- * checkboxmodus) migreert hier naar het uniforme pad: `pand` = as-is, sleutels behouden — precies
- * wat dat scenario toen betekende (alleen catalogusmaatregelen, geen kamers bewerkt). Een vóór
- * 2026-09-07 opgeslagen `'energielabel'`-scenario (toen nog exclusief van een kamerbewerking,
- * feedback Emma Morrison: "ik kan helemaal niks meer als ik een scenario selecteer") migreert naar
- * dezelfde uniforme vorm: `pand` = as-is (dat scenario kende geen bewerkt pand), `energielabelDoel`
- * = het opgeslagen doellabel. */
-function slotsUitScenarios(scenarios: ScenarioSelectie[], asIs: PandInvoer): ScenarioSlot[] {
-  return STANDAARD_NAMEN.map((standaardNaam, i) => {
-    const opgeslagen = scenarios[i];
-    if (!opgeslagen) return leegSlot(standaardNaam, asIs);
-    if (opgeslagen.soort === 'handmatig') {
-      return {
-        naam: opgeslagen.naam,
-        pand: opgeslagen.pand,
-        kamerBewerkt: opgeslagen.kamerBewerkt,
-        energielabelDoel: opgeslagen.energielabelDoel ?? null,
-        sleutels: new Set(opgeslagen.sleutels),
-        handmatigeInvesteringEuro: opgeslagen.handmatigeInvesteringEuro,
-        maatregelPrijzenEuro: opgeslagen.maatregelPrijzenEuro,
-      };
-    }
-    if (opgeslagen.soort === 'energielabel') {
-      return {
-        naam: opgeslagen.naam,
-        pand: asIs,
-        kamerBewerkt: false,
-        energielabelDoel: opgeslagen.doelLabel,
-        sleutels: new Set(opgeslagen.sleutels),
-        handmatigeInvesteringEuro: 0,
-        maatregelPrijzenEuro: opgeslagen.maatregelPrijzenEuro,
-      };
-    }
-    return {
-      naam: opgeslagen.naam,
-      pand: asIs,
-      kamerBewerkt: false,
-      energielabelDoel: null,
-      sleutels: new Set(opgeslagen.sleutels),
-      handmatigeInvesteringEuro: 0,
-      maatregelPrijzenEuro: {},
-    };
-  });
-}
 
 /** Herstelt de sessionStorage-snapshot terug naar `ScenarioSlot[]` (Set van sleutels) — het
  * spiegelbeeld van de serialisatie in `slaSnapshotOp`. Geen legacy-migratie nodig zoals bij
@@ -143,7 +109,9 @@ export function Vergelijking({
   geladenDeal?: GeladenDeal;
 }) {
   const router = useRouter();
-  const [slots, setSlots] = useState<ScenarioSlot[]>(() => (geladenDeal ? slotsUitScenarios(geladenDeal.scenarios, pand) : standaardSlots(pand)));
+  const [slots, setSlots] = useState<ScenarioSlot[]>(() =>
+    geladenDeal ? slotsUitScenarios(geladenDeal.scenarios, pand) : standaardSlots(pand),
+  );
   const [actieveTab, setActieveTab] = useState(0);
   const [dealId, setDealId] = useState<string | undefined>(geladenDeal?.id);
   const [dealNaam, setDealNaam] = useState(geladenDeal?.naam ?? pand.pand.adres);
@@ -157,6 +125,13 @@ export function Vergelijking({
   const [opslaanStatus, setOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout'>('idle');
   useDocumentTitle(`${dealNaam} · Vergelijking · WWSO Scenario App`);
   const [opslaanFoutmelding, setOpslaanFoutmelding] = useState<string | undefined>(undefined);
+  // Opslaan ná de volgende render, zodat `bewaar` de zojuist gezette slots ziet (na "Gebruik als
+  // scenario" en na kopiëren, 2026-10-06).
+  const [opslaanGevraagd, setOpslaanGevraagd] = useState(false);
+  const [nietOpgeslagenMelding, setNietOpgeslagenMelding] = useState<string | undefined>(undefined);
+  const [kopieBevestiging, setKopieBevestiging] = useState<{ van: number; naar: number } | null>(
+    null,
+  );
 
   useEffect(() => {
     haalMappen()
@@ -178,7 +153,11 @@ export function Vergelijking({
   // is de snapshot precies de staat van vóór vertrek en dus veilig om toe te passen.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const { snapshot, resultaat } = bepaalVergelijkingHerstel(haalEnWisVergelijkingSnapshotOp(), haalEnWisScenarioBewerkResultaatOp(), geladenDeal?.id);
+    const { snapshot, resultaat } = bepaalVergelijkingHerstel(
+      haalEnWisVergelijkingSnapshotOp(),
+      haalEnWisScenarioBewerkResultaatOp(),
+      geladenDeal?.id,
+    );
     if (!snapshot && !resultaat) return;
     const basisSlots = snapshot ? slotsUitSnapshot(snapshot.slots) : slots;
     setSlots(pasScenarioResultaatToe(basisSlots, resultaat));
@@ -188,22 +167,87 @@ export function Vergelijking({
       setDealNotitie(snapshot.dealNotitie);
       setDealMap(snapshot.dealMap);
     }
+    // Terug van "Scenario bewerken": meteen opslaan (2026-10-06), anders stond de kamerbewerking
+    // alleen in het geheugen. Bij alleen-lezen/onzeker niet — dan zou opslaan een kopie maken.
+    if (resultaat) {
+      if (
+        moetOpslaanNaScenarioBewerking({ heeftResultaat: true, magBewerken, bewerkrechtenOnzeker })
+      )
+        setOpslaanGevraagd(true);
+      else
+        setNietOpgeslagenMelding(
+          'Scenario niet opgeslagen: deze woning is alleen-lezen. Klik op Opslaan om een eigen kopie te maken.',
+        );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!opslaanGevraagd) return;
+    setOpslaanGevraagd(false);
+    void dealOpslaan();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opslaanGevraagd]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   // Drie expliciete aanroepen (rules-of-hooks: geen .map over een hook), zelfde patroon als de
   // useScenarioPakket-aanroepen eronder. Elk scenario heeft nu altijd een `pand` (2026-09-05),
   // dus dit levert voor elk scenario de maatregelen op die specifiek op DAT pand van toepassing
   // zijn — voor een onaangeraakt scenario is dat het pand van de as-is zelf.
-  const handmatigeKandidaten0 = useHandmatigeKandidaten(pand, slots[0], tarievenset, peildatum, kostencatalogus);
-  const handmatigeKandidaten1 = useHandmatigeKandidaten(pand, slots[1], tarievenset, peildatum, kostencatalogus);
-  const handmatigeKandidaten2 = useHandmatigeKandidaten(pand, slots[2], tarievenset, peildatum, kostencatalogus);
-  const handmatigeKandidatenPerSlot = [handmatigeKandidaten0, handmatigeKandidaten1, handmatigeKandidaten2];
+  const handmatigeKandidaten0 = useHandmatigeKandidaten(
+    pand,
+    slots[0],
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+  );
+  const handmatigeKandidaten1 = useHandmatigeKandidaten(
+    pand,
+    slots[1],
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+  );
+  const handmatigeKandidaten2 = useHandmatigeKandidaten(
+    pand,
+    slots[2],
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+  );
+  const handmatigeKandidatenPerSlot = [
+    handmatigeKandidaten0,
+    handmatigeKandidaten1,
+    handmatigeKandidaten2,
+  ];
 
-  const pakket0 = useScenarioPakket(pand, slots[0], handmatigeKandidaten0, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
-  const pakket1 = useScenarioPakket(pand, slots[1], handmatigeKandidaten1, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
-  const pakket2 = useScenarioPakket(pand, slots[2], handmatigeKandidaten2, tarievenset, peildatum, kostencatalogus, verwervingswaardeEuro);
+  const pakket0 = useScenarioPakket(
+    pand,
+    slots[0],
+    handmatigeKandidaten0,
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    verwervingswaardeEuro,
+  );
+  const pakket1 = useScenarioPakket(
+    pand,
+    slots[1],
+    handmatigeKandidaten1,
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    verwervingswaardeEuro,
+  );
+  const pakket2 = useScenarioPakket(
+    pand,
+    slots[2],
+    handmatigeKandidaten2,
+    tarievenset,
+    peildatum,
+    kostencatalogus,
+    verwervingswaardeEuro,
+  );
   const berekendePakketten = [pakket0, pakket1, pakket2];
 
   /** Zet een maatregel aan/uit op een scenario-tabblad zonder het (eventueel al bewerkte) pand of
@@ -220,7 +264,9 @@ export function Vergelijking({
   }
 
   function zetHandmatigeInvestering(slotIndex: number, euro: number) {
-    setSlots((prev) => prev.map((s, i) => (i === slotIndex ? { ...s, handmatigeInvesteringEuro: euro } : s)));
+    setSlots((prev) =>
+      prev.map((s, i) => (i === slotIndex ? { ...s, handmatigeInvesteringEuro: euro } : s)),
+    );
   }
 
   /** Per-maatregel prijsoverschrijving (Tussenfase-taak D) — voorgevuld in de UI met de
@@ -228,7 +274,11 @@ export function Vergelijking({
    * scenariosoorten, zelfde reden als `toggleHandmatigeMaatregel`. */
   function zetMaatregelPrijs(slotIndex: number, sleutel: string, euro: number) {
     setSlots((prev) =>
-      prev.map((s, i) => (i === slotIndex ? { ...s, maatregelPrijzenEuro: { ...s.maatregelPrijzenEuro, [sleutel]: euro } } : s)),
+      prev.map((s, i) =>
+        i === slotIndex
+          ? { ...s, maatregelPrijzenEuro: { ...s.maatregelPrijzenEuro, [sleutel]: euro } }
+          : s,
+      ),
     );
   }
 
@@ -240,6 +290,21 @@ export function Vergelijking({
     setSlots((prev) => prev.map((s, i) => (i === index ? leegSlot(s.naam, pand) : s)));
   }
 
+  /** "Kopiëren naar" (2026-10-06): kopie in een ander slot, gevuld doel alleen na bevestiging,
+   * daarna meteen opslaan en naar het tabblad van de kopie. */
+  function kopieer(van: number, naar: number, overschrijvenBevestigd: boolean) {
+    const uitkomst = kopieerSlot(slots, van, naar, { overschrijvenBevestigd });
+    if (uitkomst.soort === 'bevestiging-nodig') {
+      setKopieBevestiging({ van, naar });
+      return;
+    }
+    setKopieBevestiging(null);
+    if (uitkomst.soort !== 'gekopieerd') return;
+    setSlots(uitkomst.slots);
+    setActieveTab(naar);
+    setOpslaanGevraagd(true);
+  }
+
   /** Wisselknop (Tussenfase-taak C): zet alleen de energielabel-laag, boven op wat er verder al in
    * dit slot zit (kamerbewerking, maatregelen) — sinds 2026-09-07 (feedback Emma Morrison: "ik kan
    * helemaal niks meer als ik een scenario selecteer, hij overschrijft ook mijn extra
@@ -247,7 +312,9 @@ export function Vergelijking({
    * "Geen"-optie) haalt alleen de labelwisseling weer weg; voor een volledige reset is er de
    * losstaande "Leegmaken"-knop. */
   function wisselEnergielabel(index: number, doelLabel: Energielabel | null) {
-    setSlots((prev) => prev.map((s, i) => (i === index ? { ...s, energielabelDoel: doelLabel } : s)));
+    setSlots((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, energielabelDoel: doelLabel } : s)),
+    );
   }
 
   /** Slaat de huidige (mogelijk nog niet opgeslagen) slots-state op, te herstellen door de
@@ -284,34 +351,16 @@ export function Vergelijking({
     // (zie `standaardSlots`/`leegScenario`), dus dit verandert niets aan het bestaande gedrag
     // voor een vers scenario.
     slaScenarioBewerkStartOp(
-      maakScenarioBewerkStart(slots[index], index, id, terugUrl, { tarievensetPeildatum: tarievenset.peildatum, kostencatalogusVersie: kostencatalogus.versie }),
+      maakScenarioBewerkStart(slots[index], index, id, terugUrl, {
+        tarievensetPeildatum: tarievenset.peildatum,
+        kostencatalogusVersie: kostencatalogus.versie,
+      }),
     );
     router.push(scenarioBewerkenUrl(index));
   }
 
-  /** Een onaangeraakt scenario (geen kamers bewerkt, geen energielabel-wisseling, geen
-   * maatregelen, geen investering) draagt geen informatie en wordt overgeslagen — zelfde
-   * discipline als de vroegere lege "kandidaten"-modus. Zodra er wél iets is (een bewerkte kamer,
-   * een gekozen doellabel, een aangevinkte maatregel, een ingevuld investeringsbedrag) wordt het
-   * scenario altijd opgeslagen, altijd als het uniforme `'handmatig'`-type (Tussenfase-taak C,
-   * uitgebreid 2026-09-07: `'energielabel'` is alleen nog een leesbaar legacy-formaat). */
-  function opslaanbareScenarios(): ScenarioSelectie[] {
-    return slots.flatMap((s): ScenarioSelectie[] => {
-      const onaangeraakt = !s.kamerBewerkt && !s.energielabelDoel && s.sleutels.size === 0 && s.handmatigeInvesteringEuro === 0;
-      if (onaangeraakt) return [];
-      return [
-        {
-          soort: 'handmatig',
-          naam: s.naam,
-          pand: s.pand,
-          kamerBewerkt: s.kamerBewerkt,
-          energielabelDoel: s.energielabelDoel ?? undefined,
-          sleutels: [...s.sleutels],
-          handmatigeInvesteringEuro: s.handmatigeInvesteringEuro,
-          maatregelPrijzenEuro: s.maatregelPrijzenEuro,
-        },
-      ];
-    });
+  function opslaanbareScenarios() {
+    return naarOpslaanbareScenarios(slots);
   }
 
   async function bekijkResultaat(index: number) {
@@ -379,7 +428,8 @@ export function Vergelijking({
     setOpslaanFoutmelding(undefined);
     try {
       const actie = bepaalOpslaanActie({ dealId, magBewerken, bewerkrechtenOnzeker });
-      if (actie === 'geblokkeerd') throw new Error('Bewerkrechten konden niet bevestigd worden — ververs de pagina');
+      if (actie === 'geblokkeerd')
+        throw new Error('Bewerkrechten konden niet bevestigd worden — ververs de pagina');
       const kopie = actie === 'kopie';
       const invoer = {
         naam: kopie ? `${dealNaam} (kopie)` : dealNaam,
@@ -389,7 +439,10 @@ export function Vergelijking({
         scenarios: opslaanbareScenarios(),
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = actie === 'bijwerken' && dealId ? await werkDealBij(dealId, invoer) : await maakDealAan(invoer);
+      const deal =
+        actie === 'bijwerken' && dealId
+          ? await werkDealBij(dealId, invoer)
+          : await maakDealAan(invoer);
       setDealId(deal.id);
       setDealNaam(deal.naam);
       setMagBewerken(true);
@@ -399,7 +452,11 @@ export function Vergelijking({
       // Emma, 2026-09-04: "kun je niet meer terug naar dropdown").
       if (nieuweMapModus) {
         setNieuweMapModus(false);
-        setMappen((huidig) => (dealMap && !huidig.includes(dealMap) ? [...huidig, dealMap].sort((a, b) => a.localeCompare(b)) : huidig));
+        setMappen((huidig) =>
+          dealMap && !huidig.includes(dealMap)
+            ? [...huidig, dealMap].sort((a, b) => a.localeCompare(b))
+            : huidig,
+        );
       }
       return deal.id;
     } catch (err) {
@@ -411,6 +468,7 @@ export function Vergelijking({
 
   async function dealOpslaan() {
     const id = await bewaar();
+    if (id) setNietOpgeslagenMelding(undefined);
     if (id) router.replace(vergelijkingUrl(id));
   }
 
@@ -421,7 +479,9 @@ export function Vergelijking({
    * de rechten niet bevestigd konden worden — daar wordt níet stilzwijgend een kopie gemaakt (dat
    * liet het aantal kopieën eerder uit de hand lopen); de snapshot dekt de terugweg dan af.
    */
-  async function bewaarVoorVertrek(): Promise<{ gelukt: true; dealId: string | undefined } | { gelukt: false }> {
+  async function bewaarVoorVertrek(): Promise<
+    { gelukt: true; dealId: string | undefined } | { gelukt: false }
+  > {
     if (opslaanStatus === 'bezig') return { gelukt: false };
     if (bewerkrechtenOnzeker || !magBewerken) return { gelukt: true, dealId };
     const id = await bewaar();
@@ -436,91 +496,107 @@ export function Vergelijking({
         rechts={
           // Naam/map/opslaan rechts in de strook (feedback 2026-10-03); het notitieveld staat
           // alleen nog op het invoerscherm — `dealNotitie` gaat ongewijzigd mee bij opslaan.
-        <div className={styles.dealOpslaan}>
-          <input value={dealNaam} onChange={(e) => setDealNaam(e.target.value)} aria-label="Naam van de woning" className={styles.dealNaamVeld} />
-          {nieuweMapModus ? (
-            <span className={styles.dealMapNieuw}>
-              <input
-                autoFocus
+          <div className={styles.dealOpslaan}>
+            <input
+              value={dealNaam}
+              onChange={(e) => setDealNaam(e.target.value)}
+              aria-label="Naam van de woning"
+              className={styles.dealNaamVeld}
+            />
+            {nieuweMapModus ? (
+              <span className={styles.dealMapNieuw}>
+                <input
+                  autoFocus
+                  value={dealMap}
+                  onChange={(e) => setDealMap(e.target.value)}
+                  onBlur={() => {
+                    if (!dealMap) setNieuweMapModus(false);
+                  }}
+                  onKeyDown={(e) => {
+                    // Enter direct laten opslaan (i.p.v. alleen de "Opslaan"-knop verderop in de
+                    // rij) — op smalle schermen kan die knop buiten beeld staan zodra deze rij
+                    // wrapt, waardoor het leek alsof een nieuwe map helemaal niet op te slaan was
+                    // (feedback Emma, 2026-09-09).
+                    if (e.key === 'Enter' && dealMap) {
+                      e.preventDefault();
+                      dealOpslaan();
+                    }
+                  }}
+                  aria-label="Naam van de nieuwe map"
+                  placeholder="Naam nieuwe map"
+                  className={styles.dealMapVeld}
+                />
+                <button
+                  type="button"
+                  className={styles.dealMapAnnuleren}
+                  title="Annuleren, terug naar bestaande mappen"
+                  aria-label="Annuleren, terug naar bestaande mappen"
+                  onClick={() => {
+                    setDealMap('');
+                    setNieuweMapModus(false);
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ) : (
+              <select
                 value={dealMap}
-                onChange={(e) => setDealMap(e.target.value)}
-                onBlur={() => {
-                  if (!dealMap) setNieuweMapModus(false);
-                }}
-                onKeyDown={(e) => {
-                  // Enter direct laten opslaan (i.p.v. alleen de "Opslaan"-knop verderop in de
-                  // rij) — op smalle schermen kan die knop buiten beeld staan zodra deze rij
-                  // wrapt, waardoor het leek alsof een nieuwe map helemaal niet op te slaan was
-                  // (feedback Emma, 2026-09-09).
-                  if (e.key === 'Enter' && dealMap) {
-                    e.preventDefault();
-                    dealOpslaan();
+                onChange={(e) => {
+                  if (e.target.value === NIEUWE_MAP_OPTIE) {
+                    setDealMap('');
+                    setNieuweMapModus(true);
+                  } else {
+                    setDealMap(e.target.value);
                   }
                 }}
-                aria-label="Naam van de nieuwe map"
-                placeholder="Naam nieuwe map"
+                aria-label="Map (persoonlijke ordening)"
                 className={styles.dealMapVeld}
-              />
-              <button
-                type="button"
-                className={styles.dealMapAnnuleren}
-                title="Annuleren, terug naar bestaande mappen"
-                aria-label="Annuleren, terug naar bestaande mappen"
-                onClick={() => {
-                  setDealMap('');
-                  setNieuweMapModus(false);
-                }}
               >
-                ×
-              </button>
-            </span>
-          ) : (
-            <select
-              value={dealMap}
-              onChange={(e) => {
-                if (e.target.value === NIEUWE_MAP_OPTIE) {
-                  setDealMap('');
-                  setNieuweMapModus(true);
-                } else {
-                  setDealMap(e.target.value);
-                }
-              }}
-              aria-label="Map (persoonlijke ordening)"
-              className={styles.dealMapVeld}
+                <option value="">📁 (geen map)</option>
+                {mappen.map((m) => (
+                  <option key={m} value={m}>
+                    📁 {m}
+                  </option>
+                ))}
+                {dealMap && !mappen.includes(dealMap) && (
+                  <option key={dealMap} value={dealMap}>
+                    📁 {dealMap}
+                  </option>
+                )}
+                <option value={NIEUWE_MAP_OPTIE}>+ Nieuwe map…</option>
+              </select>
+            )}
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnPrimair}`}
+              onClick={dealOpslaan}
+              disabled={opslaanStatus === 'bezig' || bewerkrechtenOnzeker}
+              title={
+                bewerkrechtenOnzeker
+                  ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
+                  : !magBewerken
+                    ? 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'
+                    : undefined
+              }
             >
-              <option value="">📁 (geen map)</option>
-              {mappen.map((m) => (
-                <option key={m} value={m}>
-                  📁 {m}
-                </option>
-              ))}
-              {dealMap && !mappen.includes(dealMap) && (
-                <option key={dealMap} value={dealMap}>
-                  📁 {dealMap}
-                </option>
-              )}
-              <option value={NIEUWE_MAP_OPTIE}>+ Nieuwe map…</option>
-            </select>
-          )}
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnPrimair}`}
-            onClick={dealOpslaan}
-            disabled={opslaanStatus === 'bezig' || bewerkrechtenOnzeker}
-            title={
-              bewerkrechtenOnzeker
-                ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
-                : !magBewerken
-                  ? 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'
-                  : undefined
-            }
-          >
-            {dealId ? 'Opslaan' : 'Woning opslaan'}
-          </button>
-          {bewerkrechtenOnzeker && <span className={styles.opslaanFout}>Bewerkrechten konden niet bevestigd worden — ververs de pagina</span>}
-          {opslaanStatus === 'gelukt' && <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>}
-          {opslaanStatus === 'fout' && <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>}
-        </div>
+              {dealId ? 'Opslaan' : 'Woning opslaan'}
+            </button>
+            {bewerkrechtenOnzeker && (
+              <span className={styles.opslaanFout}>
+                Bewerkrechten konden niet bevestigd worden — ververs de pagina
+              </span>
+            )}
+            {opslaanStatus === 'gelukt' && (
+              <span className={styles.opslaanGelukt}>Opgeslagen ✓</span>
+            )}
+            {opslaanStatus === 'fout' && (
+              <span className={styles.opslaanFout}>Opslaan mislukt: {opslaanFoutmelding}</span>
+            )}
+            {nietOpgeslagenMelding && (
+              <span className={styles.opslaanFout}>{nietOpgeslagenMelding}</span>
+            )}
+          </div>
         }
       />
       <main className={styles.main}>
@@ -563,6 +639,14 @@ export function Vergelijking({
             const resultaat = handmatigeKandidatenPerSlot[i];
             return (
               <div key={i}>
+                <ScenarioKopieren
+                  index={i}
+                  slots={slots}
+                  bevestiging={kopieBevestiging?.van === i ? kopieBevestiging.naar : null}
+                  uitgeschakeld={!magBewerken || bewerkrechtenOnzeker || opslaanStatus === 'bezig'}
+                  onKopieer={(naar, bevestigd) => kopieer(i, naar, bevestigd)}
+                  onAnnuleer={() => setKopieBevestiging(null)}
+                />
                 <HandmatigMaatregelen
                   slotNaam={slot.naam}
                   kandidaten={resultaat?.kandidaten ?? []}
@@ -578,6 +662,67 @@ export function Vergelijking({
           })}
         </div>
       </main>
+    </div>
+  );
+}
+
+/** Knoppen "Kopiëren naar Scenario X" boven de maatregelen van het actieve tabblad (2026-10-06). */
+function ScenarioKopieren({
+  index,
+  slots,
+  bevestiging,
+  uitgeschakeld,
+  onKopieer,
+  onAnnuleer,
+}: {
+  index: number;
+  slots: ScenarioSlot[];
+  bevestiging: number | null;
+  uitgeschakeld: boolean;
+  onKopieer: (naar: number, overschrijvenBevestigd: boolean) => void;
+  onAnnuleer: () => void;
+}) {
+  const bron = slots[index];
+  if (!bron) return null;
+  if (bevestiging !== null) {
+    return (
+      <div className={styles.scenarioKopieren} role="alert">
+        <span>
+          &ldquo;{slots[bevestiging]?.naam}&rdquo; is niet leeg. Overschrijven met een kopie van
+          &ldquo;{bron.naam}&rdquo;?
+        </span>
+        <button type="button" className={styles.btn} onClick={() => onKopieer(bevestiging, true)}>
+          Ja, overschrijven
+        </button>
+        <button type="button" className={styles.btn} onClick={onAnnuleer}>
+          Annuleren
+        </button>
+      </div>
+    );
+  }
+  const leeg = isOnaangeraakt(bron);
+  const uitleg = uitgeschakeld
+    ? 'Deze woning is alleen-lezen. Sla eerst een eigen kopie op.'
+    : leeg
+      ? 'Dit scenario is nog leeg.'
+      : undefined;
+  return (
+    <div className={styles.scenarioKopieren}>
+      <span>Kopiëren naar:</span>
+      {slots.map((doel, naar) =>
+        naar === index ? null : (
+          <button
+            key={naar}
+            type="button"
+            className={styles.btn}
+            disabled={uitgeschakeld || leeg}
+            title={uitleg}
+            onClick={() => onKopieer(naar, false)}
+          >
+            {doel.naam}
+          </button>
+        ),
+      )}
     </div>
   );
 }

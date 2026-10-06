@@ -39,6 +39,10 @@ const ScenarioSelectieHandmatig = z.object({
   sleutels: z.array(z.string().min(1)),
   handmatigeInvesteringEuro: z.number(),
   maatregelPrijzenEuro: z.record(z.string(), z.number()).default({}),
+  /** Positie van het scenario (0..2) op de vergelijking (2026-10-06). Lege scenario's worden niet
+   * opgeslagen; zonder positie verschoof "alleen Scenario 2 gevuld" na laden naar tabblad 1.
+   * `.optional()`: oudere deals kennen het veld niet en worden op volgorde geladen. */
+  slotIndex: z.number().int().min(0).max(2).optional(),
 });
 
 /** Legacy: een energielabel-scenario zoals opgeslagen vóór 2026-09-07 — geen `pand`, alleen een
@@ -57,7 +61,11 @@ const ScenarioSelectieEnergielabel = z.object({
 /** Plain union (niet discriminatedUnion): `soort` heeft een default op de kandidaten-tak, en
  * discriminatedUnion staat dat niet overal betrouwbaar toe. `pand` disambigueert de twee takken
  * al voldoende. */
-export const ScenarioSelectie = z.union([ScenarioSelectieHandmatig, ScenarioSelectieEnergielabel, ScenarioSelectieKandidaten]);
+export const ScenarioSelectie = z.union([
+  ScenarioSelectieHandmatig,
+  ScenarioSelectieEnergielabel,
+  ScenarioSelectieKandidaten,
+]);
 export type ScenarioSelectie = z.infer<typeof ScenarioSelectie>;
 
 /** Rauwe rij zoals die uit de `deals`-tabel komt (snake_case, zie
@@ -207,7 +215,12 @@ export function parseDealRij(ruw: unknown): Deal {
  */
 export type OpslaanActie = 'nieuw' | 'bijwerken' | 'kopie' | 'geblokkeerd';
 
-export function bepaalOpslaanActie(opts: { dealId: string | undefined; magBewerken: boolean; bewerkrechtenOnzeker: boolean; forceerKopie?: boolean }): OpslaanActie {
+export function bepaalOpslaanActie(opts: {
+  dealId: string | undefined;
+  magBewerken: boolean;
+  bewerkrechtenOnzeker: boolean;
+  forceerKopie?: boolean;
+}): OpslaanActie {
   if (!opts.dealId) return 'nieuw';
   if (opts.forceerKopie) return 'kopie';
   if (opts.bewerkrechtenOnzeker) return 'geblokkeerd';

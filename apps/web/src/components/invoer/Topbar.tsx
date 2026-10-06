@@ -21,7 +21,9 @@ export function Topbar() {
   const stap = useMemo(() => ontbrekendeStap(state), [state]);
   const pand = useMemo(() => projecteerNaarPandInvoer(state), [state]);
   useDocumentTitle(`${state.pand.adres || 'Nieuwe woning'} · WWSO Scenario App`);
-  const [dealOpslaanStatus, setDealOpslaanStatus] = useState<'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'>('idle');
+  const [dealOpslaanStatus, setDealOpslaanStatus] = useState<
+    'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'
+  >('idle');
 
   /**
    * Gedeelde opslaan-logica achter zowel de "Woning opslaan"-knop als "Doorrekenen →"
@@ -56,7 +58,12 @@ export function Topbar() {
    */
   async function slaWoningOp(forceerKopie = false) {
     if (!pand) return null;
-    const actie = bepaalOpslaanActie({ dealId: state.bewerktDeal?.id, magBewerken, bewerkrechtenOnzeker, forceerKopie });
+    const actie = bepaalOpslaanActie({
+      dealId: state.bewerktDeal?.id,
+      magBewerken,
+      bewerkrechtenOnzeker,
+      forceerKopie,
+    });
     if (actie === 'geblokkeerd') {
       setDealOpslaanStatus('onzeker');
       return null;
@@ -78,10 +85,24 @@ export function Topbar() {
         scenarios: state.bewerktDeal?.scenarios ?? [],
         versiestempel: huidigeVersiestempel(tarievenset, kostencatalogus),
       };
-      const deal = actie === 'bijwerken' && state.bewerktDeal ? await werkDealBij(state.bewerktDeal.id, invoer) : await maakDealAan(invoer);
+      const deal =
+        actie === 'bijwerken' && state.bewerktDeal
+          ? await werkDealBij(state.bewerktDeal.id, invoer)
+          : await maakDealAan(invoer);
       // Na een kopie is de sessie voortaan aan de NIEUWE, eigen woning gekoppeld — magBewerken
       // is dan altijd true, ongeacht wat de bron was.
-      dispatch({ soort: 'DEAL_GEKOPPELD', deal: { id: deal.id, naam: deal.naam, notitie: deal.notitie, map: deal.map, scenarios: deal.scenarios, magBewerken: true, bewerkrechtenOnzeker: false } });
+      dispatch({
+        soort: 'DEAL_GEKOPPELD',
+        deal: {
+          id: deal.id,
+          naam: deal.naam,
+          notitie: deal.notitie,
+          map: deal.map,
+          scenarios: deal.scenarios,
+          magBewerken: true,
+          bewerkrechtenOnzeker: false,
+        },
+      });
       setDealOpslaanStatus('gelukt');
       return deal;
     } catch {
@@ -119,7 +140,11 @@ export function Topbar() {
   async function doorrekenen() {
     if (!pand) return;
     if (state.handmatigScenario) {
-      slaScenarioBewerkResultaatOp({ slotIndex: state.handmatigScenario.slotIndex, dealId: state.handmatigScenario.dealId, bewerktPand: pand });
+      slaScenarioBewerkResultaatOp({
+        slotIndex: state.handmatigScenario.slotIndex,
+        dealId: state.handmatigScenario.dealId,
+        bewerktPand: pand,
+      });
       router.push(state.handmatigScenario.terugUrl);
       return;
     }
@@ -142,7 +167,11 @@ export function Topbar() {
   // De topnavigatie is zuiver navigatie (feedback 2026-10-02: "topnavigatie is voor navigatie").
   // Statusinfo staat in de losse `WoningContext` hieronder; de sectiestatus (① Woning ✓/…) staat
   // sinds 2026-10-03 in de sectiekop op de pagina zelf, niet meer als ankerlinks in de header.
-  const titel = state.handmatigScenario ? 'Scenario bewerken' : state.bewerktDeal ? 'Woning bewerken' : 'Nieuwe woning';
+  const titel = state.handmatigScenario
+    ? 'Scenario bewerken'
+    : state.bewerktDeal
+      ? 'Woning bewerken'
+      : 'Nieuwe woning';
   return (
     <AppHeader
       titel={titel}
@@ -151,14 +180,26 @@ export function Topbar() {
         <>
           {!state.handmatigScenario && (
             <>
-              {dealOpslaanStatus === 'gelukt' && <span className={headerKnop.status}>Opgeslagen ✓</span>}
-              {dealOpslaanStatus === 'fout' && <span className={headerKnop.fout}>Opslaan mislukt</span>}
+              {dealOpslaanStatus === 'gelukt' && (
+                <span className={headerKnop.status}>Opgeslagen ✓</span>
+              )}
+              {dealOpslaanStatus === 'fout' && (
+                <span className={headerKnop.fout}>Opslaan mislukt</span>
+              )}
               {bewerkrechtenOnzeker && (
                 <>
-                  <span className={headerKnop.fout} title='Probeer eerst de pagina te verversen — dat lost het meestal op als het een tijdelijke hapering was.'>
+                  <span
+                    className={headerKnop.fout}
+                    title="Probeer eerst de pagina te verversen — dat lost het meestal op als het een tijdelijke hapering was."
+                  >
                     Bewerkrechten konden niet bevestigd worden
                   </span>
-                  <button type="button" className={headerKnop.secundair} disabled={!pand || dealOpslaanStatus === 'bezig'} onClick={forceerKopieOpslaan}>
+                  <button
+                    type="button"
+                    className={headerKnop.secundair}
+                    disabled={!pand || dealOpslaanStatus === 'bezig'}
+                    onClick={forceerKopieOpslaan}
+                  >
                     Toch opslaan als nieuwe kopie →
                   </button>
                 </>
@@ -185,11 +226,23 @@ export function Topbar() {
           <button
             type="button"
             className={headerKnop.primair}
-            disabled={!pand || (!state.handmatigScenario && dealOpslaanStatus === 'bezig') || (!state.handmatigScenario && bewerkrechtenOnzeker)}
-            title={bewerkrechtenOnzeker ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina' : stap ?? undefined}
+            disabled={
+              !pand ||
+              (!state.handmatigScenario && dealOpslaanStatus === 'bezig') ||
+              (!state.handmatigScenario && bewerkrechtenOnzeker)
+            }
+            title={
+              bewerkrechtenOnzeker
+                ? 'Bewerkrechten konden niet bevestigd worden — ververs de pagina'
+                : (stap ?? undefined)
+            }
             onClick={doorrekenen}
           >
-            {state.handmatigScenario ? 'Gebruik als scenario →' : dealOpslaanStatus === 'bezig' ? 'Opslaan…' : 'Doorrekenen →'}
+            {state.handmatigScenario
+              ? 'Gebruik als scenario en opslaan →'
+              : dealOpslaanStatus === 'bezig'
+                ? 'Opslaan…'
+                : 'Doorrekenen →'}
           </button>
           {/* Alleen bij een nieuwe woning — bij het bewerken van een bestaande woning of scenario is
               alles wissen geen zinnige actie (feedback 2026-10-03). */}
@@ -198,7 +251,8 @@ export function Topbar() {
               type="button"
               className={headerKnop.klein}
               onClick={() => {
-                if (confirm('Alle ingevoerde gegevens wissen?')) dispatch({ soort: 'ALLES_GEWIST' });
+                if (confirm('Alle ingevoerde gegevens wissen?'))
+                  dispatch({ soort: 'ALLES_GEWIST' });
               }}
             >
               Alles wissen
@@ -228,7 +282,13 @@ export function WoningContext() {
     <WoningContextStrook
       onderdelen={[
         state.bewerktDeal && (
-          <span title={magBewerken ? undefined : 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'}>
+          <span
+            title={
+              magBewerken
+                ? undefined
+                : 'Deze woning is alleen-lezen, opslaan maakt een nieuwe, eigen kopie.'
+            }
+          >
             &ldquo;{state.bewerktDeal.naam}&rdquo;{!magBewerken && ' (alleen-lezen)'}
           </span>
         ),

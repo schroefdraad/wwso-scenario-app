@@ -13,8 +13,10 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
 - [x] **Inloggen aan op test** (2026-10-04): eigen SMTP op `puntum-test`, redirect-URL's, SQL
       toggle-aan, `AUTH_VEREIST` weg uit Preview. Eigenaar en bètatester ingelogd getest.
-- [ ] **Rollentest op test:** nog open: lid, andere organisatie, niet-toegelaten gebruiker. Per rol:
+- [ ] **Rollentest op test:** andere organisatie ✓ (studio-adres = org bètatester 1, ziet Stevens woningen niet, 2026-10-06). Nog open: lid, niet-toegelaten gebruiker. Per rol:
       opslaan, doorrekenen, kopiëren, verwijderen. Emma en Steven inloggen op test.
+- [ ] **Scenario kopiëren + opslaan na scenario bewerken** staat op `test` (v0.7.38). Nog in de browser controleren: kopiëren naar leeg en gevuld scenario, "Gebruik als scenario en opslaan", demo-woning (knoppen uit). Daarna naar `master`.
+- [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen peildatum (latent tot 2e tarievenset). Zie review in hetzelfde rapport.
 - [ ] **`ANONIEM`-regel** (`lib/deals/profiel.ts`) aanpassen, samen met de productie-switch. Eerst
       `NEXT_PUBLIC_AUTH_VEREIST` op productie zetten, anders krijgt productie het kopie-probleem.
 - [ ] **Eerste echte release via `/release`** — nog niet getest. Pas afvinken na een geslaagde release.
@@ -41,6 +43,13 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
 - [ ] S0.4 Antwoorddocument naar de scraperkant (`role`/NEN2580-vraag)
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
+
+## Later (uit review scenario-plan 2026-10-06)
+
+- [ ] "Niet opgeslagen"-stip per scenario-tabblad + waarschuwing bij tabblad sluiten.
+- [ ] Twee tabbladen tegelijk: laatste opslag overschrijft stil (`werkDealBij` schrijft de hele rij).
+- [ ] Vierde scenario (nu vast op drie).
+- [ ] Foutmeldingen bij verwijderen, ophalen en inloggen ook in gewone taal (opslaan is gedaan).
 
 ## Gebruikers en data (geen code)
 

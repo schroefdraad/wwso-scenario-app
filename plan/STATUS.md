@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-04 · Versie app op productie **v0.7.37** · op `test`: tekstreview (niet gereleased) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.37** · op `test`: **v0.7.38** (scenario kopiëren, opslaan na scenario bewerken, foutmeldingen; niet gereleased) · Historie: `plan/archief/`
 
 ## Omgevingen
 
@@ -17,7 +17,8 @@ Testdata op `puntum-test`: demo-woning + Pettersonstraat 15 + Stevens map (5 won
 
 **Let op:** op productie staat inloggen nog uit (geen toegangscontrole op `deals`). Op test staat
 inloggen sinds 2026-10-04 aan. Eigenaar (gmail) en bètatester (studio-adres) zijn ingelogd getest;
-de rest van de rollentest volgt. Pas daarna productie (besluit 2026-10-04).
+het studio-adres hoort bij de org van bètatester 1 en ziet Stevens woningen niet (rol "andere org" ✓).
+Nog open: lid en niet-toegelaten gebruiker. Pas daarna productie (besluit 2026-10-04).
 
 ## Testteam
 
