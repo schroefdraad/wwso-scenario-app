@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.39';
+export const APP_VERSIE = '0.7.40';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.40',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Inloggen is verplicht. De tijdelijke regel waarmee je zonder inloggen woningen kon bijwerken is weg.',
+      'Is je sessie verlopen terwijl de pagina open stond, dan wordt opslaan geblokkeerd met de vraag de pagina te verversen en opnieuw in te loggen. Er wordt nooit stil een kopie gemaakt.',
+    ],
+  },
   {
     versie: '0.7.39',
     datum: '2026-10-06',

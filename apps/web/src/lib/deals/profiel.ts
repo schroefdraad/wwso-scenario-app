@@ -1,8 +1,8 @@
 import { supabase } from '../supabase/client';
-import { ANONIEM, type Toegang } from './types';
+import type { Toegang } from './types';
 
 export type { EigenProfiel, Toegang } from './types';
-export { magDealBewerken, profielVan } from './types';
+export { magDealBewerken } from './types';
 
 /**
  * `null` zonder ingelogde sessie (dezelfde auth-gating als `Footer`/`FeedbackKnop`) of als het
@@ -24,9 +24,11 @@ export async function haalEigenProfielOp(): Promise<Toegang> {
     data: { user },
   } = await supabase.auth.getUser();
   const email = user?.email;
-  // Geen sessie = anoniem (tijdelijk, zie `ANONIEM` in types.ts) — niet hetzelfde als "ingelogd
-  // maar niet op de allowlist" (`null` hieronder).
-  if (!email) return ANONIEM;
+  // Geen sessie: inloggen is verplicht (productie-switch, plan 2026-10-06, keuze K1a), dus dit is
+  // een verlopen sessie. Fout = "bewerkrechten onzeker" bij de aanroepers: opslaan geblokkeerd met
+  // uitleg, nooit stil bewerken of kopiëren. Niet hetzelfde als "ingelogd maar niet op de
+  // allowlist" (`null` hieronder).
+  if (!email) throw new Error('Je sessie is verlopen. Ververs de pagina en log opnieuw in.');
 
   let laatsteFout: Error | undefined;
   for (let poging = 1; poging <= 2; poging++) {

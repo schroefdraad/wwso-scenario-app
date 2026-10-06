@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testpand6Kamers } from '@wwso/engine';
-import { ANONIEM, isAnoniem, magDealBewerken, parseDealRij, profielVan, type EigenProfiel } from './types';
+import { magDealBewerken, parseDealRij, type EigenProfiel } from './types';
 
 function geldigeRij(overrides: Record<string, unknown> = {}) {
   return {
@@ -32,7 +32,9 @@ describe('parseDealRij', () => {
     expect(deal.pandInvoer.pand.adres).toBe(testpand6Kamers.pand.adres);
     // `soort` ontbreekt in de rauwe rij (legacy, vóór 2026-08-22) — valt terug op 'kandidaten',
     // het enige type dat toen bestond, geen gok.
-    expect(deal.scenarios).toEqual([{ soort: 'kandidaten', naam: 'Scenario 1', sleutels: ['K-03#keuken:7'] }]);
+    expect(deal.scenarios).toEqual([
+      { soort: 'kandidaten', naam: 'Scenario 1', sleutels: ['K-03#keuken:7'] },
+    ]);
     expect(deal.versiestempel).toEqual({
       tarievensetPeildatum: '2026-01-01',
       kostencatalogusVersie: '0.1',
@@ -110,31 +112,63 @@ describe('parseDealRij', () => {
 
   it('gooit een fout bij een handmatig scenario zonder geldig pand', () => {
     const rij = geldigeRij({
-      scenarios: [{ soort: 'handmatig', naam: 'Kamer 7', pand: { pand: { adres: 'Onvolledig' } }, sleutels: [], handmatigeInvesteringEuro: 0 }],
+      scenarios: [
+        {
+          soort: 'handmatig',
+          naam: 'Kamer 7',
+          pand: { pand: { adres: 'Onvolledig' } },
+          sleutels: [],
+          handmatigeInvesteringEuro: 0,
+        },
+      ],
     });
     expect(() => parseDealRij(rij)).toThrow();
   });
 
   it('parseert een energielabel-scenario (Tussenfase-taak C, 2026-09-04), zonder sleutels/prijzen vallen die terug op leeg', () => {
-    const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }] });
+    const rij = geldigeRij({
+      scenarios: [{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++' }],
+    });
     const deal = parseDealRij(rij);
-    expect(deal.scenarios).toEqual([{ soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: [], maatregelPrijzenEuro: {} }]);
+    expect(deal.scenarios).toEqual([
+      {
+        soort: 'energielabel',
+        naam: 'Label A+++',
+        doelLabel: 'A+++',
+        sleutels: [],
+        maatregelPrijzenEuro: {},
+      },
+    ]);
   });
 
   it('parseert een energielabel-scenario met standaardmaatregelen bovenop (feedback Emma Morrison, 2026-09-07)', () => {
     const rij = geldigeRij({
       scenarios: [
-        { soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: ['E-04|1'], maatregelPrijzenEuro: { 'E-04|1': 500 } },
+        {
+          soort: 'energielabel',
+          naam: 'Label A+++',
+          doelLabel: 'A+++',
+          sleutels: ['E-04|1'],
+          maatregelPrijzenEuro: { 'E-04|1': 500 },
+        },
       ],
     });
     const deal = parseDealRij(rij);
     expect(deal.scenarios).toEqual([
-      { soort: 'energielabel', naam: 'Label A+++', doelLabel: 'A+++', sleutels: ['E-04|1'], maatregelPrijzenEuro: { 'E-04|1': 500 } },
+      {
+        soort: 'energielabel',
+        naam: 'Label A+++',
+        doelLabel: 'A+++',
+        sleutels: ['E-04|1'],
+        maatregelPrijzenEuro: { 'E-04|1': 500 },
+      },
     ]);
   });
 
   it('gooit een fout bij een energielabel-scenario met een ongeldig label', () => {
-    const rij = geldigeRij({ scenarios: [{ soort: 'energielabel', naam: 'Label X', doelLabel: 'X' }] });
+    const rij = geldigeRij({
+      scenarios: [{ soort: 'energielabel', naam: 'Label X', doelLabel: 'X' }],
+    });
     expect(() => parseDealRij(rij)).toThrow();
   });
 
@@ -143,13 +177,18 @@ describe('parseDealRij', () => {
     expect(legacy.orgId).toBe('00000000-0000-0000-0000-000000000001');
     expect(legacy.isDemo).toBe(false);
 
-    const demo = parseDealRij(geldigeRij({ org_id: '00000000-0000-0000-0000-000000000002', is_demo: true }));
+    const demo = parseDealRij(
+      geldigeRij({ org_id: '00000000-0000-0000-0000-000000000002', is_demo: true }),
+    );
     expect(demo.orgId).toBe('00000000-0000-0000-0000-000000000002');
     expect(demo.isDemo).toBe(true);
   });
 
   it('parseert een notitie en map (backlog 2026-09-04)', () => {
-    const rij = geldigeRij({ notitie: 'Interessant pand, wachten op WOZ-beschikking.', map: 'Rotterdam-Zuid' });
+    const rij = geldigeRij({
+      notitie: 'Interessant pand, wachten op WOZ-beschikking.',
+      map: 'Rotterdam-Zuid',
+    });
     const deal = parseDealRij(rij);
     expect(deal.notitie).toBe('Interessant pand, wachten op WOZ-beschikking.');
     expect(deal.map).toBe('Rotterdam-Zuid');
@@ -161,7 +200,13 @@ describe('magDealBewerken (multi-tenant org-scheiding, 2026-09-28)', () => {
   const andereOrg = '00000000-0000-0000-0000-000000000002';
 
   function profiel(overrides: Partial<EigenProfiel> = {}): EigenProfiel {
-    return { email: 'emma@morrison-media.nl', orgId: eigenOrg, isEigenaar: false, features: [], ...overrides };
+    return {
+      email: 'emma@morrison-media.nl',
+      orgId: eigenOrg,
+      isEigenaar: false,
+      features: [],
+      ...overrides,
+    };
   }
 
   it('mag bewerken: eigen org, geen demo', () => {
@@ -187,20 +232,13 @@ describe('magDealBewerken (multi-tenant org-scheiding, 2026-09-28)', () => {
   });
 });
 
-describe('kopie-probleem 2026-10-03 — tijdelijke regel zolang inloggen op productie uit staat', () => {
+// Incident 2026-10-03 (kopie-probleem) is opgelost door inloggen verplicht te maken
+// (productie-switch, plan 2026-10-06). De tijdelijke ANONIEM-regel is weg; "geen sessie" geeft nu
+// een fout in `haalEigenProfielOp` (zie profiel.test.ts) en nooit bewerkrechten.
+describe('na de productie-switch: zonder profiel nooit bewerkrechten', () => {
   const org = '00000000-0000-0000-0000-000000000001';
 
-  it('incident: zonder inlog werd elke woning alleen-lezen en maakte elke "Opslaan" een kopie — nu gewoon bijwerken', () => {
-    expect(magDealBewerken({ orgId: org, isDemo: false }, ANONIEM)).toBe(true);
-  });
-
-  it('de demo-woning blijft ook zonder inlog beschermd (opslaan maakt daar een eigen kopie)', () => {
-    expect(magDealBewerken({ orgId: org, isDemo: true }, ANONIEM)).toBe(false);
-  });
-
-  it('anoniem is iets anders dan "ingelogd zonder toegang", en levert geen profiel op', () => {
-    expect(isAnoniem(ANONIEM)).toBe(true);
-    expect(isAnoniem(null)).toBe(false);
-    expect(profielVan(ANONIEM)).toBeNull();
+  it('geen profiel = niet bewerken, ook niet voor een gewone woning', () => {
+    expect(magDealBewerken({ orgId: org, isDemo: false }, null)).toBe(false);
   });
 });

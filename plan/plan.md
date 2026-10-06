@@ -18,12 +18,13 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
   (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.
 
 **B. Voorbereiden productie**
-- [ ] B1 Plan productie-switch: `outputs/PLAN_productie_switch_2026-10-06.md`. Wacht op goedkeuring
-      (keuzes K1–K3). Bevinding: productie toont v0.7.36, `master` (v0.7.37) staat niet live.
+- [ ] B1 Plan productie-switch goedgekeurd (2026-10-06, K1a/K2/K3 zoals aanbevolen):
+      `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40), gaat
+      pas naar `master` op het switch-moment. Nog: uitzoeken waarom productie v0.7.36 toont en `master` (v0.7.37) niet live staat.
 - [ ] B2 Productie opschonen: lijst van dubbele "(kopie)"- en testwoningen, back-up, jouw
       bevestiging, dan pas verwijderen.
-- [ ] B3 Accounts op productie: Emma (bestaat al), Steven, Myle gmail, studio-adres via
-      "Create new user"; `allowed_emails` op productie controleren.
+- B3 Accounts op productie aangemaakt (2026-10-06). `allowed_emails` op productie nog controleren
+  (studio-adres in org bètatester 1).
 - [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
       provider (Resend-records MX/SPF/DKIM niet aanraken). Code heeft geen hard ingestelde domeinen.
 

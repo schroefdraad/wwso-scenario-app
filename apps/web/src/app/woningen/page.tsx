@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag';
-import { haalEigenProfielOp, profielVan, type Toegang } from '../../lib/deals/profiel';
+import { haalEigenProfielOp, type Toegang } from '../../lib/deals/profiel';
 import { magDealBewerken, type Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { AppHeader, headerKnop } from '../../components/AppHeader';
@@ -26,7 +26,7 @@ export default function DealsOverzicht() {
   useDocumentTitle('Mijn woningen · WWSO Scenario App');
   const [deals, setDeals] = useState<Deal[] | null>(null);
   const [toegang, setToegang] = useState<Toegang>(null);
-  const profiel = profielVan(toegang);
+  const profiel = toegang;
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
   const [kopieerBezigId, setKopieerBezigId] = useState<string | null>(null);
@@ -109,7 +109,12 @@ export default function DealsOverzicht() {
         {/* Filter hoort bij de lijst, niet in de topnavigatie (topnav-audit 2026-10-03). */}
         {mappen.length > 0 && (
           <div className={styles.filterRij}>
-            <select value={mapFilter} onChange={(e) => setMapFilter(e.target.value)} className={styles.mapFilter} aria-label="Filter op map">
+            <select
+              value={mapFilter}
+              onChange={(e) => setMapFilter(e.target.value)}
+              className={styles.mapFilter}
+              aria-label="Filter op map"
+            >
               <option value="">Alle mappen</option>
               {mappen.map((m) => (
                 <option key={m} value={m}>
@@ -120,11 +125,17 @@ export default function DealsOverzicht() {
             </select>
           </div>
         )}
-        {foutmelding && <p className={`${styles.melding} ${styles.foutmelding}`}>Woningen ophalen mislukt: {foutmelding}</p>}
+        {foutmelding && (
+          <p className={`${styles.melding} ${styles.foutmelding}`}>
+            Woningen ophalen mislukt: {foutmelding}
+          </p>
+        )}
         {!foutmelding && deals === null && <p className={styles.melding}>Bezig met laden…</p>}
         {!foutmelding && deals !== null && deals.length === 0 && (
           <p className={styles.melding}>
-            Nog geen woningen opgeslagen. Ga naar <Link href="/woning/nieuw">een nieuwe woning</Link>, reken door en sla het op vanaf het vergelijkingsscherm.
+            Nog geen woningen opgeslagen. Ga naar{' '}
+            <Link href="/woning/nieuw">een nieuwe woning</Link>, reken door en sla het op vanaf het
+            vergelijkingsscherm.
           </p>
         )}
         {!foutmelding && deals !== null && deals.length > 0 && (
@@ -159,47 +170,73 @@ export default function DealsOverzicht() {
                           </span>
                         )}
                       </td>
-                      <td className={styles.eenRegel} title={adresMetStad(deal.pandInvoer.pand.adres, deal.pandInvoer.pand.stad)}>
+                      <td
+                        className={styles.eenRegel}
+                        title={adresMetStad(deal.pandInvoer.pand.adres, deal.pandInvoer.pand.stad)}
+                      >
                         {adresMetStad(deal.pandInvoer.pand.adres, deal.pandInvoer.pand.stad)}
                       </td>
                       <td>{deal.pandInvoer.pand.aantalKamers}</td>
-                      <td className={styles.dim}>{deal.scenarios.length === 0 ? 'geen' : deal.scenarios.length}</td>
+                      <td className={styles.dim}>
+                        {deal.scenarios.length === 0 ? 'geen' : deal.scenarios.length}
+                      </td>
                       <td className={styles.notitieCel} title={deal.notitie || undefined}>
                         {deal.notitie || '—'}
                       </td>
-                      <td className={`${styles.dim} ${styles.geenAfbreking}`}>{formateerDatumTijd(deal.bijgewerkt)}</td>
-                      <td className={`${styles.dim} ${styles.eenRegel} ${styles.mapCel}`} title={deal.map || undefined}>
+                      <td className={`${styles.dim} ${styles.geenAfbreking}`}>
+                        {formateerDatumTijd(deal.bijgewerkt)}
+                      </td>
+                      <td
+                        className={`${styles.dim} ${styles.eenRegel} ${styles.mapCel}`}
+                        title={deal.map || undefined}
+                      >
                         {deal.map ? `📁 ${deal.map}` : '—'}
                       </td>
                       <td>
                         <div className={styles.acties}>
-                        <button
-                          type="button"
-                          className={styles.kopieerKnop}
-                          disabled={kopieerBezigId === deal.id}
-                          title="Kopiëren naar nieuwe woning"
-                          onClick={() => kopieer(deal.id)}
-                        >
-                          {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
-                        </button>
-                        {magDealBewerken(deal, toegang) && (
-                          <>
-                            <button
-                              type="button"
-                              className={verwijderBevestigId === deal.id ? styles.verwijderKnopBevestig : styles.verwijderKnop}
-                              disabled={verwijderBezigId === deal.id}
-                              title={verwijderBevestigId === deal.id ? 'Weet je zeker dat je deze woning wilt verwijderen?' : 'Woning permanent verwijderen'}
-                              onClick={() => verwijder(deal.id)}
-                            >
-                              {verwijderBezigId === deal.id ? '…' : verwijderBevestigId === deal.id ? 'Ja, verwijderen' : '🗑 Verwijderen'}
-                            </button>
-                            {verwijderBevestigId === deal.id && verwijderBezigId !== deal.id && (
-                              <button type="button" className={styles.annuleerKnop} onClick={() => setVerwijderBevestigId(null)}>
-                                Nee
+                          <button
+                            type="button"
+                            className={styles.kopieerKnop}
+                            disabled={kopieerBezigId === deal.id}
+                            title="Kopiëren naar nieuwe woning"
+                            onClick={() => kopieer(deal.id)}
+                          >
+                            {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
+                          </button>
+                          {magDealBewerken(deal, toegang) && (
+                            <>
+                              <button
+                                type="button"
+                                className={
+                                  verwijderBevestigId === deal.id
+                                    ? styles.verwijderKnopBevestig
+                                    : styles.verwijderKnop
+                                }
+                                disabled={verwijderBezigId === deal.id}
+                                title={
+                                  verwijderBevestigId === deal.id
+                                    ? 'Weet je zeker dat je deze woning wilt verwijderen?'
+                                    : 'Woning permanent verwijderen'
+                                }
+                                onClick={() => verwijder(deal.id)}
+                              >
+                                {verwijderBezigId === deal.id
+                                  ? '…'
+                                  : verwijderBevestigId === deal.id
+                                    ? 'Ja, verwijderen'
+                                    : '🗑 Verwijderen'}
                               </button>
-                            )}
-                          </>
-                        )}
+                              {verwijderBevestigId === deal.id && verwijderBezigId !== deal.id && (
+                                <button
+                                  type="button"
+                                  className={styles.annuleerKnop}
+                                  onClick={() => setVerwijderBevestigId(null)}
+                                >
+                                  Nee
+                                </button>
+                              )}
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
