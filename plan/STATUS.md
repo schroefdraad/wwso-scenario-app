@@ -58,6 +58,10 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   aanpassen? (vraag uit de tekstreview van 2026-10-03)
 - **Nieuwe gebruikers:** tijdens de bèta alleen op uitnodiging (inschrijven uit, besluit 2026-10-06).
   Hoe nieuwe gebruikers na de bèta binnenkomen: oppakken na de bèta (zie plan.md).
+- **Kernteam deelt één org** (besluit 2026-10-06): Emma, Steven en Myle zitten in de hoofd-org en
+  kunnen elkaars woningen zien, wijzigen, kopiëren en verwijderen. Bewust zo gelaten voor de bèta.
+  Opnieuw bekijken zodra Steven met echte klantpanden werkt: dan eigen org (alleen `org_id` in
+  `allowed_emails` + zijn woningen verplaatsen, geen code).
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)
