@@ -29,8 +29,6 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 **Audit rekenmotor (2026-10-06):** `outputs/AUDIT_rekenmotor_beleidsboek_2026-10-06.md`
 - Opgelost in v0.7.45 / engine 0.3.0: minimummaten + zolder-eisen, R4 gemeenschappelijk vertrek, wastafel 8+.
 - [ ] Na de bèta: R3-maximum vóór/na deling toetsen, hardcoded waarden naar `packages/data`.
-- [ ] R6 extra's bij een douchecabine in een privévertrek: §2.6.2 spreekt van een "bad- of doucheruimte";
-      de app telt extra's mee als de eisen zijn aangevinkt. Uitzoeken (Huurprijscheck) of dat mag. Na de bèta.
 
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
@@ -92,6 +90,9 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
   nodigt de eigenaar handmatig uit ("Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`). Na de bèta kiezen:
   zelf aanmelden met wachtlijst/goedkeuring, een Supabase "before user created"-hook die
   `allowed_emails` controleert, of uitnodigen houden. Hangt samen met de keuze vermarktmodel A/B.
+- Backlog (geparkeerd 2026-10-06): R6 extra's bij een douchecabine in een privévertrek. §2.6.2 spreekt
+  van een "bad- of doucheruimte"; de app telt extra's mee als de eisen zijn aangevinkt. Toetsen in de
+  Huurprijscheck. Tot dan: eisen bij een douchecabine in een kamer niet aanvinken.
 - Backlog (geparkeerd 2026-10-06): laadpaal R10 wordt alleen ÷ adressen gedeeld, niet ÷ kamers
   (§2.10.5 letterlijk vs §2.1.5). Toetsen in de Huurprijscheck: 6 kamers, parkeerplek type III met
   laadpaal → 2,75 (huidig) of 1 pt per kamer. Zie audit 2.2.
