@@ -1,7 +1,7 @@
 .wrap {
   background: var(--paper);
   color: var(--ink);
-  font-family: ui-sans-serif, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: ui-sans-serif, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   font-size: 14.5px;
   line-height: 1.45;
   min-height: 100vh;
@@ -93,22 +93,6 @@
   color: var(--ink-dim);
 }
 
-.kopieerKnop {
-  border: 1px solid var(--line-strong);
-  background: var(--paper-raised);
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  font-size: 0.74rem;
-  color: var(--ink);
-  white-space: nowrap;
-}
-
-.kopieerKnop:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
 .acties {
   display: flex;
   gap: 0.4rem;
@@ -132,49 +116,143 @@
   white-space: nowrap;
 }
 
-.verwijderKnop {
-  border: 1px solid var(--line-strong);
-  background: var(--paper-raised);
+.menuKnop {
+  width: 2rem;
+  height: 1.8rem;
+  border: 1px solid transparent;
   border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  font-size: 0.74rem;
+  background: transparent;
   color: var(--ink-dim);
-  white-space: nowrap;
-}
-
-.verwijderKnop:hover {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-.verwijderKnopBevestig {
-  border: 1px solid var(--red);
-  background: var(--red);
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1;
   cursor: pointer;
-  font-size: 0.74rem;
-  color: var(--paper);
-  white-space: nowrap;
-  font-weight: 600;
 }
 
-.verwijderKnop:disabled,
-.verwijderKnopBevestig:disabled {
+.menuKnop:hover,
+.menuKnop[aria-expanded='true'] {
+  border-color: var(--line-strong);
+  background: var(--paper-sunken);
+  color: var(--ink);
+}
+
+.menuKnop:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
-.annuleerKnop {
+.menu {
+  position: fixed;
+  z-index: 50;
+  min-width: 12rem;
+  display: grid;
+  padding: 0.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.menu button {
+  text-align: left;
+  padding: 0.5rem 0.65rem;
   border: none;
+  border-radius: 6px;
   background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
   cursor: pointer;
-  font-size: 0.74rem;
+}
+
+.menu button:hover,
+.menu button:focus-visible {
+  background: var(--paper-sunken);
+}
+
+.menu .menuGevaar {
+  color: var(--red);
+}
+
+.menuLijn {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0.25rem 0;
+}
+
+.menuUitleg {
+  padding: 0.4rem 0.65rem;
   color: var(--ink-dim);
-  text-decoration: underline;
-  white-space: nowrap;
-  padding: 0.25rem 0.1rem;
+  font-size: 0.78rem;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(29, 32, 24, 0.35);
+}
+
+.venster {
+  width: 100%;
+  max-width: 26rem;
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px var(--shadow);
+}
+
+.vensterTitel {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.vensterTekst {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.vensterTekst strong {
+  color: var(--ink);
+}
+
+.vensterKnoppen {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.btnAnnuleren {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnVerwijder {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--red);
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.btnVerwijder:hover {
+  background: var(--red-soft);
 }
 
 .notitieCel {

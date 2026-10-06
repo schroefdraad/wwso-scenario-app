@@ -4,11 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag';
 import { haalEigenProfielOp, type Toegang } from '../../lib/deals/profiel';
-import { magDealBewerken, type Deal } from '../../lib/deals/types';
+import type { Deal } from '../../lib/deals/types';
 import { formateerDatumTijd } from '../../lib/datum';
 import { AppHeader, headerKnop } from '../../components/AppHeader';
 import { vergelijkingUrl } from '../../lib/navigatie';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import { woningMenuItems } from './acties';
+import { BevestigVerwijderen, WoningActiesMenu } from './WoningActies';
 import styles from './styles.module.css';
 
 /** Zonder map ('') hoort een deal bij "Geen map" — een aparte, altijd aanwezige filteroptie i.p.v.
@@ -30,7 +32,7 @@ export default function DealsOverzicht() {
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<string>('');
   const [kopieerBezigId, setKopieerBezigId] = useState<string | null>(null);
-  const [verwijderBevestigId, setVerwijderBevestigId] = useState<string | null>(null);
+  const [verwijderVraag, setVerwijderVraag] = useState<Deal | null>(null);
   const [verwijderBezigId, setVerwijderBezigId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,13 +59,10 @@ export default function DealsOverzicht() {
     }
   }
 
-  /** Twee klikken nodig (eerst "Verwijderen" toont "Zeker weten?", pas die tweede klik verwijdert
-   * echt) — permanent en onomkeerbaar, dus geen knop die in één klik al iets onherstelbaars doet. */
+  /** Pas na "Verwijderen" in het bevestigingsvenster (`BevestigVerwijderen`) — permanent en
+   * onomkeerbaar, dus nooit in één klik. */
   async function verwijder(id: string) {
-    if (verwijderBevestigId !== id) {
-      setVerwijderBevestigId(id);
-      return;
-    }
+    setVerwijderVraag(null);
     setVerwijderBezigId(id);
     try {
       await verwijderDeal(id);
@@ -72,7 +71,6 @@ export default function DealsOverzicht() {
       setFoutmelding(err instanceof Error ? err.message : String(err));
     } finally {
       setVerwijderBezigId(null);
-      setVerwijderBevestigId(null);
     }
   }
 
@@ -194,49 +192,14 @@ export default function DealsOverzicht() {
                       </td>
                       <td>
                         <div className={styles.acties}>
-                          <button
-                            type="button"
-                            className={styles.kopieerKnop}
-                            disabled={kopieerBezigId === deal.id}
-                            title="Kopiëren naar nieuwe woning"
-                            onClick={() => kopieer(deal.id)}
-                          >
-                            {kopieerBezigId === deal.id ? '…' : '⧉ Kopiëren'}
-                          </button>
-                          {magDealBewerken(deal, toegang) && (
-                            <>
-                              <button
-                                type="button"
-                                className={
-                                  verwijderBevestigId === deal.id
-                                    ? styles.verwijderKnopBevestig
-                                    : styles.verwijderKnop
-                                }
-                                disabled={verwijderBezigId === deal.id}
-                                title={
-                                  verwijderBevestigId === deal.id
-                                    ? 'Weet je zeker dat je deze woning wilt verwijderen?'
-                                    : 'Woning permanent verwijderen'
-                                }
-                                onClick={() => verwijder(deal.id)}
-                              >
-                                {verwijderBezigId === deal.id
-                                  ? '…'
-                                  : verwijderBevestigId === deal.id
-                                    ? 'Ja, verwijderen'
-                                    : '🗑 Verwijderen'}
-                              </button>
-                              {verwijderBevestigId === deal.id && verwijderBezigId !== deal.id && (
-                                <button
-                                  type="button"
-                                  className={styles.annuleerKnop}
-                                  onClick={() => setVerwijderBevestigId(null)}
-                                >
-                                  Nee
-                                </button>
-                              )}
-                            </>
-                          )}
+                          <WoningActiesMenu
+                            naam={deal.naam}
+                            items={woningMenuItems(deal, toegang)}
+                            isDemo={deal.isDemo}
+                            bezig={kopieerBezigId === deal.id || verwijderBezigId === deal.id}
+                            onKopieer={() => kopieer(deal.id)}
+                            onVerwijder={() => setVerwijderVraag(deal)}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -247,6 +210,13 @@ export default function DealsOverzicht() {
           </section>
         )}
       </main>
+      {verwijderVraag && (
+        <BevestigVerwijderen
+          naam={verwijderVraag.naam}
+          onAnnuleer={() => setVerwijderVraag(null)}
+          onVerwijder={() => verwijder(verwijderVraag.id)}
+        />
+      )}
     </div>
   );
 }

@@ -63,6 +63,8 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   kunnen elkaars woningen zien, wijzigen, kopiëren en verwijderen. Bewust zo gelaten voor de bèta.
   Opnieuw bekijken zodra Steven met echte klantpanden werkt: dan eigen org (alleen `org_id` in
   `allowed_emails` + zijn woningen verplaatsen, geen code).
+- **Twee UI-punten vóór de eerste productieversie** (besluit 2026-10-06, bewust afwijkend van "feedback
+  in rondes"): woningacties optie A (menu ⋯ + bevestigingsvenster) en Opslaan in Scenario bewerken.
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)
