@@ -4,41 +4,45 @@ Eén regel per punt, details in de gelinkte rapporten. Af = weghalen (verslag st
 wijzigingslog). Nieuwe vervolgstap tijdens een sessie? Meteen hier in de juiste groep zetten.
 Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-03.md`.
 
-## Nu — werkwijze op orde (2026-10-04)
+## Route naar de bèta (bijgewerkt 2026-10-06)
 
-- [ ] **Werkwijze: eerst testen, pas daarna naar `master`.** (Tekstreview staat op `test`, nog niet live.) Alles gaat eerst naar branch `test`;
-      pushen naar `master` (= productie) pas als het op test werkt.
-- [ ] **Master opschonen** — productie-database: dubbele "(kopie)"-woningen en testwoningen
-      verwijderen, en Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
-      Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
-- [x] **Inloggen aan op test** (2026-10-04): eigen SMTP op `puntum-test`, redirect-URL's, SQL
-      toggle-aan, `AUTH_VEREIST` weg uit Preview. Eigenaar en bètatester ingelogd getest.
-- [ ] **Rollentest op test:** andere organisatie ✓ (studio-adres = org bètatester 1, ziet Stevens woningen niet, 2026-10-06). Lid ✓ (Emma kopieert en wijzigt binnen de hoofd-org, 2026-10-06). Niet-toegelaten gebruiker: ziet niets, maar kreeg een aanmeldmail → opgelost in v0.7.39, opnieuw testen. Emma heeft een account op `puntum-test` en kan inloggen (2026-10-06); Steven heeft ook een account op `puntum-test` (2026-10-06); zijn testronde volgt. Nieuwe testers via "Add user → Create new user" (Auto Confirm aan). Let op: in het dashboard bovenaan het project controleren (`puntum-test`, niet productie). Emma heeft ook al een account op productie (per ongeluk aangemaakt, mag blijven). Per rol:
-      opslaan, doorrekenen, kopiëren, verwijderen. Emma en Steven inloggen op test.
-- [ ] **Scenario kopiëren + opslaan na scenario bewerken** staat op `test` (v0.7.38). Nog in de browser controleren: kopiëren naar leeg en gevuld scenario, "Gebruik als scenario en opslaan", demo-woning (knoppen uit). Daarna naar `master`.
-- [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen peildatum (latent tot 2e tarievenset). Zie review in hetzelfde rapport.
-- [ ] **`ANONIEM`-regel** (`lib/deals/profiel.ts`) aanpassen, samen met de productie-switch. Eerst
-      `NEXT_PUBLIC_AUTH_VEREIST` op productie zetten, anders krijgt productie het kopie-probleem.
-- [ ] **Eerste echte release via `/release`** — nog niet getest. Pas afvinken na een geslaagde release.
+Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op test werkt.
 
-## Vóór de bèta-livegang
+**A. Afronden op `test`**
+- [ ] A1 Steven doet zijn testronde (opslaan, doorrekenen, kopiëren, verwijderen, demo-woning,
+      scenario kopiëren, scenario bewerken + opslaan).
+- [ ] A2 Myle: niet-toegelaten adres opnieuw testen (melding "geen toegang", geen mail).
+- [ ] A3 Myle: v0.7.38 en v0.7.39 in de browser controleren (scenario kopiëren, "Gebruik als
+      scenario en opslaan", demo-woning knoppen uit, verwijderknop `/woningen`).
+- Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓ (2026-10-06). Accounts op
+  `puntum-test`: Myle, studio-adres, Emma, Steven. Nieuwe testers via "Add user → Create new user"
+  (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.
 
-Pas als het testen door Steven, Emma en Myle klaar is (of zodra de testomgeving er is).
+**B. Voorbereiden productie**
+- [ ] B1 Plan (plan mode) voor de productie-switch: `ANONIEM`-regel uit `magDealBewerken` + tests,
+      volgorde van de stappen in C, terugvalplan.
+- [ ] B2 Productie opschonen: lijst van dubbele "(kopie)"- en testwoningen, back-up, jouw
+      bevestiging, dan pas verwijderen.
+- [ ] B3 Accounts op productie: Emma (bestaat al), Steven, Myle gmail, studio-adres via
+      "Create new user"; `allowed_emails` op productie controleren.
+- [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
+      provider (Resend-records MX/SPF/DKIM niet aanraken). Code heeft geen hard ingestelde domeinen.
 
-- [ ] **Bèta op `app.puntum.nl`** (samen met de productie-switch): Vercel → Domains `app.puntum.nl` +
-      `puntum.nl` als redirect daarheen; CNAME bij de domeinprovider (Resend-records MX/SPF/DKIM niet
-      aanraken); Supabase productie → Site URL + redirect `https://app.puntum.nl/**`. Code heeft geen
-      hard ingestelde domeinen (gecontroleerd 2026-10-06). Optioneel `test.puntum.nl` voor de testomgeving.
-- [ ] Inloggen op productie aan: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weg op Vercel.
-- [ ] Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" **uit**: op
-      `puntum-test` gedaan (2026-10-06), productie nog. Nieuwe testers daarna via "Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`.
-      (Loginpagina maakt sinds v0.7.39 zelf geen accounts meer aan.)
-- [ ] Tijdelijke `ANONIEM`-regel uit `magDealBewerken` halen + regressietests aanpassen.
-- [ ] Rollen echt testen: eigenaar, lid, andere org, demo-woning, ingelogd-maar-niet-op-allowlist.
-      Per rol: opslaan, doorrekenen, doorklikken, kopiëren, verwijderen.
-- [ ] Foutmeldingen nalopen met echte rollen (geen rauwe RLS-fout 42501, "alleen-lezen" uitgelegd).
-- [ ] Drie `allowed_emails`-inserts voor de nieuwe testers (wacht op e-mailadressen).
-- [ ] Verwijderknop op `/woningen` bevestigen met een echte ingelogde sessie.
+**C. Productie-switch (één moment, via `/release` — eerste echte release)**
+- [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
+- [ ] C2 Supabase productie: `supabase/toggle-auth-aan.sql`, "Allow new users to sign up" uit,
+      Site URL + redirect `https://app.puntum.nl/**`.
+- [ ] C3 Vercel productie: `AUTH_VEREIST` weg.
+- [ ] C4 Rooktest op productie met elke rol (inloggen, opslaan, kopiëren, demo-woning).
+
+**D. Bèta starten**
+- [ ] D1 Drie nieuwe testers: e-mailadressen nodig → account + `allowed_emails` in hun eigen org.
+- [ ] D2 Uitnodiging met link `app.puntum.nl` en korte uitleg (magic link in dezelfde browser openen).
+
+**Open, niet blokkerend voor de bèta**
+- [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen
+      peildatum (latent tot 2e tarievenset). Zie `outputs/RAPPORT_scenario_opslaan_kopieren_2026-10-06.md`.
+- [ ] Kleiweg 179-B invoeren vanuit `resources/golden-master/` in de testomgeving.
 
 ## Brug Shortlist → Puntum, spoor 0 (los van de hold)
 
