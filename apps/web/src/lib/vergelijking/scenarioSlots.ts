@@ -204,3 +204,14 @@ export function zetScenarioPand(
   );
   return i >= 0 ? metPositie.map((s, j) => (j === i ? nieuw : s)) : [...metPositie, nieuw];
 }
+
+/** Melding als een scenario na "Gebruik als scenario" niet automatisch is opgeslagen (ultra-review
+ * 2026-10-06: onderscheid alleen-lezen en onzekere rechten — bij de laatste staat Opslaan uit). */
+export function meldingScenarioNietOpgeslagen(opts: {
+  magBewerken: boolean;
+  bewerkrechtenOnzeker: boolean;
+}): string {
+  if (opts.bewerkrechtenOnzeker)
+    return 'Scenario niet opgeslagen: bewerkrechten konden niet bevestigd worden — ververs de pagina.';
+  return 'Scenario niet opgeslagen: deze woning is alleen-lezen. Klik op Opslaan om een eigen kopie te maken.';
+}

@@ -3,6 +3,7 @@ import { testpand6Kamers } from '@wwso/engine';
 import { ScenarioSelectie } from '../deals/types';
 import {
   kopieerSlot,
+  meldingScenarioNietOpgeslagen,
   moetOpslaanNaScenarioBewerking,
   opslaanbareScenarios,
   slotsUitScenarios,
@@ -188,5 +189,20 @@ describe('zetScenarioPand', () => {
     const geladen = slotsUitScenarios(viaDatabase(zetScenarioPand(oud, 0, 'Oud', ander)), asIs);
     expect(geladen[0]!.pand.pand.adres).toBe('Bewerkt 1');
     expect([...geladen[0]!.sleutels]).toEqual(['x']);
+  });
+});
+
+// Regressietest (ultra-review 2026-10-06): bij onzekere rechten zei de melding "klik op Opslaan om
+// een kopie te maken", terwijl die knop dan uitgeschakeld is.
+describe('meldingScenarioNietOpgeslagen', () => {
+  it('alleen-lezen: kopie maken via Opslaan', () => {
+    expect(
+      meldingScenarioNietOpgeslagen({ magBewerken: false, bewerkrechtenOnzeker: false }),
+    ).toMatch(/alleen-lezen.*Opslaan/);
+  });
+  it('onzekere rechten: verversen, niet "klik op Opslaan"', () => {
+    const m = meldingScenarioNietOpgeslagen({ magBewerken: true, bewerkrechtenOnzeker: true });
+    expect(m).toMatch(/ververs de pagina/);
+    expect(m).not.toMatch(/Klik op Opslaan/);
   });
 });

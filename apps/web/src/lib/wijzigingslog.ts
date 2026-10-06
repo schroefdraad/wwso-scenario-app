@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.42';
+export const APP_VERSIE = '0.7.43';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.43',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Uitleg bij "Kitchenette apart verwarmd?" verbeterd: zet hem aan als de kitchenette zelf verwarmd is. De vorige uitleg kon tot een verkeerde keuze leiden.',
+      'Vergelijking: als een scenario niet kon worden opgeslagen omdat je bewerkrechten niet bevestigd konden worden, staat er nu "ververs de pagina" in plaats van een verwijzing naar een uitgeschakelde knop.',
+    ],
+  },
   {
     versie: '0.7.42',
     datum: '2026-10-06',

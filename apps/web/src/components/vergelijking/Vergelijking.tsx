@@ -23,6 +23,7 @@ import {
   isOnaangeraakt,
   kopieerSlot,
   leegSlot,
+  meldingScenarioNietOpgeslagen,
   moetOpslaanNaScenarioBewerking,
   opslaanbareScenarios as naarOpslaanbareScenarios,
   slotsUitScenarios,
@@ -176,7 +177,7 @@ export function Vergelijking({
         setOpslaanGevraagd(true);
       else
         setNietOpgeslagenMelding(
-          'Scenario niet opgeslagen: deze woning is alleen-lezen. Klik op Opslaan om een eigen kopie te maken.',
+          meldingScenarioNietOpgeslagen({ magBewerken, bewerkrechtenOnzeker }),
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
