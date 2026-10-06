@@ -9,7 +9,9 @@ import { AppHeader, WoningContextStrook, headerKnop, kamersLabel } from '../AppH
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import { slaPandOp } from '../../lib/resultaat/opslag';
 import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
-import { maakDealAan, werkDealBij } from '../../lib/deals/opslag';
+import { haalDealOp, maakDealAan, werkDealBij } from '../../lib/deals/opslag';
+import { haalEigenProfielOp, magDealBewerken } from '../../lib/deals/profiel';
+import { zetScenarioPand } from '../../lib/vergelijking/scenarioSlots';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { bepaalOpslaanActie } from '../../lib/deals/types';
 import { resultaatUrl, woningBewerkenUrl } from '../../lib/navigatie';
@@ -24,6 +26,10 @@ export function Topbar() {
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<
     'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'
   >('idle');
+  const [scenarioOpslaan, setScenarioOpslaan] = useState<{
+    status: 'idle' | 'bezig' | 'gelukt' | 'fout';
+    melding?: string;
+  }>({ status: 'idle' });
 
   /**
    * Gedeelde opslaan-logica achter zowel de "Woning opslaan"-knop als "Doorrekenen →"
@@ -130,6 +136,70 @@ export function Topbar() {
   }
 
   /**
+   * "Opslaan" in Scenario bewerken (feedback eigenaar 2026-10-06: zelfde drie knoppen als Woning
+   * bewerken). Leest de woning vers uit de database en zet alleen het pand van dít scenario
+   * (`zetScenarioPand`); as-is, andere scenario's en het versiestempel van de woning blijven staan.
+   * Geen kopie bij een alleen-lezen woning of onzekere rechten: dan een melding, en via "Gebruik
+   * als scenario" kan in de vergelijking bewust een eigen kopie gemaakt worden.
+   *
+   * Zet ook het scenario-resultaat klaar in de sessie, zodat de vergelijking bij terugkomst (ook
+   * via "← Mijn woningen") deze bewerking toepast in plaats van een oudere snapshot te tonen.
+   */
+  async function slaScenarioOp() {
+    const scenario = state.handmatigScenario;
+    if (!pand || !scenario) return;
+    if (!scenario.dealId) {
+      setScenarioOpslaan({ status: 'fout', melding: 'Sla eerst de woning op in de vergelijking.' });
+      return;
+    }
+    setScenarioOpslaan({ status: 'bezig' });
+    try {
+      let profiel;
+      try {
+        profiel = await haalEigenProfielOp();
+      } catch {
+        setScenarioOpslaan({
+          status: 'fout',
+          melding: 'Bewerkrechten konden niet bevestigd worden — ververs de pagina',
+        });
+        return;
+      }
+      const deal = await haalDealOp(scenario.dealId);
+      if (!deal) {
+        setScenarioOpslaan({ status: 'fout', melding: 'Woning niet gevonden.' });
+        return;
+      }
+      if (!magDealBewerken(deal, profiel)) {
+        setScenarioOpslaan({
+          status: 'fout',
+          melding:
+            'Alleen-lezen woning: kies "Gebruik als scenario" en sla in de vergelijking een eigen kopie op.',
+        });
+        return;
+      }
+      await werkDealBij(deal.id, {
+        naam: deal.naam,
+        notitie: deal.notitie,
+        map: deal.map,
+        pandInvoer: deal.pandInvoer,
+        scenarios: zetScenarioPand(deal.scenarios, scenario.slotIndex, scenario.naam, pand),
+        versiestempel: deal.versiestempel,
+      });
+      slaScenarioBewerkResultaatOp({
+        slotIndex: scenario.slotIndex,
+        dealId: scenario.dealId,
+        bewerktPand: pand,
+      });
+      setScenarioOpslaan({ status: 'gelukt' });
+    } catch (err) {
+      setScenarioOpslaan({
+        status: 'fout',
+        melding: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  /**
    * "Doorrekenen →" slaat de as-is nu altijd eerst op (zie `slaWoningOp` hierboven) vóórdat er
    * naar het resultaatscherm genavigeerd wordt — bij een mislukte save blijft de gebruiker op het
    * invoerscherm staan (met de bestaande "Opslaan mislukt"-melding) i.p.v. door te lopen naar een
@@ -178,6 +248,29 @@ export function Topbar() {
       sticky
       acties={
         <>
+          {state.handmatigScenario && (
+            <>
+              {scenarioOpslaan.status === 'gelukt' && (
+                <span className={headerKnop.status}>Opgeslagen ✓</span>
+              )}
+              {scenarioOpslaan.status === 'fout' && (
+                <span className={headerKnop.fout} title={scenarioOpslaan.melding}>
+                  Opslaan mislukt: {scenarioOpslaan.melding}
+                </span>
+              )}
+              <button
+                type="button"
+                className={headerKnop.secundair}
+                disabled={!pand || scenarioOpslaan.status === 'bezig'}
+                title={
+                  !pand ? (stap ?? undefined) : 'Sla dit scenario op zonder het scherm te verlaten'
+                }
+                onClick={slaScenarioOp}
+              >
+                {scenarioOpslaan.status === 'bezig' ? 'Opslaan…' : 'Opslaan'}
+              </button>
+            </>
+          )}
           {!state.handmatigScenario && (
             <>
               {dealOpslaanStatus === 'gelukt' && (

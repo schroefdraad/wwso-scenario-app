@@ -17,7 +17,7 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 
 **B. Voorbereiden productie**
 - [ ] B1 Plan productie-switch goedgekeurd (2026-10-06, K1a/K2/K3 zoals aanbevolen):
-      `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40), gaat
+      `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40, nu v0.7.41), gaat
       pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
       kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
@@ -36,13 +36,9 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       + `allowed_emails` in `…0012` en `…0013`.
 - [ ] D2 Uitnodiging met link `app.puntum.nl` en korte uitleg (magic link in dezelfde browser openen).
 
-**Volgende feedbackronde (na de switch)**
-- [ ] Mijn woningen: Kopiëren/Verwijderen achter een optie-pictogram, bevestiging met Annuleren vet.
-      Plan: `outputs/PLAN_woningacties_menu_2026-10-06.md`, mockup https://claude.ai/artifact/8T8KkVBfbVpWMeEfrycroJ.
-      Wacht op keuze A/B/C.
-- [ ] Scenario bewerken: topbar gelijk aan Woning bewerken (drie knoppen: ← Mijn woningen, Opslaan,
-      "Gebruik als scenario →"). Nu ontbreekt Opslaan. Opslaan = bewerkt pand in het juiste scenario
-      van de woning wegschrijven zonder het scherm te verlaten (feedback 2026-10-06).
+- [ ] A4 Myle: v0.7.41 op `test` controleren: menu ⋯ en bevestigingsvenster op Mijn woningen
+      (ook demo-woning en onderste rij), Opslaan in Scenario bewerken (daarna herladen en terug naar
+      de vergelijking: bewerking moet er staan).
 
 **Open, niet blokkerend voor de bèta**
 - [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen

@@ -7,6 +7,7 @@ import {
   opslaanbareScenarios,
   slotsUitScenarios,
   standaardSlots,
+  zetScenarioPand,
 } from './scenarioSlots';
 
 const asIs = testpand6Kamers;
@@ -147,5 +148,45 @@ describe('moetOpslaanNaScenarioBewerking', () => {
         bewerkrechtenOnzeker: true,
       }),
     ).toBe(false);
+  });
+});
+
+// Opslaan vanuit "Scenario bewerken" (feedback eigenaar 2026-10-06: topbar gelijk aan Woning
+// bewerken). Alleen het pand van dít scenario verandert; de rest van de woning blijft staan.
+describe('zetScenarioPand', () => {
+  const ander = { ...testpand6Kamers, pand: { ...testpand6Kamers.pand, adres: 'Bewerkt 1' } };
+
+  it('vervangt alleen het pand van het juiste scenario en behoudt maatregelen', () => {
+    const slots = standaardSlots(asIs);
+    slots[0] = gevuld('Scenario 1', 'a');
+    slots[1] = { ...gevuld('Scenario 2', 'b'), handmatigeInvesteringEuro: 900 };
+    const uit = zetScenarioPand(opslaanbareScenarios(slots), 1, 'Scenario 2', ander);
+    const geladen = slotsUitScenarios(viaDatabase(uit), asIs);
+    expect(geladen[1]!.pand.pand.adres).toBe('Bewerkt 1');
+    expect(geladen[1]!.kamerBewerkt).toBe(true);
+    expect([...geladen[1]!.sleutels]).toEqual(['b']);
+    expect(geladen[1]!.handmatigeInvesteringEuro).toBe(900);
+    expect(geladen[0]!.pand).toEqual(asIs);
+    expect([...geladen[0]!.sleutels]).toEqual(['a']);
+  });
+
+  it('maakt het scenario aan als het slot nog leeg was, op de juiste plek', () => {
+    const slots = standaardSlots(asIs);
+    slots[0] = gevuld('Scenario 1', 'a');
+    const uit = zetScenarioPand(opslaanbareScenarios(slots), 2, 'Scenario 3', ander);
+    const geladen = slotsUitScenarios(viaDatabase(uit), asIs);
+    expect(geladen[2]!.naam).toBe('Scenario 3');
+    expect(geladen[2]!.pand.pand.adres).toBe('Bewerkt 1');
+    expect(geladen[1]!.naam).toBe('Scenario 2');
+    expect(geladen[1]!.kamerBewerkt).toBe(false);
+  });
+
+  it('werkt ook op oude data zonder positie', () => {
+    const oud = viaDatabase([
+      { soort: 'kandidaten', naam: 'Oud', sleutels: ['x'] } as ScenarioSelectie,
+    ]);
+    const geladen = slotsUitScenarios(viaDatabase(zetScenarioPand(oud, 0, 'Oud', ander)), asIs);
+    expect(geladen[0]!.pand.pand.adres).toBe('Bewerkt 1');
+    expect([...geladen[0]!.sleutels]).toEqual(['x']);
   });
 });

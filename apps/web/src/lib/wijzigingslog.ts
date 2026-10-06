@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.40';
+export const APP_VERSIE = '0.7.41';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.41',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Mijn woningen: Kopiëren en Verwijderen staan nu achter het menu ⋯ aan het eind van elke rij. De lijst is daardoor rustiger.',
+      'Verwijderen vraagt om bevestiging in een apart venster. "Annuleren" is de standaardkeuze; per ongeluk dubbelklikken verwijdert niets meer.',
+      'Scenario bewerken: nieuwe knop "Opslaan" om een scenario tussendoor op te slaan zonder het scherm te verlaten, net als bij Woning bewerken.',
+    ],
+  },
   {
     versie: '0.7.40',
     datum: '2026-10-06',

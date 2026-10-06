@@ -166,3 +166,41 @@ export function moetOpslaanNaScenarioBewerking(opts: {
 }): boolean {
   return opts.heeftResultaat && opts.magBewerken && !opts.bewerkrechtenOnzeker;
 }
+
+/** Positie van een opgeslagen scenario: `slotIndex` (vanaf 2026-10-06), anders de plek in de lijst. */
+function positieVan(s: ScenarioSelectie, i: number): number {
+  return 'slotIndex' in s && s.slotIndex !== undefined ? s.slotIndex : i;
+}
+
+/**
+ * "Opslaan" vanuit Scenario bewerken (feedback eigenaar 2026-10-06): zet het bewerkte pand in het
+ * scenario op `slotIndex` van de opgeslagen woning. Maatregelen, investering, prijzen en
+ * labelwisseling van dat scenario blijven staan (zelfde regel als `pasScenarioResultaatToe`); de
+ * andere scenario's worden niet aangeraakt. Bestond het scenario nog niet, dan wordt het aangemaakt.
+ * Een oud scenariotype wordt daarbij omgezet naar het uniforme `'handmatig'`-type.
+ */
+export function zetScenarioPand(
+  scenarios: ScenarioSelectie[],
+  slotIndex: number,
+  naam: string,
+  pand: PandInvoer,
+): ScenarioSelectie[] {
+  const i = scenarios.findIndex((s, j) => positieVan(s, j) === slotIndex);
+  const basis = i >= 0 ? slotUitScenario(scenarios[i]!, pand) : leegSlot(naam, pand);
+  const nieuw: ScenarioSelectie = {
+    soort: 'handmatig',
+    naam: basis.naam,
+    pand,
+    kamerBewerkt: true,
+    energielabelDoel: basis.energielabelDoel ?? undefined,
+    sleutels: [...basis.sleutels],
+    handmatigeInvesteringEuro: basis.handmatigeInvesteringEuro,
+    maatregelPrijzenEuro: basis.maatregelPrijzenEuro,
+    slotIndex,
+  };
+  // Positie expliciet vastleggen voor alle scenario's, zodat aanvullen of vervangen niets verschuift.
+  const metPositie = scenarios.map((s, j) =>
+    s.soort === 'handmatig' ? { ...s, slotIndex: positieVan(s, j) } : s,
+  );
+  return i >= 0 ? metPositie.map((s, j) => (j === i ? nieuw : s)) : [...metPositie, nieuw];
+}
