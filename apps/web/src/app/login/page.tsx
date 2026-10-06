@@ -4,6 +4,7 @@ import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../lib/supabase/client';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import { LOGIN_OPTIES, leesLoginFout } from './fouten';
 import styles from './styles.module.css';
 
 function LoginContent() {
@@ -21,9 +22,12 @@ function LoginContent() {
     setStatus('bezig');
     setFoutmelding(undefined);
     const redirectTo = `${window.location.origin}/auth/callback?volgende=${encodeURIComponent(volgende)}`;
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirectTo, ...LOGIN_OPTIES },
+    });
     if (error) {
-      setFoutmelding(error.message);
+      setFoutmelding(leesLoginFout(error));
       setStatus('fout');
       return;
     }
@@ -36,7 +40,11 @@ function LoginContent() {
         <h1>WWSO Scenario App</h1>
         <p className={styles.sub}>Log in met een magic link — geen wachtwoord nodig.</p>
 
-        {fout && <p className={styles.foutmelding}>De magic link kon niet worden verwerkt. Probeer opnieuw.</p>}
+        {fout && (
+          <p className={styles.foutmelding}>
+            De magic link kon niet worden verwerkt. Probeer opnieuw.
+          </p>
+        )}
 
         {status === 'verstuurd' ? (
           <p className={styles.melding}>
@@ -57,12 +65,13 @@ function LoginContent() {
             <button type="submit" disabled={status === 'bezig'}>
               {status === 'bezig' ? 'Bezig…' : 'Stuur magic link'}
             </button>
-            {status === 'fout' && <p className={styles.foutmelding}>Versturen mislukt: {foutmelding}</p>}
+            {status === 'fout' && <p className={styles.foutmelding}>{foutmelding}</p>}
           </form>
         )}
 
         <p className={styles.hint}>
-          Alleen bekende e-mailadressen krijgen na het inloggen ook echt toegang tot deals — zie <code>allowed_emails</code>.
+          Alleen bekende e-mailadressen krijgen na het inloggen ook echt toegang tot deals — zie{' '}
+          <code>allowed_emails</code>.
         </p>
       </div>
     </div>
