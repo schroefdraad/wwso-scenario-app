@@ -26,6 +26,13 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - Back-up productie gemaakt (2026-10-06): CSV-export van `deals`, `allowed_emails`, `orgs`, `feedback`,
   bewaard buiten de repo.
 
+**Audit rekenmotor (2026-10-06):** `outputs/AUDIT_rekenmotor_beleidsboek_2026-10-06.md`
+- [ ] R4 telt "Gemeenschappelijk vertrek" niet mee (§2.4.4) — te laag. Advies: vóór de bèta.
+- [ ] Minimummaten vertrek 4 m² / overige ruimte 2 m² niet gecontroleerd (§2.2.1.2/§2.2.2.2) — te hoog.
+- [ ] Laadpaal R10 niet gedeeld door kamers (§2.10.5 vs §2.1.5) — te hoog. Keuze eigenaar.
+- [ ] Na de bèta: wastafel-uitzondering 8+ kamers, R3-maximum vóór/na deling toetsen, hardcoded
+      waarden naar `packages/data`.
+
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
 - [ ] C2 Supabase productie: `supabase/toggle-auth-aan.sql`, "Allow new users to sign up" uit,
