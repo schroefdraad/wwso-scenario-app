@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.43';
+export const APP_VERSIE = '0.7.44';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,14 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.44',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Rekenregel verwarming (rubriek 3, Beleidsboek §2.3.2): een kitchenette in een kamer telt alleen als tweede verwarmd vertrek als de kamer én de kitchenette verwarmd zijn. Voorheen kreeg een verwarmde kitchenette in een onverwarmde kamer 2 punten. Dit is een interpretatie, in lijn met de Huurprijscheck. Rekenmotor versie 0.2.0.',
+      'Ruimten: zolang het aantal kamers niet is ingevuld, staat er weer "Vul eerst het aantal kamers in" in plaats van een leeg grijs vlak.',
+    ],
+  },
   {
     versie: '0.7.43',
     datum: '2026-10-06',

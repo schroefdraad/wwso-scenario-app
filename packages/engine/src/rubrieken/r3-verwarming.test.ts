@@ -211,6 +211,20 @@ describe('R3 — Verwarming en verkoeling (§2.3)', () => {
       expect(berekenR3(input).perKamer[1]).toBe(2);
     });
 
+    // Ultra-review 2026-10-06, besluit eigenaar: open keuken telt alleen als vertrek én keuken
+    // verwarmd zijn (interpretatie §2.3.2 "indien deze verwarmd zijn", in lijn met de
+    // Huurprijscheck: "woon- en slaapkamer met keuken (verwarmd)" = 4 pt). Voorheen kreeg een
+    // verwarmde kitchenette in een onverwarmde kamer 2 pt.
+    it('telt géén open-keukenpunten als het vertrek zelf niet verwarmd is', () => {
+      const input = maakPandInvoer({
+        aantalKamers: 1,
+        ruimtes: [vertrek(1, { verwarmd: false, verkoeld: false })],
+        toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+        keukens: [maakKeuken({ ruimteNr: 1, verwarmd: true })],
+      });
+      expect(berekenR3(input).perKamer[1]).toBe(0);
+    });
+
     it('deelt de open-keukenpunten door het aantal kamers met toegang tot díe ruimte', () => {
       const input = maakPandInvoer({
         aantalKamers: 2,

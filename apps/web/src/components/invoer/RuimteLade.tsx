@@ -233,7 +233,7 @@ function KeukenPanel({ rij }: { rij: RuimteRij }) {
             onChange={(v) => zetKeuken({ verwarmd: v })}
           />
           <InfoBadge>
-            Zet dit aan als de kitchenette zelf verwarmd is, los van de verwarming van de kamer. Dan telt de open keuken als tweede verwarmd vertrek (Beleidsboek §2.3.2).
+            Zet dit aan als de kitchenette zelf verwarmd is. Is de kamer ook verwarmd, dan telt de open keuken als tweede verwarmd vertrek (Beleidsboek §2.3.2).
           </InfoBadge>
         </div>
       )}

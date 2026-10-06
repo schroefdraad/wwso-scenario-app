@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.43** (gecontroleerd 2026-10-06; klaar voor de productie-switch) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.44** (gecontroleerd 2026-10-06; klaar voor de productie-switch) · Historie: `plan/archief/`
 
 ## Omgevingen
 
@@ -55,8 +55,6 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   bewust nog niet gekozen. Bij twijfel bouwen voor wie er nu is.
 - **Beheer kostencatalogus** bij meerdere gebruikers: git-JSON (nu) of database met beheerscherm.
   Pas ontwerpen na de bèta-livegang. Alle 49 maatregelen staan nog op `schatting`.
-- **Tekstmelding "Vul eerst het aantal kamers in"** bij Ruimten en Overige posten: blijft staan of
-  aanpassen? (vraag uit de tekstreview van 2026-10-03)
 - **Nieuwe gebruikers:** tijdens de bèta alleen op uitnodiging (inschrijven uit, besluit 2026-10-06).
   Hoe nieuwe gebruikers na de bèta binnenkomen: oppakken na de bèta (zie plan.md).
 - **Kernteam deelt één org** (besluit 2026-10-06): Emma, Steven en Myle zitten in de hoofd-org en
@@ -66,6 +64,10 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
 - **Twee UI-punten vóór de eerste productieversie** (besluit 2026-10-06, bewust afwijkend van "feedback
   in rondes"): woningacties optie A (menu ⋯ + bevestigingsvenster) en Opslaan in Scenario bewerken.
 - **Switch zonder testronde Steven** (besluit 2026-10-06): zelfde rol als Emma, en die ronde is geslaagd.
+- **Teksten na ultra-review** (besluit 2026-10-06): "Vul eerst het aantal kamers in (sectie ①)" staat bij
+  Ruimten en Overige posten; tooltip "kies er hoogstens één" bij alternatieven blijft weg.
+- **R3 open keuken** (besluit 2026-10-06, engine 0.2.0): telt alleen als vertrek én kitchenette verwarmd
+  zijn. Interpretatie van §2.3.2, gelijk aan de Huurprijscheck.
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)

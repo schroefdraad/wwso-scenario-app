@@ -49,7 +49,8 @@ export const VERWARMING_OVERIGE_TYPES: readonly RuimteType[] = [
  * OPEN KEUKEN (§2.3.2, cross-validatie tegen de Huurcommissie Huurprijscheck, 2026-09-04): een
  * ruimte met een eigen aanrecht (een `Keuken`-voorziening waarvan `ruimte.type !== 'Keuken'`,
  * bijv. een kitchenette in een slaapkamer) wordt voor déze rubriek als twee losse binnenruimten
- * gewaardeerd — het vertrek zelf, én de open keuken erin — mits allebei verwarmd. "Een privé
+ * gewaardeerd — het vertrek zelf, én de open keuken erin — mits allebei verwarmd (interpretatie
+ * van "indien deze verwarmd zijn"; afgedwongen sinds engineversie 0.2.0, 2026-10-06). "Een privé
  * verwarmde woonkamer met open keuken wordt dus gewaardeerd met 4 punten." Een standalone
  * `Keuken`-type ruimte valt hier NIET onder: die is al volledig gedekt door haar eigen
  * vertrek-waardering (`Keuken` zit al in `VERWARMING_VERTREK_TYPES`), er is dan maar één
@@ -74,6 +75,9 @@ export function berekenR3(input: PandInvoer): RubriekResultaat {
     );
     const openKeukensVerwarmd = ruimtes.filter((r) => {
       if (r.ruimte.type === 'Keuken') return false;
+      // Interpretatie §2.3.2 ("indien deze verwarmd zijn", besluit eigenaar 2026-10-06): vertrek
+      // én keuken verwarmd. Een verwarmde kitchenette in een onverwarmde kamer telt niet.
+      if (!r.ruimte.verwarmd) return false;
       const keuken = keukenPerRuimteNr.get(r.ruimte.nr);
       return keuken?.verwarmd === true;
     });

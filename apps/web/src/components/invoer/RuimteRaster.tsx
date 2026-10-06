@@ -22,6 +22,8 @@ export function RuimteRaster() {
       <div className={styles.blokInhoud}>
         {!poortOpen && (
           <div className={styles.inertOverlay}>
+            {/* Terug na ultra-review 2026-10-06: zonder tekst was het een leeg grijs vlak. */}
+            <span>Vul eerst het aantal kamers in (sectie ①)</span>
           </div>
         )}
         <div className={styles.gridScroll}>
