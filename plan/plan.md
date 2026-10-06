@@ -9,8 +9,7 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op test werkt.
 
 **A. Afronden op `test`**
-- [ ] A1 Steven doet zijn testronde (opslaan, doorrekenen, kopiëren, verwijderen, demo-woning,
-      scenario kopiëren, scenario bewerken + opslaan).
+- A1 Steven: bewust overgeslagen vóór de switch (besluit 2026-10-06); hij test op productie mee.
 - Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓, niet-toegelaten ✓ (melding, geen mail); functies v0.7.38/39 met Emma doorlopen; v0.7.42 door Myle gecontroleerd, incl. fix code-review (2026-10-06). Accounts op
   `puntum-test`: Myle, studio-adres, Emma, Steven. Nieuwe testers via "Add user → Create new user"
   (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.

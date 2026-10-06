@@ -65,6 +65,7 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   `allowed_emails` + zijn woningen verplaatsen, geen code).
 - **Twee UI-punten vóór de eerste productieversie** (besluit 2026-10-06, bewust afwijkend van "feedback
   in rondes"): woningacties optie A (menu ⋯ + bevestigingsvenster) en Opslaan in Scenario bewerken.
+- **Switch zonder testronde Steven** (besluit 2026-10-06): zelfde rol als Emma, en die ronde is geslaagd.
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)
