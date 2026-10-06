@@ -25,6 +25,10 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 
 Pas als het testen door Steven, Emma en Myle klaar is (of zodra de testomgeving er is).
 
+- [ ] **Bèta op `app.puntum.nl`** (samen met de productie-switch): Vercel → Domains `app.puntum.nl` +
+      `puntum.nl` als redirect daarheen; CNAME bij de domeinprovider (Resend-records MX/SPF/DKIM niet
+      aanraken); Supabase productie → Site URL + redirect `https://app.puntum.nl/**`. Code heeft geen
+      hard ingestelde domeinen (gecontroleerd 2026-10-06). Optioneel `test.puntum.nl` voor de testomgeving.
 - [ ] Inloggen op productie aan: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weg op Vercel.
 - [ ] Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" **uit**: op
       `puntum-test` gedaan (2026-10-06), productie nog. Nieuwe testers daarna via "Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`.
