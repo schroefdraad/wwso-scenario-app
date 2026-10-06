@@ -2,7 +2,7 @@
  * Magic link alleen voor bestaande accounts (2026-10-06, rollentest): zonder deze optie maakte
  * Supabase voor elk onbekend adres een account aan en stuurde een "Confirm signup"-mail via
  * `puntum.nl`. Nieuwe testers worden uitgenodigd via Supabase → Authentication → Users →
- * "Invite user", naast hun rij in `allowed_emails`.
+ * "Add user → Create new user" (Auto Confirm aan), naast hun rij in `allowed_emails`.
  *
  * Dit is de nette kant voor de gebruiker; de echte blokkade is "Allow new users to sign up" uit
  * in het Supabase-dashboard (iemand kan de API ook rechtstreeks aanroepen).

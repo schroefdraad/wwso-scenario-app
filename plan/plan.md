@@ -13,7 +13,7 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
       Uitvoering door een agent. Verwijderen in productie pas na lijst + back-up + jouw bevestiging.
 - [x] **Inloggen aan op test** (2026-10-04): eigen SMTP op `puntum-test`, redirect-URL's, SQL
       toggle-aan, `AUTH_VEREIST` weg uit Preview. Eigenaar en bètatester ingelogd getest.
-- [ ] **Rollentest op test:** andere organisatie ✓ (studio-adres = org bètatester 1, ziet Stevens woningen niet, 2026-10-06). Nog open: lid. Niet-toegelaten gebruiker: ziet niets, maar kreeg een aanmeldmail → opgelost in v0.7.39, opnieuw testen. Emma en Steven eerst uitnodigen via "Invite user" op `puntum-test` als ze daar nog geen account hebben. Per rol:
+- [ ] **Rollentest op test:** andere organisatie ✓ (studio-adres = org bètatester 1, ziet Stevens woningen niet, 2026-10-06). Nog open: lid. Niet-toegelaten gebruiker: ziet niets, maar kreeg een aanmeldmail → opgelost in v0.7.39, opnieuw testen. Emma en Steven eerst uitnodigen via "Add user → Create new user" (Auto Confirm aan) op `puntum-test` als ze daar nog geen account hebben. Per rol:
       opslaan, doorrekenen, kopiëren, verwijderen. Emma en Steven inloggen op test.
 - [ ] **Scenario kopiëren + opslaan na scenario bewerken** staat op `test` (v0.7.38). Nog in de browser controleren: kopiëren naar leeg en gevuld scenario, "Gebruik als scenario en opslaan", demo-woning (knoppen uit). Daarna naar `master`.
 - [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen peildatum (latent tot 2e tarievenset). Zie review in hetzelfde rapport.
@@ -27,7 +27,7 @@ Pas als het testen door Steven, Emma en Myle klaar is (of zodra de testomgeving 
 
 - [ ] Inloggen op productie aan: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weg op Vercel.
 - [ ] Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" **uit**: op
-      `puntum-test` gedaan (2026-10-06), productie nog. Nieuwe testers daarna via "Invite user" + rij in `allowed_emails`.
+      `puntum-test` gedaan (2026-10-06), productie nog. Nieuwe testers daarna via "Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`.
       (Loginpagina maakt sinds v0.7.39 zelf geen accounts meer aan.)
 - [ ] Tijdelijke `ANONIEM`-regel uit `magDealBewerken` halen + regressietests aanpassen.
 - [ ] Rollen echt testen: eigenaar, lid, andere org, demo-woning, ingelogd-maar-niet-op-allowlist.
@@ -76,7 +76,7 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
   23 zeven open punten uit tab Toelichting van `wwso.xlsx`.
 - Fase 5: zelfstandige woonruimte (WWS), taak 24–30. Uitwerking in het archief-plan.
 - **Nieuwe gebruikers na de bèta** (notitie 2026-10-06): inschrijven staat uit; tijdens de bèta
-  nodigt de eigenaar handmatig uit ("Invite user" + rij in `allowed_emails`). Na de bèta kiezen:
+  nodigt de eigenaar handmatig uit ("Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`). Na de bèta kiezen:
   zelf aanmelden met wachtlijst/goedkeuring, een Supabase "before user created"-hook die
   `allowed_emails` controleert, of uitnodigen houden. Hangt samen met de keuze vermarktmodel A/B.
 - Ná de bèta, vóór publieke lancering: volledige code-audit, security-hardening, AVG-traject.
