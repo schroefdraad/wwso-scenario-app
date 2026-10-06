@@ -27,7 +27,8 @@ Nog open: lid en niet-toegelaten gebruiker. Pas daarna productie (besluit 2026-1
 | Myle | Eigenaar, bouwt en test | Hoofd-org (eigenaar, cross-org lezen + schrijven) |
 | Emma Morrison | Tester (zelf-verhuurder) | Hoofd-org |
 | Steven Kramer (energielabelverduurzamen.nl) | Externe tester (professional) | Hoofd-org, zonder `'import'`-feature |
-| Drie nieuwe bètatesters | Nog uit te nodigen | Drie gereserveerde lege orgs |
+| Myle via `myle@studioskael.com` | Bètatester 1 (test als buitenstaander) | Bètatester 1 (`…0011`) |
+| Twee externe bètatesters | Nog uit te nodigen | Bètatester 2 en 3 (`…0012`, `…0013`) |
 
 ## Wat werkt
 

@@ -23,8 +23,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
       kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
-- B3 Accounts op productie aangemaakt (2026-10-06). `allowed_emails` op productie nog controleren
-  (studio-adres in org bètatester 1).
+- B3 Accounts op productie aangemaakt (2026-10-06). Studio-adres in `allowed_emails` op productie
+  zetten (`…0011`, insert gegeven 2026-10-06) en controleren.
 - [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
       provider (Resend-records MX/SPF/DKIM niet aanraken). Code heeft geen hard ingestelde domeinen.
 
@@ -36,7 +36,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - [ ] C4 Rooktest op productie met elke rol (inloggen, opslaan, kopiëren, demo-woning).
 
 **D. Bèta starten**
-- [ ] D1 Drie nieuwe testers: e-mailadressen nodig → account + `allowed_emails` in hun eigen org.
+- [ ] D1 Twee externe testers (studio-adres = bètatester 1, `…0011`): e-mailadressen nodig → account
+      + `allowed_emails` in `…0012` en `…0013`.
 - [ ] D2 Uitnodiging met link `app.puntum.nl` en korte uitleg (magic link in dezelfde browser openen).
 
 **Open, niet blokkerend voor de bèta**
