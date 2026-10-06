@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.37** · op `test`: **v0.7.38** (scenario kopiëren, opslaan na scenario bewerken, foutmeldingen; niet gereleased) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (gecontroleerd 2026-10-06; `master` bevat v0.7.37 maar staat niet live) · op `test`: **v0.7.38** (scenario kopiëren, opslaan na scenario bewerken, foutmeldingen; niet gereleased) · Historie: `plan/archief/`
 
 ## Omgevingen
 

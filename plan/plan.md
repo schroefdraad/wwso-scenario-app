@@ -19,8 +19,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
   (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.
 
 **B. Voorbereiden productie**
-- [ ] B1 Plan (plan mode) voor de productie-switch: `ANONIEM`-regel uit `magDealBewerken` + tests,
-      volgorde van de stappen in C, terugvalplan.
+- [ ] B1 Plan productie-switch: `outputs/PLAN_productie_switch_2026-10-06.md`. Wacht op goedkeuring
+      (keuzes K1–K3). Bevinding: productie toont v0.7.36, `master` (v0.7.37) staat niet live.
 - [ ] B2 Productie opschonen: lijst van dubbele "(kopie)"- en testwoningen, back-up, jouw
       bevestiging, dan pas verwijderen.
 - [ ] B3 Accounts op productie: Emma (bestaat al), Steven, Myle gmail, studio-adres via
