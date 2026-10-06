@@ -11,10 +11,9 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 **A. Afronden op `test`**
 - [ ] A1 Steven doet zijn testronde (opslaan, doorrekenen, kopiëren, verwijderen, demo-woning,
       scenario kopiëren, scenario bewerken + opslaan).
-- [ ] A2 Myle: niet-toegelaten adres opnieuw testen (melding "geen toegang", geen mail).
-- [ ] A3 Myle: v0.7.38 en v0.7.39 in de browser controleren (scenario kopiëren, "Gebruik als
+- [ ] A3 Myle: versie op test in de browser bevestigd (2026-10-06); nog de functies van v0.7.38/v0.7.39 nalopen (scenario kopiëren, "Gebruik als
       scenario en opslaan", demo-woning knoppen uit, verwijderknop `/woningen`).
-- Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓ (2026-10-06). Accounts op
+- Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓, niet-toegelaten ✓ (melding, geen mail) (2026-10-06). Accounts op
   `puntum-test`: Myle, studio-adres, Emma, Steven. Nieuwe testers via "Add user → Create new user"
   (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.
 
