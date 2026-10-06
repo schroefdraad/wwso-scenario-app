@@ -8,7 +8,10 @@ import { useInvoer } from './InvoerContext';
 import { AppHeader, WoningContextStrook, headerKnop, kamersLabel } from '../AppHeader';
 import { ontbrekendeStap, projecteerNaarPandInvoer } from '../../lib/invoer/projecteer';
 import { slaPandOp } from '../../lib/resultaat/opslag';
-import { slaScenarioBewerkResultaatOp } from '../../lib/vergelijking/scenarioBewerkBrug';
+import {
+  naScenarioOpgeslagen,
+  slaScenarioBewerkResultaatOp,
+} from '../../lib/vergelijking/scenarioBewerkBrug';
 import { haalDealOp, maakDealAan, werkDealBij } from '../../lib/deals/opslag';
 import { haalEigenProfielOp, magDealBewerken } from '../../lib/deals/profiel';
 import { zetScenarioPand } from '../../lib/vergelijking/scenarioSlots';
@@ -26,9 +29,12 @@ export function Topbar() {
   const [dealOpslaanStatus, setDealOpslaanStatus] = useState<
     'idle' | 'bezig' | 'gelukt' | 'fout' | 'onzeker'
   >('idle');
+  /** `pand` = het pand dat is opgeslagen. "Opgeslagen ✓" alleen zolang er daarna niets is gewijzigd
+   * (code-review 2026-10-06: het vinkje bleef staan bij verdere bewerkingen). */
   const [scenarioOpslaan, setScenarioOpslaan] = useState<{
     status: 'idle' | 'bezig' | 'gelukt' | 'fout';
     melding?: string;
+    pand?: unknown;
   }>({ status: 'idle' });
 
   /**
@@ -142,8 +148,8 @@ export function Topbar() {
    * Geen kopie bij een alleen-lezen woning of onzekere rechten: dan een melding, en via "Gebruik
    * als scenario" kan in de vergelijking bewust een eigen kopie gemaakt worden.
    *
-   * Zet ook het scenario-resultaat klaar in de sessie, zodat de vergelijking bij terugkomst (ook
-   * via "← Mijn woningen") deze bewerking toepast in plaats van een oudere snapshot te tonen.
+   * Ruimt daarna de verouderde vergelijking-snapshot van deze woning op (`naScenarioOpgeslagen`),
+   * zodat de vergelijking bij terugkomst (ook via "← Mijn woningen") vers uit de database laadt.
    */
   async function slaScenarioOp() {
     const scenario = state.handmatigScenario;
@@ -185,12 +191,8 @@ export function Topbar() {
         scenarios: zetScenarioPand(deal.scenarios, scenario.slotIndex, scenario.naam, pand),
         versiestempel: deal.versiestempel,
       });
-      slaScenarioBewerkResultaatOp({
-        slotIndex: scenario.slotIndex,
-        dealId: scenario.dealId,
-        bewerktPand: pand,
-      });
-      setScenarioOpslaan({ status: 'gelukt' });
+      naScenarioOpgeslagen(scenario.dealId);
+      setScenarioOpslaan({ status: 'gelukt', pand });
     } catch (err) {
       setScenarioOpslaan({
         status: 'fout',
@@ -250,7 +252,7 @@ export function Topbar() {
         <>
           {state.handmatigScenario && (
             <>
-              {scenarioOpslaan.status === 'gelukt' && (
+              {scenarioOpslaan.status === 'gelukt' && scenarioOpslaan.pand === pand && (
                 <span className={headerKnop.status}>Opgeslagen ✓</span>
               )}
               {scenarioOpslaan.status === 'fout' && (

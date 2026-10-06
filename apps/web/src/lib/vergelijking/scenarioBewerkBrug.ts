@@ -124,6 +124,18 @@ export function haalEnWisVergelijkingSnapshotOp(): VergelijkingSnapshot | null {
 }
 
 /**
+ * Na "Opslaan" in Scenario bewerken (code-review 2026-10-06): de database is dan bijgewerkt, dus de
+ * snapshot die de vergelijking van deze woning vóór vertrek maakte is verouderd. Weg ermee, zodat de
+ * vergelijking de woning vers uit de database laadt. Een snapshot van een andere woning blijft
+ * staan. Er wordt bewust géén scenario-resultaat neergezet: dat zou de vergelijking later laten
+ * herstellen én automatisch opslaan, over nieuwere wijzigingen heen.
+ */
+export function naScenarioOpgeslagen(dealId: string): void {
+  const snapshot = snapshotBrug.haal();
+  if (snapshot && snapshot.dealId === dealId) snapshotBrug.wis();
+}
+
+/**
  * Welke tussenstand mag de vergelijkingspagina bij het mounten terugzetten? (staat-navigatie-audit
  * 2026-10-03, bevestigd in de browser: vergelijking van woning A → "Bekijk volledig resultaat" →
  * Mijn woningen → woning B openen zette de snapshot van A op de pagina van B, inclusief A's
@@ -164,7 +176,12 @@ export function maakScenarioBewerkStart(
  * een eerder gekozen labelwisseling, maatregelen, investering en prijzen blijven staan
  * (feedback 2026-09-07: een energielabel-wissel mocht een kamerbewerking niet meer uitsluiten).
  */
-export function pasScenarioResultaatToe<S extends { pand: PandInvoer; kamerBewerkt: boolean }>(slots: S[], resultaat: ScenarioBewerkResultaat | null): S[] {
+export function pasScenarioResultaatToe<S extends { pand: PandInvoer; kamerBewerkt: boolean }>(
+  slots: S[],
+  resultaat: ScenarioBewerkResultaat | null,
+): S[] {
   if (!resultaat) return slots;
-  return slots.map((s, i) => (i === resultaat.slotIndex ? { ...s, pand: resultaat.bewerktPand, kamerBewerkt: true } : s));
+  return slots.map((s, i) =>
+    i === resultaat.slotIndex ? { ...s, pand: resultaat.bewerktPand, kamerBewerkt: true } : s,
+  );
 }

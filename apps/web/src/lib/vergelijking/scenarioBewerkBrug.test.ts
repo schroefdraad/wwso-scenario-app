@@ -9,6 +9,7 @@ import {
   slaScenarioBewerkStartOp,
   slaVergelijkingSnapshotOp,
   type VergelijkingSnapshot,
+  naScenarioOpgeslagen,
 } from './scenarioBewerkBrug';
 
 /** Minimale sessionStorage voor de node-testomgeving — de brug zelf praat er rechtstreeks mee. */
@@ -39,7 +40,11 @@ describe('staat-navigatie-audit 2026-10-03 — vergelijking-snapshot hoort bij �
   it('incident: snapshot van woning A wordt NIET toegepast op de vergelijking van woning B', () => {
     // Vergelijking A → "Bekijk volledig resultaat" (zet snapshot) → Mijn woningen → woning B.
     slaVergelijkingSnapshotOp(snapshotVan(WONING_A, 'Croesestraat 77'));
-    const herstel = bepaalVergelijkingHerstel(haalEnWisVergelijkingSnapshotOp(), haalEnWisScenarioBewerkResultaatOp(), WONING_B);
+    const herstel = bepaalVergelijkingHerstel(
+      haalEnWisVergelijkingSnapshotOp(),
+      haalEnWisScenarioBewerkResultaatOp(),
+      WONING_B,
+    );
     expect(herstel.snapshot).toBeNull();
   });
 
@@ -70,7 +75,13 @@ describe('staat-navigatie-audit 2026-10-03 — vergelijking-snapshot hoort bij �
 
 describe('staat-navigatie-audit 2026-10-03 — scenario-bewerkresultaat hoort bij één woning', () => {
   it('de woning-id gaat heen mee in de start en terug in het resultaat', () => {
-    slaScenarioBewerkStartOp({ asIsPand: testpand6Kamers, slotIndex: 1, naam: 'Scenario 2', terugUrl: `/woning/vergelijking?deal=${WONING_A}`, dealId: WONING_A });
+    slaScenarioBewerkStartOp({
+      asIsPand: testpand6Kamers,
+      slotIndex: 1,
+      naam: 'Scenario 2',
+      terugUrl: `/woning/vergelijking?deal=${WONING_A}`,
+      dealId: WONING_A,
+    });
     expect(haalScenarioBewerkStartOp()?.dealId).toBe(WONING_A);
   });
 
@@ -84,5 +95,29 @@ describe('staat-navigatie-audit 2026-10-03 — scenario-bewerkresultaat hoort bi
     slaScenarioBewerkResultaatOp({ slotIndex: 2, dealId: WONING_A, bewerktPand: testpand6Kamers });
     const herstel = bepaalVergelijkingHerstel(null, haalEnWisScenarioBewerkResultaatOp(), WONING_A);
     expect(herstel.resultaat?.slotIndex).toBe(2);
+  });
+});
+
+// Regressietest (code-review 2026-10-06, v0.7.41): "Opslaan" in Scenario bewerken liet het
+// scenario-resultaat én de oude vergelijking-snapshot achter. Bij een latere vergelijking van
+// dezelfde woning werd die oude snapshot teruggezet en automatisch opgeslagen, over nieuwere
+// wijzigingen (naam, notitie, map) heen.
+describe('na Opslaan in Scenario bewerken', () => {
+  it('blijft er geen restje over dat de vergelijking later terugzet of opslaat', () => {
+    slaVergelijkingSnapshotOp(snapshotVan(WONING_A, 'Oude naam'));
+    naScenarioOpgeslagen(WONING_A);
+    const herstel = bepaalVergelijkingHerstel(
+      haalEnWisVergelijkingSnapshotOp(),
+      haalEnWisScenarioBewerkResultaatOp(),
+      WONING_A,
+    );
+    expect(herstel.snapshot).toBeNull();
+    expect(herstel.resultaat).toBeNull();
+  });
+
+  it('laat de snapshot van een andere woning staan', () => {
+    slaVergelijkingSnapshotOp(snapshotVan(WONING_B, 'Woning B'));
+    naScenarioOpgeslagen(WONING_A);
+    expect(haalEnWisVergelijkingSnapshotOp()?.dealNaam).toBe('Woning B');
   });
 });
