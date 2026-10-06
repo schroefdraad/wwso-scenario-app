@@ -75,5 +75,9 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
   20 koppeling rendementscalculator, 21 importadapter Shortlist (B1–B6, C1–C2, zie brugrapport),
   23 zeven open punten uit tab Toelichting van `wwso.xlsx`.
 - Fase 5: zelfstandige woonruimte (WWS), taak 24–30. Uitwerking in het archief-plan.
+- **Nieuwe gebruikers na de bèta** (notitie 2026-10-06): inschrijven staat uit; tijdens de bèta
+  nodigt de eigenaar handmatig uit ("Invite user" + rij in `allowed_emails`). Na de bèta kiezen:
+  zelf aanmelden met wachtlijst/goedkeuring, een Supabase "before user created"-hook die
+  `allowed_emails` controleert, of uitnodigen houden. Hangt samen met de keuze vermarktmodel A/B.
 - Ná de bèta, vóór publieke lancering: volledige code-audit, security-hardening, AVG-traject.
   PSP pas na de keuze voor een vermarktmodel.
