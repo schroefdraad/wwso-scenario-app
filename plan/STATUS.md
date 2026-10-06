@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.44** (gecontroleerd 2026-10-06; klaar voor de productie-switch) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.45** (gecontroleerd 2026-10-06; klaar voor de productie-switch) · Historie: `plan/archief/`
 
 ## Omgevingen
 
@@ -68,6 +68,8 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   Ruimten en Overige posten; tooltip "kies er hoogstens één" bij alternatieven blijft weg.
 - **R3 open keuken** (besluit 2026-10-06, engine 0.2.0): telt alleen als vertrek én kitchenette verwarmd
   zijn. Interpretatie van §2.3.2, gelijk aan de Huurprijscheck.
+- **Audit rekenmotor** (2026-10-06, engine 0.3.0): te kleine ruimtes en zolders tellen conform
+  §2.2.1.2/§2.2.1.3/§2.2.2.2 als overige ruimte of niet, met waarschuwing (besluit eigenaar).
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)

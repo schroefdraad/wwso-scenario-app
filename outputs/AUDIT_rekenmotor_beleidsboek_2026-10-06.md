@@ -115,7 +115,22 @@ bij grote panden; kan alleen te laag uitvallen.
 - R11 WOZ: de tool geeft 0 bij onzelfstandige woonruimte; wij volgen §2.11.
 - R6 bad + aparte douche: wij 8 (letterlijk §2.6.1), de tool 6.
 
-## 6. Voorstel volgorde vóór de bèta
+## 6. Na de audit gevonden
+
+- **Zolder als vertrek** (§2.2.1.3, letterlijk): alleen met vaste trap én beschoten dak. De invoer
+  had de vinkjes al, de motor gebruikte ze niet voor R1. Kon te hoog uitvallen. Opgelost samen met
+  2.1.
+
+## 7. Uitgevoerd (2026-10-06, v0.7.45, engine 0.3.0)
+
+- 2.1 minimummaten + zolder: waarschuwing én herindeling (besluit eigenaar), centraal in
+  `waarderingsType` (`rubrieken/gedeeld.ts`), voor R1–R4, R9, R13. R5/R6 gebruiken het ingevoerde type.
+- 3.1 R4 telt "Gemeenschappelijk vertrek" mee, ÷ adressen ÷ kamers. Voorbeeld §2.4.4 als test (19,50).
+- 3.2 wastafel-uitzondering 8+: interpretatie: de ruimte waar het maximum de meeste punten kost.
+- Golden master Kleiweg 179-B blijft exact. Afrondingstest suggesties: rollen kamer 4/6 omgewisseld.
+- Open: 2.2 laadpaal (toetsen in de Huurprijscheck).
+
+## 8. Oorspronkelijk voorstel volgorde vóór de bèta
 
 1. **3.1 R4 + gemeenschappelijk vertrek** meenemen (duidelijke tekst, test eerst, engine 0.3.0).
 2. **2.1 minimummaten**: waarschuwing in invoer en toelichting.

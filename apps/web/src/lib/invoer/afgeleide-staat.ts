@@ -1,3 +1,5 @@
+import { waarderingsType } from '@wwso/engine';
+import { naarGetal } from './projecteer';
 import type { InvoerState } from './types';
 
 export interface Waarschuwing {
@@ -16,6 +18,28 @@ export function bepaalWaarschuwingen(state: InvoerState): Waarschuwing[] {
         tekst: `Ruimte ${r.nr} (${r.naam || 'naamloos'}) is aan geen enkele kamer toegewezen en telt daardoor voor niemand mee.`,
         ruimteId: r.id,
       });
+    }
+  }
+
+  // Audit 2026-10-06: te kleine ruimtes en zolders zonder vaste trap/beschoten dak tellen als ander
+  // type of niet (§2.2.1.2, §2.2.1.3, §2.2.2.2). Dezelfde regel als de rekenmotor (`waarderingsType`).
+  for (const r of state.ruimtes) {
+    const m2 = naarGetal(r.oppervlakteM2);
+    if (m2 === undefined) continue;
+    const { type, reden } = waarderingsType({
+      nr: r.nr,
+      naam: r.naam,
+      type: r.type,
+      oppervlakteM2: m2,
+      verdieping: 0,
+      verwarmd: false,
+      verkoeld: false,
+      zolder: r.zolder,
+      heeftMeterkast: r.heeftMeterkast,
+    });
+    if (type !== r.type && reden) {
+      const voorzieningen = r.keuken || r.sanitair ? ' Een keuken of sanitair in deze ruimte telt wel mee in de rubrieken keuken en sanitair.' : '';
+      waarschuwingen.push({ tekst: `Ruimte ${r.nr} (${r.naam || 'naamloos'}): ${reden}.${voorzieningen}`, ruimteId: r.id });
     }
   }
 

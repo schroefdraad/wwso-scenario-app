@@ -197,3 +197,68 @@ describe('R6 — Extra sanitaire voorzieningen (§2.6.2)', () => {
     }
   });
 });
+
+// Audit 2026-10-06 bevinding 3.2: bij een adres met 8 of meer onzelfstandige woonruimten geldt
+// voor één ander vertrek (dan de badkamer) of overige ruimte het wastafelmaximum niet (§2.6.1).
+describe('wastafel-uitzondering bij 8 of meer kamers (§2.6.1)', () => {
+  const tarieven = getTarievenset('2026-01-01');
+  const gedeeld = (kamers: number) => Array.from({ length: kamers }, (_, i) => i + 1);
+  function pand(aantalKamers: number) {
+    return maakPandInvoer({
+      aantalKamers,
+      ruimtes: [
+        { nr: 1, naam: 'Wasruimte', type: 'Wasruimte', oppervlakteM2: 6, verdieping: 0, verwarmd: false, verkoeld: false },
+        { nr: 2, naam: 'Gang met fontein', type: 'Overige ruimte', oppervlakteM2: 4, verdieping: 0, verwarmd: false, verkoeld: false },
+      ],
+      toewijzing: [
+        { ruimteNr: 1, kamers: gedeeld(aantalKamers) },
+        { ruimteNr: 2, kamers: gedeeld(aantalKamers) },
+      ],
+      sanitair: [maakSanitair({ ruimteNr: 1, aantalWastafels: 3 }), maakSanitair({ ruimteNr: 2, aantalWastafels: 2 })],
+    });
+  }
+
+  it('8 kamers: in één ruimte tellen alle wastafels, in de andere blijft het maximum van 1', () => {
+    // (3 + 1) / 8 = 0,5
+    expect(berekenR6(pand(8), tarieven).perKamerRuw[1]).toBeCloseTo(0.5, 10);
+  });
+
+  it('7 kamers: overal het maximum van 1 per ruimte', () => {
+    // (1 + 1) / 7
+    expect(berekenR6(pand(7), tarieven).perKamerRuw[1]).toBeCloseTo(2 / 7, 10);
+  });
+});
+
+// Code-review 2026-10-06: de uitzondering ging naar de ruimte met de grootste winst, ook als
+// geen enkele kamer er toegang toe had, en werd per sanitairregel gekozen in plaats van per ruimte.
+describe('wastafel-uitzondering: alleen een ruimte met toegang, gekozen per ruimte', () => {
+  const tarieven = getTarievenset('2026-01-01');
+  const alle = [1, 2, 3, 4, 5, 6, 7, 8];
+  const ruimte = (nr: number) => ({ nr, naam: `R${nr}`, type: 'Overige ruimte' as const, oppervlakteM2: 5, verdieping: 0, verwarmd: false, verkoeld: false });
+
+  it('slaat een ruimte zonder kamers over', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 8,
+      ruimtes: [ruimte(1), ruimte(2)],
+      toewijzing: [{ ruimteNr: 1, kamers: [] }, { ruimteNr: 2, kamers: alle }],
+      sanitair: [maakSanitair({ ruimteNr: 1, aantalWastafels: 4 }), maakSanitair({ ruimteNr: 2, aantalWastafels: 3 })],
+    });
+    expect(berekenR6(input, tarieven).perKamerRuw[1]).toBeCloseTo(3 / 8, 10);
+  });
+
+  it('telt meerdere sanitairregels in dezelfde ruimte samen', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 8,
+      ruimtes: [ruimte(5), ruimte(7)],
+      toewijzing: [{ ruimteNr: 5, kamers: alle }, { ruimteNr: 7, kamers: alle }],
+      sanitair: [
+        maakSanitair({ ruimteNr: 5, aantalWastafels: 2 }),
+        maakSanitair({ ruimteNr: 5, aantalWastafels: 2 }),
+        maakSanitair({ ruimteNr: 7, aantalWastafels: 2 }),
+      ],
+    });
+    // Ruimte 5: twee regels van 2 wastafels, gecapt 1 + 1, zonder maximum 4 → winst 2.
+    // Ruimte 7: gecapt 1, zonder maximum 2 → winst 1. Ruimte 5 krijgt de uitzondering: (4 + 1) / 8.
+    expect(berekenR6(input, tarieven).perKamerRuw[1]).toBeCloseTo(5 / 8, 10);
+  });
+});

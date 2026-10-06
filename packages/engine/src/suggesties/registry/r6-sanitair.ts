@@ -5,7 +5,7 @@ import type { MaatregelContext, MaatregelDefinitie } from '../types';
 import { vereistParameter, volgendeVrijeRuimteNr } from './hulp';
 
 function priveVertrekVan(ctx: MaatregelContext, kamer: number) {
-  const ruimtes = ruimtesPerKamer(ctx.pand).get(kamer) ?? [];
+  const ruimtes = ruimtesPerKamer(ctx.pand, { herindelen: false }).get(kamer) ?? [];
   return ruimtes.find((r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1)?.ruimte;
 }
 

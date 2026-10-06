@@ -733,7 +733,7 @@ function ZolderPanel({ rij }: { rij: RuimteRij }) {
   const isVertrek = rij.type === 'Privévertrek';
   const hint =
     isVertrek && !(zolder.vasteTrap && zolder.beschotenDak)
-      ? "Een zolder telt alleen als vertrek bij een vaste trap én een beschoten dak (Beleidsboek §2.2.1.3). Overweeg het type 'Overige ruimte'."
+      ? "Een zolder telt alleen als vertrek bij een vaste trap én een beschoten dak (Beleidsboek §2.2.1.3). De berekening telt deze zolder daarom als overige ruimte" + (zolder.vasteTrap ? '.' : ', met 5 punten aftrek omdat er geen vaste trap is (§2.2.2.3).')
       : !isVertrek && !zolder.vasteTrap
         ? 'Levert 5 aftrekpunten op (Beleidsboek §2.2.2.3), begrensd op de waarde van de zolder zelf.'
         : '';

@@ -84,6 +84,81 @@ export function rondAfOp2Decimalen(x: number): number {
   return Math.round(x * 100) / 100;
 }
 
+export const MIN_VERTREK_M2 = 4;
+export const MIN_OVERIGE_RUIMTE_M2 = 2;
+
+/** Een ruimte die voor de waardering als een ander type telt dan ingevoerd (of helemaal niet). */
+export interface Herindeling {
+  ruimteNr: number;
+  naam: string;
+  ingevoerd: RuimteType;
+  telt: RuimteType | null;
+  reden: string;
+}
+
+/**
+ * Als welk type telt deze ruimte voor de oppervlakte- en verwarmingsrubrieken (R1–R4, R9, R13)?
+ * Audit 2026-10-06, besluit eigenaar "minder punten conform beleid":
+ * - §2.2.1.3: een zolder is alleen een vertrek met een vaste trap én een beschoten dak.
+ * - §2.2.1.2: een vertrek is "minimaal 4,00 m² groot"; anders kan het een overige ruimte zijn.
+ * - §2.2.2.2: een overige ruimte heeft "een minimale oppervlakte van 2,00 m²"; anders telt hij niet.
+ * - §2.2.1: een keuken of badkamer "is altijd een vertrek", ongeacht de grootte.
+ * INTERPRETATIE: voor gemeenschappelijke ruimten gelden dezelfde minimummaten (§2.9.6 verwijst naar de
+ * definities van §2.2). INTERPRETATIE: de minimummaat geldt na de meterkastcorrectie van §2.2.4 (de
+ * gemeten oppervlakte is al zonder meterkast).
+ * R5/R6 gebruiken bewust het ingevoerde type: een toilet in een kleine toiletruimte blijft een
+ * toilet in een toiletruimte (§2.6.1).
+ * Overige voorwaarden (breedte, hoogte, raam, ventilatie) zitten niet in de invoer en worden niet getoetst.
+ */
+export function waarderingsType(ruimte: Ruimte): { type: RuimteType | null; reden?: string } {
+  const m2 = effectieveOppervlakteM2(ruimte);
+  const alsOverige = (overigType: RuimteType, reden: string) =>
+    m2 >= MIN_OVERIGE_RUIMTE_M2
+      ? { type: overigType, reden: `${reden} → telt als ${overigType.toLowerCase()}` }
+      : { type: null, reden: `${reden} en kleiner dan ${MIN_OVERIGE_RUIMTE_M2} m² → telt niet mee` };
+
+  if (ruimte.type === 'Privévertrek') {
+    if (ruimte.zolder && !(ruimte.zolder.vasteTrap && ruimte.zolder.beschotenDak)) {
+      return alsOverige('Overige ruimte', 'zolder zonder vaste trap én beschoten dak is geen vertrek (§2.2.1.3)');
+    }
+    if (m2 < MIN_VERTREK_M2) {
+      return alsOverige('Overige ruimte', `kleiner dan ${MIN_VERTREK_M2} m² is geen vertrek (§2.2.1.2)`);
+    }
+  }
+  if (ruimte.type === 'Gemeenschappelijk vertrek' && m2 < MIN_VERTREK_M2) {
+    return alsOverige('Gemeenschappelijke overige ruimte', `kleiner dan ${MIN_VERTREK_M2} m² is geen vertrek (§2.2.1.2)`);
+  }
+  if ((OVERIGE_RUIMTE_TYPES.includes(ruimte.type) || ruimte.type === 'Gemeenschappelijke overige ruimte') && m2 < MIN_OVERIGE_RUIMTE_M2) {
+    return { type: null, reden: `kleiner dan ${MIN_OVERIGE_RUIMTE_M2} m² is geen overige ruimte (§2.2.2.2) → telt niet mee` };
+  }
+  return { type: ruimte.type };
+}
+
+/** Alle ruimtes die anders tellen dan ingevoerd, voor de toelichting en de waarschuwingen. */
+export function herindelingen(input: PandInvoer): Herindeling[] {
+  return input.ruimtes.flatMap((r) => {
+    const { type, reden } = waarderingsType(r);
+    return type === r.type ? [] : [{ ruimteNr: r.nr, naam: r.naam, ingevoerd: r.type, telt: type, reden: reden ?? '' }];
+  });
+}
+
+/**
+ * Toelichtingsregels voor de herindelingen, alleen voor ruimtes waar een kamer toegang toe heeft en
+ * die voor deze rubriek uitmaken: R1 = ingevoerd als privévertrek, R2 = telt als (of was) een
+ * privé overige ruimte. Gemeenschappelijke ruimtes staan in R9 en worden hier niet herhaald.
+ */
+export function herindelingToelichting(rubriek: 'R1' | 'R2', input: PandInvoer): string[] {
+  const metToegang = new Set(input.toewijzing.filter((t) => t.kamers.length > 0).map((t) => t.ruimteNr));
+  return herindelingen(input)
+    .filter((h) => metToegang.has(h.ruimteNr))
+    .filter((h) =>
+      rubriek === 'R1'
+        ? h.ingevoerd === 'Privévertrek'
+        : h.telt === 'Overige ruimte' || OVERIGE_RUIMTE_TYPES.includes(h.ingevoerd),
+    )
+    .map((h) => `${rubriek}: ${h.naam || `ruimte ${h.ruimteNr}`} (${h.ingevoerd.toLowerCase()}) ${h.reden}`);
+}
+
 /** Een Map met alle kamernummers 1..aantalKamers, elk op 0 — startpunt voor "optellen per kamer". */
 export function nulPerKamer(aantalKamers: number): Map<number, number> {
   const resultaat = new Map<number, number>();
@@ -104,7 +179,13 @@ export interface ToegankelijkeRuimte {
  * gedeeld wordt. Die deler volgt uit §2.1.5: punten worden alleen verdeeld over de bewoners
  * die volgens het huurcontract toegang en gebruiksrecht hebben.
  */
-export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRuimte[]> {
+export function ruimtesPerKamer(
+  input: PandInvoer,
+  opties: { herindelen?: boolean } = {},
+): Map<number, ToegankelijkeRuimte[]> {
+  // `herindelen: false` voor de suggesties: die zoeken een fysieke privékamer (bijv. "vergroot
+  // deze kamer tot 8 m²"), ook als die voor de waardering als overige ruimte telt.
+  const herindelen = opties.herindelen ?? true;
   const ruimteBijNr = new Map(input.ruimtes.map((r) => [r.nr, r] as const));
 
   const resultaat = new Map<number, ToegankelijkeRuimte[]>();
@@ -113,8 +194,13 @@ export function ruimtesPerKamer(input: PandInvoer): Map<number, ToegankelijkeRui
   }
 
   for (const entry of input.toewijzing) {
-    const ruimte = ruimteBijNr.get(entry.ruimteNr);
-    if (!ruimte) continue; // referentiële integriteit is al geborgd door PandInvoer-validatie
+    const ingevoerd = ruimteBijNr.get(entry.ruimteNr);
+    if (!ingevoerd) continue; // referentiële integriteit is al geborgd door PandInvoer-validatie
+    // Waarderingstype (§2.2.1.2/§2.2.1.3/§2.2.2.2): te kleine ruimtes en zolders zonder trap/dak
+    // tellen als ander type of helemaal niet. Zie `waarderingsType`.
+    const { type } = herindelen ? waarderingsType(ingevoerd) : { type: ingevoerd.type };
+    if (type === null) continue;
+    const ruimte = type === ingevoerd.type ? ingevoerd : { ...ingevoerd, type };
     const nKamersMetToegang = entry.kamers.length;
     for (const kamer of entry.kamers) {
       if (kamer > input.pand.aantalKamers) continue;
@@ -236,5 +322,11 @@ export function vertrekOppervlakteM2(ruimtes: ToegankelijkeRuimte[]): number {
  * reproduceert alle drie exact. Zie `outputs/RAPPORT_taak8-r4-opus-beoordeling_2026-08-19.md`.
  */
 export function ongerondeVertrekOppervlakteM2(ruimtes: ToegankelijkeRuimte[]): number {
-  return ongerondeOppervlakte(ruimtes, VERTREK_TYPES).totaalM2;
+  // §2.4.4 (letterlijk): "de aan huurder toe te rekenen gemeenschappelijke vertrekken" — ook het type
+  // 'Gemeenschappelijk vertrek' (R9). INTERPRETATIE: dezelfde toerekening als R9, ÷ adressen ÷ kamers
+  // (audit 2026-10-06, bevinding 3.1; voorbeeld §2.4.4: woonkamer 40 m² / 4).
+  const gemeenschappelijk = ruimtes
+    .filter((r) => r.ruimte.type === 'Gemeenschappelijk vertrek')
+    .reduce((som, r) => som + effectieveOppervlakteM2(r.ruimte) / (r.ruimte.aantalAdressenMetToegang ?? 1) / r.nKamersMetToegang, 0);
+  return ongerondeOppervlakte(ruimtes, VERTREK_TYPES).totaalM2 + gemeenschappelijk;
 }

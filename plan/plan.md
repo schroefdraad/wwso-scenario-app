@@ -10,13 +10,13 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 
 **A. Afronden op `test`**
 - A1 Steven: bewust overgeslagen vóór de switch (besluit 2026-10-06); hij test op productie mee.
-- Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓, niet-toegelaten ✓ (melding, geen mail); functies v0.7.38/39 met Emma doorlopen; v0.7.44 door Myle gecontroleerd, incl. ultra-review-fixes en R3 (2026-10-06). Accounts op
+- Rollentest tot nu toe: andere org ✓, lid ✓ (Emma), eigenaar ✓, niet-toegelaten ✓ (melding, geen mail); functies v0.7.38/39 met Emma doorlopen; v0.7.45 door Myle gecontroleerd, incl. ultra-review-fixes en R3 (2026-10-06). Accounts op
   `puntum-test`: Myle, studio-adres, Emma, Steven. Nieuwe testers via "Add user → Create new user"
   (Auto Confirm aan) + rij in `allowed_emails`; bovenaan het dashboard het project controleren.
 
 **B. Voorbereiden productie**
 - [ ] B1 Plan productie-switch goedgekeurd (2026-10-06, K1a/K2/K3 zoals aanbevolen):
-      `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40, nu v0.7.44), gaat
+      `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40, nu v0.7.45), gaat
       pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
       kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
@@ -27,11 +27,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
   bewaard buiten de repo.
 
 **Audit rekenmotor (2026-10-06):** `outputs/AUDIT_rekenmotor_beleidsboek_2026-10-06.md`
-- [ ] R4 telt "Gemeenschappelijk vertrek" niet mee (§2.4.4) — te laag. Advies: vóór de bèta.
-- [ ] Minimummaten vertrek 4 m² / overige ruimte 2 m² niet gecontroleerd (§2.2.1.2/§2.2.2.2) — te hoog.
-- [ ] Laadpaal R10 niet gedeeld door kamers (§2.10.5 vs §2.1.5) — te hoog. Keuze eigenaar.
-- [ ] Na de bèta: wastafel-uitzondering 8+ kamers, R3-maximum vóór/na deling toetsen, hardcoded
-      waarden naar `packages/data`.
+- Opgelost in v0.7.45 / engine 0.3.0: minimummaten + zolder-eisen, R4 gemeenschappelijk vertrek, wastafel 8+.
+- [ ] Na de bèta: R3-maximum vóór/na deling toetsen, hardcoded waarden naar `packages/data`.
 
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
@@ -93,5 +90,8 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
   nodigt de eigenaar handmatig uit ("Add user → Create new user" (Auto Confirm aan) + rij in `allowed_emails`). Na de bèta kiezen:
   zelf aanmelden met wachtlijst/goedkeuring, een Supabase "before user created"-hook die
   `allowed_emails` controleert, of uitnodigen houden. Hangt samen met de keuze vermarktmodel A/B.
+- Backlog (geparkeerd 2026-10-06): laadpaal R10 wordt alleen ÷ adressen gedeeld, niet ÷ kamers
+  (§2.10.5 letterlijk vs §2.1.5). Toetsen in de Huurprijscheck: 6 kamers, parkeerplek type III met
+  laadpaal → 2,75 (huidig) of 1 pt per kamer. Zie audit 2.2.
 - Ná de bèta, vóór publieke lancering: volledige code-audit, security-hardening, AVG-traject.
   PSP pas na de keuze voor een vermarktmodel.

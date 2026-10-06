@@ -1,7 +1,7 @@
 import { PandInvoer as PandInvoerSchema, type PandInvoer } from '@wwso/engine';
 import type { InvoerState, RuimteRij } from './types';
 
-function naarGetal(waarde: string): number | undefined {
+export function naarGetal(waarde: string): number | undefined {
   if (waarde.trim() === '') return undefined;
   const genormaliseerd = waarde.replace(',', '.');
   const n = Number(genormaliseerd);

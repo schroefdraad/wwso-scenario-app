@@ -22,6 +22,7 @@ function wastafelPunten(
   post: SanitairVoorziening,
   isBadkamer: boolean,
   tarievenset: Tarievenset,
+  zonderMaximum = false,
 ): number {
   const { wastafel, meerpersoonswastafel } = tarievenset.sanitairBasisPunten;
   const max = tarievenset.sanitairMaxima;
@@ -29,7 +30,7 @@ function wastafelPunten(
   const gewoon = post.aantalWastafels * wastafel;
   const meerpersoons = post.aantalMeerpersoonswastafels * meerpersoonswastafel;
 
-  if (isBadkamer) return gewoon + meerpersoons;
+  if (isBadkamer || zonderMaximum) return gewoon + meerpersoons;
 
   return (
     Math.min(gewoon, max.wastafelPuntenPerVertrekBuitenBadkamer) +
@@ -98,11 +99,12 @@ export function berekenSanitair(
   ruimte: Ruimte | undefined,
   nKamersMetToegang: number,
   tarievenset: Tarievenset,
+  wastafelZonderMaximum = false,
 ): SanitairBerekening {
   const isBadkamer = ruimte?.type === 'Badruimte';
 
   const toilet = tarievenset.sanitairToiletPunten[post.toiletType];
-  const wastafel = wastafelPunten(post, isBadkamer, tarievenset);
+  const wastafel = wastafelPunten(post, isBadkamer, tarievenset, wastafelZonderMaximum);
   const doucheBad = doucheBadPunten(post, tarievenset);
 
   const eisenGehaald = voldoetAanExtraEisen(post);
@@ -133,9 +135,38 @@ export function berekenSanitair(
  * puntenaantal, gedeelde voorzieningen worden gedeeld door het aantal onzelfstandige
  * woonruimten met toegang en gebruiksrecht.
  */
+/**
+ * §2.6.1 (letterlijk): "Bij een adres met 8 of meer onzelfstandige woonruimten geldt een
+ * uitzonderingsregel: bij 1 ander vertrek (dan de badkamer) of overige ruimte is het maximum van 1
+ * (meerpersoons) wastafel niet van toepassing." INTERPRETATIE (audit 2026-10-06): welke ruimte dat
+ * is, zegt het beleid niet; we kiezen de ruimte waar het maximum de meeste punten kost.
+ * `aantalKamers` is het aantal onzelfstandige woonruimten op het adres.
+ */
+export function ruimteZonderWastafelMaximum(input: PandInvoer, tarievenset: Tarievenset): number | undefined {
+  if (input.pand.aantalKamers < tarievenset.sanitairMaxima.wooneenhedenVoorWastafelUitzondering) return undefined;
+  const ruimteBijNr = new Map(input.ruimtes.map((r) => [r.nr, r] as const));
+  const kamersBijRuimte = kamersPerRuimte(input);
+  // Winst per ruimte (alle sanitairregels in die ruimte samen), alleen ruimtes waar minstens één
+  // kamer toegang toe heeft; bij gelijke winst het laagste ruimtenummer (code-review 2026-10-06).
+  const winstPerRuimte = new Map<number, number>();
+  for (const post of input.sanitair) {
+    const ruimte = ruimteBijNr.get(post.ruimteNr);
+    if (!ruimte || ruimte.type === 'Badruimte' || !waardeertVoorzieningen(ruimte.type)) continue;
+    if ((kamersBijRuimte.get(post.ruimteNr) ?? []).length === 0) continue;
+    const winst = wastafelPunten(post, false, tarievenset, true) - wastafelPunten(post, false, tarievenset);
+    winstPerRuimte.set(post.ruimteNr, (winstPerRuimte.get(post.ruimteNr) ?? 0) + winst);
+  }
+  let beste: { nr: number; winst: number } | undefined;
+  for (const [nr, winst] of [...winstPerRuimte].sort((x, y) => x[0] - y[0])) {
+    if (winst > 0 && (!beste || winst > beste.winst)) beste = { nr, winst };
+  }
+  return beste?.nr;
+}
+
 export function berekenR6(input: PandInvoer, tarievenset: Tarievenset): RubriekResultaat {
   const kamersBijRuimte = kamersPerRuimte(input);
   const ruimteBijNr = new Map(input.ruimtes.map((r) => [r.nr, r] as const));
+  const uitzonderingRuimte = ruimteZonderWastafelMaximum(input, tarievenset);
   const perKamer: Record<number, number> = {};
   const perKamerRuw: Record<number, number> = {};
   const toelichting: string[] = [];
@@ -157,6 +188,7 @@ export function berekenR6(input: PandInvoer, tarievenset: Tarievenset): RubriekR
       ruimteBijNr.get(post.ruimteNr),
       kamers.length,
       tarievenset,
+      post.ruimteNr === uitzonderingRuimte,
     );
 
     for (const kamer of kamers) {
@@ -177,6 +209,9 @@ export function berekenR6(input: PandInvoer, tarievenset: Tarievenset): RubriekR
     perKamer[kamer] = rondAfOpKwartpunten(ruw);
   }
 
+  if (uitzonderingRuimte !== undefined) {
+    toelichting.push(`R6: adres met ${input.pand.aantalKamers} kamers (8 of meer) → in ruimte ${uitzonderingRuimte} tellen alle wastafels mee, zonder maximum (§2.6.1)`);
+  }
   if (input.sanitair.length === 0) {
     toelichting.push('R6: geen sanitaire voorzieningen ingevoerd → 0 pt voor alle kamers');
   }

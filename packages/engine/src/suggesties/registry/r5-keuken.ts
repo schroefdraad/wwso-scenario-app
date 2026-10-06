@@ -32,7 +32,7 @@ function volgendeAanrechtDrempel(
 
 /** De privé-ruimte van een kamer (nKamersMetToegang === 1) van het type Privévertrek, of undefined. */
 function priveVertrekVan(ctx: MaatregelContext, kamer: number) {
-  const ruimtes = ruimtesPerKamer(ctx.pand).get(kamer) ?? [];
+  const ruimtes = ruimtesPerKamer(ctx.pand, { herindelen: false }).get(kamer) ?? [];
   return ruimtes.find((r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1)?.ruimte;
 }
 

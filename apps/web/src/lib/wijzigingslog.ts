@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.44';
+export const APP_VERSIE = '0.7.45';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,17 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.45',
+    datum: '2026-10-06',
+    wijzigingen: [
+      'Rekenregels nagelopen naast het Beleidsboek (rekenmotor versie 0.3.0):',
+      'Een kamer of vertrek kleiner dan 4 m² telt niet als vertrek maar als overige ruimte; een overige ruimte kleiner dan 2 m² telt niet mee voor oppervlakte en verwarming (Beleidsboek §2.2.1.2 en §2.2.2.2). Een keuken of badkamer blijft altijd een vertrek. Bij de invoer staat een waarschuwing.',
+      'Een zolder telt alleen als vertrek met een vaste trap én een beschoten dak; anders als overige ruimte (§2.2.1.3).',
+      'Energieprestatie (rubriek 4): een gemeenschappelijk vertrek, zoals een gedeelde woonkamer, telt nu mee (§2.4.4). Dit kan punten opleveren. Bij een ruimte die met andere adressen wordt gedeeld, wordt ook door het aantal adressen gedeeld, net als in rubriek 9 (interpretatie).',
+      'Sanitair: bij 8 of meer kamers tellen in één ruimte buiten de badkamer alle wastafels mee (§2.6.1). Welke ruimte dat is, zegt het Beleidsboek niet; de app kiest de ruimte waar dit de meeste punten oplevert (interpretatie).',
+    ],
+  },
   {
     versie: '0.7.44',
     datum: '2026-10-06',

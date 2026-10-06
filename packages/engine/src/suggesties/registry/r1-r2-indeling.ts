@@ -199,7 +199,11 @@ const A04: MaatregelDefinitie = {
       const ruimtes = perKamerRuimtes.get(kamer) ?? [];
       const oppervlakte = vertrekOppervlakteM2(ruimtes);
       if (oppervlakte >= MIN_OPPERVLAKTE_M2) continue;
-      const priveVertrek = ruimtes.find((r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1)?.ruimte;
+      // Fysieke privékamer zoeken op het ingevoerde type (een kamer < 4 m² telt voor de waardering
+      // als overige ruimte, maar is juist de kamer die vergroot moet worden — code-review 2026-10-06).
+      const priveVertrek = (ruimtesPerKamer(ctx.pand, { herindelen: false }).get(kamer) ?? []).find(
+        (r) => r.ruimte.type === 'Privévertrek' && r.nKamersMetToegang === 1,
+      )?.ruimte;
       if (!priveVertrek) continue;
       const nodig = Math.round((MIN_OPPERVLAKTE_M2 - oppervlakte + 0.01) * 100) / 100;
       kandidaten.push({

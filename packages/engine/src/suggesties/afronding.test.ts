@@ -17,7 +17,7 @@ const peildatum = '2026-01-01';
  * catalogus mag gebruiken.
  */
 describe('afronding — dezelfde maatregel, andere uitkomst per kamer', () => {
-  it('S-04 (thermostatische douchekraan, badruimte achter) verhoogt de huur van kamer 4 maar niet van kamer 6', () => {
+  it('S-04 (thermostatische douchekraan, badruimte achter) verhoogt de huur van kamer 6 maar niet van kamer 4', () => {
     const asIs = berekenEindtelling(testpand6Kamers, tarievenset, peildatum);
     const ruimte9 = testpand6Kamers.sanitair.find((s) => s.ruimteNr === 9)!;
 
@@ -30,13 +30,15 @@ describe('afronding — dezelfde maatregel, andere uitkomst per kamer', () => {
     expect(eindtellingNa.perKamer[4].rubrieken.r6).toBeCloseTo(asIs.perKamer[4].rubrieken.r6 + 0.25, 4);
     expect(eindtellingNa.perKamer[6].rubrieken.r6).toBeCloseTo(asIs.perKamer[6].rubrieken.r6 + 0.25, 4);
 
-    // Maar de HUUR verandert alleen voor kamer 4 (die net onder een heelpuntgrens zat) en niet
-    // voor kamer 6 (die verder van de grens af zat) — exact de "soms niets, soms een vol punt"-claim.
-    expect(eindtellingNa.perKamer[4].totaalPunten).toBe(asIs.perKamer[4].totaalPunten + 1);
-    expect(eindtellingNa.perKamer[4].maxHuurEuro).toBeGreaterThan(asIs.perKamer[4].maxHuurEuro);
+    // Maar de HUUR verandert alleen voor kamer 6 (die net onder een heelpuntgrens zat) en niet
+    // voor kamer 4 (die verder van de grens af zat) — exact de "soms niets, soms een vol punt"-claim.
+    // (Rollen van kamer 4 en 6 omgewisseld op 2026-10-06: sinds de minimummaatregel telt de
+    // toiletruimte van 1,5 m² niet meer mee voor R2, waardoor kamer 4 van de grens af schoof.)
+    expect(eindtellingNa.perKamer[6].totaalPunten).toBe(asIs.perKamer[6].totaalPunten + 1);
+    expect(eindtellingNa.perKamer[6].maxHuurEuro).toBeGreaterThan(asIs.perKamer[6].maxHuurEuro);
 
-    expect(eindtellingNa.perKamer[6].totaalPunten).toBe(asIs.perKamer[6].totaalPunten);
-    expect(eindtellingNa.perKamer[6].maxHuurEuro).toBe(asIs.perKamer[6].maxHuurEuro);
+    expect(eindtellingNa.perKamer[4].totaalPunten).toBe(asIs.perKamer[4].totaalPunten);
+    expect(eindtellingNa.perKamer[4].maxHuurEuro).toBe(asIs.perKamer[4].maxHuurEuro);
   });
 
   it('twee losse voorzieningen die elk apart geen enkele kamer over de grens duwen, doen dat samen wel', () => {

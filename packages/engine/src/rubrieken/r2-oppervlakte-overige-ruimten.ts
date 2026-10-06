@@ -3,6 +3,7 @@ import {
   OVERIGE_RUIMTE_TYPES,
   effectieveOppervlakteM2,
   oppervlakteVolgensRekenregel,
+  herindelingToelichting,
   rondAfOpKwartpunten,
   ruimtesPerKamer,
 } from './gedeeld';
@@ -26,7 +27,7 @@ export function berekenR2(input: PandInvoer): RubriekResultaat {
   const perKamerRuimtes = ruimtesPerKamer(input);
   const perKamer: Record<number, number> = {};
   const perKamerRuw: Record<number, number> = {};
-  const toelichting: string[] = [];
+  const toelichting: string[] = herindelingToelichting('R2', input);
 
   for (const [kamer, ruimtes] of perKamerRuimtes) {
     const { priveM2, gedeeldM2, totaalM2 } = oppervlakteVolgensRekenregel(
