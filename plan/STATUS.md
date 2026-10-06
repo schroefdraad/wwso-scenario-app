@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (gecontroleerd 2026-10-06; `master` bevat v0.7.37 maar staat niet live) · op `test`: **v0.7.38** (scenario kopiëren, opslaan na scenario bewerken, foutmeldingen; niet gereleased) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.38** (scenario kopiëren, opslaan na scenario bewerken, foutmeldingen; niet gereleased) · Historie: `plan/archief/`
 
 ## Omgevingen
 
@@ -8,7 +8,7 @@ Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (gecontrole
 |---|---|---|---|
 | URL | `web-skael.vercel.app` | `web-git-test-skael.vercel.app` (branch `test`) | `localhost:3000` |
 | Supabase | productieproject | `puntum-test` (`phjaooawljkmrweyqroh`) | `puntum-test` |
-| Deployen | nog handmatig (`vercel --prod`); straks merge naar `master` | automatisch bij push naar `test` | — |
+| Deployen | Git-koppeling sinds 4 okt: push naar `master` = productie (nog niet gebruikt) | automatisch bij push naar `test` | — |
 | Inloggen | ⚠ **uit** | **aan** (sinds 2026-10-04, magic link via eigen SMTP); inschrijven uit (2026-10-06) | uit |
 
 Testdata op `puntum-test`: demo-woning + Pettersonstraat 15 + Stevens map (5 woningen), gekopieerd

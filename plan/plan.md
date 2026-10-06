@@ -20,7 +20,9 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 **B. Voorbereiden productie**
 - [ ] B1 Plan productie-switch goedgekeurd (2026-10-06, K1a/K2/K3 zoals aanbevolen):
       `outputs/PLAN_productie_switch_2026-10-06.md`. Code `ANONIEM` weg staat op `test` (v0.7.40), gaat
-      pas naar `master` op het switch-moment. Nog: uitzoeken waarom productie v0.7.36 toont en `master` (v0.7.37) niet live staat.
+      pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
+      kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
+      gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
 - [ ] B2 Productie opschonen: lijst van dubbele "(kopie)"- en testwoningen, back-up, jouw
       bevestiging, dan pas verwijderen.
 - B3 Accounts op productie aangemaakt (2026-10-06). `allowed_emails` op productie nog controleren
