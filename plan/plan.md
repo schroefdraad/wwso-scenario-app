@@ -23,8 +23,10 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
       kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
-- [ ] B2 Productie opschonen (stap 1 lijst: `supabase/onderhoud/opschonen_stap1_lijst.sql`, wacht op CSV): lijst van dubbele "(kopie)"- en testwoningen, back-up, jouw
-      bevestiging, dan pas verwijderen.
+- [ ] B2 Productie opschonen: inventaris 2026-10-06 (`supabase/onderhoud/opschonen_stap1_lijst.sql`):
+      11 woningen, geen "(kopie)"-woningen, geen dubbele inhoud. Alleen nog beslissen over
+      Basrastraat 12 en Kraaiheide 8 (geen map, 0 scenario's, vroege invoer). De vele Kanaalkades
+      staan op `test`, niet op productie.
 - B3 Accounts op productie aangemaakt (2026-10-06). `allowed_emails` op productie nog controleren
   (studio-adres in org bètatester 1).
 - [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
