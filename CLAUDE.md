@@ -89,6 +89,9 @@ Past een afspraak niet meer, stel dan een aanpassing van dit bestand voor.
 - Voordat Claude "klaar" meldt, draaien typecheck en tests als er iets is gewijzigd
   (`.claude/hooks/verify-before-stop.sh`). Bij een fout werkt Claude door.
 - GitHub Action (`.github/workflows/ci.yml`) draait typecheck, lint en tests bij elke push.
+- **Na elke afgeronde wijziging, vóór de push naar `test`,** draait Claude zelf `/code-review` over
+  die wijziging en verwerkt de bevindingen (fout = eerst falende test). `/code-review ultra` start
+  de gebruiker vóór een grote release naar `master` (besluit 2026-10-06).
 
 ## Elke release
 
