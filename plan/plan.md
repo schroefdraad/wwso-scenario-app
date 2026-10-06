@@ -36,6 +36,14 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       + `allowed_emails` in `…0012` en `…0013`.
 - [ ] D2 Uitnodiging met link `app.puntum.nl` en korte uitleg (magic link in dezelfde browser openen).
 
+**Volgende feedbackronde (na de switch)**
+- [ ] Mijn woningen: Kopiëren/Verwijderen achter een optie-pictogram, bevestiging met Annuleren vet.
+      Plan: `outputs/PLAN_woningacties_menu_2026-10-06.md`, mockup https://claude.ai/artifact/8T8KkVBfbVpWMeEfrycroJ.
+      Wacht op keuze A/B/C.
+- [ ] Scenario bewerken: topbar gelijk aan Woning bewerken (drie knoppen: ← Mijn woningen, Opslaan,
+      "Gebruik als scenario →"). Nu ontbreekt Opslaan. Opslaan = bewerkt pand in het juiste scenario
+      van de woning wegschrijven zonder het scherm te verlaten (feedback 2026-10-06).
+
 **Open, niet blokkerend voor de bèta**
 - [ ] Versiestempel: invoerscherm stempelt met nieuwste tarievenset, vergelijking met opgeslagen
       peildatum (latent tot 2e tarievenset). Zie `outputs/RAPPORT_scenario_opslaan_kopieren_2026-10-06.md`.
