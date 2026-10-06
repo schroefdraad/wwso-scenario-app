@@ -24,6 +24,9 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
       provider (Resend-records MX/SPF/DKIM niet aanraken). Code heeft geen hard ingestelde domeinen.
 
+- Back-up productie gemaakt (2026-10-06): CSV-export van `deals`, `allowed_emails`, `orgs`, `feedback`,
+  bewaard buiten de repo.
+
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
 - [ ] C2 Supabase productie: `supabase/toggle-auth-aan.sql`, "Allow new users to sign up" uit,
