@@ -26,8 +26,8 @@ Oud, uitgebreid plan (fase 0–5 met verslagen): `plan/archief/plan_t-m_2026-10-
 Pas als het testen door Steven, Emma en Myle klaar is (of zodra de testomgeving er is).
 
 - [ ] Inloggen op productie aan: `supabase/toggle-auth-aan.sql` + `AUTH_VEREIST` weg op Vercel.
-- [ ] Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" **uit**, eerst op
-      `puntum-test`, dan productie. Nieuwe testers daarna via "Invite user" + rij in `allowed_emails`.
+- [ ] Supabase → Authentication → Sign In / Providers → "Allow new users to sign up" **uit**: op
+      `puntum-test` gedaan (2026-10-06), productie nog. Nieuwe testers daarna via "Invite user" + rij in `allowed_emails`.
       (Loginpagina maakt sinds v0.7.39 zelf geen accounts meer aan.)
 - [ ] Tijdelijke `ANONIEM`-regel uit `magDealBewerken` halen + regressietests aanpassen.
 - [ ] Rollen echt testen: eigenaar, lid, andere org, demo-woning, ingelogd-maar-niet-op-allowlist.
