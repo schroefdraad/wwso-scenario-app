@@ -21,8 +21,10 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       pas naar `master` op het switch-moment. Productie v0.7.36 verklaard: laatste productie-deploy 3 okt 15:04 (handmatig via CLI); v0.7.37
       kwam later op `master`, vóór de Git-koppeling van 4 okt, en sindsdien is er niet naar `master`
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
-- [ ] B4 Optioneel nu al: Vercel → Domains `app.puntum.nl` + `puntum.nl` als redirect; DNS bij de
-      provider (Resend-records MX/SPF/DKIM niet aanraken). Code heeft geen hard ingestelde domeinen.
+- [x] B4a `app.puntum.nl` live (2026-10-08): CNAME bij Namecheap, Vercel geverifieerd, HTTPS werkt, toont
+      productie v0.7.36. **Niet delen vóór de switch** (inloggen staat daar nog uit).
+- [ ] B4b `puntum.nl` (nu Namecheap-parkeerpagina) doorsturen naar `app.puntum.nl` via Vercel; A-record
+      `@` vervangen. Resend-records (`send`, `resend._domainkey`) niet aanraken.
 
 - Back-up productie gemaakt (2026-10-06): CSV-export van `deals`, `allowed_emails`, `orgs`, `feedback`,
   bewaard buiten de repo.

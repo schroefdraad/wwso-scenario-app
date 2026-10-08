@@ -6,7 +6,7 @@ Laatst bijgewerkt: 2026-10-08 · Versie app op productie **v0.7.36** (laatste de
 
 | | Productie | Test | Lokaal |
 |---|---|---|---|
-| URL | `web-skael.vercel.app` | `web-git-test-skael.vercel.app` (branch `test`) | `localhost:3000` |
+| URL | `web-skael.vercel.app` en `app.puntum.nl` (sinds 2026-10-08, nog niet delen) | `web-git-test-skael.vercel.app` (branch `test`) | `localhost:3000` |
 | Supabase | productieproject | `puntum-test` (`phjaooawljkmrweyqroh`) | `puntum-test` |
 | Deployen | Git-koppeling sinds 4 okt: push naar `master` = productie (nog niet gebruikt) | automatisch bij push naar `test` | — |
 | Inloggen | ⚠ **uit** | **aan** (sinds 2026-10-04, magic link via eigen SMTP); inschrijven uit (2026-10-06) | uit |
