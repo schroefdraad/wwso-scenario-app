@@ -64,6 +64,8 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       BAG via PDOK, deuren bekend (21/24 kasten één buurruimte), wél hoogte-info in FML.
       Volgende: validatie op een nieuwe steekproef zonder bijstellen; m² onder 1,50 m uit FML; daarna
       mergen/deployen (akkoord eigenaar). Rapport: funda-scraper `outputs/RAPPORT_afwijkingen_verkleinen_20261008.md`.
+      Norm (besluit 2026-10-08): ≥ 80% van de panden ≤ 5% afwijking, én geen afwijking > 10% zonder
+      verklaring; steekproeven ≥ 20, overwegend eengezinshuizen. Validatie A → m² < 1,50 m → eindmeting B loopt (agent).
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
 
