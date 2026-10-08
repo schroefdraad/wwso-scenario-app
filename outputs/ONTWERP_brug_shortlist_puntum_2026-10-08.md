@@ -7,12 +7,15 @@ https://claude.ai/artifact/K43JcpaNBJEwA3z3TANb56 · Bouwt voort op
 
 ## Stroom
 
-1. **Controleren in de Shortlist** (Google Sheet, menu "Puntum"): "Controleer plattegronden" roept het
-   Cloud Run-endpoint `/plattegrond-fml` aan voor elke rij **zonder status** (± $0,004 per pand) en vult
-   nieuwe kolommen: `plattegrond` (in orde / aandacht / geen plattegrond), `afwijking`, `reden`,
-   `gecontroleerd`. Rijen met een status worden overgeslagen; status leegmaken = opnieuw.
+1. **Controleren vanuit de Shortlist** (bestaand menu "Funda Tools"): "Controleer plattegronden" leest
+   kolom F (`funda_url`) en A (adres) van het tabblad `shortlist` en roept het Cloud Run-endpoint
+   `/plattegrond-fml` aan voor elk pand dat **nog niet op het tabblad `puntum`** staat (± $0,004 per pand).
+   **Besluit eigenaar 2026-10-08: apart tabblad `puntum`**, één rij per gecontroleerd pand, gekoppeld op
+   Funda-ID: `funda_id`, `adres`, `plattegrond` (in orde / aandacht / geen plattegrond), `afwijking`,
+   `reden`, `gecontroleerd`, `naar Puntum`. De Shortlist zelf krijgt geen kolommen (archiveren en de
+   bestaande `COL_*`-nummers blijven ongemoeid). Opnieuw controleren = de rij op `puntum` verwijderen.
 2. **Exporteren** ("Naar Puntum", per rij of selectie): levert een importbestand (JSON) met het skelet en zet
-   de datum in kolom `naar Puntum`. Rijen met een datum slaat de export over. "Geen plattegrond" wordt
+   de datum in kolom `naar Puntum` op het tabblad `puntum`. Panden met een datum slaat de export over. "Geen plattegrond" wordt
    niet geëxporteerd (handmatig, zoals nu).
 3. **Importeren in Puntum** (`/woning/importeren`, achter de `'import'`-feature): plakken of uploaden →
    reviewscherm → "Overnemen in invoerscherm". Landt in `InvoerState`, niet direct in de database
@@ -32,7 +35,7 @@ weten. Typesuggestie uit de ruimtenaam is altijd een voorstel; onbekende naam = 
 
 ## Dubbel exporteren voorkomen (twee sloten)
 
-- **Sheet:** kolom `naar Puntum` met datum; export slaat zulke rijen over.
+- **Sheet:** kolom `naar Puntum` op tabblad `puntum` met datum; export slaat zulke panden over.
 - **Puntum:** de woning onthoudt het Funda-ID. Bestaat dat ID al in de organisatie → "Deze woning bestaat
   al: openen of toch een nieuwe maken?" (nooit stil een kopie, CLAUDE.md).
   **Gevolg:** een nieuw veld op `deals` (bijv. `bron_funda_id text null`, uniek per `org_id` waar niet
@@ -50,6 +53,6 @@ weten. Typesuggestie uit de ruimtenaam is altijd een voorstel; onbekende naam = 
 ## Volgorde en wanneer
 
 - **Scraperkant (kan nu, los van de hold):** endpoint deployen als aandachtslijst-hulpmiddel; Apps
-  Script-menu + kolommen; export-JSON. In het scraperproject.
+  Script-menu-items + tabblad `puntum`; export-JSON. In het scraperproject.
 - **Puntumkant (Fase 4, taak 21, na de bèta):** importscherm (B1–B3, C1.2–C1.3), Funda-ID + migratie,
   feature-gate (B6). Eerst plan mode, daarna bouwen; regressietest op het "bestaat al"-pad.
