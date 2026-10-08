@@ -75,8 +75,9 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       `outputs/RAPPORT_steekproef_c_20261008.md`): **huizen 87% ≤ 5%, 0 onverklaard → norm gehaald**;
       totaal 78%; appartementen 62% (1 onverklaard, Funda-getal wijkt af van FML én BAG). RESP001: Funda-
       botbescherming, mislukte calls kosten 0 credits; retry + `mode=auto`-fallback → 100% per pand.
-      Branch `brug-steekproef-c` lokaal (niet gemerged). Steven doet géén inmetingen (correctie eigenaar
-      2026-10-08); besluit over appartementen nodig zonder referentieset. Scraper: geplande scrape ma/wo/vr
+      Ronde C gemerged naar main (2026-10-08). Steven doet géén inmetingen. Appartementen: **BAG als
+      scheidsrechter** (FML binnen 5% van Funda óf BAG; besluit 2026-10-08) — bouwen + steekproef D loopt
+      (agent). Fase 8 in het scraperplan gemarkeerd als vervangen door de brug. Scraper: geplande scrape ma/wo/vr
       06:00 UTC via GitHub Actions draait `main`; Cloud Run (`/plattegrond-fml`) wordt handmatig gedeployd. Appartementen: zie hieronder (geen inmetingen
       door Steven).
       ⚠ ZenRows-sleutel staat sinds 2026-08-13 in 4 bestanden van de (privé) scraper-repo: sleutel
