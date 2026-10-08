@@ -70,7 +70,11 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       dubbeltelling + m² < 1,50 m: eindmeting B (21 nieuwe panden) **76% ≤ 5%** (was 43%), mediaan 3,5%,
       2 onverklaard > 10% → norm nog net niet gehaald. Open: signalen "verdieping leeg getekend" en
       "Funda veel meer bijgebouwen" toetsen op steekproef C; appartementen systematisch 3–7% onder Funda
-      (norm of referentieset Steven); RESP001 bij ~70% van de detailcalls. Mergen naar main kan, deployen na C.
+      (norm of referentieset Steven); RESP001 bij ~70% van de detailcalls. Gemerged naar main en gepusht (2026-10-08, geen deploy).
+      Steekproef C + RESP001-onderzoek loopt (agent, branch `brug-steekproef-c`). Appartementen: wachten
+      op referentieset Steven (besluit 2026-10-08).
+      ⚠ ZenRows-sleutel staat sinds 2026-08-13 in 4 bestanden van de (privé) scraper-repo: sleutel
+      vervangen (eigenaar), daarna uit die bestanden halen.
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
 
