@@ -58,9 +58,12 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
 - [ ] S0.2 Skelet-preset uitbreiden met gedeelde ruimtes (lege m²)
 - [ ] S0.3 Knop "Kopieer voor Shortlist" op het resultaatscherm
 - [ ] S0.4 Antwoorddocument naar de scraperkant (`role`/NEN2580-vraag)
-- [ ] S0.6 Afwijkingen-analyse: `outputs/RAPPORT_brug_afwijkingen_2026-10-08.md`. Voorstel: mandjes per
-      Funda-categorie (scraper), afwijking per verdieping/ruimte (scraper), referentieset met Stevens
-      inmetingen, BAG als derde getal, woordenlijst type-suggestie (Puntum, na de bèta).
+- [ ] S0.6 Afwijkingen verkleinen — stap 1/2/4/6 gebouwd in funda-scraper, branch `brug-afwijkingen`
+      (lokaal, niet gepusht). Mediaan |verschil| 5,4% → 4,3% (per mandje) → 3,2% (na verklaring, deels
+      afgesteld op dezelfde data), n=10. FML als één gratis `.fml`-download (geen dure render meer),
+      BAG via PDOK, deuren bekend (21/24 kasten één buurruimte), wél hoogte-info in FML.
+      Volgende: validatie op een nieuwe steekproef zonder bijstellen; m² onder 1,50 m uit FML; daarna
+      mergen/deployen (akkoord eigenaar). Rapport: funda-scraper `outputs/RAPPORT_afwijkingen_verkleinen_20261008.md`.
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
 
