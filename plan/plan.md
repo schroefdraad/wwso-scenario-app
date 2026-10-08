@@ -33,6 +33,9 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - Opgelost in v0.7.45 / engine 0.3.0: minimummaten + zolder-eisen, R4 gemeenschappelijk vertrek, wastafel 8+.
 - [ ] Na de bèta: R3-maximum vóór/na deling toetsen, hardcoded waarden naar `packages/data`.
 
+- [ ] Branch `wastafel-uitleg` (v0.7.46: info-badges wastafel/meerpersoonswastafel) naar `test` mergen ná
+      Stevens testronde, kort in de browser controleren, dan mee in de switch-release.
+
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
 - [ ] C2 Supabase productie: `supabase/toggle-auth-aan.sql`, "Allow new users to sign up" uit,
