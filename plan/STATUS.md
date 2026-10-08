@@ -1,6 +1,6 @@
 # Status — WWSO Scenario App (Puntum)
 
-Laatst bijgewerkt: 2026-10-06 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.45** (gecontroleerd 2026-10-06; klaar voor de productie-switch) · Historie: `plan/archief/`
+Laatst bijgewerkt: 2026-10-08 · Versie app op productie **v0.7.36** (laatste deploy 3 okt handmatig; v0.7.37 staat op `master` maar is nooit gedeployd) · op `test`: **v0.7.45** (engine 0.3.0; v0.7.44 gecontroleerd, v0.7.45 nog in de browser controleren) · Historie: `plan/archief/`
 
 ## Omgevingen
 
