@@ -93,9 +93,10 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
 - [ ] S0.7 Ontwerp stroom Shortlist → Puntum (controleren, exporteren, dubbel-export voorkomen):
       `outputs/ONTWERP_brug_shortlist_puntum_2026-10-08.md` + mockup. Besluiten 2026-10-08: tabblad
       `puntum`; aandacht ook exporteren; eerst importbestand (later evt. directe koppeling, zelfde JSON);
-      Funda-ID als veld + migratie. Scraperkant gebouwd (branch `brug-shortlist`, lokaal):
-      exportcontract v1, Apps Script (menu + tabblad `puntum`), handleiding; Python- en Node-tests groen, niet in
-      echte Apps Script getest. Nodig: review/merge, deploy Cloud Run (regio controleren), script plakken.
+      Funda-ID als veld + migratie. Scraperkant gebouwd, code-review (10 punten) verwerkt,
+      gemerged naar main (2026-10-08). Tests: 162 Python + Node groen; niet in echte Apps Script getest.
+      Nodig (eigenaar): deploy Cloud Run via Cloud Shell (regio controleren), script + `puntum_pure` plakken,
+      `initDashboard`, één pand proberen. Handleiding: funda-scraper `outputs/HANDLEIDING_brug_shortlist_20261008.md`.
       Puntumkant Fase 4 na de bèta.
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
