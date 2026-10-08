@@ -56,6 +56,9 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
 - [ ] S0.2 Skelet-preset uitbreiden met gedeelde ruimtes (lege m²)
 - [ ] S0.3 Knop "Kopieer voor Shortlist" op het resultaatscherm
 - [ ] S0.4 Antwoorddocument naar de scraperkant (`role`/NEN2580-vraag)
+- [ ] S0.6 Afwijkingen-analyse: `outputs/RAPPORT_brug_afwijkingen_2026-10-08.md`. Voorstel: mandjes per
+      Funda-categorie (scraper), afwijking per verdieping/ruimte (scraper), referentieset met Stevens
+      inmetingen, BAG als derde getal, woordenlijst type-suggestie (Puntum, na de bèta).
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
 
