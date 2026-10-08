@@ -18,6 +18,28 @@ function voldoetAanExtraEisen(post: SanitairVoorziening): boolean {
  * vertrek aanwijst; zolang dat veld er niet is, rekent de engine het strengere maximum en
  * onderschat hij dus hooguit. Zie rapport taak 5.
  */
+/**
+ * INTERPRETATIE (besluit eigenaar 2026-10-08, engine 0.4.0): in een toiletruimte tellen alleen het
+ * toilet en maximaal één fonteintje. Een ruimte met douche, bad of meerpersoonswastafel is geen
+ * toiletruimte; zulke waarden (bijv. blijven staan na het wijzigen van het ruimtetype, de invoer
+ * verbergt die velden) tellen daarom niet mee, en extra's ook niet. Het ruimtetype is leidend.
+ * Eén plek, gebruikt door de berekening, de wastafel-uitzondering en de marge-analyse.
+ */
+export function effectieveSanitairPost(post: SanitairVoorziening, ruimte: Ruimte | undefined): SanitairVoorziening {
+  if (ruimte?.type !== 'Toiletruimte') return post;
+  return {
+    ...post,
+    aantalWastafels: Math.min(post.aantalWastafels, 1),
+    aantalMeerpersoonswastafels: 0,
+    douche: false,
+    bad: false,
+    badDoucheCombinatie: false,
+    extra: Object.fromEntries(
+      Object.entries(post.extra).map(([k, v]) => [k, typeof v === 'boolean' ? false : 0]),
+    ) as SanitairVoorziening['extra'],
+  };
+}
+
 function wastafelPunten(
   post: SanitairVoorziening,
   isBadkamer: boolean,
@@ -101,6 +123,7 @@ export function berekenSanitair(
   tarievenset: Tarievenset,
   wastafelZonderMaximum = false,
 ): SanitairBerekening {
+  post = effectieveSanitairPost(post, ruimte);
   const isBadkamer = ruimte?.type === 'Badruimte';
 
   const toilet = tarievenset.sanitairToiletPunten[post.toiletType];
@@ -153,7 +176,8 @@ export function ruimteZonderWastafelMaximum(input: PandInvoer, tarievenset: Tari
     const ruimte = ruimteBijNr.get(post.ruimteNr);
     if (!ruimte || ruimte.type === 'Badruimte' || !waardeertVoorzieningen(ruimte.type)) continue;
     if ((kamersBijRuimte.get(post.ruimteNr) ?? []).length === 0) continue;
-    const winst = wastafelPunten(post, false, tarievenset, true) - wastafelPunten(post, false, tarievenset);
+    const effectief = effectieveSanitairPost(post, ruimte);
+    const winst = wastafelPunten(effectief, false, tarievenset, true) - wastafelPunten(effectief, false, tarievenset);
     winstPerRuimte.set(post.ruimteNr, (winstPerRuimte.get(post.ruimteNr) ?? 0) + winst);
   }
   let beste: { nr: number; winst: number } | undefined;

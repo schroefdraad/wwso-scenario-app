@@ -19,6 +19,7 @@ export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
     datum: '2026-10-08',
     wijzigingen: [
       'Sanitair: korte uitleg bij "Wastafels" en "Meerpersoonswastafels" (minimaal 70 cm breed met twee kranen).',
+      'Rekenregel sanitair (rekenmotor 0.4.0): in een toiletruimte tellen alleen het toilet en maximaal één fonteintje. Waarden voor douche, bad of meerpersoonswastafel die na het wijzigen van het ruimtetype zijn blijven staan, tellen niet meer mee (interpretatie: een ruimte met douche of bad is geen toiletruimte).',
     ],
   },
   {

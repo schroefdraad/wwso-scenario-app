@@ -262,3 +262,52 @@ describe('wastafel-uitzondering: alleen een ruimte met toegang, gekozen per ruim
     expect(berekenR6(input, tarieven).perKamerRuw[1]).toBeCloseTo(5 / 8, 10);
   });
 });
+
+// Code-review 2026-10-08, besluit eigenaar: in een toiletruimte tellen alleen toilet en fonteintje.
+// Een meerpersoonswastafel, douche, bad of extra's (bijv. blijven staan na het wijzigen van het
+// ruimtetype; de invoer verbergt die velden daar) tellen niet mee. INTERPRETATIE: een ruimte met
+// douche of bad is geen toiletruimte meer, het type is leidend.
+describe('toiletruimte: alleen toilet en fonteintje tellen', () => {
+  const tarieven = getTarievenset('2026-01-01');
+  const toiletruimte = { nr: 1, naam: 'WC', type: 'Toiletruimte' as const, oppervlakteM2: 1.5, verdieping: 0, verwarmd: false, verkoeld: false };
+
+  it('verborgen meerpersoonswastafel, douche en extra’s tellen niet', () => {
+    const input = maakPandInvoer({
+      aantalKamers: 1,
+      ruimtes: [toiletruimte],
+      toewijzing: [{ ruimteNr: 1, kamers: [1] }],
+      sanitair: [
+        maakSanitair({
+          ruimteNr: 1,
+          toiletType: 'Staand in toiletruimte',
+          aantalWastafels: 1,
+          aantalMeerpersoonswastafels: 1,
+          douche: true,
+          extra: { ...GEEN_SANITAIR_EXTRA, aantalHanddoekenradiatoren: 1 },
+        }),
+      ],
+    });
+    // toilet 3 + fonteintje 1 = 4
+    expect(berekenR6(input, tarieven).perKamer[1]).toBe(4);
+  });
+});
+
+// Code-review 2026-10-08: de wastafel-uitzondering (8+ kamers) koos een toiletruimte met een
+// blijven-staan aantal wastafels, waar de uitzondering niets oplevert.
+describe('wastafel-uitzondering negeert de beperking van een toiletruimte niet', () => {
+  it('kiest de echte ruimte met twee wastafels, niet de toiletruimte', () => {
+    const tarieven = getTarievenset('2026-01-01');
+    const alle = [1, 2, 3, 4, 5, 6, 7, 8];
+    const input = maakPandInvoer({
+      aantalKamers: 8,
+      ruimtes: [
+        { nr: 1, naam: 'WC', type: 'Toiletruimte', oppervlakteM2: 2, verdieping: 0, verwarmd: false, verkoeld: false },
+        { nr: 2, naam: 'Wasruimte', type: 'Wasruimte', oppervlakteM2: 5, verdieping: 0, verwarmd: false, verkoeld: false },
+      ],
+      toewijzing: [{ ruimteNr: 1, kamers: alle }, { ruimteNr: 2, kamers: alle }],
+      sanitair: [maakSanitair({ ruimteNr: 1, aantalWastafels: 2 }), maakSanitair({ ruimteNr: 2, aantalWastafels: 2 })],
+    });
+    // WC: max 1 fonteintje → 1. Wasruimte met uitzondering → 2. Samen 3 / 8.
+    expect(berekenR6(input, tarieven).perKamerRuw[1]).toBeCloseTo(3 / 8, 10);
+  });
+});

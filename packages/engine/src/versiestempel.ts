@@ -9,7 +9,8 @@ import { REGISTRY_VERSIE } from './suggesties/types';
 /** 0.2.0 (2026-10-06): R3 open keuken telt alleen als vertrek én keuken verwarmd zijn (§2.3.2). */
 /** 0.3.0 (2026-10-06, audit): minimummaten vertrek/overige ruimte en zolder-eisen (§2.2.1.2/§2.2.1.3/
  * §2.2.2.2), R4 telt gemeenschappelijke vertrekken mee (§2.4.4), wastafel-uitzondering 8+ (§2.6.1). */
-export const ENGINE_VERSIE = '0.3.0';
+/** 0.4.0 (2026-10-08): toiletruimte telt in R6 alleen toilet en maximaal één fonteintje (interpretatie). */
+export const ENGINE_VERSIE = '0.4.0';
 
 /**
  * Harde regel 6: elke opgeslagen berekening krijgt een stempel — peildatum tarieven + versie

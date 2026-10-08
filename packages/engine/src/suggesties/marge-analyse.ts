@@ -90,7 +90,9 @@ function poortSignalen(input: PandInvoer, tarievenset: Tarievenset): MargeSignaa
   for (const post of input.sanitair) {
     const kamers = kamersBijRuimte.get(post.ruimteNr) ?? [];
     const berekening = berekenSanitair(post, ruimteBijNr.get(post.ruimteNr), kamers.length, tarievenset);
-    if (!berekening.voldoetAanExtraEisen && (post.douche || post.bad || post.badDoucheCombinatie)) {
+    // Op de berekende douche/bad-punten, niet op de ruwe vinkjes: in een toiletruimte tellen die niet
+    // (`effectieveSanitairPost`, code-review 2026-10-08).
+    if (!berekening.voldoetAanExtraEisen && berekening.doucheBadPunten > 0) {
       signalen.push({
         soort: 'poort-niet-gehaald',
         rubriek: 'r6',
