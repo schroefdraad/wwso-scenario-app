@@ -1,6 +1,6 @@
 # Ontwerp brug Shortlist → Puntum (stroom en dubbel-export)
 
-Datum: 2026-10-08 · Status: ontwerp + mockup, wacht op keuzes · Mockup:
+Datum: 2026-10-08 · Status: ontwerp + mockup, keuzes gemaakt 2026-10-08 · Mockup:
 https://claude.ai/artifact/K43JcpaNBJEwA3z3TANb56 · Bouwt voort op
 `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md` (B1–B6, C1) en de validatie van de scraper
 (funda-scraper `outputs/RAPPORT_steekproef_e_20261008.md`).
@@ -42,13 +42,15 @@ weten. Typesuggestie uit de ruimtenaam is altijd een voorstel; onbekende naam = 
   null). Dat is een migratie (eerst `puntum-test`) — afwijking van brugplan §"geen migratie", nodig voor dit
   tweede slot. Alternatief zonder migratie: het Funda-ID in de notitie zetten en daarop zoeken (zwakker).
 
-## Open keuzes voor de eigenaar
+## Besluiten eigenaar (2026-10-08)
 
-1. **"Aandacht" ook exporteren** (aanbevolen, met de reden zichtbaar) of alleen "in orde"?
-2. **Overdracht:** importbestand plakken/uploaden (aanbevolen: geen koppeling tussen Sheet en Puntum,
-   werkt met de bestaande login) of een directe koppeling (Sheet schrijft in Puntum; vraagt een API-sleutel
-   en meer beveiliging)?
-3. **Funda-ID op de woning** via migratie (aanbevolen) of via de notitie?
+1. **"Aandacht" wordt ook geëxporteerd**, met de reden zichtbaar in Puntum (verdachte ruimtes zonder m²,
+   grijze bovengrens).
+2. **Overdracht: eerst een importbestand** (plakken/uploaden in Puntum). Bevalt het, dan later een directe
+   koppeling. Daarom ligt het JSON-contract (met eigen Zod-schema in Puntum, brugplan B3) vast vanaf het
+   begin; een directe koppeling stuurt later hetzelfde formaat.
+3. **Funda-ID als veld op de woning, met migratie** (`bron_funda_id`, uniek per `org_id` waar niet null;
+   eerst op `puntum-test`).
 
 ## Volgorde en wanneer
 

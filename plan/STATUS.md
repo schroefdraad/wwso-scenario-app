@@ -71,6 +71,8 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   zijn. Interpretatie van §2.3.2, gelijk aan de Huurprijscheck.
 - **Audit rekenmotor** (2026-10-06, engine 0.3.0): te kleine ruimtes en zolders tellen conform
   §2.2.1.2/§2.2.1.3/§2.2.2.2 als overige ruimte of niet, met waarschuwing (besluit eigenaar).
+- **Brug Shortlist → Puntum** (besluiten 2026-10-08): apart tabblad `puntum` in de Sheet; ook "aandacht"-
+  woningen exporteren; eerst via importbestand, later evt. directe koppeling; Funda-ID als veld op de woning.
 - Taxatiefactor (Steven): op de plank, geen actie.
 
 ## Bekende afwijkingen van de officiële Huurprijscheck (geen bug bij ons)
