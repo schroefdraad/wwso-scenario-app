@@ -71,7 +71,10 @@ FML heeft geen dakmodel; dat verandert niet. Wat helpt:
 - sinds engine 0.3.0 rekent Puntum een zolder zonder vaste trap of beschoten dak al correct als
   overige ruimte met 5 punten aftrek. De resterende fout zit dus alleen nog in de m² onder 1,50 m.
 
-### 2.5 Een referentieset met échte inmetingen (F kalibreren, alles meten) — samen met Steven
+### 2.5 Een referentieset met échte inmetingen (F kalibreren, alles meten) — VERVALLEN
+**Correctie 2026-10-08:** Steven doet geen inmetingen. Deze stap vervalt; zie het plan voor het
+alternatief (BAG als scheidsrechter bij appartementen).
+
 De enige manier om te weten hoe groot de **WWSO-fout per kamer** is: 5–10 panden waar Steven de
 kamers zelf heeft ingemeten (zijn vak), naast de FML-polygonen. Dan meet je:
 - de afwijking per kamer in m² en in punten (de echte maatstaf, zie §0);
