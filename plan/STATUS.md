@@ -63,7 +63,8 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   `allowed_emails` + zijn woningen verplaatsen, geen code).
 - **Twee UI-punten vóór de eerste productieversie** (besluit 2026-10-06, bewust afwijkend van "feedback
   in rondes"): woningacties optie A (menu ⋯ + bevestigingsvenster) en Opslaan in Scenario bewerken.
-- **Switch zonder testronde Steven** (besluit 2026-10-06): zelfde rol als Emma, en die ronde is geslaagd.
+- **Switch wacht op Steven** (besluit 2026-10-08, herziet 2026-10-06): hij test eerst twee woningen op
+  `test`. Tot dan geen codewijzigingen naar `test`.
 - **Teksten na ultra-review** (besluit 2026-10-06): "Vul eerst het aantal kamers in (sectie ①)" staat bij
   Ruimten en Overige posten; tooltip "kies er hoogstens één" bij alternatieven blijft weg.
 - **R3 open keuken** (besluit 2026-10-06, engine 0.2.0): telt alleen als vertrek én kitchenette verwarmd
