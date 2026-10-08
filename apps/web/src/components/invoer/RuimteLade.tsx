@@ -413,6 +413,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
           }}
         />
         <TariefBadge {...wastafelTarief('wastafel')} />
+        {!isToiletruimte && <InfoBadge>Meerpersoonswastafel? Vul die alleen hieronder in.</InfoBadge>}
       </div>
       {!isToiletruimte && (
         <div className={styles.veldrij}>
@@ -425,6 +426,7 @@ function SanitairPanel({ rij }: { rij: RuimteRij }) {
             onChange={(e) => zetSanitair({ aantalMeerpersoonswastafels: Number(e.target.value) || 0 })}
           />
           <TariefBadge {...wastafelTarief('meerpersoonswastafel')} />
+          <InfoBadge>Minimaal 70 cm breed met twee kranen (Beleidsboek §2.6.1).</InfoBadge>
         </div>
       )}
       {!isToiletruimte && (
