@@ -23,8 +23,8 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       gepusht. `test` bevat `master` volledig → de switch-merge is een fast-forward.
 - [x] B4a `app.puntum.nl` live (2026-10-08): CNAME bij Namecheap, Vercel geverifieerd, HTTPS werkt, toont
       productie v0.7.36. **Niet delen vóór de switch** (inloggen staat daar nog uit).
-- [ ] B4b `puntum.nl` (nu Namecheap-parkeerpagina) doorsturen naar `app.puntum.nl` via Vercel; A-record
-      `@` vervangen. Resend-records (`send`, `resend._domainkey`) niet aanraken.
+- [x] B4b `puntum.nl` stuurt door (308) naar `app.puntum.nl` (2026-10-08). Namecheap: A `@` naar Vercel,
+      parkeerrecords en `www` weg; Resend-records intact.
 
 - Back-up productie gemaakt (2026-10-06): CSV-export van `deals`, `allowed_emails`, `orgs`, `feedback`,
   bewaard buiten de repo.
