@@ -71,7 +71,12 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       2 onverklaard > 10% → norm nog net niet gehaald. Open: signalen "verdieping leeg getekend" en
       "Funda veel meer bijgebouwen" toetsen op steekproef C; appartementen systematisch 3–7% onder Funda
       (norm of referentieset Steven); RESP001 bij ~70% van de detailcalls. Gemerged naar main en gepusht (2026-10-08, geen deploy).
-      Steekproef C + RESP001-onderzoek loopt (agent, branch `brug-steekproef-c`). Appartementen: wachten
+      Steekproef C (23 nieuwe panden, regels bevroren; rapport funda-scraper
+      `outputs/RAPPORT_steekproef_c_20261008.md`): **huizen 87% ≤ 5%, 0 onverklaard → norm gehaald**;
+      totaal 78%; appartementen 62% (1 onverklaard, Funda-getal wijkt af van FML én BAG). RESP001: Funda-
+      botbescherming, mislukte calls kosten 0 credits; retry + `mode=auto`-fallback → 100% per pand.
+      Branch `brug-steekproef-c` lokaal (niet gemerged). Advies: test-deploy voor huizen kan na akkoord;
+      productie pas na referentieset Steven (appartementen). Appartementen: wachten
       op referentieset Steven (besluit 2026-10-08).
       ⚠ ZenRows-sleutel staat sinds 2026-08-13 in 4 bestanden van de (privé) scraper-repo: sleutel
       vervangen (eigenaar), daarna uit die bestanden halen.
