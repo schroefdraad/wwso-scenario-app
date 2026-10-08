@@ -65,7 +65,12 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       Volgende: validatie op een nieuwe steekproef zonder bijstellen; m² onder 1,50 m uit FML; daarna
       mergen/deployen (akkoord eigenaar). Rapport: funda-scraper `outputs/RAPPORT_afwijkingen_verkleinen_20261008.md`.
       Norm (besluit 2026-10-08): ≥ 80% van de panden ≤ 5% afwijking, én geen afwijking > 10% zonder
-      verklaring; steekproeven ≥ 20, overwegend eengezinshuizen. Validatie A → m² < 1,50 m → eindmeting B loopt (agent).
+      verklaring; steekproeven ≥ 20, overwegend eengezinshuizen. Validatie gedaan (2026-10-08, rapport funda-scraper
+      `outputs/RAPPORT_validatie_afwijkingen_20261008.md`): A zonder wijzigingen 65% ≤ 5%; na fix
+      dubbeltelling + m² < 1,50 m: eindmeting B (21 nieuwe panden) **76% ≤ 5%** (was 43%), mediaan 3,5%,
+      2 onverklaard > 10% → norm nog net niet gehaald. Open: signalen "verdieping leeg getekend" en
+      "Funda veel meer bijgebouwen" toetsen op steekproef C; appartementen systematisch 3–7% onder Funda
+      (norm of referentieset Steven); RESP001 bij ~70% van de detailcalls. Mergen naar main kan, deployen na C.
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
 
