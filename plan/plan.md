@@ -31,7 +31,7 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - [ ] B4d Speelbare demo op puntum.nl i.p.v. video's: voorbeeldpand + 4–6 maatregelen aan/uit, getallen
       vooraf berekend met de echte motor (JSON bij de build). Eerst mockup. Zie concurrentie-analyse 2026-10-09.
 - [ ] B5 Open inschrijving: code op branch `open-inschrijving` (v0.7.48, review verwerkt), plan
-      `~/.claude/plans/vast-swinging-river.md`. Open: 0008 + droogtest op `puntum-test` (jij), Turnstile-sleutels,
+      `~/.claude/plans/vast-swinging-river.md`. 0008 + droogtest op `puntum-test` gedraaid en groen (2026-10-09). Open: Turnstile-sleutels,
       aanbieder/KvK + contactadres in `lib/juridisch.ts`, juridische toets, mockup welkomstblok (eerste keer),
       browsertest. Pas naar `test` ná Stevens ronde en ná 0008.
 
