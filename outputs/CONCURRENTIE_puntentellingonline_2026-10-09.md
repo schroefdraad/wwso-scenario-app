@@ -62,6 +62,10 @@ beheerders. Claim: "nagerekend op meer dan 4000 woningen in de rekentool van de 
    (minimummaten, zolder, R3, R4). Let op: wie exact de Huurcommissie-tool volgt, geeft bij onzelfstandige
    woonruimte vermoedelijk **0 WOZ-punten** (wij 10–14, §2.11) → te toetsen.
 4. **Brug vanuit Funda** (Shortlist, plattegrond-m² met aandachtslijst, straks import): de aankoopfase.
+   **Correctie eigenaar 2026-10-09:** de Shortlist-koppeling is een eigen werkwijze, niet voor het brede
+   publiek. Alleen een functie "plak een Funda-link → skelet met m²" zou publiek kunnen, met twee haken:
+   juridisch risico van commercieel scrapen van Funda, en kosten/dekking (± $0,004 per pand, alleen bij een
+   Floorplanner-tekening). Telt dus vooral als voordeel in model B.
 
 ## Interface
 
@@ -76,6 +80,9 @@ uiterlijk komt. Advies: geen herontwerp vóór de bèta; onderscheid zichtbaar m
   Dat maakt de keuze vermarktmodel urgenter: bij A concurreren we met een gratis, verder ontwikkeld product;
   bij B is Puntum een eigen instrument binnen een dienst en is hun tool geen directe bedreiging.
 
+- **Voor een breed publiek (model A)** blijft als onderscheid: rendement/terugverdientijd per scenario,
+  het Beleidsboek als bron (WOZ-verschil te toetsen) en suggesties per kamer met afrondingseffect — een
+  smallere basis tegenover een gratis, verder ontwikkeld product. In model B is de Shortlist-brug juist sterk.
 - Positionering: niet concurreren op puntentelling alleen (zij zijn gratis), maar **beslisinstrument voor
   de investering bij kamerverhuur**: van Funda-shortlist naar scenario's met kosten en rendement. Raakt de
   open beslissing vermarktmodel A/B.
