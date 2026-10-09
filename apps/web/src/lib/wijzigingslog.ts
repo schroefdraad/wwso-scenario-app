@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.45';
+export const APP_VERSIE = '0.7.47';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,15 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.47',
+    datum: '2026-10-09',
+    wijzigingen: [
+      'Nieuw: knop "Gegevens ophalen" bij Woning. Puntum zoekt het adres op in de BAG en het WOZ-loket en vult gemeente (met COROP-gebied), bouwjaar, WOZ-waarde, WOZ-peildatum en WOZ-oppervlak (gebruiksoppervlakte uit de BAG) in. Aantal kamers, energielabel en monument vul je zelf in.',
+      'Opgehaalde velden hebben een groene rand en een vinkje; de bron staat in de tooltip. Had je zelf al iets anders ingevuld, dan wordt dat niet overschreven: je kiest per veld "Gebruik" of "Houd mijne".',
+      'Staan er meerdere woningen op het adres (bijvoorbeeld 49-A, 49-B en 49-C), dan kies je welke. Wordt iets niet gevonden (bijvoorbeeld geen WOZ-waarde bij nieuwbouw), dan blijft het veld leeg en krijg je een melding; er wordt niets geschat.',
+    ],
+  },
   {
     versie: '0.7.45',
     datum: '2026-10-06',
