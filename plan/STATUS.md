@@ -56,8 +56,10 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
   optimalisatie (zie `outputs/CONCURRENTIE_puntentellingonline_2026-10-09.md`). Bij twijfel bouwen voor wie er nu is.
 - **Beheer kostencatalogus** bij meerdere gebruikers: git-JSON (nu) of database met beheerscherm.
   Pas ontwerpen na de bèta-livegang. Alle 49 maatregelen staan nog op `schatting`.
-- **Nieuwe gebruikers:** tijdens de bèta alleen op uitnodiging (inschrijven uit, besluit 2026-10-06).
-  Hoe nieuwe gebruikers na de bèta binnenkomen: oppakken na de bèta (zie plan.md).
+- **Open inschrijving** (besluit 2026-10-09, herziet "alleen op uitnodiging" van 2026-10-06): iedereen kan
+  via de site direct een account maken (magic link) en de app gebruiken; e-mailadressen zijn mailbaar.
+  Nieuwsbrief met niet-aangevinkt toestemmingsvakje; site zegt "gratis tijdens de bèta". CLAUDE.md regel 8
+  aangepast. Resend en Supabase staan op het gratis plan (zie B5 in plan.md: limieten). Eerst plan (B5).
 - **Kernteam deelt één org** (besluit 2026-10-06): Emma, Steven en Myle zitten in de hoofd-org en
   kunnen elkaars woningen zien, wijzigen, kopiëren en verwijderen. Bewust zo gelaten voor de bèta.
   Opnieuw bekijken zodra Steven met echte klantpanden werkt: dan eigen org (alleen `org_id` in

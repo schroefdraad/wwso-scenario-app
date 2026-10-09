@@ -25,6 +25,13 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
       productie v0.7.36. **Niet delen vóór de switch** (inloggen staat daar nog uit).
 - [x] B4b `puntum.nl` stuurt door (308) naar `app.puntum.nl` (2026-10-08). Namecheap: A `@` naar Vercel,
       parkeerrecords en `www` weg; Resend-records intact.
+- [ ] B4c One-pager `puntum.nl` (investeerders): mockup https://claude.ai/artifact/2rCMA7SZpg42T2xCuTUDnW,
+      feedbackronde 1 verwerkt (v7, hoofdknop "Start direct"). Open: screenshot demopand, FAQ prijs
+      (hangt aan vermarktmodel). Daarna `apps/site` (branch `site`) bijwerken, Vercel-project, DNS.
+- [ ] B4d Speelbare demo op puntum.nl i.p.v. video's: voorbeeldpand + 4–6 maatregelen aan/uit, getallen
+      vooraf berekend met de echte motor (JSON bij de build). Eerst mockup. Zie concurrentie-analyse 2026-10-09.
+- [ ] B5 Open inschrijving (besluit 2026-10-09: iedereen kan direct een account maken, e-mail mailbaar).
+      Raakt de switch (B1), CLAUDE.md regel 8, privacy/AVG. Eerst plan (plan mode) — impact zie gesprek 2026-10-09.
 
 - Back-up productie gemaakt (2026-10-06): CSV-export van `deals`, `allowed_emails`, `orgs`, `feedback`,
   bewaard buiten de repo.

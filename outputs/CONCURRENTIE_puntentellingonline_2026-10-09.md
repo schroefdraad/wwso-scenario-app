@@ -92,3 +92,28 @@ uiterlijk komt. Advies: geen herontwerp vóór de bèta; onderscheid zichtbaar m
   toepassen); badkamer uit een kamer met automatische m²-aftrek; export "wat gaat er veranderen" voor de
   aannemer.
 - Toetsen: Kleiweg 179-B in hun gratis versie invoeren en vergelijken (vooral WOZ-punten).
+
+## Websiteteksten vergeleken (2026-10-09)
+
+Bron: puntentellingonline.nl, /demo, /referenties (opgehaald 2026-10-09). Vergeleken met mockup puntum.nl v7
+(https://claude.ai/artifact/2rCMA7SZpg42T2xCuTUDnW).
+
+**Hun boodschappen:** H1 "De beste puntentelling-tool op de markt, gemaakt voor de vastgoedprofessional";
+"in enkele minuten", "potentie doorrekenen met 1 klik"; risicoverlagers "Resultaat in minuten · Geen handleiding
+nodig · Geen creditcard"; bewijs "Getoetst tegen de Huurcommissie, nagerekend op meer dan 4000 woningen";
+"Zekerheid, snelheid en gemak"; functies (automatisch ophalen monument/WOZ/label, complexmatig in één keer, alle
+kamers in 1 telling, pandenbibliotheek); diensten (huur maximaliseren, labeladvies, aannemers, taxatie); € 0 p/m,
+max. 25 nieuwe leden/maand, wachtlijst; formulier naam/e-mail/telefoon/type gebruiker; oprichters met foto
+("Voor puntentellers, door puntentellers"); 3 demovideo's; 9 casussen met huur/jaar voor-na, taxatie voor-na en
+waardestijging (geen investering, geen terugverdientijd); WhatsApp en bellen.
+
+**Beter bij hen / mist bij ons:** tijdsbelofte + risicoverlagers; bewijs van juistheid met een getal; echte casussen
+in euro's; gezichten en expertise; demo zonder account; menselijk contact; waardestijging (taxatie) als uitkomst;
+doelgroepen benoemd; prijs expliciet; privacy/voorwaarden in de footer.
+
+**Niet overnemen:** superlatieven zonder onderbouwing ("de beste", "snelste") — ACM-risico; schaarste/wachtlijst
+(botst met open inschrijving); telefoonnummer uitvragen (AVG, niet nodig).
+
+**Ons sterkste verschil:** zij tonen wat het oplevert, niet wat het kost en wanneer het terug is. Puntum toont
+investering, terugverdientijd en ROI per scenario. Hun site is ook een leadfunnel voor advies, verbouwing en
+taxatie; Puntum kan zich (bij model A) als onafhankelijk positioneren.

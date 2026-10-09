@@ -54,7 +54,10 @@ Past een afspraak niet meer, stel dan een aanpassing van dit bestand voor.
 5. **De rekenmotor (`packages/engine`) blijft puur:** geen netwerk, geen database, geen systeemdatum.
 6. **Nooit stilzwijgend gokken.** Liever zichtbaar "ontbreekt nog" / `null` dan ongemerkt 0.
 7. **`org_id` op elke tabel.**
-8. **Geen persoonsgegevens**, alleen objectgegevens. Bewuste uitzondering: e-mailadres bij feedback.
+8. **Geen persoonsgegevens**, alleen objectgegevens (geen huurdergegevens). Bewuste uitzonderingen:
+   e-mailadres bij feedback, en het e-mailadres van gebruikers voor account en communicatie
+   (besluit 2026-10-09, open inschrijving). Nieuwsbrief/marketing alleen met vooraf gegeven toestemming
+   (niet-aangevinkt vakje, vastgelegd met datum) en een afmeldlink in elke mail.
 9. **Elke opgeslagen berekening krijgt een stempel:** peildatum tarieven + engineversie +
    catalogusversie.
 10. **Kwartpuntsafronding en deling per kamer** zijn de valkuilen: altijd expliciet testen.
