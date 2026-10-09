@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { leesLoginFout, loginOpties } from './fouten';
+import { callbackUrl, leesLoginFout, loginOpties } from './fouten';
 
 const REDIRECT = 'https://app.puntum.nl/auth/callback?volgende=%2Fwoningen';
 
@@ -7,30 +7,28 @@ const REDIRECT = 'https://app.puntum.nl/auth/callback?volgende=%2Fwoningen';
 // ("maakt geen nieuwe accounts aan"): die gold zolang alleen uitgenodigde adressen toegang hadden.
 describe('inloggen of account maken met magic link', () => {
   it('maakt voor een nieuw adres een account aan', () => {
-    expect(loginOpties({ redirectTo: REDIRECT, nieuwsbrief: false }).shouldCreateUser).toBe(true);
+    expect(loginOpties({ redirectTo: REDIRECT }).shouldCreateUser).toBe(true);
   });
 
   it('stuurt de redirect mee', () => {
-    expect(loginOpties({ redirectTo: REDIRECT, nieuwsbrief: false }).emailRedirectTo).toBe(
+    expect(loginOpties({ redirectTo: REDIRECT }).emailRedirectTo).toBe(
       REDIRECT,
     );
   });
 
-  it('zonder vinkje: geen toestemming nieuwsbrief in de accountgegevens (CLAUDE.md regel 8)', () => {
-    const opties = loginOpties({ redirectTo: REDIRECT, nieuwsbrief: false });
-    expect(opties.data).toBeUndefined();
+  it('stuurt nooit toestemming mee bij het aanmaken van het account (review 2026-10-09: dan kon iedereen voor andermans adres toestemming geven)', () => {
+    expect('data' in loginOpties({ redirectTo: REDIRECT, nieuwsbrief: true } as never)).toBe(false);
   });
 
-  it('met vinkje: toestemming gaat mee als nieuwsbrief=true (de database legt het moment vast)', () => {
-    expect(loginOpties({ redirectTo: REDIRECT, nieuwsbrief: true }).data).toEqual({
-      nieuwsbrief: true,
-    });
+  it('vinkje gaat via de callback-URL, zodat toestemming pas na klikken op de link wordt vastgelegd', () => {
+    expect(callbackUrl('https://app.puntum.nl', '/woningen', true)).toBe('https://app.puntum.nl/auth/callback?volgende=%2Fwoningen&nieuwsbrief=1');
+    expect(callbackUrl('https://app.puntum.nl', '/woningen', false)).toBe('https://app.puntum.nl/auth/callback?volgende=%2Fwoningen');
   });
 
   it('captcha-token gaat alleen mee als er een is', () => {
-    expect(loginOpties({ redirectTo: REDIRECT, nieuwsbrief: false }).captchaToken).toBeUndefined();
+    expect(loginOpties({ redirectTo: REDIRECT }).captchaToken).toBeUndefined();
     expect(
-      loginOpties({ redirectTo: REDIRECT, nieuwsbrief: false, captchaToken: 'tok' }).captchaToken,
+      loginOpties({ redirectTo: REDIRECT, captchaToken: 'tok' }).captchaToken,
     ).toBe('tok');
   });
 });

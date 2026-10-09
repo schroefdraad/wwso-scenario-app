@@ -4,22 +4,27 @@
  * - `shouldCreateUser: true`: een nieuw adres krijgt een account. De database-trigger uit
  *   `supabase/migrations/0008_open_inschrijving.sql` maakt daar meteen een eigen org bij.
  *   (Tot 2026-10-09 stond dit op false: alleen uitgenodigde adressen.)
- * - `data.nieuwsbrief`: alleen mee als het vakje is aangevinkt (CLAUDE.md regel 8: nieuwsbrief alleen
- *   met vooraf gegeven toestemming). De trigger legt het moment vast. Supabase bewaart `data` alleen
- *   bij het aanmaken van een account; bij een bestaand account doet het niets.
+ * - Bewust GEEN toestemming nieuwsbrief in `data`: Supabase maakt het account al aan vóórdat iemand
+ *   op de link klikt, dus dan kon iedereen voor andermans adres toestemming geven (review
+ *   2026-10-09). Het vinkje gaat via `callbackUrl` mee en wordt pas na het klikken vastgelegd.
  * - `captchaToken`: Cloudflare Turnstile, alleen als de widget aan staat (zie `Captcha.tsx`).
  */
-export function loginOpties(invoer: {
-  redirectTo: string;
-  nieuwsbrief: boolean;
-  captchaToken?: string;
-}) {
+export function loginOpties(invoer: { redirectTo: string; captchaToken?: string }) {
   return {
     emailRedirectTo: invoer.redirectTo,
     shouldCreateUser: true,
-    ...(invoer.nieuwsbrief ? { data: { nieuwsbrief: true } } : {}),
     ...(invoer.captchaToken ? { captchaToken: invoer.captchaToken } : {}),
   };
+}
+
+/**
+ * De link in de mail. Met `nieuwsbrief=1` legt `/auth/callback` de toestemming vast zodra de
+ * gebruiker met een geldige sessie terugkomt (ook voor een bestaand account).
+ */
+export function callbackUrl(origin: string, volgende: string, nieuwsbrief: boolean): string {
+  const params = new URLSearchParams({ volgende });
+  if (nieuwsbrief) params.set('nieuwsbrief', '1');
+  return `${origin}/auth/callback?${params.toString()}`;
 }
 
 /** Zet een Supabase-authfout om naar een melding in gewone taal. */

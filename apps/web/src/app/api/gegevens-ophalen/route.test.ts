@@ -126,7 +126,7 @@ describe('POST /api/gegevens-ophalen — daglimiet per org', () => {
 
   it('registreert elke geldige aanvraag met de daglimiet', async () => {
     await POST(verzoek({ adres: 'Kleiweg 179-B' }));
-    expect(rpc).toHaveBeenCalledWith('registreer_ophaalactie', { p_limiet: 50 });
+    expect(rpc).toHaveBeenCalledWith('registreer_ophaalactie');
     expect(haalGegevensOp).toHaveBeenCalledOnce();
   });
 
@@ -134,7 +134,15 @@ describe('POST /api/gegevens-ophalen — daglimiet per org', () => {
     rpc.mockResolvedValue({ data: 'limiet', error: null });
     const res = await POST(verzoek({ adres: 'Kleiweg 179-B' }));
     expect(res.status).toBe(429);
-    expect(await res.json()).toMatchObject({ status: 'fout', code: 'daglimiet', bericht: expect.stringContaining('50') });
+    expect(await res.json()).toMatchObject({ status: 'fout', code: 'daglimiet', bericht: expect.stringContaining('24 uur') });
+    expect(haalGegevensOp).not.toHaveBeenCalled();
+  });
+
+  it('totaallimiet (alle accounts samen) bereikt: 429, niets opgehaald', async () => {
+    rpc.mockResolvedValue({ data: 'limiet_totaal', error: null });
+    const res = await POST(verzoek({ adres: 'Kleiweg 179-B' }));
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: 'daglimiet' });
     expect(haalGegevensOp).not.toHaveBeenCalled();
   });
 

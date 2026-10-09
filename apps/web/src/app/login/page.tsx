@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../lib/supabase/client';
 import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import { CAPTCHA_SITE_KEY, Captcha } from './Captcha';
-import { leesLoginFout, loginOpties } from './fouten';
+import { callbackUrl, leesLoginFout, loginOpties } from './fouten';
 import styles from './styles.module.css';
 
 function LoginContent() {
@@ -38,10 +38,10 @@ function LoginContent() {
     if (wachtOpCaptcha) return;
     setStatus('bezig');
     setFoutmelding(undefined);
-    const redirectTo = `${window.location.origin}/auth/callback?volgende=${encodeURIComponent(volgende)}`;
+    const redirectTo = callbackUrl(window.location.origin, volgende, nieuwsbrief);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: loginOpties({ redirectTo, nieuwsbrief, captchaToken }),
+      options: loginOpties({ redirectTo, captchaToken }),
     });
     // Een token is maar één keer geldig: na elke poging een nieuwe vragen.
     if (captchaAan) setCaptchaReset((n) => n + 1);

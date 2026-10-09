@@ -5,9 +5,6 @@ export const runtime = 'nodejs';
 /** Drie opeenvolgende externe stappen met elk een eigen time-out (zie `gegevensOphalenServer.ts`). */
 export const maxDuration = 30;
 
-/** Daglimiet per org (open inschrijving, plan B5, 2026-10-09). Telling in `registreer_ophaalactie`. */
-const DAGLIMIET_OPHALEN = 50;
-
 type ServerClient = Awaited<ReturnType<typeof import('../../../lib/supabase/server').maakServerClient>>;
 
 /**
@@ -41,14 +38,19 @@ async function aanvrager(): Promise<'open' | ServerClient | null> {
  */
 async function controleerDaglimiet(supabase: ServerClient): Promise<Response | null> {
   try {
-    const { data, error } = await supabase.rpc('registreer_ophaalactie', { p_limiet: DAGLIMIET_OPHALEN });
+    // De limieten (50 per org, 1000 in totaal per 24 uur) staan in de databasefunctie zelf, zodat
+    // een gebruiker ze niet kan kiezen door de functie rechtstreeks aan te roepen (review 2026-10-09).
+    const { data, error } = await supabase.rpc('registreer_ophaalactie');
     if (!error && data === 'ok') return null;
-    if (!error && data === 'limiet') {
+    if (!error && (data === 'limiet' || data === 'limiet_totaal')) {
       return Response.json(
         {
           status: 'fout',
           code: 'daglimiet',
-          bericht: `Je hebt in de afgelopen 24 uur ${DAGLIMIET_OPHALEN} keer gegevens opgehaald, het maximum.`,
+          bericht:
+            data === 'limiet'
+              ? 'Je hebt in de afgelopen 24 uur het maximale aantal keer gegevens opgehaald.'
+              : 'Gegevens ophalen is in de afgelopen 24 uur heel vaak gebruikt en staat even stil.',
         },
         { status: 429 },
       );

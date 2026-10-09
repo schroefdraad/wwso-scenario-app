@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { haalDealenOp, kopieerDeal, verwijderDeal } from '../../lib/deals/opslag';
 import { haalEigenProfielOp, type Toegang } from '../../lib/deals/profiel';
 import type { Deal } from '../../lib/deals/types';
@@ -22,6 +23,19 @@ const GEEN_MAP = '(geen map)';
 function adresMetStad(adres: string, stad: string): string {
   if (!stad || adres.toLowerCase().includes(stad.toLowerCase())) return adres;
   return `${adres} · ${stad}`;
+}
+
+/** Melding vanuit `/auth/callback` (B5, 2026-10-09): het vinkje voor de nieuwsbrief kon niet
+ * worden vastgelegd. Zichtbaar, want de gebruiker denkt anders dat hij is aangemeld. */
+function CallbackMelding() {
+  const melding = useSearchParams().get('melding');
+  if (melding !== 'nieuwsbrief-mislukt') return null;
+  return (
+    <p className={`${styles.melding} ${styles.foutmelding}`}>
+      Je bent ingelogd, maar je aanmelding voor mails over nieuwe functies is niet gelukt. Log later
+      opnieuw in met het vinkje aan om het nog eens te proberen.
+    </p>
+  );
 }
 
 export default function DealsOverzicht() {
@@ -104,6 +118,9 @@ export default function DealsOverzicht() {
         }
       />
       <main className={styles.main}>
+        <Suspense fallback={null}>
+          <CallbackMelding />
+        </Suspense>
         {/* Filter hoort bij de lijst, niet in de topnavigatie (topnav-audit 2026-10-03). */}
         {mappen.length > 0 && (
           <div className={styles.filterRij}>
