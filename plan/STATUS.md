@@ -52,7 +52,8 @@ sessies van Steven zonder nieuwe blokkerende melding. Nog niet gehaald.
 ## Open beslissingen
 
 - **Vermarktmodel** A (software aan zelfstandige eindgebruikers) of B (instrument in Stevens dienst):
-  bewust nog niet gekozen. Bij twijfel bouwen voor wie er nu is.
+  bewust nog niet gekozen. Urgenter sinds 2026-10-09: gratis concurrent Puntentellingonline heeft volwassen
+  optimalisatie (zie `outputs/CONCURRENTIE_puntentellingonline_2026-10-09.md`). Bij twijfel bouwen voor wie er nu is.
 - **Beheer kostencatalogus** bij meerdere gebruikers: git-JSON (nu) of database met beheerscherm.
   Pas ontwerpen na de bèta-livegang. Alle 49 maatregelen staan nog op `schatting`.
 - **Nieuwe gebruikers:** tijdens de bèta alleen op uitnodiging (inschrijven uit, besluit 2026-10-06).

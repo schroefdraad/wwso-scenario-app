@@ -145,7 +145,8 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
   laadpaal → 2,75 (huidig) of 1 pt per kamer. Zie audit 2.2.
 - Concurrentie (2026-10-09): `outputs/CONCURRENTIE_puntentellingonline_2026-10-09.md`. Quick wins na de
   bèta: gegevens ophalen in Puntum (WOZ, gebruiksoppervlakte, label incl. geldigheid, monument); PDF per kamer
-  en één kamer; zelf te beheren presets; kant-en-klaar scenario "standaard kamerverhuur". Toetsen: Kleiweg
-  179-B in hun gratis versie (WOZ-punten). Positionering: beslisinstrument investering (raakt model A/B).
+  en één kamer; zelf te beheren presets; kant-en-klaar scenario "standaard kamerverhuur". Grotere ideeën: optimalisatieprofiel met regels, badkamer uit kamer met
+  m²-aftrek, export voor aannemer. Toetsen: Kleiweg 179-B in hun gratis versie (WOZ-punten). Hun
+  optimalisatie is volwassen → keuze vermarktmodel A/B urgenter.
 - Ná de bèta, vóór publieke lancering: volledige code-audit, security-hardening, AVG-traject.
   PSP pas na de keuze voor een vermarktmodel.
