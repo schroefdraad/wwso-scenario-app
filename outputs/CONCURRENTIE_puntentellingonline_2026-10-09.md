@@ -1,6 +1,6 @@
 # Concurrentie: Puntentellingonline.nl
 
-Datum: 2026-10-09 · Bron: website puntentellingonline.nl en twee demovideo's van het kanaal
+Datum: 2026-10-09 · Bron: website puntentellingonline.nl en drie demovideo's van het kanaal
 "Puntentellingonline" (Algemene DEMO, Demo object aanmaken, Demo optimalisatie), transcripten aangeleverd door de
 eigenaar. Niet zelf gebruikt; alles hieronder is wat zij laten zien of claimen.
 
@@ -58,10 +58,17 @@ beheerders. Claim: "nagerekend op meer dan 4000 woningen in de rekentool van de 
    kosten, maar tonen geen terugverdientijd of rendement.
 2. **Suggesties per kamer** met effect van kwartpunt- en heelpuntafronding (zij werken met regels/presets,
    wat praktischer is maar niet laat zien waar een punt net wel/niet valt).
-4. **Beleidsboek als bron** met §-verwijzingen, interpretaties gemarkeerd, versiestempel, audit 2026-10-06
+3. **Beleidsboek als bron** met §-verwijzingen, interpretaties gemarkeerd, versiestempel, audit 2026-10-06
    (minimummaten, zolder, R3, R4). Let op: wie exact de Huurcommissie-tool volgt, geeft bij onzelfstandige
    woonruimte vermoedelijk **0 WOZ-punten** (wij 10–14, §2.11) → te toetsen.
-5. **Brug vanuit Funda** (Shortlist, plattegrond-m² met aandachtslijst, straks import): de aankoopfase.
+4. **Brug vanuit Funda** (Shortlist, plattegrond-m² met aandachtslijst, straks import): de aankoopfase.
+
+## Interface
+
+Volgens de eigenaar lijken de interfaces op elkaar (indeling invoer: ruimtes in een raster, secties,
+resultaat per kamer). Logisch bij hetzelfde domein; het betekent wel dat onderscheid niet uit het
+uiterlijk komt. Advies: geen herontwerp vóór de bèta; onderscheid zichtbaar maken in wat uniek is
+(scenario's met rendement vooraan, de stap vanuit de Funda-shortlist, de aandachtslijst).
 
 ## Advies
 
