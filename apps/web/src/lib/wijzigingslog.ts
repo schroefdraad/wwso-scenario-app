@@ -4,7 +4,7 @@
  * REKENLOGICA versiet voor de reproduceerbaarheid van een opgeslagen deal (taak 15, harde regel
  * 6). Dit bestand is puur voor de gebruiker: "wat is er veranderd", getoond in de footer.
  */
-export const APP_VERSIE = '0.7.47';
+export const APP_VERSIE = '0.7.48';
 
 export interface WijzigingslogEntry {
   versie: string;
@@ -14,6 +14,17 @@ export interface WijzigingslogEntry {
 
 /** Nieuwste release eerst. */
 export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
+  {
+    versie: '0.7.48',
+    datum: '2026-10-09',
+    wijzigingen: [
+      'Iedereen kan nu zelf een account maken: vul op de inlogpagina je e-mailadres in en je krijgt een inloglink. Een nieuw account krijgt een eigen, afgeschermde omgeving en ziet meteen de voorbeeldwoning.',
+      'Op de inlogpagina kun je aangeven of je mails over nieuwe functies wilt ontvangen. Dat staat standaard uit.',
+      'Nieuw: een privacyverklaring en gebruiksvoorwaarden, te vinden via de inlogpagina.',
+      'Bij het inloggen kan een korte controle verschijnen of je geen robot bent.',
+      'Gegevens ophalen kan maximaal 50 keer per 24 uur per account. Daarna vul je de gegevens zelf in.',
+    ],
+  },
   {
     versie: '0.7.47',
     datum: '2026-10-09',

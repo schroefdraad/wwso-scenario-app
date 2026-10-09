@@ -31,7 +31,7 @@ export default function PrivacyPagina() {
         <li>Of en wanneer je toestemming gaf voor mails over nieuwe functies.</li>
         <li>
           De gegevens over panden die je zelf invoert: adres, kamers, voorzieningen, kosten en
-          scenario's. Puntum vraagt geen gegevens over huurders. Voer die ook niet in, bijvoorbeeld
+          scenario&apos;s. Puntum vraagt geen gegevens over huurders. Voer die ook niet in, bijvoorbeeld
           in een notitie.
         </li>
         <li>Feedback die je via de app stuurt, met je e-mailadres zodat we kunnen reageren.</li>

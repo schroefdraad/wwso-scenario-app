@@ -66,18 +66,29 @@ Daarom gaat de code in dezelfde release als de switch, niet eerder.
 5. Back-up productie-database (Supabase → Database → Backups, of `pg_dump` via SQL-export). 👤
 6. Code `ANONIEM` weg op `test` (🤖), testen op `test`, dan klaar om te mergen.
 7. Testers laten weten: op dag X ±15 minuten niet werken, daarna inloggen met magic link.
+8. **Open inschrijving (B5, besluit 2026-10-09):** migratie `0008_open_inschrijving.sql` eerst op
+   `puntum-test` + `supabase/onderhoud/0008_droogtest.sql` (alle kolommen true), dan op productie. 👤
+   Daarna pas code met de daglimiet naar een omgeving: zonder 0008 weigert Gegevens ophalen (fail closed).
+9. Cloudflare Turnstile: widget voor `app.puntum.nl` (+ testdomein), secret in Supabase → Attack
+   Protection (per project), site key als `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in Vercel. Zonder sleutel
+   staat de captcha in de app uit. 👤
+10. Supabase → Authentication → Rate limits: "emails sent" bewust op ±30 per uur (Resend gratis:
+    100/dag). 👤
+11. Gegevens in `apps/web/src/lib/juridisch.ts`: aanbieder + KvK en contactadres; na juridische
+    toetsing `CONCEPT: false`. 🤖 na aanlevering 👤
 
 **Switch (± 15 minuten, in deze volgorde)**
 1. Supabase productie → Authentication → URL Configuration: Site URL + redirect-URL's
    (`https://app.puntum.nl/**` en/of `https://web-skael.vercel.app/**`). 👤
-2. Supabase productie → "Allow new users to sign up" uit. 👤
+2. Supabase productie → "Allow new users to sign up" **aan** (open inschrijving, B5, herziet "uit"). 👤
 3. Vercel → Environment Variables → `AUTH_VEREIST` weg uit **Production**. 👤
 4. Supabase productie → SQL Editor → `supabase/toggle-auth-aan.sql`. 👤
    (Vanaf hier kan de oude, anonieme versie niets meer opslaan — kort.)
 5. `test` → `master` mergen via `/release` (🤖), versie v0.7.40, wijzigingslog. Push = deploy.
 6. Footer controleren: v0.7.40 live. 🤖 (curl) + 👤 (browser)
 7. Rooktest productie: inloggen als Myle (eigenaar), Emma (lid), studio-adres (andere org) en een
-   onbekend adres (geen toegang, geen mail). Per rol: woning openen, opslaan, kopiëren, demo-woning. 👤
+   een **nieuw** adres (account + eigen org, ziet alleen de demo-woning, kan eigen woning opslaan).
+   Per rol: woning openen, opslaan, kopiëren, demo-woning. 👤
 8. STATUS bijwerken: productie inloggen aan. 🤖
 
 ## Terugvalplan
