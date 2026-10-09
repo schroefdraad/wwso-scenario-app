@@ -10,7 +10,8 @@ import { NextResponse, type NextRequest } from 'next/server';
  *
  * Inloggen zelf is open (iedereen kan een magic link aanvragen) — of een ingelogde gebruiker ook
  * daadwerkelijk data ziet, hangt af van `allowed_emails` via RLS (zie
- * supabase/migrations/0002_auth_allowlist.sql), niet van deze proxy.
+ * supabase/migrations/0002_auth_allowlist.sql), niet van deze proxy. Sinds de open inschrijving
+ * (0008_open_inschrijving.sql) krijgt elk nieuw account automatisch een eigen rij en org.
  *
  * Handmatige, tijdelijke schakelaar (2026-08-24, zie plan.md): de ingebouwde Supabase-mailer
  * staat maar 2 magic-link-mails per uur toe (gedeeld over het hele project) — te storend tijdens
@@ -23,35 +24,47 @@ import { NextResponse, type NextRequest } from 'next/server';
 const AUTH_VEREIST = process.env.AUTH_VEREIST !== 'false';
 
 const PUBLIEKE_PADEN = ['/login', '/auth/callback'];
+/** Exact pad, zonder sessie bereikbaar: de juridische pagina's waar de loginpagina naar linkt (B5, 2026-10-09). */
+const OPENBARE_PAGINAS = ['/privacy', '/voorwaarden'];
 
 export async function proxy(request: NextRequest) {
   if (!AUTH_VEREIST) return NextResponse.next();
 
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        for (const { name, value } of cookiesToSet) request.cookies.set(name, value);
-        supabaseResponse = NextResponse.next({ request });
-        for (const { name, value, options } of cookiesToSet) supabaseResponse.cookies.set(name, value, options);
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          for (const { name, value } of cookiesToSet) request.cookies.set(name, value);
+          supabaseResponse = NextResponse.next({ request });
+          for (const { name, value, options } of cookiesToSet)
+            supabaseResponse.cookies.set(name, value, options);
+        },
       },
     },
-  });
+  );
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPubliekPad = PUBLIEKE_PADEN.some((pad) => request.nextUrl.pathname.startsWith(pad));
+  const isPubliekPad =
+    PUBLIEKE_PADEN.some((pad) => request.nextUrl.pathname.startsWith(pad)) ||
+    OPENBARE_PAGINAS.includes(request.nextUrl.pathname);
 
   // Een API-route wordt met `fetch` aangeroepen: een redirect naar /login levert daar HTML op en
   // geen duidelijke fout. Dus 401 met JSON (beperkt tot /api/, pagina's blijven redirecten).
   if (!user && request.nextUrl.pathname.startsWith('/api/')) {
-    return NextResponse.json({ status: 'fout', bericht: 'Je bent niet ingelogd.' }, { status: 401 });
+    return NextResponse.json(
+      { status: 'fout', bericht: 'Je bent niet ingelogd.' },
+      { status: 401 },
+    );
   }
 
   if (!user && !isPubliekPad) {

@@ -49,6 +49,21 @@
   font: inherit;
 }
 
+.form .vinkje {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.3rem;
+  color: var(--ink);
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.form .vinkje input {
+  margin-top: 0.15rem;
+  padding: 0;
+}
+
 .form button {
   margin-top: 0.4rem;
   padding: 0.55rem 0.8rem;

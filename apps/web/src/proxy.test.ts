@@ -30,7 +30,19 @@ describe('proxy — niet ingelogd (review 2026-10-09)', () => {
   it('een API-route krijgt 401 met JSON, geen redirect naar /login (fetch kan een redirect niet duiden)', async () => {
     const res = await proxyVoor('/api/gegevens-ophalen', 'POST');
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ status: 'fout', bericht: expect.stringContaining('ingelogd') });
+    expect(await res.json()).toMatchObject({
+      status: 'fout',
+      bericht: expect.stringContaining('ingelogd'),
+    });
+  });
+
+  it('privacyverklaring en voorwaarden zijn openbaar (open inschrijving, 2026-10-09)', async () => {
+    expect((await proxyVoor('/privacy')).status).toBe(200);
+    expect((await proxyVoor('/voorwaarden')).status).toBe(200);
+  });
+
+  it('een pad dat alleen met "privacy" begint is niet openbaar', async () => {
+    expect((await proxyVoor('/privacyx')).status).toBe(307);
   });
 
   it('ingelogd: een API-route gaat gewoon door', async () => {
