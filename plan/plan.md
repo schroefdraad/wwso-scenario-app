@@ -36,6 +36,10 @@ Werkwijze: alles eerst naar `test`, pas naar `master` (= productie) als het op t
 - [ ] Branch `wastafel-uitleg` (v0.7.46: info-badges wastafel/meerpersoonswastafel) naar `test` mergen ná
       Stevens testronde, kort in de browser controleren, dan mee in de switch-release.
 
+- [ ] Gegevens ophalen (kleine versie: BAG + WOZ, geen sleutel) mee in de bèta als het op tijd af is
+      (besluit 2026-10-09). Mockup: https://claude.ai/artifact/NEApd7KXFWv5eL5AmkcjBy — wacht op akkoord.
+      Eigen branch; houdt de switch niet op. Label (EP-online) en monument (RCE) na de bèta.
+
 **C. Productie-switch (één moment, via `/release` — eerste echte release)**
 - [ ] C1 Merge `test` → `master` met de `ANONIEM`-wijziging; footer controleren.
 - [ ] C2 Supabase productie: `supabase/toggle-auth-aan.sql`, "Allow new users to sign up" uit,
