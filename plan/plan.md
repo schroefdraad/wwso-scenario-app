@@ -143,6 +143,14 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
 - Backlog (geparkeerd 2026-10-06): laadpaal R10 wordt alleen ÷ adressen gedeeld, niet ÷ kamers
   (§2.10.5 letterlijk vs §2.1.5). Toetsen in de Huurprijscheck: 6 kamers, parkeerplek type III met
   laadpaal → 2,75 (huidig) of 1 pt per kamer. Zie audit 2.2.
+- **Na de bèta, eerst (besluit 2026-10-09):** 1) gegevens ophalen in Puntum via gratis API's, geen ZenRows:
+  PDOK/BAG (bouwjaar, gebruiksoppervlakte) en Kadaster WOZ-loket (code staat al in de scraper), daarna
+  EP-online (energielabel + geldigheid, gratis RVO-sleutel nodig) en RCE (rijksmonument, beschermd gezicht);
+  gemeentelijk monument blijft handmatig. 2) PDF per kamer / één kamer. 3) R6: geen extra's bij een
+  douchecabine in een kamer (§2.6.2 letterlijk; lost backlogpunt op).
+- Onderzoek: import uit PDF van de Huurprijscheck (tweede bron voor het importscherm, met automatische
+  vergelijking met hun uitkomst = validatieset). Nodig: 2–3 echte PDF's (kamerverhuur). Excel alleen per
+  bekend sjabloon, later.
 - Concurrentie (2026-10-09): `outputs/CONCURRENTIE_puntentellingonline_2026-10-09.md`. Quick wins na de
   bèta: gegevens ophalen in Puntum (WOZ, gebruiksoppervlakte, label incl. geldigheid, monument); PDF per kamer
   en één kamer; zelf te beheren presets; kant-en-klaar scenario "standaard kamerverhuur". Grotere ideeën: optimalisatieprofiel met regels, badkamer uit kamer met
