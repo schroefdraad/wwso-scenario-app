@@ -1,6 +1,15 @@
 import type { RuimteType } from '@wwso/engine';
 import { DUBBEL_GEDEELDE_RUIMTE_TYPES, testpand6Kamers } from '@wwso/engine';
-import { NIEUWE_INVOERSTATE, type InvoerState, type PandVeldenState, type RuimteRij } from './types';
+import {
+  NIEUWE_INVOERSTATE,
+  type GegevensOphalenState,
+  type InvoerState,
+  type OphaalMelding,
+  type OphaalVeld,
+  type PandVeldenState,
+  type RuimteRij,
+} from './types';
+import type { Toepassing } from './gegevensOphalen';
 import { pandInvoerNaarState } from './vanPandInvoer';
 import { nieuwSanitair } from './ladeDefaults';
 
@@ -31,6 +40,9 @@ function isDubbelGedeeld(type: RuimteType): boolean {
 
 export type InvoerActie =
   | { soort: 'PAND_VELD_GEWIJZIGD'; veld: keyof PandVeldenState; waarde: PandVeldenState[keyof PandVeldenState] }
+  | { soort: 'GEGEVENS_OPGEHAALD'; toepassing: Toepassing }
+  | { soort: 'GEGEVENS_CONFLICT_OPGELOST'; veld: OphaalVeld; gebruik: boolean }
+  | { soort: 'GEGEVENS_MELDING_GEZET'; melding: OphaalMelding | null }
   | { soort: 'RUIMTE_TOEGEVOEGD'; ruimte: Partial<RuimteRij> }
   | { soort: 'RUIMTE_GEWIJZIGD'; id: string; patch: Partial<RuimteRij> }
   | { soort: 'RUIMTE_TYPE_GEWIJZIGD'; id: string; type: RuimteType }
@@ -95,6 +107,14 @@ function maakRuimte(state: InvoerState, overrides: Partial<RuimteRij>): RuimteRi
   };
 }
 
+const LEGE_OPHAAL_STATE: GegevensOphalenState = { herkomst: {}, conflicten: [], melding: null };
+
+/** Welk "Gegevens ophalen"-veld hoort bij een formulierveld? (`coropGebied` hoort bij `gemeente`.) */
+function ophaalVeldVan(veld: keyof PandVeldenState): OphaalVeld | null {
+  if (veld === 'coropGebied') return 'gemeente';
+  return (['adres', 'stad', 'gemeente', 'bouwjaar', 'wozWaarde', 'wozPeildatum', 'wozOppervlak'] as const).find((v) => v === veld) ?? null;
+}
+
 export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerState {
   switch (actie.soort) {
     case 'PAND_VELD_GEWIJZIGD': {
@@ -104,8 +124,50 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
         return Number.isFinite(parsed) && parsed > 0 ? Math.min(12, parsed) : 1;
       })();
       const ruimtes = state.ruimtes.map((r) => ({ ...r, kamers: r.kamers.filter((k) => k <= n) }));
-      return { ...state, pand, ruimtes };
+      // Zelf een veld aanpassen: de "opgehaald"-markering en een openstaand conflict vervallen.
+      const ophaalVeld = ophaalVeldVan(actie.veld);
+      const go = state.gegevensOphalen;
+      const gegevensOphalen =
+        go && ophaalVeld && (go.herkomst[ophaalVeld] || go.conflicten.some((c) => c.veld === ophaalVeld))
+          ? {
+              ...go,
+              herkomst: Object.fromEntries(Object.entries(go.herkomst).filter(([k]) => k !== ophaalVeld)),
+              conflicten: go.conflicten.filter((c) => c.veld !== ophaalVeld),
+            }
+          : go;
+      return { ...state, pand, ruimtes, ...(gegevensOphalen ? { gegevensOphalen } : {}) };
     }
+
+    case 'GEGEVENS_OPGEHAALD': {
+      const oud = state.gegevensOphalen ?? LEGE_OPHAAL_STATE;
+      return {
+        ...state,
+        pand: { ...state.pand, ...actie.toepassing.patch },
+        gegevensOphalen: {
+          herkomst: { ...oud.herkomst, ...actie.toepassing.herkomst },
+          conflicten: actie.toepassing.conflicten,
+          melding: actie.toepassing.melding,
+        },
+      };
+    }
+
+    case 'GEGEVENS_CONFLICT_OPGELOST': {
+      const oud = state.gegevensOphalen;
+      const c = oud?.conflicten.find((x) => x.veld === actie.veld);
+      if (!oud || !c) return state;
+      return {
+        ...state,
+        pand: actie.gebruik ? { ...state.pand, ...c.patch } : state.pand,
+        gegevensOphalen: {
+          ...oud,
+          herkomst: actie.gebruik ? { ...oud.herkomst, [c.veld]: c.herkomst } : oud.herkomst,
+          conflicten: oud.conflicten.filter((x) => x.veld !== actie.veld),
+        },
+      };
+    }
+
+    case 'GEGEVENS_MELDING_GEZET':
+      return { ...state, gegevensOphalen: { ...(state.gegevensOphalen ?? LEGE_OPHAAL_STATE), melding: actie.melding } };
 
     case 'RUIMTE_TOEGEVOEGD': {
       const ruimte = maakRuimte(state, actie.ruimte);
