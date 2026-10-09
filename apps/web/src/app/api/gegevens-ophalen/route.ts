@@ -33,6 +33,17 @@ async function isToegestaan(): Promise<boolean> {
  * voor een ingelogde gebruiker (behalve waar inloggen bewust uit staat).
  */
 export async function POST(request: Request) {
+  // Op productie staat inloggen uit (`AUTH_VEREIST=false`): dan zou deze route een open doorgeefluik
+  // naar PDOK/BAG/het WOZ-loket zijn. Bewust uitgeschakeld tot inloggen aan staat (CLAUDE.md:
+  // bouw voor de omgeving zoals die nu is). Lokaal en op preview/test (VERCEL_ENV != production)
+  // blijft hij werken. Geen aparte begrenzing per sessie: op serverless is een teller in het
+  // geheugen onbetrouwbaar en een gedeelde teller vraagt een opslag die er niet is.
+  if (process.env.AUTH_VEREIST === 'false' && process.env.VERCEL_ENV === 'production') {
+    return Response.json(
+      { status: 'fout', code: 'niet_beschikbaar', bericht: 'Gegevens ophalen is nog niet beschikbaar. Vul de gegevens zelf in.' },
+      { status: 503 },
+    );
+  }
   if (!(await isToegestaan())) return Response.json({ status: 'fout', bericht: 'Je bent niet ingelogd.' }, { status: 401 });
 
   let body: unknown;

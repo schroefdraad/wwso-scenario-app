@@ -48,6 +48,12 @@ export async function proxy(request: NextRequest) {
 
   const isPubliekPad = PUBLIEKE_PADEN.some((pad) => request.nextUrl.pathname.startsWith(pad));
 
+  // Een API-route wordt met `fetch` aangeroepen: een redirect naar /login levert daar HTML op en
+  // geen duidelijke fout. Dus 401 met JSON (beperkt tot /api/, pagina's blijven redirecten).
+  if (!user && request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.json({ status: 'fout', bericht: 'Je bent niet ingelogd.' }, { status: 401 });
+  }
+
   if (!user && !isPubliekPad) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';

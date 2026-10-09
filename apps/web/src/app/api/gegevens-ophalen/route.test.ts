@@ -16,7 +16,9 @@ const verzoek = (body: unknown) =>
   new Request('http://localhost/api/gegevens-ophalen', { method: 'POST', body: typeof body === 'string' ? body : JSON.stringify(body) });
 
 const OORSPRONG = process.env.AUTH_VEREIST;
+const OORSPRONG_VERCEL = process.env.VERCEL_ENV;
 beforeEach(() => {
+  delete process.env.VERCEL_ENV;
   getUser.mockReset();
   haalGegevensOp.mockReset();
   haalGegevensOp.mockResolvedValue({ status: 'niet_gevonden' });
@@ -24,6 +26,32 @@ beforeEach(() => {
 afterEach(() => {
   if (OORSPRONG === undefined) delete process.env.AUTH_VEREIST;
   else process.env.AUTH_VEREIST = OORSPRONG;
+  if (OORSPRONG_VERCEL === undefined) delete process.env.VERCEL_ENV;
+  else process.env.VERCEL_ENV = OORSPRONG_VERCEL;
+});
+
+describe('POST /api/gegevens-ophalen — uitgeschakeld op productie zolang inloggen uit staat (review 2026-10-09)', () => {
+  it('productie + AUTH_VEREIST=false: 503 met duidelijke melding, niets opgehaald', async () => {
+    process.env.AUTH_VEREIST = 'false';
+    process.env.VERCEL_ENV = 'production';
+    const res = await POST(verzoek({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ status: 'fout', code: 'niet_beschikbaar', bericht: expect.stringContaining('nog niet beschikbaar') });
+    expect(haalGegevensOp).not.toHaveBeenCalled();
+  });
+
+  it('productie met inloggen aan: werkt voor een ingelogde gebruiker', async () => {
+    delete process.env.AUTH_VEREIST;
+    process.env.VERCEL_ENV = 'production';
+    getUser.mockResolvedValue({ data: { user: { id: 'u1' } } });
+    expect((await POST(verzoek({ adres: 'Kleiweg 179-B' }))).status).toBe(200);
+  });
+
+  it('preview/test met inloggen uit: werkt gewoon', async () => {
+    process.env.AUTH_VEREIST = 'false';
+    process.env.VERCEL_ENV = 'preview';
+    expect((await POST(verzoek({ adres: 'Kleiweg 179-B' }))).status).toBe(200);
+  });
 });
 
 describe('POST /api/gegevens-ophalen — beveiliging', () => {
