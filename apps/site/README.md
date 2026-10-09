@@ -2,20 +2,21 @@
 
 Statische one-page site. Geen build, geen formulier, geen cookies, geen tracking, geen externe scripts.
 Lettertype: systeemfont (de Inter-fontbestanden zitten niet in de repo, alleen de licentie).
+De getallen in de scenariotabel zijn fictief en als voorbeeld gemarkeerd.
 
 ## Lokaal bekijken
 
     cd apps/site && python3 -m http.server 8000   # http://localhost:8000
 
-## Schakelaar voor de knop
+## Schakelaar voor de knoppen
 
 Bovenin `app.js`:
 
     const APP_LIVE = false;   // false: "Bèta start binnenkort" (niet klikbaar)
                               // true:  "Naar de app", link naar https://app.puntum.nl
 
-Zet op `true` na de productie-switch van de app, commit en deploy. Zonder JavaScript blijft de
-knop in de "binnenkort"-stand.
+Dit geldt voor beide knoppen op de pagina (hero en slot). Zet op `true` na de productie-switch van de
+app, commit en deploy. Zonder JavaScript blijven de knoppen in de "binnenkort"-stand.
 
 ## Deployen (door de eigenaar)
 

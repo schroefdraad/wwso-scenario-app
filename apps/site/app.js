@@ -8,14 +8,15 @@ const APP_LIVE = false;
 const APP_URL = 'https://app.puntum.nl';
 
 (function () {
-  var knop = document.getElementById('app-knop');
-  if (knop && APP_LIVE) {
-    var a = document.createElement('a');
-    a.id = 'app-knop';
-    a.className = 'knop';
-    a.href = APP_URL;
-    a.textContent = 'Naar de app';
-    knop.replaceWith(a);
+  if (APP_LIVE) {
+    var knoppen = document.querySelectorAll('[data-app-knop]');
+    for (var i = 0; i < knoppen.length; i++) {
+      var a = document.createElement('a');
+      a.className = 'knop';
+      a.href = APP_URL;
+      a.textContent = 'Naar de app';
+      knoppen[i].replaceWith(a);
+    }
   }
   var jaar = document.getElementById('jaar');
   if (jaar) jaar.textContent = new Date().getFullYear();

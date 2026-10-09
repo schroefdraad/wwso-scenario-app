@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Puntum</title>
-  <meta name="description" content="Puntum berekent voor kamerverhuur het puntenaantal en de maximale huur per kamer volgens het Beleidsboek WWSO van de Huurcommissie (januari 2026). Binnenkort, nu in besloten bèta.">
+  <meta name="description" content="Puntum is het beslisinstrument voor investeerders in kamerverhuur: punten en maximale huur per kamer volgens het Beleidsboek WWSO (januari 2026), met investering, terugverdientijd, rendement en BAR per optimalisatie. Nu in besloten bèta.">
   <meta name="theme-color" content="#2f6a53">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -12,7 +12,7 @@
   <meta property="og:locale" content="nl_NL">
   <meta property="og:site_name" content="Puntum">
   <meta property="og:title" content="Puntum">
-  <meta property="og:description" content="Punten en maximale huur per kamer, volgens het Beleidsboek WWSO. Binnenkort, nu in besloten bèta.">
+  <meta property="og:description" content="Weet vóór je verbouwt wat het oplevert. Rendement en terugverdientijd per optimalisatie in kamerverhuur. Besloten bèta.">
   <meta property="og:url" content="https://puntum.nl/">
   <meta property="og:image" content="https://puntum.nl/assets/og.png">
   <meta property="og:image:width" content="1200">
@@ -29,35 +29,87 @@
       <source srcset="assets/puntum-wordmark-white-sm.png" media="(prefers-color-scheme: dark)">
       <img class="logo" src="assets/puntum-wordmark-sm.png" width="500" height="159" alt="Puntum">
     </picture>
+    <span class="label">Besloten bèta</span>
   </header>
 
   <main id="inhoud">
     <section class="wrap hero">
-      <p class="label">Besloten bèta</p>
-      <h1>Punten en maximale huur voor kamerverhuur, per kamer berekend.</h1>
-      <p class="lead">Puntum is een webapp voor onzelfstandige woonruimte. Je ziet het puntenaantal en de maximale huur per kamer, en wat een verbetering oplevert en kost.</p>
+      <h1>Weet vóór je verbouwt wat het oplevert.</h1>
+      <p class="lead">Puntum is het beslisinstrument voor investeerders in kamerverhuur. Het rekent punten en maximale huur per kamer door, en toont per optimalisatie de investering, de terugverdientijd en het rendement.</p>
       <div class="actie">
-        <span id="app-knop" class="knop knop-uit" aria-disabled="true">Bèta start binnenkort</span>
+        <span class="knop knop-uit" data-app-knop aria-disabled="true">Bèta start binnenkort</span>
+      </div>
+      <p class="noot">Voor onzelfstandige woonruimte (kamerverhuur).</p>
+    </section>
+
+    <section class="wrap stappen" aria-labelledby="h-werking">
+      <h2 id="h-werking" class="sectiekop">Zo werkt het</h2>
+      <ol>
+        <li><span class="nr">1</span><div><h3>Pand invoeren</h3><p>Kamers, voorzieningen en energielabel. Gegevens worden waar mogelijk automatisch opgehaald.</p></div></li>
+        <li><span class="nr">2</span><div><h3>Punten per kamer</h3><p>Puntenaantal en maximale huur per kamer, per rubriek uitgesplitst.</p></div></li>
+        <li><span class="nr">3</span><div><h3>Scenario's met rendement</h3><p>Vergelijk tot drie scenario's met de huidige situatie, inclusief terugverdientijd.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="wrap usp" aria-labelledby="h-usp">
+      <h2 id="h-usp" class="sectiekop">Waar je op stuurt</h2>
+      <div class="raster">
+        <article class="groot">
+          <h3>ROI en terugverdientijd per optimalisatie</h3>
+          <p>Per scenario zie je de investering, de extra jaarhuur, de terugverdientijd, het marginaal bruto rendement en de verandering in het BAR. Je beslist op cijfers, niet op aannames.</p>
+        </article>
+        <article>
+          <h3>Optimalisaties per kamer</h3>
+          <p>Zie welke maatregel echt een punt oplevert, en dus huur. Het afrondingseffect is meegenomen: kwartpunt per rubriek, hele punten in het totaal.</p>
+        </article>
+        <article>
+          <h3>Analyse per kamer</h3>
+          <p>Punten en maximale huur per kamer, per rubriek, met verantwoording volgens het Beleidsboek WWSO. Als PDF-rapport.</p>
+        </article>
+        <article>
+          <h3>Direct herberekend</h3>
+          <p>Elke wijziging werkt meteen door. Woningen en scenario's kopieer je in een keer.</p>
+        </article>
+        <article>
+          <h3>Al je panden op één plek</h3>
+          <p>Geordend in mappen, met notities per pand.</p>
+        </article>
       </div>
     </section>
 
-    <section class="wrap blokken" aria-label="Wat Puntum doet">
-      <article>
-        <h2>Punten per kamer</h2>
-        <p>Puntum telt de punten van een woning en deelt ze per kamer toe, zodat je per kamer ziet waar het aantal vandaan komt.</p>
-      </article>
-      <article>
-        <h2>Maximale huur</h2>
-        <p>Uit het puntenaantal volgt de maximale huur per kamer.</p>
-      </article>
-      <article>
-        <h2>Wat levert een verbetering op?</h2>
-        <p>Een keuken, een beter energielabel of een extra kamer: je vergelijkt de huidige situatie met een scenario en ziet wat het oplevert en kost.</p>
-      </article>
-      <article>
-        <h2>Volgens het Beleidsboek</h2>
-        <p>De berekening volgt het Beleidsboek WWSO van de Huurcommissie, januari 2026.</p>
-      </article>
+    <section class="wrap voorbeeld" aria-labelledby="h-voorbeeld">
+      <h2 id="h-voorbeeld" class="sectiekop">Zo ziet een scenariovergelijking eruit</h2>
+      <div class="kaart">
+        <p class="stempel">Voorbeeld met fictieve getallen</p>
+        <div class="tabelwrap">
+          <table>
+            <caption class="sr">Voorbeeld: huidige situatie naast een scenario met een nieuwe keuken en energielabel B</caption>
+            <thead><tr><th scope="col"></th><th scope="col" class="num">Huidige situatie</th><th scope="col" class="num">Scenario 1</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Punten (woning)</th><td class="num">118</td><td class="num">126</td></tr>
+              <tr><th scope="row">Maximale huur per maand</th><td class="num">&euro; 2.310</td><td class="num">&euro; 2.480</td></tr>
+              <tr><th scope="row">Investering</th><td class="num">&ndash;</td><td class="num">&euro; 14.500</td></tr>
+              <tr><th scope="row">Extra jaarhuur</th><td class="num">&ndash;</td><td class="num">&euro; 2.040</td></tr>
+              <tr><th scope="row">Terugverdientijd</th><td class="num">&ndash;</td><td class="num">7,1 jaar</td></tr>
+              <tr><th scope="row">Marginaal bruto rendement</th><td class="num">&ndash;</td><td class="num">14,1%</td></tr>
+              <tr><th scope="row">BAR</th><td class="num">5,3%</td><td class="num">5,6%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="klein">Alleen ter illustratie. De getallen in Puntum volgen uit jouw pand en jouw kosten.</p>
+      </div>
+    </section>
+
+    <section class="wrap bron" aria-labelledby="h-bron">
+      <h2 id="h-bron" class="sectiekop">Volgens het Beleidsboek WWSO 2026</h2>
+      <p>De puntentelling volgt het Beleidsboek WWSO van de Huurcommissie, januari 2026. Per kamer zie je welke regel tot welk punt leidt.</p>
+    </section>
+
+    <section class="wrap slot">
+      <h2>Puntum is in besloten bèta.</h2>
+      <div class="actie">
+        <span class="knop knop-uit" data-app-knop aria-disabled="true">Bèta start binnenkort</span>
+      </div>
     </section>
   </main>
 
