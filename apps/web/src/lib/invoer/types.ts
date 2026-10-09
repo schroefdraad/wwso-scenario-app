@@ -62,8 +62,43 @@ export interface PandVeldenState {
   zorgwoning: boolean;
 }
 
+/** Velden die "Gegevens ophalen" kan invullen (besluit eigenaar 2026-10-09). `gemeente` dekt ook
+ * `coropGebied`. Aantal kamers, energielabel en monument horen er bewust niet bij. */
+export type OphaalVeld = 'adres' | 'stad' | 'gemeente' | 'bouwjaar' | 'wozWaarde' | 'wozPeildatum' | 'wozOppervlak';
+
+/** Waar een opgehaalde waarde vandaan komt, voor de tooltip bij het vinkje. `datum` = YYYY-MM-DD. */
+export interface OphaalHerkomst {
+  bron: 'WOZ-loket' | 'BAG';
+  datum: string;
+}
+
+/** Een veld waar de gebruiker zelf al iets anders had staan: nooit stil overschrijven. `patch` en
+ * `herkomst` worden pas toegepast als de gebruiker "Gebruik" kiest. */
+export interface OphaalConflict {
+  veld: OphaalVeld;
+  huidig: string;
+  opgehaaldTekst: string;
+  patch: Partial<PandVeldenState>;
+  herkomst: OphaalHerkomst;
+}
+
+export interface OphaalMelding {
+  soort: 'ok' | 'let';
+  tekst: string;
+}
+
+/** Sessie-informatie over de laatste "Gegevens ophalen" — wordt NIET opgeslagen in de database en
+ * is geen onderdeel van `PandInvoer` (projecteer.ts neemt het niet mee). */
+export interface GegevensOphalenState {
+  herkomst: Partial<Record<OphaalVeld, OphaalHerkomst>>;
+  conflicten: OphaalConflict[];
+  melding: OphaalMelding | null;
+}
+
 export interface InvoerState {
   pand: PandVeldenState;
+  /** Zie `GegevensOphalenState`. Optioneel: een oud concept uit sessionStorage heeft dit niet. */
+  gegevensOphalen?: GegevensOphalenState;
   ruimtes: RuimteRij[];
   aanbelfunctieAan: boolean;
   aanbelfunctieKamers: number[];
