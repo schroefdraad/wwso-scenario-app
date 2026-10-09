@@ -139,3 +139,25 @@ describe('haalGegevensOp', () => {
     expect(r.status === 'ok' && r.gegevens.bouwjaar).toBeNull();
   });
 });
+
+describe('review 2026-10-09: bouwjaar en oppervlak wachten niet op de WOZ-retry', () => {
+  it('de pand-call start al terwijl de WOZ-call nog wacht op zijn tweede poging', async () => {
+    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding/0599200001004841': [{ status: 404, body: WOZ_404 }, { status: 200, body: WOZ_KLEIWEG_179B }] });
+    let pandAangeroepenVoorWacht: boolean | null = null;
+    const wacht = async () => {
+      // Als de pand-stap eerst op de WOZ-retry moest wachten, is hij hier nog niet geweest.
+      await new Promise((r) => setTimeout(r, 20));
+      pandAangeroepenVoorWacht = f.aanroepen.some((u) => u.includes(PAND_URL));
+    };
+    const r = await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }, { fetch: f.fn, datum: '2026-10-09', wacht });
+    expect(pandAangeroepenVoorWacht).toBe(true);
+    expect(r.status === 'ok' && r.gegevens).toMatchObject({ bouwjaar: 1930, wozWaarde: 490000 });
+  });
+
+  it('stad komt niet overeen: de server geeft kiezen met waarschuwing', async () => {
+    const f = nepFetch({ 'locatieserver/search': { status: 200, body: LOCATIESERVER_KLEIWEG_179B } });
+    const r = await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Utrecht' }, deps(f));
+    expect(r).toMatchObject({ status: 'kiezen', waarschuwing: 'stad' });
+    expect(f.aanroepen).toHaveLength(1);
+  });
+});

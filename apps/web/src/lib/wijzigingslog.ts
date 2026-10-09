@@ -18,9 +18,9 @@ export const WIJZIGINGSLOG: WijzigingslogEntry[] = [
     versie: '0.7.47',
     datum: '2026-10-09',
     wijzigingen: [
-      'Nieuw: knop "Gegevens ophalen" bij Woning. Puntum zoekt het adres op in de BAG en het WOZ-loket en vult gemeente (met COROP-gebied), bouwjaar, WOZ-waarde, WOZ-peildatum en WOZ-oppervlak (gebruiksoppervlakte uit de BAG) in. Aantal kamers, energielabel en monument vul je zelf in.',
-      'Opgehaalde velden hebben een groene rand en een vinkje; de bron staat in de tooltip. Had je zelf al iets anders ingevuld, dan wordt dat niet overschreven: je kiest per veld "Gebruik" of "Houd mijne".',
-      'Staan er meerdere woningen op het adres (bijvoorbeeld 49-A, 49-B en 49-C), dan kies je welke. Wordt iets niet gevonden (bijvoorbeeld geen WOZ-waarde bij nieuwbouw), dan blijft het veld leeg en krijg je een melding; er wordt niets geschat.',
+      'Nieuw: knop "Gegevens ophalen" bij Woning. Puntum zoekt het adres op in de BAG en het WOZ-loket en vult gemeente (met COROP-gebied), bouwjaar, WOZ-waarde, WOZ-peildatum en WOZ-oppervlak (gebruiksoppervlakte uit de BAG) in. Aantal kamers, energielabel en monument vul je zelf in. Op de live omgeving is de knop nog niet beschikbaar zolang inloggen uit staat; dan vul je de gegevens zelf in.',
+      'Opgehaalde velden hebben een groene rand en een vinkje; de bron staat in de tooltip. Had je zelf al iets anders ingevuld, dan wordt dat niet overschreven: je kiest per veld "Gebruik" of "Houd mijne". WOZ-waarde en WOZ-peildatum horen bij elkaar en worden samen overgenomen of samen behouden.',
+      'Staan er meerdere woningen op het adres (bijvoorbeeld 49-A, 49-B en 49-C), dan kies je welke (klopt de stad of straat niet met wat je typte, dan krijg je ook een keuze in plaats van een gok); het gekozen adres wordt dan ook zelf ingevuld. Wordt iets niet gevonden (bijvoorbeeld geen WOZ-waarde bij nieuwbouw), dan blijft het veld leeg en krijg je een melding; er wordt niets geschat.',
     ],
   },
   {

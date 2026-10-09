@@ -9,7 +9,7 @@ import {
   type PandVeldenState,
   type RuimteRij,
 } from './types';
-import type { Toepassing } from './gegevensOphalen';
+import { bepaalToepassing, type OpgehaaldePand } from './gegevensOphalen';
 import { pandInvoerNaarState } from './vanPandInvoer';
 import { nieuwSanitair } from './ladeDefaults';
 
@@ -40,7 +40,10 @@ function isDubbelGedeeld(type: RuimteType): boolean {
 
 export type InvoerActie =
   | { soort: 'PAND_VELD_GEWIJZIGD'; veld: keyof PandVeldenState; waarde: PandVeldenState[keyof PandVeldenState] }
-  | { soort: 'GEGEVENS_OPGEHAALD'; toepassing: Toepassing }
+  /** Het ruwe opgehaalde resultaat: wat er gevuld wordt en wat een conflict is, bepaalt de reducer
+   * tegen de ECHTE huidige state (de respons komt een seconde of meer na het klikken). `adresLeidend`
+   * = de gebruiker koos dit adres expliciet uit een lijst: adres en stad worden dan overgenomen. */
+  | { soort: 'GEGEVENS_OPGEHAALD'; gegevens: OpgehaaldePand; taxatieModus: boolean; adresLeidend?: boolean }
   | { soort: 'GEGEVENS_CONFLICT_OPGELOST'; veld: OphaalVeld; gebruik: boolean }
   | { soort: 'GEGEVENS_MELDING_GEZET'; melding: OphaalMelding | null }
   | { soort: 'RUIMTE_TOEGEVOEGD'; ruimte: Partial<RuimteRij> }
@@ -127,27 +130,27 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
       // Zelf een veld aanpassen: de "opgehaald"-markering en een openstaand conflict vervallen.
       const ophaalVeld = ophaalVeldVan(actie.veld);
       const go = state.gegevensOphalen;
+      // Alleen bij een echte wijziging: een blur of herhaalde zet met dezelfde waarde wist niets.
+      const veranderd = state.pand[actie.veld] !== actie.waarde;
       const gegevensOphalen =
-        go && ophaalVeld && (go.herkomst[ophaalVeld] || go.conflicten.some((c) => c.veld === ophaalVeld))
+        go && veranderd && ophaalVeld && (go.herkomst[ophaalVeld] || go.conflicten.some((c) => ophaalVeld in c.herkomst))
           ? {
               ...go,
               herkomst: Object.fromEntries(Object.entries(go.herkomst).filter(([k]) => k !== ophaalVeld)),
-              conflicten: go.conflicten.filter((c) => c.veld !== ophaalVeld),
+              conflicten: go.conflicten.filter((c) => !(ophaalVeld in c.herkomst)),
             }
           : go;
       return { ...state, pand, ruimtes, ...(gegevensOphalen ? { gegevensOphalen } : {}) };
     }
 
     case 'GEGEVENS_OPGEHAALD': {
-      const oud = state.gegevensOphalen ?? LEGE_OPHAAL_STATE;
+      const toepassing = bepaalToepassing(state.pand, actie.gegevens, { taxatieModus: actie.taxatieModus, adresLeidend: actie.adresLeidend });
       return {
         ...state,
-        pand: { ...state.pand, ...actie.toepassing.patch },
-        gegevensOphalen: {
-          herkomst: { ...oud.herkomst, ...actie.toepassing.herkomst },
-          conflicten: actie.toepassing.conflicten,
-          melding: actie.toepassing.melding,
-        },
+        pand: { ...state.pand, ...toepassing.patch },
+        // Een nieuwe ophaalactie VERVANGT de herkomst: een ✓ van een vorige actie (ander adres)
+        // blijft niet staan voor velden die nu niet uit deze actie komen.
+        gegevensOphalen: { herkomst: toepassing.herkomst, conflicten: toepassing.conflicten, melding: toepassing.melding },
       };
     }
 
@@ -160,8 +163,8 @@ export function invoerReducer(state: InvoerState, actie: InvoerActie): InvoerSta
         pand: actie.gebruik ? { ...state.pand, ...c.patch } : state.pand,
         gegevensOphalen: {
           ...oud,
-          herkomst: actie.gebruik ? { ...oud.herkomst, [c.veld]: c.herkomst } : oud.herkomst,
-          conflicten: oud.conflicten.filter((x) => x.veld !== actie.veld),
+          herkomst: actie.gebruik ? { ...oud.herkomst, ...c.herkomst } : oud.herkomst,
+          conflicten: oud.conflicten.filter((x) => x !== c),
         },
       };
     }

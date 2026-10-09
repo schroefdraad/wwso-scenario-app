@@ -1,4 +1,4 @@
-import { coropVoorGemeente } from '@wwso/data';
+import { alleGemeentes, coropVoorGemeente } from '@wwso/data';
 import type { OphaalConflict, OphaalHerkomst, OphaalMelding, OphaalVeld, PandVeldenState } from './types';
 
 /**
@@ -33,10 +33,24 @@ export interface AdresKandidaat {
 
 const normaliseer = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
+/**
+ * Splitst een getypt adres in straat, huisnummer en toevoeging. Het huisnummer is het LAATSTE
+ * getal dat los staat (na een spatie of komma): straatnamen kunnen cijfers bevatten ("Plein 1944 5",
+ * "Laan 1940-1945 12"). Een getal na een streepje of letter hoort bij de toevoeging ("19A-01",
+ * "179-2"). Een toevoeging met spatie en cijfer ("179 2") is dubbelzinnig en wordt als huisnummer 2
+ * gelezen; wie dat bedoelt typt "179-2".
+ */
 export function parseAdresInvoer(adres: string): { straat: string; huisnummer: number | null; toevoeging: string } {
-  const m = adres.trim().match(/^(?:(.*?)[\s,]+)?(\d+)\s*[-\s]?\s*([A-Za-z0-9\-\s]*)$/);
-  if (!m) return { straat: adres.trim(), huisnummer: null, toevoeging: '' };
-  return { straat: (m[1] ?? '').trim(), huisnummer: parseInt(m[2], 10), toevoeging: normaliseer(m[3] ?? '') };
+  const s = adres.trim();
+  const treffers = [...s.matchAll(/(?:^|[\s,])(\d+)(?=[A-Za-z\-\s]|$)/g)];
+  const laatste = treffers[treffers.length - 1];
+  if (!laatste) return { straat: s, huisnummer: null, toevoeging: '' };
+  const begin = laatste.index + laatste[0].length - laatste[1].length;
+  return {
+    straat: s.slice(0, begin).replace(/[\s,]+$/, ''),
+    huisnummer: parseInt(laatste[1], 10),
+    toevoeging: normaliseer(s.slice(begin + laatste[1].length)),
+  };
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null;
@@ -68,7 +82,12 @@ export function parseLocatieserver(json: unknown): AdresKandidaat[] {
   return uit;
 }
 
-export type Keuze = { soort: 'een'; kandidaat: AdresKandidaat } | { soort: 'kiezen'; kandidaten: AdresKandidaat[] } | { soort: 'geen' };
+/** `waarschuwing`: het getypte adres klopte niet met stad of straat; de gebruiker moet bevestigen. */
+export type Waarschuwing = 'stad' | 'straat';
+export type Keuze =
+  | { soort: 'een'; kandidaat: AdresKandidaat }
+  | { soort: 'kiezen'; kandidaten: AdresKandidaat[]; waarschuwing?: Waarschuwing }
+  | { soort: 'geen' };
 
 const MAX_KEUZES = 12;
 
@@ -81,22 +100,28 @@ export function kiesKandidaat(kandidaten: AdresKandidaat[], invoer: { adres: str
   const inv = parseAdresInvoer(invoer.adres);
   if (inv.huisnummer === null) return { soort: 'geen' };
   let pool = kandidaten.filter((k) => k.huisnummer === inv.huisnummer);
+  let waarschuwing: Waarschuwing | undefined;
 
+  // Nooit stil terugvallen op een andere stad of straat: levert het filter niets op, dan beslist
+  // de gebruiker (met een waarschuwing), en pas na de keuze wordt er iets opgehaald.
   const stad = normaliseer(invoer.stad);
   if (stad) {
     const opStad = pool.filter((k) => normaliseer(k.woonplaats) === stad || normaliseer(k.gemeente ?? '') === stad);
     if (opStad.length > 0) pool = opStad;
+    else if (pool.length > 0) waarschuwing = 'stad';
   }
   const straat = normaliseer(inv.straat);
-  if (straat) {
+  if (straat && !waarschuwing) {
     const opStraat = pool.filter((k) => normaliseer(k.straat) === straat);
     if (opStraat.length > 0) pool = opStraat;
+    else if (pool.length > 0) waarschuwing = 'straat';
   }
 
   const exact = pool.filter((k) => k.toevoeging === inv.toevoeging);
-  if (exact.length === 1) return { soort: 'een', kandidaat: exact[0] };
-  if (exact.length > 1) return { soort: 'kiezen', kandidaten: exact.slice(0, MAX_KEUZES) };
-  if (inv.toevoeging === '' && pool.length > 0) return { soort: 'kiezen', kandidaten: pool.slice(0, MAX_KEUZES) };
+  const kiezen = (kandidaten: AdresKandidaat[]): Keuze => ({ soort: 'kiezen', kandidaten: kandidaten.slice(0, MAX_KEUZES), ...(waarschuwing ? { waarschuwing } : {}) });
+  if (exact.length === 1 && !waarschuwing) return { soort: 'een', kandidaat: exact[0] };
+  if (exact.length > 0) return kiezen(exact);
+  if (inv.toevoeging === '' && pool.length > 0) return kiezen(pool);
   return { soort: 'geen' };
 }
 
@@ -219,6 +244,13 @@ const LABELS: Record<OphaalVeld, string> = {
   wozOppervlak: 'WOZ-oppervlak',
 };
 
+/** De naam zoals die in de CBS-lijst staat, of `undefined` als er niets (eenduidigs) past. */
+function canoniekeGemeente(naam: string): string | undefined {
+  const sleutel = normaliseer(naam);
+  const treffers = alleGemeentes().filter((g) => normaliseer(g) === sleutel);
+  return treffers.length === 1 ? treffers[0] : undefined;
+}
+
 const euro = (n: number) => `€ ${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 const getal = (s: string): number | null => {
   const n = Number(s.trim().replace(',', '.'));
@@ -230,7 +262,7 @@ const getal = (s: string): number | null => {
  * dat al dezelfde waarde heeft krijgt alleen de "opgehaald"-markering; een veld met een andere
  * waarde wordt NOOIT overschreven: het wordt een conflict dat de gebruiker beslist.
  */
-export function bepaalToepassing(huidig: PandVeldenState, o: OpgehaaldePand, opties: { taxatieModus: boolean }): Toepassing {
+export function bepaalToepassing(huidig: PandVeldenState, o: OpgehaaldePand, opties: { taxatieModus: boolean; adresLeidend?: boolean }): Toepassing {
   const patch: Partial<PandVeldenState> = {};
   const herkomst: Toepassing['herkomst'] = {};
   const conflicten: OphaalConflict[] = [];
@@ -245,28 +277,34 @@ export function bepaalToepassing(huidig: PandVeldenState, o: OpgehaaldePand, opt
     } else if (status === 'gelijk') {
       herkomst[veld] = h;
     } else {
-      conflicten.push({ veld, huidig: huidigTekst, opgehaaldTekst, patch: p, herkomst: h });
+      conflicten.push({ veld, huidig: huidigTekst, opgehaaldTekst, patch: p, herkomst: { [veld]: h } });
     }
   };
 
   // Tekstvelden: alleen een conflict bij een inhoudelijk ander adres/andere stad, niet bij spelling.
+  // Na een expliciete keuze uit de kandidatenlijst (`adresLeidend`) is het gekozen adres leidend:
+  // het hoort bij de opgehaalde objectgegevens en wordt dus ingevuld, geen conflict.
   for (const veld of ['adres', 'stad'] as const) {
     const nieuw = o[veld];
     const nu = huidig[veld];
-    if (nu.trim() === '') zet(veld, bagH, { [veld]: nieuw }, nu, nieuw, 'leeg');
+    if (nu.trim() === '' || (opties.adresLeidend && nu !== nieuw)) zet(veld, bagH, { [veld]: nieuw }, nu, nieuw, 'leeg');
     else if (normaliseer(nu) !== normaliseer(nieuw)) zet(veld, bagH, { [veld]: nieuw }, nu, nieuw, 'ander');
+    else if (opties.adresLeidend) zet(veld, bagH, {}, nu, nieuw, 'gelijk');
   }
 
-  // Gemeente + COROP-gebied horen samen (zoals `zetGemeente` in het formulier).
+  // Gemeente + COROP-gebied horen samen (zoals `zetGemeente` in het formulier). De naam uit de BAG
+  // wordt hoofdletter- en leesteken-ongevoelig tegen de CBS-lijst gehouden ("Bergen (NH)" = "Bergen (NH.)").
   if (o.gemeente) {
-    const corop = coropVoorGemeente(o.gemeente);
-    if (corop === undefined) {
+    const gemeente = canoniekeGemeente(o.gemeente);
+    const corop = gemeente === undefined ? undefined : coropVoorGemeente(gemeente);
+    if (gemeente === undefined || corop === undefined) {
       notities.push(`De gemeente "${o.gemeente}" is niet herkend: kies die zelf.`);
     } else {
-      const p = { gemeente: o.gemeente, coropGebied: corop };
-      const leegNu = huidig.gemeente === '' && huidig.coropGebied === '';
-      const gelijk = huidig.gemeente !== '' ? huidig.gemeente === o.gemeente : huidig.coropGebied === corop;
-      zet('gemeente', bagH, p, huidig.gemeente || huidig.coropGebied, o.gemeente, leegNu ? 'leeg' : gelijk ? 'gelijk' : 'ander');
+      const p = { gemeente, coropGebied: corop };
+      // Ontbreekt een van beide, dan wordt het aangevuld zolang het aanwezige deel klopt.
+      const gemeenteKlopt = huidig.gemeente === '' || huidig.gemeente === gemeente;
+      const coropKlopt = huidig.coropGebied === '' || huidig.coropGebied === corop;
+      zet('gemeente', bagH, p, huidig.gemeente || huidig.coropGebied, gemeente, gemeenteKlopt && coropKlopt ? 'leeg' : 'ander');
     }
   }
 
@@ -283,12 +321,27 @@ export function bepaalToepassing(huidig: PandVeldenState, o: OpgehaaldePand, opt
   if (opties.taxatieModus) {
     if (o.wozWaarde !== null) notities.push('De WOZ-waarde is niet ingevuld: je gebruikt nu de taxatiewaarde. Zet die schakelaar uit als je de WOZ-waarde wilt gebruiken.');
   } else {
-    getalVeld('wozWaarde', o.wozWaarde, wozH, euro);
-    if (o.wozPeildatum !== null) {
+    // Waarde en peildatum horen bij elkaar (één WOZ-beschikking): samen invullen, samen conflict.
+    if (o.wozWaarde !== null && o.wozPeildatum !== null) {
+      const nuWaarde = huidig.wozWaarde;
+      const waardeLeeg = nuWaarde.trim() === '';
       // De standaard-peildatum is geen eigen invoer zolang er geen WOZ-waarde staat.
-      const nu = huidig.wozPeildatum;
-      const status = nu === '' || huidig.wozWaarde.trim() === '' ? 'leeg' : nu === o.wozPeildatum ? 'gelijk' : 'ander';
-      zet('wozPeildatum', wozH, { wozPeildatum: o.wozPeildatum }, nu, `1 januari ${o.wozPeildatum.slice(0, 4)}`, status);
+      const peilLeeg = huidig.wozPeildatum === '' || waardeLeeg;
+      const waardeGelijk = !waardeLeeg && getal(nuWaarde) === o.wozWaarde;
+      const peilGelijk = !peilLeeg && huidig.wozPeildatum === o.wozPeildatum;
+      const p = { wozWaarde: String(o.wozWaarde), wozPeildatum: o.wozPeildatum };
+      const beide = { wozWaarde: wozH, wozPeildatum: wozH };
+      const tekst = `${euro(o.wozWaarde)} (1 januari ${o.wozPeildatum.slice(0, 4)})`;
+      if (waardeLeeg) {
+        Object.assign(patch, p);
+        Object.assign(herkomst, beide);
+      } else if (waardeGelijk && (peilGelijk || peilLeeg)) {
+        if (peilLeeg) patch.wozPeildatum = o.wozPeildatum;
+        Object.assign(herkomst, beide);
+      } else {
+        const peilTekst = huidig.wozPeildatum ? ` (1 januari ${huidig.wozPeildatum.slice(0, 4)})` : '';
+        conflicten.push({ veld: 'wozWaarde', huidig: `${nuWaarde}${peilTekst}`, opgehaaldTekst: tekst, patch: p, herkomst: beide });
+      }
     }
   }
 

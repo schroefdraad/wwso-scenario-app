@@ -8,6 +8,7 @@ import {
   parseWoz,
   type AdresKandidaat,
   type OpgehaaldePand,
+  type Waarschuwing,
 } from './gegevensOphalen';
 
 /**
@@ -30,7 +31,7 @@ export type OphaalVerzoek = { adres: string; stad: string } | { nummeraanduiding
 
 export type OphaalAntwoord =
   | { status: 'ok'; gegevens: OpgehaaldePand }
-  | { status: 'kiezen'; kandidaten: AdresKandidaat[] }
+  | { status: 'kiezen'; kandidaten: AdresKandidaat[]; waarschuwing?: Waarschuwing }
   | { status: 'niet_gevonden' }
   | { status: 'fout'; bericht: string };
 
@@ -92,7 +93,7 @@ export async function haalGegevensOp(verzoek: OphaalVerzoek, d: OphaalAfhankelij
     if (!r || r.status !== 200) return FOUT;
     const keuze = kiesKandidaat(parseLocatieserver(r.json), verzoek);
     if (keuze.soort === 'geen') return { status: 'niet_gevonden' };
-    if (keuze.soort === 'kiezen') return { status: 'kiezen', kandidaten: keuze.kandidaten };
+    if (keuze.soort === 'kiezen') return { status: 'kiezen', kandidaten: keuze.kandidaten, ...(keuze.waarschuwing ? { waarschuwing: keuze.waarschuwing } : {}) };
     kandidaat = keuze.kandidaat;
   }
 
@@ -108,15 +109,22 @@ export async function haalGegevensOp(verzoek: OphaalVerzoek, d: OphaalAfhankelij
     }
     return r;
   };
-  const [vboR, wozR] = await Promise.all([haal(`${BAG_VBO}?identificatie=${kandidaat.objectId}&f=json&limit=1`, d), wozOphalen()]);
-  const vboBereikbaar = !!vboR && vboR.status === 200;
+  // De WOZ-call (met zijn retry) loopt naast de keten verblijfsobject → pand: bouwjaar en oppervlak
+  // wachten niet op de pauze van de WOZ-retry.
+  const bagKeten = async () => {
+    const vboR = await haal(`${BAG_VBO}?identificatie=${kandidaat.objectId}&f=json&limit=1`, d);
+    const vboBereikbaar = !!vboR && vboR.status === 200;
+    const vbo = vboBereikbaar ? parseVbo(vboR.json) : null;
+    const hrefs = (vbo?.pandHrefs ?? []).slice(0, MAX_PANDEN);
+    const pandR = await Promise.all(hrefs.map((h) => haal(`${h}?f=json`, d)));
+    return { vboBereikbaar, vbo, hrefs, pandR };
+  };
+  const [bag, wozR] = await Promise.all([bagKeten(), wozOphalen()]);
+  const { vboBereikbaar, vbo, hrefs, pandR } = bag;
   // 404 = het loket kent geen WOZ-waarde voor dit adres; alleen netwerkfout of 5xx is "onbereikbaar".
   const wozBereikbaar = !!wozR && (wozR.status === 200 || wozR.status === 404);
   if (!vboBereikbaar && !wozBereikbaar) return { status: 'fout', bericht: 'De BAG en het WOZ-loket zijn nu niet bereikbaar.' };
 
-  const vbo = vboBereikbaar ? parseVbo(vboR.json) : null;
-  const hrefs = (vbo?.pandHrefs ?? []).slice(0, MAX_PANDEN);
-  const pandR = await Promise.all(hrefs.map((h) => haal(`${h}?f=json`, d)));
   const pandBereikbaar = pandR.some((p) => p && p.status === 200);
   const bouwjaar = bepaalBouwjaar(pandR.map((p) => (p && p.status === 200 ? parsePand(p.json).bouwjaar : null)));
 

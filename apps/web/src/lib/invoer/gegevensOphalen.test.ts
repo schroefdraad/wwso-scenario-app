@@ -35,6 +35,13 @@ describe('parseAdresInvoer', () => {
     ['Kanaalkade 49', 'Kanaalkade', 49, ''],
     ['Kleiweg 19A-01', 'Kleiweg', 19, 'a01'],
     ['Van Hogendorpstraat 3', 'Van Hogendorpstraat', 3, ''],
+    // Review 2026-10-09: cijfers in de straatnaam; het LAATSTE getal is het huisnummer.
+    ['Plein 1944 5', 'Plein 1944', 5, ''],
+    ['Plein 1944 5b', 'Plein 1944', 5, 'b'],
+    ['Laan 1940-1945 12', 'Laan 1940-1945', 12, ''],
+    ['Laan 1940-1945 12-A', 'Laan 1940-1945', 12, 'a'],
+    ['Burgemeester 1e Weg, 7', 'Burgemeester 1e Weg', 7, ''],
+    ['Kleiweg 179-2', 'Kleiweg', 179, '2'],
   ])('%s', (invoer, straat, huisnummer, toevoeging) => {
     expect(parseAdresInvoer(invoer)).toEqual({ straat, huisnummer, toevoeging });
   });
@@ -264,7 +271,7 @@ describe('bepaalToepassing', () => {
     expect(t.herkomst).not.toHaveProperty('wozWaarde');
     expect(t.conflicten.map((c) => c.veld).sort()).toEqual(['bouwjaar', 'wozWaarde']);
     const woz = t.conflicten.find((c) => c.veld === 'wozWaarde')!;
-    expect(woz).toMatchObject({ huidig: '300000', opgehaaldTekst: '€ 490.000', patch: { wozWaarde: '490000' }, herkomst: { bron: 'WOZ-loket', datum: DATUM } });
+    expect(woz).toMatchObject({ huidig: '300000 (1 januari 2025)', opgehaaldTekst: '€ 490.000 (1 januari 2025)', patch: { wozWaarde: '490000', wozPeildatum: '2025-01-01' }, herkomst: { wozWaarde: { bron: 'WOZ-loket', datum: DATUM }, wozPeildatum: { bron: 'WOZ-loket', datum: DATUM } } });
     expect(t.melding.soort).toBe('let');
     expect(t.melding.tekst).toContain('2');
   });
@@ -284,7 +291,7 @@ describe('bepaalToepassing', () => {
 
   it('wel een conflict op de peildatum als er al een eigen WOZ-waarde staat', () => {
     const t = bepaalToepassing({ ...leeg, wozWaarde: '490000', wozPeildatum: '2024-01-01' }, volledig(), { taxatieModus: false });
-    expect(t.conflicten.map((c) => c.veld)).toEqual(['wozPeildatum']);
+    expect(t.conflicten.map((c) => c.veld)).toEqual(['wozWaarde']);
   });
 
   it('WOZ ontbreekt: velden blijven leeg/ongemoeid, melding zegt het, niets geschat', () => {
@@ -352,5 +359,96 @@ describe('herkomstTekst', () => {
   it('bron en korte datum voor in de tooltip', () => {
     expect(herkomstTekst({ bron: 'WOZ-loket', datum: '2026-10-09' })).toBe('WOZ-loket · 9 okt');
     expect(herkomstTekst({ bron: 'BAG', datum: '2026-01-05' })).toBe('BAG · 5 jan');
+  });
+});
+
+
+// ── Review 2026-10-09 ────────────────────────────────────────────────────────
+
+describe('review: kiesKandidaat valt niet stil terug op andere stad/straat (punt 8)', () => {
+  const k = parseLocatieserver(LOCATIESERVER_KLEIWEG_179B);
+  it('stad komt niet overeen: de gebruiker kiest, met waarschuwing; nooit automatisch', () => {
+    const keuze = kiesKandidaat(k, { adres: 'Kleiweg 179-B', stad: 'Utrecht' });
+    expect(keuze).toMatchObject({ soort: 'kiezen', waarschuwing: 'stad' });
+  });
+  it('straat komt niet overeen: de gebruiker kiest, met waarschuwing', () => {
+    const keuze = kiesKandidaat(k, { adres: 'Dorpsstraat 179-B', stad: 'Rotterdam' });
+    expect(keuze).toMatchObject({ soort: 'kiezen', waarschuwing: 'straat' });
+  });
+  it('geen kandidaat met die toevoeging: nog steeds geen', () => {
+    expect(kiesKandidaat(k, { adres: 'Kleiweg 179-C', stad: 'Utrecht' })).toEqual({ soort: 'geen' });
+  });
+  it('een normale match heeft geen waarschuwing', () => {
+    expect(kiesKandidaat(k, { adres: 'Kleiweg 179-B', stad: 'Rotterdam' })).not.toHaveProperty('waarschuwing');
+  });
+});
+
+describe('review: gemeente en COROP (punt 3, gemeentenaam-match)', () => {
+  it('gemeente leeg maar COROP gelijk: de gemeente wordt wél ingevuld', () => {
+    const t = bepaalToepassing({ ...leeg, gemeente: '', coropGebied: coropVoorGemeente('Rotterdam') ?? '' }, volledig(), { taxatieModus: false });
+    expect(t.patch.gemeente).toBe('Rotterdam');
+    expect(t.conflicten.find((x) => x.veld === 'gemeente')).toBeUndefined();
+    expect(t.herkomst.gemeente).toBeDefined();
+  });
+  it('gemeente gelijk maar COROP leeg: het COROP-gebied wordt aangevuld', () => {
+    const t = bepaalToepassing({ ...leeg, gemeente: 'Rotterdam', coropGebied: '' }, volledig(), { taxatieModus: false });
+    expect(t.patch.coropGebied).toBe(coropVoorGemeente('Rotterdam'));
+  });
+  it('gemeente anders dan de COROP van de gebruiker: conflict', () => {
+    const t = bepaalToepassing({ ...leeg, gemeente: '', coropGebied: coropVoorGemeente('Delft') ?? '' }, volledig(), { taxatieModus: false });
+    expect(t.conflicten.find((x) => x.veld === 'gemeente')).toBeDefined();
+  });
+  it.each([
+    ['rotterdam', 'Rotterdam'],
+    ['ROTTERDAM', 'Rotterdam'],
+    ["'s-Gravenhage", "'s-Gravenhage"],
+    ['Bergen (NH)', 'Bergen (NH.)'],
+    ['bergen (nh.)', 'Bergen (NH.)'],
+  ])('gemeentenaam "%s" wordt herkend als "%s"', (uitPdok, canoniek) => {
+    const t = bepaalToepassing(leeg, volledig({ gemeente: uitPdok }), { taxatieModus: false });
+    expect(t.patch.gemeente).toBe(canoniek);
+    expect(t.patch.coropGebied).toBe(coropVoorGemeente(canoniek));
+  });
+});
+
+describe('review: WOZ-waarde en -peildatum zijn één conflict (punt 5)', () => {
+  it('andere waarde én andere peildatum: één conflict dat beide vervangt', () => {
+    const t = bepaalToepassing({ ...leeg, wozWaarde: '300000', wozPeildatum: '2024-01-01' }, volledig(), { taxatieModus: false });
+    const woz = t.conflicten.filter((c) => c.veld === 'wozWaarde' || c.veld === 'wozPeildatum');
+    expect(woz).toHaveLength(1);
+    expect(woz[0].patch).toEqual({ wozWaarde: '490000', wozPeildatum: '2025-01-01' });
+    expect(Object.keys(woz[0].herkomst).sort()).toEqual(['wozPeildatum', 'wozWaarde']);
+    expect(t.patch).not.toHaveProperty('wozPeildatum');
+  });
+  it('zelfde waarde maar andere peildatum: ook één conflict (waarde hoort bij zijn jaar)', () => {
+    const t = bepaalToepassing({ ...leeg, wozWaarde: '490000', wozPeildatum: '2024-01-01' }, volledig(), { taxatieModus: false });
+    expect(t.conflicten).toHaveLength(1);
+    expect(t.conflicten[0].patch).toEqual({ wozWaarde: '490000', wozPeildatum: '2025-01-01' });
+  });
+  it('leeg: beide direct gevuld, beide met herkomst', () => {
+    const t = bepaalToepassing(leeg, volledig(), { taxatieModus: false });
+    expect(t.patch).toMatchObject({ wozWaarde: '490000', wozPeildatum: '2025-01-01' });
+    expect(t.herkomst.wozWaarde).toBeDefined();
+    expect(t.herkomst.wozPeildatum).toBeDefined();
+  });
+  it('alles gelijk: geen conflict, beide gemarkeerd', () => {
+    const t = bepaalToepassing({ ...leeg, wozWaarde: '490000', wozPeildatum: '2025-01-01' }, volledig(), { taxatieModus: false });
+    expect(t.conflicten).toEqual([]);
+    expect(t.herkomst.wozPeildatum).toBeDefined();
+  });
+});
+
+describe('review: een expliciet gekozen adres is leidend (punt 7)', () => {
+  const o = volledig({ adres: 'Kleiweg 179B' });
+  it('zonder keuze: een ander getypt adres is een conflict (ongewijzigd)', () => {
+    const t = bepaalToepassing({ ...leeg, adres: 'Kleiweg 179' }, o, { taxatieModus: false });
+    expect(t.conflicten.find((c) => c.veld === 'adres')).toBeDefined();
+  });
+  it('na een keuze uit de lijst: adres en stad worden ingevuld, geen conflict', () => {
+    const t = bepaalToepassing({ ...leeg, adres: 'Kleiweg 179', stad: 'Roterdam' }, o, { taxatieModus: false, adresLeidend: true });
+    expect(t.patch).toMatchObject({ adres: 'Kleiweg 179B', stad: 'Rotterdam' });
+    expect(t.conflicten.find((c) => c.veld === 'adres' || c.veld === 'stad')).toBeUndefined();
+    expect(t.herkomst.adres).toBeDefined();
+    expect(t.herkomst.stad).toBeDefined();
   });
 });

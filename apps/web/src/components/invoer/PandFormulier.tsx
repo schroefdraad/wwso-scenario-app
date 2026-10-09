@@ -8,7 +8,8 @@ import { Toggle } from './Toggle';
 import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
 import type { OphaalVeld, PandVeldenState } from '../../lib/invoer/types';
-import { bepaalToepassing, herkomstTekst, type AdresKandidaat, type OpgehaaldePand } from '../../lib/invoer/gegevensOphalen';
+import { herkomstTekst, type AdresKandidaat, type OpgehaaldePand } from '../../lib/invoer/gegevensOphalen';
+import { gemeenteSuggestie } from '../../lib/invoer/gemeenteSuggestie';
 import type { OphaalAntwoord } from '../../lib/invoer/gegevensOphalenServer';
 
 const ENERGIELABELS = Energielabel.options;
@@ -56,12 +57,13 @@ export function PandFormulier() {
   const go = state.gegevensOphalen;
   const [bezig, setBezig] = useState(false);
   const [keuzes, setKeuzes] = useState<AdresKandidaat[] | null>(null);
-  /** De respons komt pas na een seconde of meer: bepaal wat er gevuld wordt op basis van de invoer
-   * van DAN, niet van het moment van klikken (de gebruiker kan intussen doortypen). */
-  const pandRef = useRef(pand);
+  /** De respons komt pas na een seconde of meer. Wat er gevuld wordt bepaalt de reducer tegen de
+   * state van DAN (niet van het moment van klikken); alleen de taxatieschakelaar lezen we hier via
+   * een ref die in een effect wordt bijgewerkt (niet tijdens het renderen). */
   const taxatieRef = useRef(gebruikTaxatie);
-  pandRef.current = pand;
-  taxatieRef.current = gebruikTaxatie;
+  useEffect(() => {
+    taxatieRef.current = gebruikTaxatie;
+  }, [gebruikTaxatie]);
   const aanwezig = useRef(true);
   useEffect(() => {
     aanwezig.current = true;
@@ -72,7 +74,7 @@ export function PandFormulier() {
 
   const meld = (soort: 'ok' | 'let', tekst: string) => dispatch({ soort: 'GEGEVENS_MELDING_GEZET', melding: { soort, tekst } });
 
-  const haalOp = async (verzoek: { adres: string; stad: string } | { nummeraanduidingId: string }) => {
+  const haalOp = async (verzoek: { adres: string; stad: string } | { nummeraanduidingId: string }, adresLeidend = false) => {
     setBezig(true);
     try {
       const res = await fetch('/api/gegevens-ophalen', {
@@ -87,7 +89,12 @@ export function PandFormulier() {
         antwoord = null;
       }
       if (!aanwezig.current) return;
-      if (res.status === 401) return meld('let', 'Je bent niet (meer) ingelogd. Log opnieuw in en probeer het nog eens. Je kunt de gegevens ook zelf invullen.');
+      // Met inloggen aan geeft de proxy een niet-ingelogde aanvraag een 401 (JSON); een redirect naar
+      // /login (bijv. een oude sessie of een andere proxy-instelling) telt hetzelfde.
+      if (res.status === 401 || res.redirected) return meld('let', 'Je bent niet (meer) ingelogd. Log opnieuw in en probeer het nog eens. Je kunt de gegevens ook zelf invullen.');
+      if (res.status === 503 && (antwoord as { code?: string } | null)?.code === 'niet_beschikbaar') {
+        return meld('let', 'Gegevens ophalen is nog niet beschikbaar. Vul de gegevens zelf in.');
+      }
       if (!antwoord || antwoord.status === 'fout') {
         return meld('let', `${antwoord?.status === 'fout' ? antwoord.bericht : 'Ophalen lukte niet.'} Probeer het later nog eens of vul de gegevens zelf in.`);
       }
@@ -97,11 +104,16 @@ export function PandFormulier() {
       }
       if (antwoord.status === 'kiezen') {
         setKeuzes(antwoord.kandidaten);
-        return meld('let', 'Op dit adres staan meerdere woningen. Kies welke je bedoelt.');
+        return meld(
+          'let',
+          antwoord.waarschuwing
+            ? `De ${antwoord.waarschuwing === 'stad' ? 'stad' : 'straat'} komt niet overeen met wat je typte. Kies welke woning je bedoelt, of pas het adres aan.`
+            : 'Op dit adres staan meerdere woningen. Kies welke je bedoelt.',
+        );
       }
       setKeuzes(null);
       const gegevens: OpgehaaldePand = antwoord.gegevens;
-      dispatch({ soort: 'GEGEVENS_OPGEHAALD', toepassing: bepaalToepassing(pandRef.current, gegevens, { taxatieModus: taxatieRef.current }) });
+      dispatch({ soort: 'GEGEVENS_OPGEHAALD', gegevens, taxatieModus: taxatieRef.current, adresLeidend });
     } catch {
       if (aanwezig.current) meld('let', 'Ophalen lukte niet (geen verbinding?). Probeer het later nog eens of vul de gegevens zelf in.');
     } finally {
@@ -126,7 +138,7 @@ export function PandFormulier() {
       </span>
     ) : null;
   };
-  const veldKlasse = (v: OphaalVeld) => (go?.conflicten.some((c) => c.veld === v) ? styles.veldConflict : herkomst(v) ? styles.veldOpgehaald : undefined);
+  const veldKlasse = (v: OphaalVeld) => (go?.conflicten.some((c) => v in c.herkomst) ? styles.veldConflict : herkomst(v) ? styles.veldOpgehaald : undefined);
   /** Gebruiker had zelf al een andere waarde: nooit stil overschrijven, de gebruiker beslist. */
   const conflictRegel = (v: OphaalVeld) => {
     const c = go?.conflicten.find((x) => x.veld === v);
@@ -156,8 +168,8 @@ export function PandFormulier() {
    * die verkeerde tussentijdse gemeente stilzwijgend staan (bevinding gebruiker, 2026-09-19). */
   const zetStad = (stad: string) => zet('stad', stad);
   const suggereerGemeenteOpBlur = () => {
-    const kandidaten = gemeentesVoorWoonplaats(pand.stad);
-    if (kandidaten.length === 1) zetGemeente(kandidaten[0]);
+    const voorstel = gemeenteSuggestie({ stad: pand.stad, gemeente: pand.gemeente, openConflict: !!go?.conflicten.some((c) => 'gemeente' in c.herkomst) });
+    if (voorstel) zetGemeente(voorstel);
   };
 
   const gemeenteKandidaten = pand.stad ? gemeentesVoorWoonplaats(pand.stad) : [];
@@ -214,7 +226,7 @@ export function PandFormulier() {
         {keuzes && (
           <div className={styles.ophaalKeuzes}>
             {keuzes.map((k) => (
-              <button key={k.nummeraanduidingId} type="button" className={styles.btn} disabled={bezig} onClick={() => void haalOp({ nummeraanduidingId: k.nummeraanduidingId })}>
+              <button key={k.nummeraanduidingId} type="button" className={styles.btn} disabled={bezig} onClick={() => void haalOp({ nummeraanduidingId: k.nummeraanduidingId }, true)}>
                 {k.adres}, {k.postcode} {k.woonplaats}
               </button>
             ))}

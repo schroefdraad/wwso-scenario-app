@@ -73,13 +73,15 @@ export interface OphaalHerkomst {
 }
 
 /** Een veld waar de gebruiker zelf al iets anders had staan: nooit stil overschrijven. `patch` en
- * `herkomst` worden pas toegepast als de gebruiker "Gebruik" kiest. */
+ * `herkomst` worden pas toegepast als de gebruiker "Gebruik" kiest. Een conflict kan meerdere
+ * samenhangende velden dekken (gemeente+COROP; WOZ-waarde+peildatum): `veld` is het veld waar het
+ * getoond wordt, de sleutels van `herkomst` zijn alle velden die het dekt. */
 export interface OphaalConflict {
   veld: OphaalVeld;
   huidig: string;
   opgehaaldTekst: string;
   patch: Partial<PandVeldenState>;
-  herkomst: OphaalHerkomst;
+  herkomst: Partial<Record<OphaalVeld, OphaalHerkomst>>;
 }
 
 export interface OphaalMelding {
