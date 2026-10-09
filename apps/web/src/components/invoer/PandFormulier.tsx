@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { alleGemeentes, coropVoorGemeente, gemeentesVoorWoonplaats } from '@wwso/data';
 import { Energielabel, MonumentStatus } from '@wwso/engine';
 import { useInvoer } from './InvoerContext';
 import { Toggle } from './Toggle';
 import { InfoBadge } from '../InfoBadge';
 import styles from './styles.module.css';
-import type { PandVeldenState } from '../../lib/invoer/types';
+import type { OphaalVeld, PandVeldenState } from '../../lib/invoer/types';
+import { bepaalToepassing, herkomstTekst, type AdresKandidaat, type OpgehaaldePand } from '../../lib/invoer/gegevensOphalen';
+import type { OphaalAntwoord } from '../../lib/invoer/gegevensOphalenServer';
 
 const ENERGIELABELS = Energielabel.options;
 const MONUMENTSTATUSSEN = MonumentStatus.options;
@@ -50,6 +52,98 @@ export function PandFormulier() {
     zet('coropGebied', coropVoorGemeente(gemeente) ?? '');
   };
 
+  // ── Gegevens ophalen (BAG + WOZ-loket, besluit eigenaar 2026-10-09) ──────────────────────────
+  const go = state.gegevensOphalen;
+  const [bezig, setBezig] = useState(false);
+  const [keuzes, setKeuzes] = useState<AdresKandidaat[] | null>(null);
+  /** De respons komt pas na een seconde of meer: bepaal wat er gevuld wordt op basis van de invoer
+   * van DAN, niet van het moment van klikken (de gebruiker kan intussen doortypen). */
+  const pandRef = useRef(pand);
+  const taxatieRef = useRef(gebruikTaxatie);
+  pandRef.current = pand;
+  taxatieRef.current = gebruikTaxatie;
+  const aanwezig = useRef(true);
+  useEffect(() => {
+    aanwezig.current = true;
+    return () => {
+      aanwezig.current = false;
+    };
+  }, []);
+
+  const meld = (soort: 'ok' | 'let', tekst: string) => dispatch({ soort: 'GEGEVENS_MELDING_GEZET', melding: { soort, tekst } });
+
+  const haalOp = async (verzoek: { adres: string; stad: string } | { nummeraanduidingId: string }) => {
+    setBezig(true);
+    try {
+      const res = await fetch('/api/gegevens-ophalen', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(verzoek),
+      });
+      let antwoord: OphaalAntwoord | null = null;
+      try {
+        antwoord = (await res.json()) as OphaalAntwoord;
+      } catch {
+        antwoord = null;
+      }
+      if (!aanwezig.current) return;
+      if (res.status === 401) return meld('let', 'Je bent niet (meer) ingelogd. Log opnieuw in en probeer het nog eens. Je kunt de gegevens ook zelf invullen.');
+      if (!antwoord || antwoord.status === 'fout') {
+        return meld('let', `${antwoord?.status === 'fout' ? antwoord.bericht : 'Ophalen lukte niet.'} Probeer het later nog eens of vul de gegevens zelf in.`);
+      }
+      if (antwoord.status === 'niet_gevonden') {
+        setKeuzes(null);
+        return meld('let', 'Geen woning gevonden op dit adres. Controleer straat, huisnummer (met toevoeging, bijvoorbeeld 49-A) en stad, of vul de gegevens zelf in.');
+      }
+      if (antwoord.status === 'kiezen') {
+        setKeuzes(antwoord.kandidaten);
+        return meld('let', 'Op dit adres staan meerdere woningen. Kies welke je bedoelt.');
+      }
+      setKeuzes(null);
+      const gegevens: OpgehaaldePand = antwoord.gegevens;
+      dispatch({ soort: 'GEGEVENS_OPGEHAALD', toepassing: bepaalToepassing(pandRef.current, gegevens, { taxatieModus: taxatieRef.current }) });
+    } catch {
+      if (aanwezig.current) meld('let', 'Ophalen lukte niet (geen verbinding?). Probeer het later nog eens of vul de gegevens zelf in.');
+    } finally {
+      if (aanwezig.current) setBezig(false);
+    }
+  };
+
+  const klikOphalen = () => {
+    setKeuzes(null);
+    if (!pand.adres.trim()) return meld('let', 'Vul eerst een adres in (straat en huisnummer), dan kan Puntum de gegevens ophalen.');
+    void haalOp({ adres: pand.adres, stad: pand.stad });
+  };
+
+  const herkomst = (v: OphaalVeld) => go?.herkomst[v];
+  /** Klein vinkje achter het label, met de bron in een tooltip (geen bronteksten naast velden). */
+  const vinkje = (v: OphaalVeld) => {
+    const h = herkomst(v);
+    return h ? (
+      <span className={styles.ophaalVinkje} title={`Opgehaald: ${herkomstTekst(h)}`} role="img" aria-label={`Opgehaald uit ${herkomstTekst(h)}`}>
+        {' '}
+        ✓
+      </span>
+    ) : null;
+  };
+  const veldKlasse = (v: OphaalVeld) => (go?.conflicten.some((c) => c.veld === v) ? styles.veldConflict : herkomst(v) ? styles.veldOpgehaald : undefined);
+  /** Gebruiker had zelf al een andere waarde: nooit stil overschrijven, de gebruiker beslist. */
+  const conflictRegel = (v: OphaalVeld) => {
+    const c = go?.conflicten.find((x) => x.veld === v);
+    if (!c) return null;
+    return (
+      <span className={styles.conflictRegel}>
+        Opgehaald: <strong>{c.opgehaaldTekst}</strong>
+        <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => dispatch({ soort: 'GEGEVENS_CONFLICT_OPGELOST', veld: v, gebruik: true })}>
+          Gebruik
+        </button>
+        <button type="button" className={`${styles.btn} ${styles.btnKlein}`} onClick={() => dispatch({ soort: 'GEGEVENS_CONFLICT_OPGELOST', veld: v, gebruik: false })}>
+          Houd mijne
+        </button>
+      </span>
+    );
+  };
+
   /** Suggereert een gemeente op basis van de VOLLEDIG getypte stad — alleen bij een EENDUIDIGE
    * match (harde regel 4: nooit gokken). Bij nul of meerdere kandidaten (bijv. "Aalst" ligt in
    * drie gemeentes) blijft de gemeente ongewijzigd en kiest de gebruiker zelf hieronder.
@@ -90,21 +184,57 @@ export function PandFormulier() {
         >
           {pandCompleet ? '✓' : '…'}
         </span>
+        <button
+          type="button"
+          className={`${styles.btn} ${styles.btnKlein} ${styles.ophaalKnop}`}
+          onClick={klikOphalen}
+          disabled={bezig}
+          title="Haalt gemeente, bouwjaar, WOZ-waarde en oppervlak op uit de BAG en het WOZ-loket"
+        >
+          {bezig ? 'Ophalen…' : 'Gegevens ophalen'}
+        </button>
       </div>
       <div className={styles.blokInhoud}>
+        {go?.melding && (
+          <div className={`${styles.ophaalMelding} ${go.melding.soort === 'ok' ? styles.ophaalOk : styles.ophaalLet}`} role="status">
+            <span>{go.melding.tekst}</span>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnKlein} ${styles.btnGhost}`}
+              aria-label="Melding sluiten"
+              onClick={() => {
+                setKeuzes(null);
+                dispatch({ soort: 'GEGEVENS_MELDING_GEZET', melding: null });
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
+        {keuzes && (
+          <div className={styles.ophaalKeuzes}>
+            {keuzes.map((k) => (
+              <button key={k.nummeraanduidingId} type="button" className={styles.btn} disabled={bezig} onClick={() => void haalOp({ nummeraanduidingId: k.nummeraanduidingId })}>
+                {k.adres}, {k.postcode} {k.woonplaats}
+              </button>
+            ))}
+          </div>
+        )}
         <div className={styles.pandGrid}>
           <div className={styles.veldRij}>
             <div className={styles.veld}>
-              <label htmlFor="p-adres">Adres</label>
-              <input id="p-adres" value={pand.adres} onChange={(e) => zet('adres', e.target.value)} />
+              <label htmlFor="p-adres">Adres{vinkje('adres')}</label>
+              <input id="p-adres" className={veldKlasse('adres')} value={pand.adres} onChange={(e) => zet('adres', e.target.value)} />
+              {conflictRegel('adres')}
             </div>
             <div className={styles.veld}>
-              <label htmlFor="p-stad">Stad</label>
-              <input id="p-stad" value={pand.stad} onChange={(e) => zetStad(e.target.value)} onBlur={suggereerGemeenteOpBlur} />
+              <label htmlFor="p-stad">Stad{vinkje('stad')}</label>
+              <input id="p-stad" className={veldKlasse('stad')} value={pand.stad} onChange={(e) => zetStad(e.target.value)} onBlur={suggereerGemeenteOpBlur} />
+              {conflictRegel('stad')}
             </div>
             <div className={styles.veld}>
               <span className={styles.labelRij}>
-                <label htmlFor="p-gemeente">Gemeente</label>
+                <label htmlFor="p-gemeente">Gemeente{vinkje('gemeente')}</label>
                 {/* Alleen nog bij een meerduidige stad (tekstreview 2026-10-03: de standaardtoelichting mocht weg). */}
                 {gemeenteKandidaten.length > 1 && (
                   <InfoBadge>
@@ -112,7 +242,7 @@ export function PandFormulier() {
                   </InfoBadge>
                 )}
               </span>
-              <select id="p-gemeente" value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
+              <select id="p-gemeente" className={veldKlasse('gemeente')} value={pand.gemeente} onChange={(e) => zetGemeente(e.target.value)}>
                 <option value="">— kies —</option>
                 {gemeenteOpties.map((g) => (
                   <option key={g} value={g}>
@@ -120,6 +250,7 @@ export function PandFormulier() {
                   </option>
                 ))}
               </select>
+              {conflictRegel('gemeente')}
             </div>
             <div className={`${styles.veld} ${styles.veldGate}`}>
               <span className={styles.labelRij}>
@@ -151,8 +282,9 @@ export function PandFormulier() {
                 </>
               ) : (
                 <>
-                  <label htmlFor="p-woz">WOZ-waarde (€)</label>
-                  <input id="p-woz" type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
+                  <label htmlFor="p-woz">WOZ-waarde (€){vinkje('wozWaarde')}</label>
+                  <input id="p-woz" className={veldKlasse('wozWaarde')} type="number" min={0} value={pand.wozWaarde} onChange={(e) => zet('wozWaarde', e.target.value)} />
+                  {conflictRegel('wozWaarde')}
                 </>
               )}
               <span className={styles.wozTaxatieRij}>
@@ -163,11 +295,12 @@ export function PandFormulier() {
             </div>
             <div className={styles.veld}>
               <span className={styles.labelRij}>
-                <label htmlFor="p-wozpeildatum">WOZ-peildatum</label>
+                <label htmlFor="p-wozpeildatum">WOZ-peildatum{vinkje('wozPeildatum')}</label>
                 <InfoBadge>Altijd 1 januari van het waarderingsjaar (Wet WOZ).</InfoBadge>
               </span>
               <select
                 id="p-wozpeildatum"
+                className={veldKlasse('wozPeildatum')}
                 value={pand.wozPeildatum.slice(0, 4)}
                 onChange={(e) => zet('wozPeildatum', e.target.value ? `${e.target.value}-01-01` : '')}
               >
@@ -178,16 +311,19 @@ export function PandFormulier() {
                   </option>
                 ))}
               </select>
+              {conflictRegel('wozPeildatum')}
             </div>
             <div className={styles.veld}>
-              <label htmlFor="p-wozopp">WOZ-oppervlak (m²)</label>
+              <label htmlFor="p-wozopp">WOZ-oppervlak (m²){vinkje('wozOppervlak')}</label>
               <input
                 id="p-wozopp"
+                className={veldKlasse('wozOppervlak')}
                 type="number"
                 min={0}
                 value={pand.wozOppervlak}
                 onChange={(e) => zet('wozOppervlak', e.target.value)}
               />
+              {conflictRegel('wozOppervlak')}
             </div>
           </div>
           <div className={styles.veldRij}>
@@ -216,8 +352,9 @@ export function PandFormulier() {
               )}
             </div>
             <div className={styles.veld}>
-              <label htmlFor="p-bouwjaar">Bouwjaar</label>
-              <input id="p-bouwjaar" type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
+              <label htmlFor="p-bouwjaar">Bouwjaar{vinkje('bouwjaar')}</label>
+              <input id="p-bouwjaar" className={veldKlasse('bouwjaar')} type="number" value={pand.bouwjaar} onChange={(e) => zet('bouwjaar', e.target.value)} />
+              {conflictRegel('bouwjaar')}
             </div>
           </div>
           <div className={styles.veldRij}>

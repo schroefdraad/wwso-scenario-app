@@ -22,7 +22,7 @@ const PDOK = 'https://api.pdok.nl';
 const LOCATIESERVER = `${PDOK}/bzk/locatieserver/search/v3_1/free`;
 const BAG_VBO = `${PDOK}/kadaster/bag/ogc/v2/collections/verblijfsobject/items`;
 const WOZ = 'https://api.kadaster.nl/lvwoz/wozwaardeloket-api/v1/wozwaarde/nummeraanduiding';
-const TIMEOUT_MS = 8000;
+const TIMEOUT_MS = 6000;
 const MAX_PANDEN = 3;
 const FL = 'id,weergavenaam,type,adresseerbaarobject_id,nummeraanduiding_id,woonplaatsnaam,gemeentenaam,postcode,huis_nlt,huisnummer,huisletter,huisnummertoevoeging,straatnaam';
 

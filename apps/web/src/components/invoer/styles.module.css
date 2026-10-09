@@ -1021,3 +1021,73 @@
 .plafondTekstVol {
   color: var(--amber);
 }
+
+/* Gegevens ophalen (Woning ①, 2026-10-09): knop in de kop, melding boven de velden, groene rand
+ * voor opgehaalde velden, regel onder een veld bij een conflict met eigen invoer. */
+.ophaalKnop {
+  margin-left: auto;
+  align-self: center;
+}
+
+.ophaalMelding {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.ophaalMelding > span {
+  flex: 1;
+}
+
+.ophaalMelding > button {
+  flex: none;
+}
+
+.ophaalOk {
+  background: var(--green-soft);
+  border: 1px solid var(--green);
+}
+
+.ophaalLet {
+  background: var(--amber-soft);
+  border: 1px solid var(--amber);
+}
+
+.ophaalKeuzes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: -0.3rem 0 0.9rem;
+}
+
+.ophaalVinkje {
+  color: var(--green);
+  font-size: 0.8em;
+  cursor: help;
+}
+
+.veld input.veldOpgehaald,
+.veld select.veldOpgehaald {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.veld input.veldConflict,
+.veld select.veldConflict {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+
+.conflictRegel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--ink);
+}
