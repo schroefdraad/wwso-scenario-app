@@ -143,5 +143,9 @@ Start pas na het exit-criterium in `plan/STATUS.md`.
 - Backlog (geparkeerd 2026-10-06): laadpaal R10 wordt alleen ÷ adressen gedeeld, niet ÷ kamers
   (§2.10.5 letterlijk vs §2.1.5). Toetsen in de Huurprijscheck: 6 kamers, parkeerplek type III met
   laadpaal → 2,75 (huidig) of 1 pt per kamer. Zie audit 2.2.
+- Concurrentie (2026-10-09): `outputs/CONCURRENTIE_puntentellingonline_2026-10-09.md`. Quick wins na de
+  bèta: gegevens ophalen in Puntum (WOZ, gebruiksoppervlakte, label incl. geldigheid, monument); PDF per kamer
+  en één kamer; zelf te beheren presets; kant-en-klaar scenario "standaard kamerverhuur". Toetsen: Kleiweg
+  179-B in hun gratis versie (WOZ-punten). Positionering: beslisinstrument investering (raakt model A/B).
 - Ná de bèta, vóór publieke lancering: volledige code-audit, security-hardening, AVG-traject.
   PSP pas na de keuze voor een vermarktmodel.
