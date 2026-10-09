@@ -95,7 +95,7 @@ describe('haalGegevensOp', () => {
   });
 
   it('geen WOZ-waarde: een tweede poging (valse 404 van het Kadaster), daarna leeg met reden', async () => {
-    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding': [{ status: 404, body: WOZ_404 }, { status: 404, body: WOZ_404 }] });
+    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding/0599200001004841': [{ status: 404, body: WOZ_404 }, { status: 404, body: WOZ_404 }] });
     const r = await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }, deps(f));
     expect(f.aanroepen.filter((u) => u.includes('wozwaarde'))).toHaveLength(2);
     expect(r.status === 'ok' && r.gegevens).toMatchObject({ wozWaarde: null, wozPeildatum: null, bouwjaar: 1930 });
@@ -103,13 +103,13 @@ describe('haalGegevensOp', () => {
   });
 
   it('valse 404 die bij de tweede poging wel werkt', async () => {
-    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding': [{ status: 404, body: WOZ_404 }, { status: 200, body: WOZ_KLEIWEG_179B }] });
+    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding/0599200001004841': [{ status: 404, body: WOZ_404 }, { status: 200, body: WOZ_KLEIWEG_179B }] });
     const r = await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }, deps(f));
     expect(r.status === 'ok' && r.gegevens.wozWaarde).toBe(490000);
   });
 
   it('één bron onbereikbaar: de rest komt wel, met de reden "niet bereikbaar" (geen schatting)', async () => {
-    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding': 'netwerkfout' });
+    const f = nepFetch({ ...goedeRoutes, 'wozwaarde/nummeraanduiding/0599200001004841': 'netwerkfout' });
     const r = await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }, deps(f));
     expect(r.status === 'ok' && r.gegevens).toMatchObject({ wozWaarde: null, bouwjaar: 1930, wozOppervlak: 157 });
     expect(r.status === 'ok' && r.gegevens.nietGevonden[0].reden).toMatch(/niet bereikbaar/);
@@ -126,7 +126,7 @@ describe('haalGegevensOp', () => {
     const f = nepFetch({
       'locatieserver/search': { status: 200, body: LOCATIESERVER_KLEIWEG_179B },
       'collections/verblijfsobject': 'netwerkfout',
-      'wozwaarde/nummeraanduiding': 'netwerkfout',
+      'wozwaarde/nummeraanduiding/0599200001004841': 'netwerkfout',
     });
     expect((await haalGegevensOp({ adres: 'Kleiweg 179-B', stad: 'Rotterdam' }, deps(f))).status).toBe('fout');
   });
