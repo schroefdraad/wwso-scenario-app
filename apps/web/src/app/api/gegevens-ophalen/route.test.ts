@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getUser = vi.fn();
+const rpc = vi.fn();
 vi.mock('../../../lib/supabase/server', () => ({
-  maakServerClient: async () => ({ auth: { getUser } }),
+  maakServerClient: async () => ({ auth: { getUser }, rpc }),
 }));
 const haalGegevensOp = vi.fn();
 vi.mock('../../../lib/invoer/gegevensOphalenServer', async (orig) => ({
@@ -20,6 +21,8 @@ const OORSPRONG_VERCEL = process.env.VERCEL_ENV;
 beforeEach(() => {
   delete process.env.VERCEL_ENV;
   getUser.mockReset();
+  rpc.mockReset();
+  rpc.mockResolvedValue({ data: 'ok', error: null });
   haalGegevensOp.mockReset();
   haalGegevensOp.mockResolvedValue({ status: 'niet_gevonden' });
 });
@@ -110,5 +113,53 @@ describe('POST /api/gegevens-ophalen — invoer', () => {
     const res = await POST(verzoek({ adres: 'Kleiweg 179-B' }));
     expect(res.status).toBe(500);
     expect(JSON.stringify(await res.json())).not.toContain('boem');
+  });
+});
+
+// Open inschrijving (plan B5, 2026-10-09): elk nieuw account kan de route gebruiken, dus een
+// daglimiet per org (registreer_ophaalactie, migratie 0008).
+describe('POST /api/gegevens-ophalen — daglimiet per org', () => {
+  beforeEach(() => {
+    delete process.env.AUTH_VEREIST;
+    getUser.mockResolvedValue({ data: { user: { id: 'u1' } } });
+  });
+
+  it('registreert elke geldige aanvraag met de daglimiet', async () => {
+    await POST(verzoek({ adres: 'Kleiweg 179-B' }));
+    expect(rpc).toHaveBeenCalledWith('registreer_ophaalactie', { p_limiet: 50 });
+    expect(haalGegevensOp).toHaveBeenCalledOnce();
+  });
+
+  it('limiet bereikt: 429 met melding, niets opgehaald', async () => {
+    rpc.mockResolvedValue({ data: 'limiet', error: null });
+    const res = await POST(verzoek({ adres: 'Kleiweg 179-B' }));
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ status: 'fout', code: 'daglimiet', bericht: expect.stringContaining('50') });
+    expect(haalGegevensOp).not.toHaveBeenCalled();
+  });
+
+  it('ingelogd zonder org: 403, niets opgehaald', async () => {
+    rpc.mockResolvedValue({ data: 'geen_org', error: null });
+    expect((await POST(verzoek({ adres: 'Kleiweg 179-B' }))).status).toBe(403);
+    expect(haalGegevensOp).not.toHaveBeenCalled();
+  });
+
+  it('teller onbereikbaar (bijv. migratie nog niet gedraaid): fail closed, 503', async () => {
+    rpc.mockResolvedValue({ data: null, error: { message: 'function registreer_ophaalactie does not exist' } });
+    const res = await POST(verzoek({ adres: 'Kleiweg 179-B' }));
+    expect(res.status).toBe(503);
+    expect(JSON.stringify(await res.json())).not.toContain('does not exist');
+    expect(haalGegevensOp).not.toHaveBeenCalled();
+  });
+
+  it('ongeldige invoer telt niet mee', async () => {
+    await POST(verzoek({ adres: '' }));
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it('AUTH_VEREIST=false (lokaal): geen teller, er is geen sessie', async () => {
+    process.env.AUTH_VEREIST = 'false';
+    expect((await POST(verzoek({ adres: 'Kleiweg 179-B' }))).status).toBe(200);
+    expect(rpc).not.toHaveBeenCalled();
   });
 });
