@@ -97,6 +97,9 @@ Details: `outputs/RAPPORT_brug_implementatieplan_2026-10-01.md`.
       gemerged naar main (2026-10-08). Tests: 162 Python + Node groen; niet in echte Apps Script getest.
       Nodig (eigenaar): deploy Cloud Run via Cloud Shell (regio controleren), script + `puntum_pure` plakken,
       `initDashboard`, één pand proberen. Handleiding: funda-scraper `outputs/HANDLEIDING_brug_shortlist_20261008.md`.
+      Klusje (2026-10-09, agent, branch `brug-selectie`): menu-item "Controleer geselecteerde rij(en)" en
+      exportdatum pas na het kopiëren. Puntum-importscherm bestaat nog niet (Fase 4): export is nu alleen JSON.
+      Zie ook: oude melding "parser check nodig (125/125 FOUT 2026-08-24)" in `config!B7` controleren.
       Puntumkant Fase 4 na de bèta.
 - [ ] S0.5 Plan bijwerken zodra de bredere steekproef van de scraper binnen is
 - Fase A (A1–A5) hoort in het project "Realestate Workflow", niet hier.
