@@ -59,10 +59,11 @@ Vorige versie (met alle verslagregels brug/steekproeven): `plan/archief/plan_t-m
 
 ## Scraper (repo `funda-scraper`)
 
-- [ ] Fix 422 zoekpagina's (`mode=auto` eerst) + strenger verhuurfilter Delft/Leiden: 2 commits lokaal op
-      `main` (e7df092, 33c209a), 199 tests groen. Jij: pushen, workflow Delft/Leiden met limit 5 draaien,
-      `config!B5` = `funda_results_delft_leiden.json`, Apps Script opnieuw plakken, oude rijen in `new`
-      opruimen. Twijfelgevallen in `funda_niet_beoordeeld_delft_leiden.json`.
+- [ ] Fix 422 + strenger Delft/Leiden-filter staan op `main` (gepusht 2026-10-10, dc5ff71). Jij: workflow
+      Delft/Leiden met limit 5 draaien, `config!B5` = `funda_results_delft_leiden.json`, Apps Script opnieuw
+      plakken, oude rijen in `new` opruimen. Twijfelgevallen in Drive: `funda_niet_beoordeeld_delft_leiden.json`.
+      Workflow-artifact voor dat bestand op lokale branch `workflow-artifact-twijfel`: pushen zodra je token
+      de scope `workflow` heeft.
 - [ ] Rotterdam: omschrijvingen nog met `js_render=false` zonder retry → keyword-kolommen vaak leeg.
 - [ ] Brug S0.6/S0.7: aandachtslijst-hulpmiddel; Cloud Run deployen, script + `puntum_pure` plakken,
       `config!B7`-melding nakijken. Details in het archief-plan en `outputs/ONTWERP_brug_shortlist_puntum_2026-10-08.md`.
